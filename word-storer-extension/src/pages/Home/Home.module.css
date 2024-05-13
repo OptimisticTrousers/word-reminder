@@ -1,0 +1,31 @@
+.table {
+    border-collapse: collapse;
+    border: 2px solid rgb(140, 140, 140);
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.table__caption {
+    caption-side: bottom;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.table__head {
+    background-color: rgb(228, 240, 245);
+}
+
+.table__header,
+.table__cell {
+    border: 1px solid rgb (160, 160, 160);
+    padding: 8px 10p;
+}
+
+.table__cell:last-of-type {
+    text-align: center;
+}
+
+.table__body>.table__row:nth-of-type(even) {
+    background-color: rgb(237, 238, 242);
+}
