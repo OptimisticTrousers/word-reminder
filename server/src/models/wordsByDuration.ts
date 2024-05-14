@@ -14,6 +14,7 @@ const WordsByDurationSchema = new Schema(
     ],
     from: { type: Date, required: true },
     to: { type: Date, required: true },
+    active: { type: Boolean, required: true, default: false },
   },
   { timestamps: true }
 );

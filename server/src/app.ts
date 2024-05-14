@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
+import { config } from "dotenv";
 import express from "express";
 import logger from "morgan";
-import mongoose, { ConnectOptions } from "mongoose";
+import mongoose from "mongoose";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
@@ -10,7 +11,6 @@ import errorHandler from "./middleware/errorHandler";
 import notFoundHandler from "./middleware/notFoundHandler";
 import routes from "./routes/index";
 import User from "./models/user";
-import { config } from "dotenv";
 
 config();
 
@@ -21,10 +21,7 @@ if (!mongoDb) {
   throw new Error("DB_STRING value is not defined in .env file");
 }
 
-mongoose.connect(mongoDb, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-} as ConnectOptions);
+mongoose.connect(mongoDb);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongo connection error"));
 
@@ -33,10 +30,10 @@ if (!secret) {
   throw new Error("SECRET value is not defined in .env file");
 }
 
-app.use(logger("dev"));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(logger("dev"));
 app.use(
   session({
     secret,

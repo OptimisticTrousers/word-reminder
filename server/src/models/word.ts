@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const WordSchema = new Schema({
-  word: { type: String, required: true },
+  word: { type: String, required: true, unique: true },
   meanings: [
     {
       partOfSpeech: { type: String, required: true },
@@ -19,7 +19,7 @@ const WordSchema = new Schema({
   audio: { type: String, required: true },
 });
 
-WordSchema.virtual("definitionCount").get(function () {
+WordSchema.virtual("meaningCount").get(function () {
   if (!this.meanings) {
     return 0;
   }
