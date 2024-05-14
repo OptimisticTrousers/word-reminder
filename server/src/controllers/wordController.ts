@@ -38,7 +38,7 @@ export const word_create = asyncHandler(async (req, res) => {
 // @desc    Delete single word
 // @route   DELETE /api/words/:wordId
 // @access  Private
-export const word_delete = asyncHandler(async (req, res, next) => {
+export const word_delete = asyncHandler(async (req, res) => {
   const wordId = req.params.wordId;
 
   const deletedWord = await Word.findByIdAndDelete(wordId).exec();
@@ -68,11 +68,11 @@ export const word_search = asyncHandler(async (req, res) => {
   res.status(200).json(words);
 });
 
-// @desc    Update single word
-// @route   PUT /api/words/:wordId
+// @desc    Upload files in order to add them into the database
+// @route   GET /api/words/upload
 // @access  Private
-export const word_update = asyncHandler(async (req, res) => {
+export const word_upload = asyncHandler(async (req, res) => {
+  console.log(req.file);
 })
-
 
 
