@@ -11,6 +11,12 @@ const UserSchema = new Schema(
   {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    theme: {
+      type: String,
+      enum: ["light", "dark"],
+      default: "dark",
+      required: true,
+    },
     words: [{ type: [UserWordSchema], required: true, default: [] }],
     wordsByDuration: [
       {

@@ -114,7 +114,7 @@ export const word_list = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { filter, search } = req.query;
   if (search) {
-    const words = await Word.find({ $text: { $search: search } });
+    const words = await Word.find({ $text: { $search: search } }).exec();
     res.status(200).json(words);
     return;
   }

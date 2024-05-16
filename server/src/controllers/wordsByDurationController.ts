@@ -8,20 +8,24 @@ import validateDates from "../utils/validateDates";
 // @route POST /api/users/:userId/wordsByDuration
 // @access Private
 export const words_by_duration_create = asyncHandler(async (req, res) => {
-  const { userId } = req.params.userId;
+  const { userId } = req.params;
   const user = await User.findById(userId).exec();
   if (!req.body) {
     // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
     const from = new Date();
     const to = new Date();
-    to.setDate(from.getDate() + 7);
     const length = user.words.length;
-    if (length < 7) {
-      const difference = 7 - length;
-      const newWords = await Word.aggregate().sample(difference);
+    if (length === 0) {
+      res.status(405).send({
+        message:
+          "You must have at least one word in order to create a words by duration.",
+      });
+    } else if (length < 7) {
+      to.setDate(from.getDate() + length);
       await User.findByIdAndUpdate(userId, {
         $push: { words: { $each: newWords } },
       }).exec();
+    } else {
     }
   }
   const { active, from, to, words } = req.body;

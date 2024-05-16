@@ -12,8 +12,8 @@ export const user_delete = [
   asyncHandler(async (req) => {
     const { userId } = req.params;
     // User found, continue with deletion operations
-    await User.findByIdAndDelete(userId);
-    await WordsByDuration.deleteMany({ userId });
+    await User.findByIdAndDelete(userId).exec();
+    await WordsByDuration.deleteMany({ userId }).exec();
     // Log the user out
   }),
   logout_user,
@@ -23,7 +23,8 @@ export const user_delete = [
 // @route   GET /api/users/:userId
 // @access  Private
 export const user_detail = asyncHandler(async (req, res) => {
-  const user = req.user;
+  const { userId } = req.params;
+  const user = User.findById(userId).exec();
   res.status(200).json(user);
 });
 
@@ -38,7 +39,7 @@ export const user_update = [
     .isEmpty()
     .custom(async (value) => {
       try {
-        const user = await User.findOne({ username: value });
+        const user = await User.findOne({ username: value }).exec();
         if (user) {
           return Promise.reject("Username already in use");
         }
