@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
+import asyncHandler from "express-async-handler";
 import { body, validationResult } from "express-validator";
 import passport from "passport";
 import User from "../models/user";
@@ -22,7 +22,7 @@ export const logout_user = (
     if (err) {
       return next(err);
     }
-    res.send("Logged out!");
+    res.status(200).json({ message: "User successfully logged out." });
   });
 };
 
@@ -31,8 +31,8 @@ export const logout_user = (
 // @access  Public
 export const register_user = [
   // Validate and sanitize fields.
-  body("username", "Username is required").trim().escape().isEmpty(),
-  body("password", "Password is required").trim().escape().isEmpty(),
+  body("username", "Username is required.").trim().escape().isEmpty(),
+  body("password", "Password is required.").trim().escape().isEmpty(),
   // Process request after validation and sanitization.
   asyncHandler(async (req, res) => {
     // Extract validation errors from a request.

@@ -19,7 +19,7 @@ const WordsByDurationSchema = new Schema(
   { timestamps: true }
 );
 
-WordsByDurationSchema.virtual("currentWordCount").get(function () {
+WordsByDurationSchema.virtual("wordCount").get(function () {
   if (!this.words) {
     return 0;
   }

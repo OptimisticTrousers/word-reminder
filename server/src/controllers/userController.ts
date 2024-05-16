@@ -3,14 +3,17 @@ import bcrypt from "bcryptjs";
 import { body, validationResult } from "express-validator";
 import { logout_user } from "./authController";
 import User from "../models/user";
+import WordsByDuration from "../models/wordsByDuration";
 
 // @desc    Delete single user
 // @route   DELETE /api/user/:userId
 // @access  Private
 export const user_delete = [
-  asyncHandler(async (req, res, next) => {
+  asyncHandler(async (req) => {
+    const { _id } = req.user;
     // User found, continue with deletion operations
-    await User.findByIdAndDelete(req.params.userId);
+    await User.findByIdAndDelete(_id);
+    await WordsByDuration.deleteMany({ userId: _id });
     // Log the user out
   }),
   logout_user,
@@ -21,10 +24,6 @@ export const user_delete = [
 // @access  Private
 export const user_detail = asyncHandler(async (req, res) => {
   const user = req.user;
-  if (!user) {
-    res.status(401).json(null);
-    return;
-  }
   res.status(200).json(user);
 });
 
@@ -36,50 +35,71 @@ export const user_update = [
   body("username")
     .trim()
     .escape()
-    .custom(async (value, { req }) => {
+    .isEmpty()
+    .custom(async (value) => {
       try {
         const user = await User.findOne({ username: value });
         if (user) {
           return Promise.reject("Username already in use");
         }
-        if (
-          !value &&
-          !req.body.oldPassword &&
-          !req.body.newPassword &&
-          !req.body.newPasswordConfirmation
-        ) {
-          throw new Error("You must update your username or password");
-        }
       } catch (error) {
         return Promise.reject("Server Error");
       }
     }),
-  body("oldPassword").custom((value, { req }) => {
-    if (value && !req.body.newPassword && !req.body.newPasswordConfirmation) {
-      throw new Error(
-        "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
-      );
+  body("oldPassword").custom(
+    (
+      value,
+      {
+        req: {
+          body: { newPassword, newPasswordConfirmation },
+        },
+      }
+    ) => {
+      if (value && !newPassword && !newPasswordConfirmation) {
+        throw new Error(
+          "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
+        );
+      }
+      return true;
     }
-    return true;
-  }),
-  body("newPassword").custom((value, { req }) => {
-    if (value && !req.body.oldPassword && !req.body.newPasswordConfirmation) {
-      throw new Error(
-        "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
-      );
+  ),
+  body("newPassword").custom(
+    (
+      value,
+      {
+        req: {
+          body: { oldPassword, newPasswordConfirmation },
+        },
+      }
+    ) => {
+      if (value && !oldPassword && !newPasswordConfirmation) {
+        throw new Error(
+          "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
+        );
+      }
+      return true;
     }
-    return true;
-  }),
-  body("newPasswordConfirmation").custom((value, { req }) => {
-    if (value && !req.body.oldPassword && !req.body.newPassword) {
-      throw new Error(
-        "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
-      );
+  ),
+  body("newPasswordConfirmation").custom(
+    (
+      value,
+      {
+        req: {
+          body: { oldPassword, newPassword },
+        },
+      }
+    ) => {
+      if (value && !oldPassword && !newPassword) {
+        throw new Error(
+          "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
+        );
+      }
+      return true;
     }
-    return true;
-  }),
+  ),
   asyncHandler(async (req, res) => {
     // Extract the validation errors from a request.
+    const { userId } = req.params;
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -90,12 +110,12 @@ export const user_update = [
     const { oldPassword, newPassword, newPasswordConfirmation, username } =
       req.body;
 
-    const hashedPassword = await bcrypt.hash(oldPassword, 10);
+    const oldHashedPassword = await bcrypt.hash(oldPassword, 10);
 
     const user = await User.exists({
-      _id: req.params.userId,
+      _id: userId,
       username,
-      password: hashedPassword,
+      password: oldHashedPassword,
     }).exec();
 
     if (!user) {
@@ -116,7 +136,7 @@ export const user_update = [
 
     // Get the user to be updated
     const updatedUser = await User.findByIdAndUpdate(
-      req.params.userId,
+      userId,
       { password: newHashedPassword },
       { new: true }
     ).exec();
