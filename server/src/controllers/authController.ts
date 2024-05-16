@@ -31,8 +31,8 @@ export const logout_user = (
 // @access  Public
 export const register_user = [
   // Validate and sanitize fields.
-  body("username", "Username is required").trim().escape(),
-  body("password", "Password is required").trim().escape(),
+  body("username", "Username is required").trim().escape().isEmpty(),
+  body("password", "Password is required").trim().escape().isEmpty(),
   // Process request after validation and sanitization.
   asyncHandler(async (req, res) => {
     // Extract validation errors from a request.
@@ -51,7 +51,6 @@ export const register_user = [
     const user = new User({
       username,
       password: hashedPassword,
-      words: [],
     });
 
     await user.save();

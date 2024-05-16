@@ -8,16 +8,23 @@ import {
   word_upload,
 } from "../controllers/wordController";
 
-const csvFilter = (_req: Express.Request, file: Express.Multer.File, cb: FileFilterCallback) => {
-  console.log('Reading file in middleware: ', file.originalname);
+const csvFilter = (
+  req: Express.Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+) => {
+  console.log("Reading file in middleware: ", file.originalname);
   if (file.mimetype.includes("csv")) {
     cb(null, true);
   } else {
     return cb(null, false);
   }
-}
+};
 
-const upload = multer({ storage: multer.memoryStorage(), fileFilter: csvFilter });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: csvFilter,
+});
 const router = Router();
 
 router.route("/").get(word_list).post(word_create);

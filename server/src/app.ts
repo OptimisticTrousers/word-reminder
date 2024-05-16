@@ -7,10 +7,10 @@ import mongoose from "mongoose";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
+import User from "./models/user";
 import errorHandler from "./middleware/errorHandler";
 import notFoundHandler from "./middleware/notFoundHandler";
 import routes from "./routes/index";
-import User from "./models/user";
 
 config();
 

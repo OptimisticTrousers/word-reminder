@@ -12,7 +12,14 @@ const UserSchema = new Schema(
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     words: [{ type: [UserWordSchema], required: true, default: [] }],
-    wordsByDuration: { type: Schema.Types.ObjectId, ref: "WordsByDuration" },
+    wordsByDuration: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "WordsByDuration",
+        required: true,
+        default: [],
+      },
+    ],
   },
   {
     timestamps: true,
@@ -31,6 +38,13 @@ UserSchema.virtual("wordCount").get(function () {
     return 0;
   }
   return this.words.length;
+});
+
+UserSchema.virtual("wordsByDurationCount").get(function () {
+  if (!this.wordsByDuration) {
+    return 0;
+  }
+  return this.wordsByDuration.length;
 });
 
 export default mongoose.model("User", UserSchema);

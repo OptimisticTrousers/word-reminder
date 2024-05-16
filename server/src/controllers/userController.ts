@@ -7,12 +7,14 @@ import User from "../models/user";
 // @desc    Delete single user
 // @route   DELETE /api/user/:userId
 // @access  Private
-export const user_delete = asyncHandler(async (req, res, next) => {
-  // User found, continue with deletion operations
-  await User.findByIdAndDelete(req.params.userId);
-  // Log the user out
-  logout_user(req, res, next);
-});
+export const user_delete = [
+  asyncHandler(async (req, res, next) => {
+    // User found, continue with deletion operations
+    await User.findByIdAndDelete(req.params.userId);
+    // Log the user out
+  }),
+  logout_user,
+];
 
 // @desc    Get a user (public details)
 // @route   GET /api/users/:userId
@@ -34,11 +36,19 @@ export const user_update = [
   body("username")
     .trim()
     .escape()
-    .custom(async (value) => {
+    .custom(async (value, { req }) => {
       try {
         const user = await User.findOne({ username: value });
         if (user) {
           return Promise.reject("Username already in use");
+        }
+        if (
+          !value &&
+          !req.body.oldPassword &&
+          !req.body.newPassword &&
+          !req.body.newPasswordConfirmation
+        ) {
+          throw new Error("You must update your username or password");
         }
       } catch (error) {
         return Promise.reject("Server Error");
@@ -77,12 +87,14 @@ export const user_update = [
       return;
     }
 
-    const { oldPassword, newPassword, newPasswordConfirmation } = req.body;
+    const { oldPassword, newPassword, newPasswordConfirmation, username } =
+      req.body;
 
     const hashedPassword = await bcrypt.hash(oldPassword, 10);
 
-    const user = await User.findOne({
+    const user = await User.exists({
       _id: req.params.userId,
+      username,
       password: hashedPassword,
     }).exec();
 

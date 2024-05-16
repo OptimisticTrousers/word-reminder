@@ -49,26 +49,27 @@ export const word_delete = asyncHandler(async (req, res) => {
 export const word_list = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { filter } = req.query;
-  let sortOptions = {}
+  let sortOptions = {};
   switch (filter) {
     case "alphabeticallyAscending":
-      sortOptions = { word: 1 }
+      sortOptions = { word: 1 };
       break;
     case "alphabeticallyDescending":
-      sortOptions = { word: -1 }
+      sortOptions = { word: -1 };
       break;
     case "ascending":
-      sortOptions = { created_at: 1 }
+      sortOptions = { created_at: 1 };
       break;
     case "descending":
-      sortOptions = { created_at: -1 }
+      sortOptions = { created_at: -1 };
       break;
     default:
       break;
   }
   const user = await User.findById(_id).sort(sortOptions).exec();
+  const count = await Word.countDocuments({ userId: { $ne: _id } });
 
-  res.status(200).json(user.words);
+  res.status(200).json({ words: user.words, count });
 });
 
 // @desc    Search for users

@@ -3,12 +3,7 @@ import { Request, Response } from "express";
 import Word from "../models/word";
 import WordsByDuration from "../models/wordsByDuration";
 import User from "../models/user";
-
-const validateDates = (from: Date, to: Date) => {
-  if (from > to) {
-    throw new Error("'From' date comes before the 'to' date");
-  }
-};
+import validateDates from "../utils/validateDates";
 
 // @desc Create a new current words by duration
 // @route POST /api/users/:userId/wordsByDuration
@@ -25,7 +20,9 @@ export const words_by_duration_create = asyncHandler(
       if (length < 7) {
         const difference = 7 - length;
         const newWords = await Word.aggregate().sample(difference);
-        await User.findByIdAndUpdate(req.params.userId, { $push: { words: { $each: newWords } } }).exec();
+        await User.findByIdAndUpdate(req.params.userId, {
+          $push: { words: { $each: newWords } },
+        }).exec();
       }
     }
     const { active, from, to, words } = req.body;
@@ -61,7 +58,9 @@ export const words_by_duration_delete = asyncHandler(async (req, res) => {
 export const words_by_duration_get = asyncHandler(async (req, res) => {
   const { wordByDurationId } = req.params;
 
-  const wordsByDuration = await WordsByDuration.findById(wordByDurationId).exec();
+  const wordsByDuration = await WordsByDuration.findById(
+    wordByDurationId
+  ).exec();
   res.status(200).json(wordsByDuration);
 });
 
@@ -93,11 +92,13 @@ export const words_by_duration_update = asyncHandler(async (req, res) => {
 // @route GET /api/users/:userId/wordsByDuration
 // @access Private
 export const words_by_duration_get_random = asyncHandler(async (req, res) => {
-  const randomActiveWordsByDuration = await WordsByDuration.findOne({ active: true }).exec();
+  const randomActiveWordsByDuration = await WordsByDuration.findOne({
+    active: true,
+  }).exec();
 
   if (!randomActiveWordsByDuration) {
     res.status(404).json({ message: "No active WordsByDuration found" });
     return;
   }
   res.status(200).json(randomActiveWordsByDuration);
-})
+});
