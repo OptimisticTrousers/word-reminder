@@ -10,10 +10,10 @@ import WordsByDuration from "../models/wordsByDuration";
 // @access  Private
 export const user_delete = [
   asyncHandler(async (req) => {
-    const { _id } = req.user;
+    const { userId } = req.params;
     // User found, continue with deletion operations
-    await User.findByIdAndDelete(_id);
-    await WordsByDuration.deleteMany({ userId: _id });
+    await User.findByIdAndDelete(userId);
+    await WordsByDuration.deleteMany({ userId });
     // Log the user out
   }),
   logout_user,
