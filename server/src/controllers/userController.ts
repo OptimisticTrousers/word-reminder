@@ -9,7 +9,7 @@ import User from "../models/user";
 // @access  Private
 export const user_delete = asyncHandler(async (req, res, next) => {
   // User found, continue with deletion operations
-  await User.findOneAndDelete({ _id: req.params.userId });
+  await User.findByIdAndDelete(req.params.userId);
   // Log the user out
   logout_user(req, res, next);
 });
@@ -81,7 +81,7 @@ export const user_update = [
 
     const hashedPassword = await bcrypt.hash(oldPassword, 10);
 
-    const user = await User.find({
+    const user = await User.findOne({
       _id: req.params.userId,
       password: hashedPassword,
     }).exec();

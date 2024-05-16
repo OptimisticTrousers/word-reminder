@@ -15,7 +15,7 @@ const validateDates = (from: Date, to: Date) => {
 // @access Private
 export const words_by_duration_create = asyncHandler(
   async (req: Request, res: Response) => {
-    const user: any= await User.findById(req.params.userId).exec();
+    const user = await User.findById(req.params.userId).exec();
     if (!req.body) {
       // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
       const from = new Date();
@@ -25,8 +25,7 @@ export const words_by_duration_create = asyncHandler(
       if (length < 7) {
         const difference = 7 - length;
         const newWords = await Word.aggregate().sample(difference);
-        user.words.push(newWords);
-        await user.save();
+        await User.findByIdAndUpdate(req.params.userId, { $push: { words: { $each: newWords } } }).exec();
       }
     }
     const { active, from, to, words } = req.body;
@@ -52,7 +51,7 @@ export const words_by_duration_delete = asyncHandler(async (req, res) => {
 
   const deletedWordsByDuration = await WordsByDuration.findByIdAndDelete(
     wordByDurationId
-  );
+  ).exec();
   res.status(200).json(deletedWordsByDuration);
 });
 
@@ -62,7 +61,7 @@ export const words_by_duration_delete = asyncHandler(async (req, res) => {
 export const words_by_duration_get = asyncHandler(async (req, res) => {
   const { wordByDurationId } = req.params;
 
-  const wordsByDuration = await WordsByDuration.findById(wordByDurationId);
+  const wordsByDuration = await WordsByDuration.findById(wordByDurationId).exec();
   res.status(200).json(wordsByDuration);
 });
 
@@ -89,3 +88,16 @@ export const words_by_duration_update = asyncHandler(async (req, res) => {
   }
   res.status(200).json(updatedWordsByDuration);
 });
+
+// @desc Fetch a random wordsByDuration
+// @route GET /api/users/:userId/wordsByDuration
+// @access Private
+export const words_by_duration_get_random = asyncHandler(async (req, res) => {
+  const randomActiveWordsByDuration = await WordsByDuration.findOne({ active: true }).exec();
+
+  if (!randomActiveWordsByDuration) {
+    res.status(404).json({ message: "No active WordsByDuration found" });
+    return;
+  }
+  res.status(200).json(randomActiveWordsByDuration);
+})

@@ -22,19 +22,14 @@ const fetchWordData = async (word: string) => {
 // @route POST /api/words
 // @access Private
 export const word_create = asyncHandler(async (req, res) => {
-  const user = await User.findById(userId).exec();
-  if (!user) {
-    throw new Error("User not found");
+  const { _id } = req.user;
+  const { word } = req.body;
+  let existingWord = await Word.exists({ word }).exec();
+  if (!existingWord) {
+    existingWord = new Word(await fetchWordData(word));
+    await existingWord.save();
   }
-  const existingWord = await Word.exists({ word }).exec();
-  if (existingWord) {
-    user.words.push(existingWord);
-  } else {
-    const newWord = new Word(fetchWordData(word));
-
-    await newWord.save();
-  }
-  await user.save();
+  await User.findByIdAndUpdate(_id, { $push: { words: existingWord } });
   res.status(200).json(word);
 });
 
@@ -42,8 +37,7 @@ export const word_create = asyncHandler(async (req, res) => {
 // @route   DELETE /api/words/:wordId
 // @access  Private
 export const word_delete = asyncHandler(async (req, res) => {
-  const wordId = req.params.wordId;
-
+  const { wordId } = req.params;
   const deletedWord = await Word.findByIdAndDelete(wordId).exec();
 
   res.status(200).json(deletedWord);
@@ -53,10 +47,26 @@ export const word_delete = asyncHandler(async (req, res) => {
 // @route   GET /api/words
 // @access  Private
 export const word_list = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.userId).exec();
-  if (!user) {
-    throw new Error("User not found");
+  const { _id } = req.user;
+  const { filter } = req.query;
+  let sortOptions = {}
+  switch (filter) {
+    case "alphabeticallyAscending":
+      sortOptions = { word: 1 }
+      break;
+    case "alphabeticallyDescending":
+      sortOptions = { word: -1 }
+      break;
+    case "ascending":
+      sortOptions = { created_at: 1 }
+      break;
+    case "descending":
+      sortOptions = { created_at: -1 }
+      break;
+    default:
+      break;
   }
+  const user = await User.findById(_id).sort(sortOptions).exec();
 
   res.status(200).json(user.words);
 });
@@ -74,8 +84,8 @@ export const word_search = asyncHandler(async (req, res) => {
 // @desc    Upload files in order to add them into the database
 // @route   POST /api/words/upload
 // @access  Private
-export const word_upload = asyncHandler(async (req: any, res: any) => {
-  const words: any[] = [];
+export const word_upload = asyncHandler(async (req, res) => {
+  const words = [];
   const parser = parse({
     delimiter: ",", // Start with a common delimiter, but consider auto-detect
     relax_column_count: true, // Relax column count to avoid errors with varying columns
