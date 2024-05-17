@@ -155,26 +155,10 @@ export const word_list = [
       return;
     }
     else if (learned) {
-
       const { words } = await User.find({ _id: userId, "words.learned": learned }, { words: 1 }).exec();
       res.status(200).json(words);
       return;
     }
-    // const aggregation = User.aggregate([{
-    //   $search: {
-    //     compound: {
-    //       index: "word_storer-words-static",
-    //       $filter: [
-    //         {
-    //           text: {
-    //             query: learned,
-    //             "path": "words.learned"
-    //           }
-    //         }
-    //       ]
-    //     }
-    //   }
-    // }])
     let sortOptions = {};
     switch (filter) {
       case "alphabeticallyAscending":
