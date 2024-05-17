@@ -13,7 +13,7 @@ export const user_delete = [
     const { userId } = req.params;
     // User found, continue with deletion operations
     await User.findByIdAndDelete(userId).exec();
-    await WordsByDuration.deleteMany({ userId }).exec();
+    await WordsByDuration.deleteMany({ _id: userId }).exec();
     // Log the user out
   }),
   logout_user,
@@ -36,7 +36,6 @@ export const user_update = [
   body("username")
     .trim()
     .escape()
-    .isEmpty()
     .custom(async (value) => {
       try {
         const user = await User.findOne({ username: value }).exec();
@@ -47,6 +46,7 @@ export const user_update = [
         return Promise.reject("Server Error");
       }
     }),
+  body("theme").trim().escape(),
   body("oldPassword").custom(
     (
       value,
@@ -108,8 +108,35 @@ export const user_update = [
       return;
     }
 
-    const { oldPassword, newPassword, newPasswordConfirmation, username } =
-      req.body;
+    const {
+      oldPassword,
+      newPassword,
+      newPasswordConfirmation,
+      username,
+      theme,
+    } = req.body;
+
+    if (theme) {
+      // Get the user to be updated
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { theme },
+        { new: true }
+      ).exec();
+
+      res.status(200).json(updatedUser);
+      return;
+    } else if (username) {
+      // Get the user to be updated
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { username },
+        { new: true }
+      ).exec();
+
+      res.status(200).json(updatedUser);
+      return;
+    }
 
     const oldHashedPassword = await bcrypt.hash(oldPassword, 10);
 

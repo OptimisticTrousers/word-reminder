@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const WordSchema = new Schema({
-  word: { type: String, required: true, unique: true },
+  word: { type: String, required: true, index: true, unique: true },
+  origin: { type: String, required: true },
   meanings: [
     {
       partOfSpeech: { type: String, required: true },

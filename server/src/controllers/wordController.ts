@@ -1,23 +1,30 @@
 import asyncHandler from "express-async-handler";
-import { body, validationResult } from "express-validator";
+import { body, query, validationResult } from "express-validator";
 import { parse } from "csv-parse";
 import fs from "fs";
 import User from "../models/user";
 import Word from "../models/word";
 import wordsByDuration from "../models/wordsByDuration";
 import upload from "../config/multer";
+import { CustomError } from "../utils/models";
 
-const fetchWordData = async (word: string) => {
-  const data = await fetch(
-    `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-  );
+const createWord = async (word: string) => {
+  const callback = async (word: string) => {
+    const data = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+    );
 
-  const json = await data.json();
-  return {
-    word: json.word,
-    meanings: json.meanings,
-    audio: json.phonetics[0].audio,
+    const json = await data.json();
+    return {
+      word: json.word,
+      origin: json.origin,
+      meanings: json.meanings,
+      audio: json.phonetics[0].audio,
+    };
   };
+  const newWord = new Word(await callback(word));
+  await newWord.save();
+  return newWord;
 };
 
 // @desc Add new word
@@ -26,24 +33,30 @@ const fetchWordData = async (word: string) => {
 export const word_create = [
   upload.single("file"),
   // Check for either post text or image upload to allow a user to post image only or text only, but not a post with neither
-  body("word").custom((value, { req }) => {
-    if ((!value || value.trim().length === 0) && !req.file) {
-      // neither text nor image has been provided
-      const error = new Error("Word or CSV file is required");
-      error.status = 400;
-      throw error;
-    }
-    // User has included one of either text or image. Continue with request handling
-    return true;
-  }),
+  body("word")
+    .trim()
+    .escape()
+    .custom((value, { req }) => {
+      if ((!value || value.length === 0) && !req.file) {
+        // neither text nor image has been provided
+        const error = new Error("Word or CSV file is required");
+        (error as CustomError).status = 400;
+        throw error;
+      }
+      // User has included one of either text or image. Continue with request handling
+      return true;
+    }),
   // @desc    Upload files in order to add them into the database
   asyncHandler(async (req, res, next) => {
+    const { userId } = req.params;
+    // If a CSV file is not provided, then go to the next request handler
     if (!req.file) {
       next();
+      return;
     }
-    const words = [];
+    const words: string[] = [];
     const parser = parse({
-      delimiter: ",", // Start with a common delimiter, but consider auto-detect
+      delimiter: ",",
       relax_column_count: true, // Relax column count to avoid errors with varying columns
       skip_empty_lines: true, // Skip any empty lines in the file
       trim: true, // Automatically trim values
@@ -73,26 +86,28 @@ export const word_create = [
     });
 
     parser.on("end", async () => {
-      await Word.insertMany(words, { ordered: false });
-      res.status(200).json({
-        words: words,
-        message: "Successfully uploaded and parsed CSV file!",
-      });
+      const wordDocuments = [];
+      for (let i = 0; i < words.length; i++) {
+        const wordDocument = await createWord(words[i]);
+        wordDocuments.push(wordDocument);
+      }
+      await User.findByIdAndUpdate(userId, {
+        $push: { words: { $each: wordDocuments } },
+      }).exec();
+      res.status(200).json(wordDocuments);
     });
-
     // Write buffer to parser and end
     parser.write(req.file.buffer.toString());
     parser.end();
   }),
   asyncHandler(async (req, res) => {
-    const { _id } = req.user;
+    const { userId } = req.params;
     const { word } = req.body;
     let existingWord = await Word.exists({ word }).exec();
     if (!existingWord) {
-      existingWord = new Word(await fetchWordData(word));
-      await existingWord.save();
+      await createWord(word);
     }
-    await User.findByIdAndUpdate(_id, { $push: { words: existingWord } });
+    await User.findByIdAndUpdate(userId, { $push: { words: existingWord } });
     res.status(200).json(word);
   }),
 ];
@@ -110,33 +125,58 @@ export const word_delete = asyncHandler(async (req, res) => {
 // @desc    Get all words
 // @route   GET /api/users/:userId/words
 // @access  Private
-export const word_list = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { filter, search } = req.query;
-  if (search) {
-    const words = await Word.find({ $text: { $search: search } }).exec();
-    res.status(200).json(words);
-    return;
-  }
-
-  let sortOptions = {};
-  switch (filter) {
-    case "alphabeticallyAscending":
-      sortOptions = { word: 1 };
-      break;
-    case "alphabeticallyDescending":
-      sortOptions = { word: -1 };
-      break;
-    case "ascending":
-      sortOptions = { created_at: 1 };
-      break;
-    case "descending":
-      sortOptions = { created_at: -1 };
-      break;
-    default:
-      break;
-  }
-  const user = await User.findById(_id).sort(sortOptions).exec();
-
-  res.status(200).json(user.words);
-});
+export const word_list = [
+  query("search").optional().trim().escape().isString(),
+  query("filter").optional().trim().escape().isString(),
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { filter, search } = req.query;
+    if (search) {
+      const words = await Word.aggregate([
+        {
+          $search: {
+            index: "word_storer-words-static",
+            text: {
+              query: search,
+              path: { wildcard: "*" },
+            },
+          },
+        },
+        {
+          $set: {
+            score: {
+              $meta: "searchScore",
+            },
+          },
+        },
+      ]).exec();
+      res.status(200).json(words);
+      return;
+    }
+    let sortOptions = {};
+    switch (filter) {
+      case "learned":
+        sortOptions = { word: 1 };
+        break;
+      case "learned":
+        sortOptions = { word: 1 };
+        break;
+      case "alphabeticallyAscending":
+        sortOptions = { word: 1 };
+        break;
+      case "alphabeticallyDescending":
+        sortOptions = { word: -1 };
+        break;
+      case "ascending":
+        sortOptions = { created_at: 1 };
+        break;
+      case "descending":
+        sortOptions = { created_at: -1 };
+        break;
+      default:
+        break;
+    }
+    const user = await User.findById(_id).sort(sortOptions).exec();
+    res.status(200).json(user.words);
+  }),
+];

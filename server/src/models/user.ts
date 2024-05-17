@@ -9,8 +9,8 @@ const UserWordSchema = new Schema({
 
 const UserSchema = new Schema(
   {
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    username: { type: String, required: true, index: true, unique: true },
+    password: { type: String, required: true, index: true },
     theme: {
       type: String,
       enum: ["light", "dark"],
