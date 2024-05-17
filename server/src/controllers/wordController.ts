@@ -128,17 +128,18 @@ export const word_delete = asyncHandler(async (req, res) => {
 export const word_list = [
   query("search").optional().trim().escape().isString(),
   query("filter").optional().trim().escape().isString(),
+  query("learned").optional().isBoolean(),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { filter, search } = req.query;
+    const { filter, search, learned } = req.query;
     if (search) {
-      const words = await Word.aggregate([
+      const words = await User.aggregate([
         {
           $search: {
-            index: "word_storer-words-static",
+            index: "word_storer-users-dynamic",
             text: {
               query: search,
-              path: { wildcard: "*" },
+              path: "words"
             },
           },
         },
@@ -153,14 +154,29 @@ export const word_list = [
       res.status(200).json(words);
       return;
     }
+    else if (learned) {
+
+      const { words } = await User.find({ _id: userId, "words.learned": learned }, { words: 1 }).exec();
+      res.status(200).json(words);
+      return;
+    }
+    // const aggregation = User.aggregate([{
+    //   $search: {
+    //     compound: {
+    //       index: "word_storer-words-static",
+    //       $filter: [
+    //         {
+    //           text: {
+    //             query: learned,
+    //             "path": "words.learned"
+    //           }
+    //         }
+    //       ]
+    //     }
+    //   }
+    // }])
     let sortOptions = {};
     switch (filter) {
-      case "learned":
-        sortOptions = { word: 1 };
-        break;
-      case "learned":
-        sortOptions = { word: 1 };
-        break;
       case "alphabeticallyAscending":
         sortOptions = { word: 1 };
         break;
@@ -174,9 +190,10 @@ export const word_list = [
         sortOptions = { created_at: -1 };
         break;
       default:
+        sortOptions = {};
         break;
     }
-    const user = await User.findById(_id).sort(sortOptions).exec();
-    res.status(200).json(user.words);
+    const { words } = await User.findById(userId, { words: 1 }).sort(sortOptions).exec();
+    res.status(200).json(words);
   }),
 ];
