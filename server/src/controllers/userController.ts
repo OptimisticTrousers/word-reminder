@@ -1,8 +1,9 @@
-import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
+import asyncHandler from "express-async-handler";
 import { body, validationResult } from "express-validator";
 import { logout_user } from "./authController";
 import User from "../models/user";
+import UserWord from "../models/userWord";
 import WordsByDuration from "../models/wordsByDuration";
 
 // @desc    Delete single user
@@ -12,8 +13,9 @@ export const user_delete = [
   asyncHandler(async (req) => {
     const { userId } = req.params;
     // User found, continue with deletion operations
+    await UserWord.deleteMany({ userId }).exec();
+    await WordsByDuration.deleteMany({ userId }).exec();
     await User.findByIdAndDelete(userId).exec();
-    await WordsByDuration.deleteMany({ _id: userId }).exec();
     // Log the user out
   }),
   logout_user,

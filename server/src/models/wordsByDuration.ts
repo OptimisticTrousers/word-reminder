@@ -7,7 +7,7 @@ const WordsByDurationSchema = new Schema(
     words: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Word",
+        ref: "UserWord",
         default: [],
         required: true,
       },
@@ -16,7 +16,12 @@ const WordsByDurationSchema = new Schema(
     to: { type: Date, required: true },
     active: { type: Boolean, required: true, default: false },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
 WordsByDurationSchema.virtual("wordCount").get(function () {

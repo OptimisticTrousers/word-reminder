@@ -6,15 +6,17 @@ import User from "../models/user";
 import Word from "../models/word";
 import wordsByDuration from "../models/wordsByDuration";
 import upload from "../config/multer";
-import { CustomError } from "../utils/models";
+import { CustomError } from "../utils/types";
+import UserWord from "../models/userWord";
 
-const createWord = async (word: string) => {
-  const callback = async (word: string) => {
+const createWord = async (userId: string, word: string) => {
+  const callback = async (userId: string, word: string) => {
     const data = await fetch(
       `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
     );
 
     const json = await data.json();
+    if (json.message) return null;
     return {
       word: json.word,
       origin: json.origin,
@@ -22,9 +24,15 @@ const createWord = async (word: string) => {
       audio: json.phonetics[0].audio,
     };
   };
-  const newWord = new Word(await callback(word));
-  await newWord.save();
-  return newWord;
+  const options = { upsert: true, new: true };
+  const wordData = await callback(userId, word);
+  if (!wordData) return null;
+  await Word.findOneAndUpdate({ word }, wordData, options);
+  const userWord = await UserWord.findOneAndUpdate(
+    { userId, word: wordData },
+    { ...options, setDefaultsOnInsert: true }
+  );
+  return userWord;
 };
 
 // @desc Add new word
@@ -46,6 +54,15 @@ export const word_create = [
       // User has included one of either text or image. Continue with request handling
       return true;
     }),
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());
+      return;
+    }
+    next();
+  }),
   // @desc    Upload files in order to add them into the database
   asyncHandler(async (req, res, next) => {
     const { userId } = req.params;
@@ -55,6 +72,7 @@ export const word_create = [
       return;
     }
     const words: string[] = [];
+    let invalidWords = 0;
     const parser = parse({
       delimiter: ",",
       relax_column_count: true, // Relax column count to avoid errors with varying columns
@@ -63,18 +81,29 @@ export const word_create = [
     });
 
     // Use the readable stream api to consume records
-    parser.on("readable", () => {
+    parser.on("readable", async () => {
       let record;
       while ((record = parser.read()) !== null) {
         // Assuming each record could have multiple columns but you want the first column
+        let word;
         if (record.length > 1) {
           for (let i = 0; i < record.length; i++) {
-            console.log(record[i]);
-            words.push(record[i]);
+            word = record[i];
+            console.log(word);
+            words.push(word);
+            const newWord = await createWord(userId, word);
+            if (newWord) {
+              invalidWords++;
+            }
           }
         } else {
-          console.log(record[0]);
-          words.push(record[0]); // Capture only the first column if there are multiple
+          word = record[0];
+          console.log(word);
+          words.push(word); // Capture only the first column if there are multiple
+          const newWord = await createWord(userId, word);
+          if (newWord) {
+            invalidWords++;
+          }
         }
       }
     });
@@ -86,15 +115,9 @@ export const word_create = [
     });
 
     parser.on("end", async () => {
-      const wordDocuments = [];
-      for (let i = 0; i < words.length; i++) {
-        const wordDocument = await createWord(words[i]);
-        wordDocuments.push(wordDocument);
-      }
-      await User.findByIdAndUpdate(userId, {
-        $push: { words: { $each: wordDocuments } },
-      }).exec();
-      res.status(200).json(wordDocuments);
+      const length = words.length;
+      const validWords = length - invalidWords;
+      res.status(200).json({ valid: validWords, invalid: invalidWords });
     });
     // Write buffer to parser and end
     parser.write(req.file.buffer.toString());
@@ -103,12 +126,8 @@ export const word_create = [
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const { word } = req.body;
-    let existingWord = await Word.exists({ word }).exec();
-    if (!existingWord) {
-      await createWord(word);
-    }
-    await User.findByIdAndUpdate(userId, { $push: { words: existingWord } });
-    res.status(200).json(word);
+    const newWord = await createWord(userId, word);
+    res.status(200).json(newWord);
   }),
 ];
 
@@ -116,8 +135,8 @@ export const word_create = [
 // @route   DELETE /api/users/:userId/words/:wordId
 // @access  Private
 export const word_delete = asyncHandler(async (req, res) => {
-  const { wordId } = req.params;
-  const deletedWord = await Word.findByIdAndDelete(wordId).exec();
+  const { wordId, userId } = req.params;
+  const deletedWord = await UserWord.deleteOne({ userId, word: wordId }).exec();
 
   res.status(200).json(deletedWord);
 });
@@ -127,18 +146,24 @@ export const word_delete = asyncHandler(async (req, res) => {
 // @access  Private
 export const word_list = [
   query("search").optional().trim().escape().isString(),
-  query("filter").optional().trim().escape().isString(),
+  query("sort").optional().trim().escape().isString(),
+  query("learned").optional().isBoolean(),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { filter, search } = req.query;
+    const { sort, search, learned } = req.query;
     if (search) {
-      const words = await Word.aggregate([
+      const words = await UserWord.aggregate([
+        {
+          $match: {
+            userId,
+          },
+        },
         {
           $search: {
-            index: "word_storer-words-static",
+            index: "word_storer-userWords-static",
             text: {
               query: search,
-              path: { wildcard: "*" },
+              path: ["word", "origin", "meanings.definitions"],
             },
           },
         },
@@ -154,13 +179,7 @@ export const word_list = [
       return;
     }
     let sortOptions = {};
-    switch (filter) {
-      case "learned":
-        sortOptions = { word: 1 };
-        break;
-      case "learned":
-        sortOptions = { word: 1 };
-        break;
+    switch (sort) {
       case "alphabeticallyAscending":
         sortOptions = { word: 1 };
         break;
@@ -176,7 +195,13 @@ export const word_list = [
       default:
         break;
     }
-    const user = await User.findById(_id).sort(sortOptions).exec();
-    res.status(200).json(user.words);
+    let fields = {};
+    if (learned) {
+      fields = { learned };
+    }
+    const words = await UserWord.find({ userId, ...fields })
+      .sort(sortOptions)
+      .exec();
+    res.status(200).json(words);
   }),
 ];

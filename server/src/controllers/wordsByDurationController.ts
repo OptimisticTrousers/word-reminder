@@ -3,15 +3,20 @@ import { body, query, validationResult } from "express-validator";
 import Word from "../models/word";
 import WordsByDuration from "../models/wordsByDuration";
 import User from "../models/user";
-import validateDates from "../utils/validateDates";
-import { CustomError } from "../utils/models";
+import { CustomError } from "../utils/types";
+import UserWord from "../models/userWord";
 
 // @desc Create a new current words by duration
 // @route POST /api/users/:userId/wordsByDuration?random
 // @access Private
 export const words_by_duration_create = [
-  body("from", "'From' date is required.").trim().isDate(),
-  body("to", "'To' date is required.").trim().isDate(),
+  body("from", "'From' date is required.").trim().isDate().isAfter(),
+  body("to", "'To' date is required.")
+    .trim()
+    .isDate()
+    .custom((to, { req }) => {
+      return to > req.body.from;
+    }),
   body("active", "'Active' boolean is required.").isBoolean(),
   body("words", "'words' array is required.").optional().isArray(),
   body("wordsByDurationLength")
@@ -29,44 +34,77 @@ export const words_by_duration_create = [
       // User has included one of either text or image. Continue with request handling
       return true;
     }),
-  query("duplicate").optional().isBoolean(),
+  query("duplicateWords").optional().isBoolean(),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { duplicate } = req.query;
-    const user = await User.findById(userId).exec();
+    const { duplicateWords } = req.query;
     const { active, from, to, words, wordsByDurationLength } = req.body;
-    if (!words && wordsByDurationLength) {
+    if (!words) {
       // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
-      const length = user.wordCount;
-      if (wordsByDurationLength - length < 0) {
-        res.status(405).send({
-          message: `You must have at least ${wordsByDurationLength} word(s) in order to create a words by duration.`,
-        });
-      } else {
-        const randomWords = Word.aggregate([
+      if (duplicateWords) {
+        const randomWords = await UserWord.aggregate([
+          {
+            $match: {
+              userId,
+            },
+          },
           {
             $lookup: {
               from: "wordsByDuration",
               localField: "_id",
               foreignField: "words",
-              as: "join",
+              as: "usedInWordByDurations",
             },
           },
+          {
+            $match: {
+              "usedInWordByDurations.0": { $exists: false },
+            },
+          },
+          {
+            $sample: { size: wordsByDurationLength },
+          },
         ]);
-        const wordsByDuration = new WordsByDuration({});
+        if (randomWords.length < wordsByDurationLength) {
+          res.status(405).json({
+            message: `Not enough unique words available. You need ${wordsByDurationLength} words, but only ${randomWords.length} unique words are available.`,
+          });
+          return;
+        }
+        const wordsByDuration = new WordsByDuration({
+          userId,
+          words: randomWords,
+          from,
+          to,
+          active,
+        });
+        await wordsByDuration.save();
+        res.status(200).json(wordsByDuration);
+        return;
+      } else {
+        const randomWords = await UserWord.find({}).limit(
+          wordsByDurationLength
+        );
+        const wordsByDuration = new WordsByDuration({
+          userId,
+          words: randomWords,
+          from,
+          to,
+          active,
+        });
+        res.status(200).json(wordsByDuration);
+        return;
       }
-    } else {
-      validateDates(from, to);
-      const wordsByDuration = new WordsByDuration({
-        userId,
-        words,
-        from,
-        to,
-        active,
-      });
-      await wordsByDuration.save();
-      res.status(200).json(wordsByDuration);
     }
+    const wordsByDuration = new WordsByDuration({
+      userId,
+      words,
+      from,
+      to,
+      active,
+    });
+    await wordsByDuration.save();
+    res.status(200).json(wordsByDuration);
   }),
 ];
 
@@ -124,7 +162,6 @@ export const words_by_duration_update = [
   body("words").optional().isArray(),
   asyncHandler(async (req, res) => {
     const { active, from, to, words } = req.body;
-    validateDates(from, to);
     const { wordByDurationId } = req.params;
     const updatedWordsByDuration = await WordsByDuration.findByIdAndUpdate(
       wordByDurationId,
@@ -140,19 +177,3 @@ export const words_by_duration_update = [
     res.status(200).json(updatedWordsByDuration);
   }),
 ];
-
-// @desc Fetch a random wordsByDuration
-// @route GET /api/users/:userId/wordsByDuration/random
-// @access Private
-export const words_by_duration_get_random = asyncHandler(async (_req, res) => {
-  const randomActiveWordsByDuration = await WordsByDuration.findOne({
-    active: true,
-  }).exec();
-
-  if (!randomActiveWordsByDuration) {
-    res.status(404).json({ message: "No active WordsByDuration found" });
-    return;
-  }
-
-  res.status(200).json(randomActiveWordsByDuration);
-});
