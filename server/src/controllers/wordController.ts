@@ -175,6 +175,11 @@ export const word_list = [
       res.status(200).json(words);
       return;
     }
+    else if (learned) {
+      const { words } = await User.find({ _id: userId, "words.learned": learned }, { words: 1 }).exec();
+      res.status(200).json(words);
+      return;
+    }
     let sortOptions = {};
     switch (sort) {
       case "alphabeticallyAscending":
@@ -190,6 +195,7 @@ export const word_list = [
         sortOptions = { created_at: -1 };
         break;
       default:
+        sortOptions = {};
         break;
     }
     let fields = {};
