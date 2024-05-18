@@ -174,9 +174,8 @@ export const word_list = [
       ]).exec();
       res.status(200).json(words);
       return;
-    }
-    else if (learned) {
-      const { words } = await User.find({ _id: userId, "words.learned": learned }, { words: 1 }).exec();
+    } else if (learned) {
+      const words = await UserWord.find({ userId, learned }).exec();
       res.status(200).json(words);
       return;
     }
