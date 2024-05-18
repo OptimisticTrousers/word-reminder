@@ -1,13 +1,10 @@
+import { parse } from "csv-parse";
 import asyncHandler from "express-async-handler";
 import { body, query, validationResult } from "express-validator";
-import { parse } from "csv-parse";
-import fs from "fs";
-import User from "../models/user";
-import Word from "../models/word";
-import wordsByDuration from "../models/wordsByDuration";
 import upload from "../config/multer";
-import { CustomError } from "../utils/types";
 import UserWord from "../models/userWord";
+import Word from "../models/word";
+import { CustomError } from "../utils/types";
 
 const createWord = async (userId: string, word: string) => {
   const callback = async (userId: string, word: string) => {

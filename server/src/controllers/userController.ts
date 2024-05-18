@@ -5,6 +5,7 @@ import { logout_user } from "./authController";
 import User from "../models/user";
 import UserWord from "../models/userWord";
 import WordsByDuration from "../models/wordsByDuration";
+import { CustomError } from "../utils/types";
 
 // @desc    Delete single user
 // @route   DELETE /api/user/:userId
@@ -49,57 +50,27 @@ export const user_update = [
       }
     }),
   body("theme").trim().escape(),
-  body("oldPassword").custom(
-    (
-      value,
-      {
-        req: {
-          body: { newPassword, newPasswordConfirmation },
-        },
-      }
-    ) => {
-      if (value && !newPassword && !newPasswordConfirmation) {
-        throw new Error(
-          "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
+  body("oldPassword")
+    // Only validate if the old password has been provided
+    .if(body("newPassword").notEmpty())
+    .if(body("newPasswordConfirmation").notEmpty()),
+  body("newPassword")
+    // Only validate if the old password has been provided
+    .if(body("oldPassword").notEmpty())
+    .if(body("newPasswordConfirmation").notEmpty()),
+  body("newPasswordConfirmation")
+    // Only validate if the old password has been provided
+    .if(body("oldPassword").notEmpty())
+    .if(body("newPassword").notEmpty())
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword) {
+        const error = new Error(
+          "'New Password' and 'Confirm New Password' are not equal"
         );
+        (error as CustomError).status = 400;
+        throw error;
       }
-      return true;
-    }
-  ),
-  body("newPassword").custom(
-    (
-      value,
-      {
-        req: {
-          body: { oldPassword, newPasswordConfirmation },
-        },
-      }
-    ) => {
-      if (value && !oldPassword && !newPasswordConfirmation) {
-        throw new Error(
-          "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
-        );
-      }
-      return true;
-    }
-  ),
-  body("newPasswordConfirmation").custom(
-    (
-      value,
-      {
-        req: {
-          body: { oldPassword, newPassword },
-        },
-      }
-    ) => {
-      if (value && !oldPassword && !newPassword) {
-        throw new Error(
-          "At least one of oldPassword, newPassword, or newPasswordConfirmation is required"
-        );
-      }
-      return true;
-    }
-  ),
+    }),
   asyncHandler(async (req, res) => {
     // Extract the validation errors from a request.
     const { userId } = req.params;
@@ -110,13 +81,7 @@ export const user_update = [
       return;
     }
 
-    const {
-      oldPassword,
-      newPassword,
-      newPasswordConfirmation,
-      username,
-      theme,
-    } = req.body;
+    const { oldPassword, newPassword, username, theme } = req.body;
 
     if (theme) {
       // Get the user to be updated
@@ -152,13 +117,6 @@ export const user_update = [
       res
         .status(400)
         .json({ message: "You typed your old password incorrectly" });
-      return;
-    }
-
-    if (newPassword !== newPasswordConfirmation) {
-      res.status(400).json({
-        message: "'New Password' and 'Confirm New Password' are not equal",
-      });
       return;
     }
 

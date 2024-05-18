@@ -1,10 +1,8 @@
 import asyncHandler from "express-async-handler";
 import { body, query, validationResult } from "express-validator";
-import Word from "../models/word";
 import WordsByDuration from "../models/wordsByDuration";
-import User from "../models/user";
-import { CustomError } from "../utils/types";
 import UserWord from "../models/userWord";
+import { CustomError } from "../utils/types";
 
 // @desc Create a new current words by duration
 // @route POST /api/users/:userId/wordsByDuration?random
@@ -39,6 +37,14 @@ export const words_by_duration_create = [
     const { userId } = req.params;
     const { duplicateWords } = req.query;
     const { active, from, to, words, wordsByDurationLength } = req.body;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());
+      return;
+    }
+
     if (!words) {
       // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
       if (duplicateWords) {
@@ -163,6 +169,14 @@ export const words_by_duration_update = [
   asyncHandler(async (req, res) => {
     const { active, from, to, words } = req.body;
     const { wordByDurationId } = req.params;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());
+      return;
+    }
+
     const updatedWordsByDuration = await WordsByDuration.findByIdAndUpdate(
       wordByDurationId,
       {
