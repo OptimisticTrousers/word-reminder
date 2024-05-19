@@ -13,6 +13,7 @@
   "author": "Tony Isern",
   "license": "MIT",
   "dependencies": {
+    "agenda": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "csv-parse": "^5.5.6",

@@ -1,22 +1,23 @@
+import Agenda, { Job } from "agenda";
 import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
-import { config } from "dotenv";
 import express from "express";
 import session from "express-session";
 import mongoose from "mongoose";
 import logger from "morgan";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import User from "./models/user";
 import errorHandler from "./middleware/errorHandler";
 import notFoundHandler from "./middleware/notFoundHandler";
+import User from "./models/user";
+import WordsByDuration from "./models/wordsByDuration";
 import routes from "./routes/index";
-
-config();
+import createWordsByDuration from "./utils/createRandomWordsByDuration";
 
 const app = express();
 
 const mongoDb = process.env.DB_STRING;
+
 if (!mongoDb) {
   throw new Error("DB_STRING value is not defined in .env file");
 }
@@ -24,6 +25,55 @@ if (!mongoDb) {
 mongoose.connect(mongoDb);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongo connection error"));
+
+const agenda = new Agenda({
+  db: { address: mongoDb, collection: "agendaJobs" },
+});
+
+agenda.define("create_agenda", async (job: Job) => {
+  const {
+    duplicateWords,
+    userId,
+    wordsByDurationLength,
+    from,
+    to,
+    active,
+    recurring,
+  } = job.attrs.data;
+  await createWordsByDuration(
+    from,
+    to,
+    userId,
+    wordsByDurationLength,
+    active,
+    duplicateWords,
+    recurring,
+    () => {},
+    () => {},
+    () => {}
+  );
+});
+
+agenda.define("activate_words_by_duration", async (job: Job) => {
+  const { wordsByDurationId } = job.attrs.data;
+  await WordsByDuration.findByIdAndUpdate(
+    wordsByDurationId,
+    { active: true },
+    { new: true }
+  ).exec();
+});
+
+(async () => {
+  await agenda.start();
+})();
+
+async function graceful() {
+  await agenda.stop();
+  process.exit(0);
+}
+
+process.on("SIGTERM", graceful);
+process.on("SIGINT", graceful);
 
 const secret = process.env.SECRET;
 if (!secret) {
@@ -51,7 +101,7 @@ passport.use(
           return done(null, false, { message: "Incorrect username" });
         }
         bcrypt
-          .compare(password, user.password)
+          .compare(password, user.password as string)
           .then((result) => {
             if (result) {
               // passwords match! log user in
@@ -66,7 +116,7 @@ passport.use(
   })
 );
 
-passport.serializeUser((user, done) => {
+passport.serializeUser((user: any, done) => {
   done(null, user.id);
 });
 
@@ -90,3 +140,5 @@ app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log("Server running..."));
+
+export default agenda;

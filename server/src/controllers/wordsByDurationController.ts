@@ -1,7 +1,9 @@
 import asyncHandler from "express-async-handler";
 import { body, query, validationResult } from "express-validator";
+import agenda from "../app";
 import WordsByDuration from "../models/wordsByDuration";
-import UserWord from "../models/userWord";
+import activateWordsByDuration from "../utils/activateWordsByDuration";
+import createRandomWordsByDuration from "../utils/createRandomWordsByDuration";
 import { CustomError } from "../utils/types";
 
 // @desc Create a new current words by duration
@@ -17,6 +19,8 @@ export const words_by_duration_create = [
     }),
   body("active", "'Active' boolean is required.").isBoolean(),
   body("words", "'words' array is required.").optional().isArray(),
+  body("recurring").optional().isBoolean(),
+  body("interval").optional().isString().if(body("recurring").notEmpty()),
   body("wordsByDurationLength")
     .optional()
     .isInt()
@@ -36,7 +40,15 @@ export const words_by_duration_create = [
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const { duplicateWords } = req.query;
-    const { active, from, to, words, wordsByDurationLength } = req.body;
+    const {
+      active,
+      from,
+      to,
+      words,
+      wordsByDurationLength,
+      recurring,
+      interval,
+    } = req.body;
 
     const errors = validationResult(req);
 
@@ -47,60 +59,36 @@ export const words_by_duration_create = [
 
     if (!words) {
       // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
-      if (duplicateWords) {
-        const randomWords = await UserWord.aggregate([
-          {
-            $match: {
-              userId,
-            },
-          },
-          {
-            $lookup: {
-              from: "wordsByDuration",
-              localField: "_id",
-              foreignField: "words",
-              as: "usedInWordByDurations",
-            },
-          },
-          {
-            $match: {
-              "usedInWordByDurations.0": { $exists: false },
-            },
-          },
-          {
-            $sample: { size: wordsByDurationLength },
-          },
-        ]);
-        if (randomWords.length < wordsByDurationLength) {
+      createRandomWordsByDuration(
+        from,
+        to,
+        userId,
+        wordsByDurationLength,
+        active,
+        Boolean(duplicateWords),
+        recurring,
+        (randomWordsLength) => {
           res.status(405).json({
-            message: `Not enough unique words available. You need ${wordsByDurationLength} words, but only ${randomWords.length} unique words are available.`,
+            message: `Not enough unique words available. You need ${wordsByDurationLength} words, but only ${randomWordsLength} unique words are available.`,
           });
-          return;
+        },
+        (wordsByDuration) => {
+          res.status(200).json(wordsByDuration);
+        },
+        async (wordsByDurationId) => {
+          // make sure to add the interval to the dates so that the 'from' and 'to' date changes are reflected
+          const newFrom = from.setHours(from.getHours() + interval);
+          const newTo = to.setHours(to.getHours() + interval);
+          if (recurring) {
+            agenda.every(interval, "create_agenda", {
+              ...req.body,
+              from: newFrom,
+              to: newTo,
+            });
+          }
+          await activateWordsByDuration(from, wordsByDurationId);
         }
-        const wordsByDuration = new WordsByDuration({
-          userId,
-          words: randomWords,
-          from,
-          to,
-          active,
-        });
-        await wordsByDuration.save();
-        res.status(200).json(wordsByDuration);
-        return;
-      } else {
-        const randomWords = await UserWord.find({}).limit(
-          wordsByDurationLength
-        );
-        const wordsByDuration = new WordsByDuration({
-          userId,
-          words: randomWords,
-          from,
-          to,
-          active,
-        });
-        res.status(200).json(wordsByDuration);
-        return;
-      }
+      );
     }
     const wordsByDuration = new WordsByDuration({
       userId,
@@ -166,9 +154,11 @@ export const words_by_duration_update = [
   body("to").trim().isDate(),
   body("active").isBoolean(),
   body("words").optional().isArray(),
+  body("recurring").optional().isBoolean(),
+  body("interval").optional().isString().if(body("recurring").notEmpty()),
   asyncHandler(async (req, res) => {
-    const { active, from, to, words } = req.body;
-    const { wordByDurationId } = req.params;
+    const { active, from, to, words, recurring } = req.body;
+    const { wordsByDurationId } = req.params;
 
     const errors = validationResult(req);
 
@@ -176,17 +166,19 @@ export const words_by_duration_update = [
       res.status(400).json(errors.array());
       return;
     }
-
     const updatedWordsByDuration = await WordsByDuration.findByIdAndUpdate(
-      wordByDurationId,
+      wordsByDurationId,
       {
         words,
         from,
         to,
         active,
+        recurring,
       },
       { new: true }
     ).exec();
+
+    await activateWordsByDuration(from, wordsByDurationId);
 
     res.status(200).json(updatedWordsByDuration);
   }),

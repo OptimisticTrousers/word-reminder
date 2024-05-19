@@ -2,10 +2,10 @@ import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import { body, validationResult } from "express-validator";
 import { logout_user } from "./authController";
+import { CustomError } from "../utils/types";
 import User from "../models/user";
 import UserWord from "../models/userWord";
 import WordsByDuration from "../models/wordsByDuration";
-import { CustomError } from "../utils/types";
 
 // @desc    Delete single user
 // @route   DELETE /api/user/:userId
