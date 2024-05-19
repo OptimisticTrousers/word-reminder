@@ -4,7 +4,6 @@ import agenda from "../app";
 import WordsByDuration from "../models/wordsByDuration";
 import activateWordsByDuration from "../utils/activateWordsByDuration";
 import createRandomWordsByDuration from "../utils/createRandomWordsByDuration";
-import { CustomError } from "../utils/types";
 
 // @desc Create a new current words by duration
 // @route POST /api/users/:userId/wordsByDuration?random
@@ -27,11 +26,9 @@ export const words_by_duration_create = [
     .custom((value, { req }) => {
       if ((!value || value.length === 0) && !req.body.words) {
         // neither a list of words nor a number providing the length of a words by duration has been provided
-        const error = new Error(
+        return Promise.reject(
           "List of words or number expressing the length of a words by duration must be provided"
         );
-        (error as CustomError).status = 400;
-        throw error;
       }
       // User has included one of either text or image. Continue with request handling
       return true;

@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import { body, validationResult } from "express-validator";
 import { logout_user } from "./authController";
-import { CustomError } from "../utils/types";
 import User from "../models/user";
 import UserWord from "../models/userWord";
 import WordsByDuration from "../models/wordsByDuration";
@@ -64,11 +63,9 @@ export const user_update = [
     .if(body("newPassword").notEmpty())
     .custom((value, { req }) => {
       if (value !== req.body.newPassword) {
-        const error = new Error(
+        return Promise.reject(
           "'New Password' and 'Confirm New Password' are not equal"
         );
-        (error as CustomError).status = 400;
-        throw error;
       }
     }),
   asyncHandler(async (req, res) => {

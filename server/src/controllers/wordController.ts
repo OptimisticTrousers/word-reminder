@@ -2,7 +2,6 @@ import { parse } from "csv-parse";
 import asyncHandler from "express-async-handler";
 import { body, query, validationResult } from "express-validator";
 import upload from "../config/multer";
-import { CustomError } from "../utils/types";
 import UserWord from "../models/userWord";
 import Word from "../models/word";
 
@@ -44,9 +43,7 @@ export const word_create = [
     .custom((value, { req }) => {
       if ((!value || value.length === 0) && !req.file) {
         // neither text nor image has been provided
-        const error = new Error("Word or CSV file is required");
-        (error as CustomError).status = 400;
-        throw error;
+        return Promise.reject("Word or CSV file is required");
       }
       // User has included one of either text or image. Continue with request handling
       return true;
