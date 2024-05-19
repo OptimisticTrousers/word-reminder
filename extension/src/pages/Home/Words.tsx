@@ -1,7 +1,7 @@
 import CSSModules from "react-css-modules";
-import styles from "./Home.module.css";
+import styles from "./Words.module.css";
 
-const Home = CSSModules(
+const Words = CSSModules(
   () => {
     return (
       <div>
@@ -50,4 +50,4 @@ const Home = CSSModules(
   }
 );
 
-export default Home;
+export default Words;
