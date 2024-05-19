@@ -16,10 +16,16 @@ export const words_by_duration_create = [
     .custom((to, { req }) => {
       return to > req.body.from;
     }),
-  body("active", "'Active' boolean is required.").isBoolean(),
   body("words", "'words' array is required.").optional().isArray(),
-  body("recurring").optional().isBoolean(),
-  body("interval").optional().isString().if(body("recurring").notEmpty()),
+  body("options.isActive").optional().isBoolean(),
+  query("options.hasReminderOnLoad").optional().isBoolean(),
+  query("options.hasDuplicateWords").optional().isBoolean(),
+  body("options.recurring.isRecurring").optional().isBoolean(),
+  body("options.recurring.interval")
+    .optional()
+    .isString()
+    .if(body("options.recurring.isRecurring").notEmpty()),
+  body("options.reminder").optional().isString(),
   body("wordsByDurationLength")
     .optional()
     .isInt()
@@ -33,18 +39,20 @@ export const words_by_duration_create = [
       // User has included one of either text or image. Continue with request handling
       return true;
     }),
-  query("duplicateWords").optional().isBoolean(),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { duplicateWords } = req.query;
     const {
-      active,
       from,
       to,
       words,
       wordsByDurationLength,
-      recurring,
-      interval,
+      options: {
+        isActive,
+        hasReminderOnLoad,
+        hasDuplicateWords,
+        recurring: { isRecurring, interval },
+        reminder,
+      },
     } = req.body;
 
     const errors = validationResult(req);
@@ -57,13 +65,17 @@ export const words_by_duration_create = [
     if (!words) {
       // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
       createRandomWordsByDuration(
+        userId,
         from,
         to,
-        userId,
         wordsByDurationLength,
-        active,
-        Boolean(duplicateWords),
-        recurring,
+        {
+          isActive,
+          hasReminderOnLoad,
+          hasDuplicateWords,
+          recurring: { isRecurring, interval },
+          reminder,
+        },
         (randomWordsLength) => {
           res.status(405).json({
             message: `Not enough unique words available. You need ${wordsByDurationLength} words, but only ${randomWordsLength} unique words are available.`,
@@ -76,7 +88,7 @@ export const words_by_duration_create = [
           // make sure to add the interval to the dates so that the 'from' and 'to' date changes are reflected
           const newFrom = from.setHours(from.getHours() + interval);
           const newTo = to.setHours(to.getHours() + interval);
-          if (recurring) {
+          if (isRecurring) {
             agenda.every(interval, "create_agenda", {
               ...req.body,
               from: newFrom,
@@ -89,10 +101,16 @@ export const words_by_duration_create = [
     }
     const wordsByDuration = new WordsByDuration({
       userId,
-      words,
       from,
       to,
-      active,
+      words,
+      options: {
+        isActive,
+        hasReminderOnLoad,
+        hasDuplicateWords,
+        recurring: { isRecurring, interval },
+        reminder,
+      },
     });
     await wordsByDuration.save();
     res.status(200).json(wordsByDuration);
@@ -147,14 +165,36 @@ export const words_by_duration_list = asyncHandler(async (req, res) => {
 // @route PUT /api/users/:userId/wordsByDuration/:wordsByDurationId
 // @access Private
 export const words_by_duration_update = [
-  body("from").trim().isDate(),
-  body("to").trim().isDate(),
-  body("active").isBoolean(),
-  body("words").optional().isArray(),
-  body("recurring").optional().isBoolean(),
-  body("interval").optional().isString().if(body("recurring").notEmpty()),
+  body("from", "'From' date is required.").trim().isDate().isAfter(),
+  body("to", "'To' date is required.")
+    .trim()
+    .isDate()
+    .custom((to, { req }) => {
+      return to > req.body.from;
+    }),
+  body("words", "'words' array is required.").optional().isArray(),
+  body("options.isActive").optional().isBoolean(),
+  query("options.hasReminderOnLoad").optional().isBoolean(),
+  query("options.hasDuplicateWords").optional().isBoolean(),
+  body("options.recurring.isRecurring").optional().isBoolean(),
+  body("options.recurring.interval")
+    .optional()
+    .isString()
+    .if(body("options.recurring.isRecurring").notEmpty()),
+  body("options.reminder").optional().isString(),
   asyncHandler(async (req, res) => {
-    const { active, from, to, words, recurring } = req.body;
+    const {
+      from,
+      to,
+      words,
+      options: {
+        isActive,
+        hasReminderOnLoad,
+        hasDuplicateWords,
+        recurring: { isRecurring, interval },
+        reminder,
+      },
+    } = req.body;
     const { wordsByDurationId } = req.params;
 
     const errors = validationResult(req);
@@ -166,11 +206,16 @@ export const words_by_duration_update = [
     const updatedWordsByDuration = await WordsByDuration.findByIdAndUpdate(
       wordsByDurationId,
       {
-        words,
         from,
         to,
-        active,
-        recurring,
+        words,
+        options: {
+          isActive,
+          hasReminderOnLoad,
+          hasDuplicateWords,
+          recurring: { isRecurring, interval },
+          reminder,
+        },
       },
       { new: true }
     ).exec();

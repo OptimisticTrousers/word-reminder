@@ -3,18 +3,32 @@ import UserWord from "../models/userWord";
 import WordsByDuration from "../models/wordsByDuration";
 
 const createRandomWordsByDuration = async (
+  userId: string,
   from: Date,
   to: Date,
-  userId: string,
   wordsByDurationLength: number,
-  active: boolean,
-  duplicateWords: boolean,
-  recurring: boolean,
+  options: {
+    isActive: boolean;
+    hasReminderOnLoad: boolean;
+    hasDuplicateWords: boolean;
+    recurring: {
+      isRecurring: boolean;
+      interval: string;
+    };
+    reminder: string;
+  },
   failureCallback: (length: number) => void,
   successCallback: (wordsByDuration: Document) => void,
   scheduleCallback: (wordsByDurationId: Types.ObjectId) => void
 ) => {
-  if (duplicateWords) {
+  const {
+    isActive,
+    hasReminderOnLoad,
+    hasDuplicateWords,
+    recurring: { isRecurring, interval },
+    reminder,
+  } = options;
+  if (options.hasDuplicateWords) {
     const randomWords = await UserWord.aggregate([
       {
         $match: {
@@ -44,11 +58,16 @@ const createRandomWordsByDuration = async (
     }
     const wordsByDuration = new WordsByDuration({
       userId,
-      words: randomWords,
       from,
       to,
-      active,
-      recurring,
+      words: randomWords,
+      options: {
+        isActive,
+        hasReminderOnLoad,
+        hasDuplicateWords,
+        recurring: { isRecurring, interval },
+        reminder,
+      },
     });
     await wordsByDuration.save();
     scheduleCallback(wordsByDuration._id);
@@ -58,11 +77,16 @@ const createRandomWordsByDuration = async (
     const randomWords = await UserWord.find({}).limit(wordsByDurationLength);
     const wordsByDuration = new WordsByDuration({
       userId,
-      words: randomWords,
       from,
       to,
-      active,
-      recurring,
+      words: randomWords,
+      options: {
+        isActive,
+        hasReminderOnLoad,
+        hasDuplicateWords,
+        recurring: { isRecurring, interval },
+        reminder,
+      },
     });
     await wordsByDuration.save();
     scheduleCallback(wordsByDuration._id);

@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 const WordsByDurationSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    from: { type: Date, required: true },
+    to: { type: Date, required: true },
     words: [
       {
         type: Schema.Types.ObjectId,
@@ -12,10 +14,16 @@ const WordsByDurationSchema = new Schema(
         required: true,
       },
     ],
-    from: { type: Date, required: true },
-    to: { type: Date, required: true },
-    active: { type: Boolean, required: true, default: false },
-    recurring: { type: Boolean, required: true, default: false },
+    options: {
+      isActive: { type: Boolean, required: true },
+      hasReminderOnLoad: { type: Boolean, required: true },
+      hasDuplicateWords: { type: Boolean, required: true },
+      recurring: {
+        isRecurring: { type: Boolean, required: true },
+        interval: { type: String, required: true },
+      },
+      reminder: { type: String, required: true },
+    },
   },
   {
     timestamps: true,
