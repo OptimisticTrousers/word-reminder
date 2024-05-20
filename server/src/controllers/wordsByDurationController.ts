@@ -95,6 +95,7 @@ export const words_by_duration_create = [
               to: newTo,
             });
           }
+          agenda.schedule(to, "learned_words", { wordsByDurationId });
           await activateWordsByDuration(from, wordsByDurationId);
         }
       );

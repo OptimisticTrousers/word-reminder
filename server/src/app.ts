@@ -32,22 +32,33 @@ const agenda = new Agenda({
 
 agenda.define("create_agenda", async (job: Job) => {
   const {
-    duplicateWords,
     userId,
-    wordsByDurationLength,
     from,
     to,
-    active,
-    recurring,
+    wordsByDurationLength,
+    options: {
+      isActive,
+      hasReminderOnLoad,
+      hasDuplicateWords,
+      recurring: { isRecurring, interval },
+      reminder,
+    },
   } = job.attrs.data;
   await createWordsByDuration(
+    userId,
     from,
     to,
-    userId,
     wordsByDurationLength,
-    active,
-    duplicateWords,
-    recurring,
+    {
+      isActive,
+      hasReminderOnLoad,
+      hasDuplicateWords,
+      recurring: {
+        isRecurring,
+        interval,
+      },
+      reminder,
+    },
     () => {},
     () => {},
     () => {}
@@ -61,6 +72,13 @@ agenda.define("activate_words_by_duration", async (job: Job) => {
     { active: true },
     { new: true }
   ).exec();
+});
+
+agenda.define("learned_words", async (job: Job) => {
+  const { wordsByDurationId } = job.attrs.data;
+  await WordsByDuration.findByIdAndUpdate(wordsByDurationId, {
+    $set: { "words.learned": true },
+  }).exec();
 });
 
 (async () => {
