@@ -1,0 +1,51 @@
+.word {
+    display: flex;
+    padding: 1.25rem;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-word-bg);
+    margin: 1rem;
+}
+
+.word__buttons {
+    display: flex;
+}
+
+.word__divider {
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgb(181, 181, 181);
+    display: flex;
+    flex-direction: column;
+    margin: 0 25px;
+    align-items: center;
+    justify-content: center;
+}
+
+.word__divider::before,
+.word__divider::after {
+    background-color: #dbdbdb;
+    content: "";
+    display: block;
+}
+
+
+.word__divider::after {
+    margin-left: 0;
+    margin-top: 10px;
+    flex: 1;
+    width: 3px;
+}
+
+.word__divider::before {
+    margin-bottom: 10px;
+    margin-right: 0;
+    flex: 1;
+    width: 1px;
+}
+
+.word__button {}
+
+.word__button--info {
+    margin-right: 1rem;
+}

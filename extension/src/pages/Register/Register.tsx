@@ -1,5 +1,5 @@
 import CSSModules from "react-css-modules";
-import styles from "./Login.module.css";
+import styles from "../../assets/Auth.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,12 +35,12 @@ const Register = CSSModules(
     });
 
     return (
-      <section styleName="auth">
+      <section styleName="auth--register">
         <form styleName="auth__form" onSubmit={onSubmit}>
           <nav styleName="auth__navigation">
-            <Link to="/login">Cancel</Link>
-            <h3>Create account</h3>
-            <button type="submit">Submit</button>
+            <Link styleName="auth__link" to="/login">Cancel</Link>
+            <h3 styleName="auth__title">Create account</h3>
+            <button styleName="auth__button" type="submit">Submit</button>
           </nav>
           <div styleName="auth__control">
             <label htmlFor="username" styleName="auth__label">
@@ -50,8 +50,8 @@ const Register = CSSModules(
               {...register("username", { required: "This is required." })}
               styleName="auth__input"
             />
-            <p styleName="auth__error">{errors.username?.message}</p>
           </div>
+          <p styleName="auth__error">{errors.username?.message}</p>
           <div styleName="auth__control">
             <label htmlFor="password" styleName="auth__label">
               <span styleName="auth__bold">Password</span>
@@ -60,12 +60,12 @@ const Register = CSSModules(
               {...register("password", { required: "This is required." })}
               styleName="auth__input"
             />
-            <p styleName="auth__error">{errors.password?.message}</p>
-            <p styleName="auth__help">
-              <b>Important:</b> Your password cannot be recovered if you forget
-              it!
-            </p>
           </div>
+          <p styleName="auth__error">{errors.password?.message}</p>
+          <p styleName="auth__help">
+            <b>Important:</b> Your password cannot be recovered if you forget
+            it!
+          </p>
         </form>
       </section>
     );

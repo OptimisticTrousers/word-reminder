@@ -6,11 +6,11 @@ const RouteSwitch = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/" element={<App />}>
           <Route index element={<Words />} />
-          <Route path="/wordsByDurations" element={<WordsByDurations />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="wordsByDurations" element={<WordsByDurations />} />
         </Route>
       </Routes>
     </BrowserRouter>

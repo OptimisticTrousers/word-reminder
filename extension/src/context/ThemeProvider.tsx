@@ -14,16 +14,16 @@ interface ThemeContext {
 export const ThemeContext = createContext<ThemeContext>({} as ThemeContext);
 
 export const ThemeProvider: FC<Props> = ({ children }) => {
-  const [value, setValue] = useLocalStorage("theme", "dark");
+  const [value] = useLocalStorage("theme", "dark");
   const [theme, setTheme] = useState(value);
 
   const toggleTheme = () => {
     setTheme((prevTheme: string) => {
       if (prevTheme === "light") {
-        setValue("dark");
+        // setValue("dark");
         return "dark";
       } else if (prevTheme === "dark") {
-        setValue("light");
+        // setValue("light");
         return "light";
       }
       return "dark";

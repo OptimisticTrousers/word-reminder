@@ -1,0 +1,19 @@
+.main {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main--light {}
+
+.main--dark {
+    --color-control-bg: #2f343d;
+    --color-word-bg: #161d3a;
+    --color-base-text: white;
+    --color-input-bg: #fff;
+    --color-input-text: #a3a3a3;
+    --color-button-bg: #7f8ff4;
+    --color-button-text: #fff;
+}

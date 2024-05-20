@@ -1,5 +1,5 @@
 import CSSModules from "react-css-modules";
-import styles from "./Login.module.css";
+import styles from "../../assets/Auth.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,7 +35,7 @@ const Login = CSSModules(
     });
 
     return (
-      <section styleName="auth">
+      <section styleName="auth--login">
         <div styleName="auth__box">
           <div styleName="auth__hero">
             <h2>Word Storer</h2>
@@ -60,11 +60,13 @@ const Login = CSSModules(
               <span styleName="auth__bold">Password</span>
             </label>
             <input
+              type="password"
               {...register("password", { required: "This is required." })}
               styleName="auth__input"
             />
             <p styleName="auth__error">{errors.username?.message}</p>
           </div>
+          <button styleName="auth__button" type="submit">Login</button>
         </form>
         <p styleName="auth__create">
           New around here? <Link to="/register">Create account</Link>
