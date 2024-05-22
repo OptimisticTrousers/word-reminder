@@ -5,12 +5,12 @@ import { useEffect } from "react";
 export const useKeyboardNavigation = (elementId: string) => {
     useEffect(() => {
         const menu = document.querySelector(`#${elementId}`) as HTMLElement;
-        const menuItems = menu.querySelectorAll('[role="menuitem"]') as NodeList;
+        const menuItems = menu.querySelectorAll('[role="menuitem"]');
         const container = menu.parentNode as HTMLElement;
         let currentFocus: number = 0;
 
         // Focus the first menu item when the menu is first opened
-        menuItems[0].focus();
+        (menuItems[0] as HTMLElement).focus();
 
         const handleKeyPress = (e: KeyboardEvent) => {
             switch (e.key) {
@@ -23,7 +23,7 @@ export const useKeyboardNavigation = (elementId: string) => {
                         // user is at last item, move to top item
                         currentFocus = 0;
                     }
-                    menuItems[currentFocus].focus();
+                    (menuItems[currentFocus] as HTMLElement).focus();
                     break;
                 case "ArrowUp":
                     e.preventDefault();
@@ -34,7 +34,7 @@ export const useKeyboardNavigation = (elementId: string) => {
                         // user is not at top item, move up list
                         currentFocus--;
                     }
-                    menuItems[currentFocus].focus();
+                    (menuItems[currentFocus] as HTMLElement).focus();
                     break;
                 default:
                     break;

@@ -35,7 +35,7 @@ const Login = CSSModules(
     });
 
     return (
-      <section styleName="auth--login">
+      <section styleName="auth auth--login">
         <div styleName="auth__box">
           <div styleName="auth__hero">
             <h2>Word Storer</h2>

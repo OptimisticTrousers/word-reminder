@@ -5,6 +5,11 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["scripting"],
-  "host_permissions": ["http://*/*", "https://*/*"]
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ]
 }

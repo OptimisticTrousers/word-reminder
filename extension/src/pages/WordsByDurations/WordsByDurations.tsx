@@ -4,7 +4,7 @@ import styles from "./WordsByDurations.module.css";
 const WordsByDurations = CSSModules(
   () => {
     return (
-      <div></div>
+      <div>hello</div>
     )
   },
   styles,

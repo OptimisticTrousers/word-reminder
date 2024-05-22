@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, HashRouter } from "react-router-dom";
 import App from "./App";
 import { WordsByDurations, Words, Login, Register } from "./pages";
 
 const RouteSwitch = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<Words />} />
@@ -13,7 +13,7 @@ const RouteSwitch = () => {
           <Route path="wordsByDurations" element={<WordsByDurations />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 export default RouteSwitch;

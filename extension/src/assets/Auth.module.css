@@ -1,4 +1,6 @@
-.auth {}
+.auth {
+    margin: 1rem;
+}
 
 .auth--login {}
 

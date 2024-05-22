@@ -33,6 +33,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 375px;
+  height: 500px;
 }
 
 #root {

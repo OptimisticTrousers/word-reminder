@@ -35,7 +35,7 @@ const Register = CSSModules(
     });
 
     return (
-      <section styleName="auth--register">
+      <section styleName="auth auth--register">
         <form styleName="auth__form" onSubmit={onSubmit}>
           <nav styleName="auth__navigation">
             <Link styleName="auth__link" to="/login">Cancel</Link>

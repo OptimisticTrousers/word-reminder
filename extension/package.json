@@ -9,11 +9,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "extension": "npm run build && cd ./dist && web-ext run",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.4.0",
+    "@tanstack/react-query": "^5.37.1",
     "react": "^18.2.0",
     "react-css-modules": "^4.7.11",
     "react-dom": "^18.2.0",
@@ -23,6 +25,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.35.6",
     "@types/react": "^18.2.66",
     "@types/react-css-modules": "^4.6.8",
     "@types/react-dom": "^18.2.22",

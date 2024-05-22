@@ -1,10 +1,16 @@
 .word {
     display: flex;
-    padding: 1.25rem;
+    padding: 18px;
     justify-content: center;
     align-items: center;
     background-color: var(--color-word-bg);
-    margin: 1rem;
+    transition: 0.4s;
+    margin-top: 1rem;
+}
+
+.word--active,
+.panel--active {
+    background-color: var(--color-active-bg);
 }
 
 .word__buttons {
@@ -48,4 +54,18 @@
 
 .word__button--info {
     margin-right: 1rem;
+}
+
+.word__input {}
+
+.panel {
+    padding: 0 18px;
+    background-color: var(--color-accordion-bg);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
+}
+
+.panel__paragraph {
+    color: var(--color-accordion-text);
 }
