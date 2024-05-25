@@ -1,6 +1,8 @@
 import { Outlet } from "react-router-dom";
 import CSSModules from "react-css-modules";
 import styles from "./App.module.css";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = CSSModules(() => {
   // const [colour, setColour] = useState("");
@@ -19,6 +21,7 @@ const App = CSSModules(() => {
   return (
     <main styleName="main main--dark">
       <Outlet />
+      <ToastContainer />
     </main>
   );
 }, styles, { allowMultiple: true, handleNotFoundStyleName: "ignore" })

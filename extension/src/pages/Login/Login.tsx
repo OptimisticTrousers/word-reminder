@@ -3,7 +3,9 @@ import styles from "../../assets/Auth.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const schema = z.object({
   username: z.string({
@@ -30,8 +32,27 @@ const Login = CSSModules(
       resolver: zodResolver(schema),
     });
 
+    const navigate = useNavigate();
+
+    const { data, status, error } = useMutation({
+      mutationFn: (formData) => {
+        return fetch(`${import.meta.env.VITE_API_DOMAIN}/auth/login`, {
+          body: JSON.stringify(formData)
+        })
+      }, onSuccess: () => {
+        toast.success("You have successfully logged in!");
+        navigate("/")
+      }, onError: () => {
+        toast.error("There was an issue logging in!")
+      }
+    })
+
+    console.log(data)
+
     const onSubmit = handleSubmit((data) => {
       console.log(data);
+      console.log(status);
+      console.log(error);
     });
 
     return (
