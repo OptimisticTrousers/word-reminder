@@ -5,6 +5,7 @@ import { logout_user } from "./authController";
 import User from "../models/user";
 import UserWord from "../models/userWord";
 import WordsByDuration from "../models/wordsByDuration";
+import { isValidObjectId } from "mongoose";
 
 // @desc    Delete single user
 // @route   DELETE /api/user/:userId
@@ -26,8 +27,12 @@ export const user_delete = [
 // @access  Private
 export const user_detail = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = User.findById(userId).exec();
-  res.status(200).json(user);
+  if (isValidObjectId(userId)) {
+    const user = User.findById(userId).exec();
+    res.status(200).json(user);
+    return;
+  }
+  res.status(200).json(req.user);
 });
 
 // @desc    Update user details
