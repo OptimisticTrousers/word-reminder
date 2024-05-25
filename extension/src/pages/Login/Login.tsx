@@ -7,6 +7,7 @@ import * as z from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const schema = z.object({
   username: z.string({
@@ -37,9 +38,11 @@ const Login = CSSModules(
 
     const { data, status, error, mutate }: any = useMutation({
       mutationFn: (formData) => {
-        return fetch(`${import.meta.env.VITE_API_DOMAIN}/auth/login`, {
-          body: JSON.stringify(formData),
-        });
+        return axios.post(
+          `${import.meta.env.VITE_API_DOMAIN}/auth/login`,
+          formData,
+          { withCredentials: true }
+        );
       },
       onSuccess: () => {
         toast.success("You have successfully logged in!");

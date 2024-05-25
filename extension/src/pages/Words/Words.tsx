@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CSSModules from "react-css-modules";
 import styles from "./Words.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import Word from "../../components/Word/Word";
+// import Word from "../../components/Word/Word";
 import { TfiImport } from "react-icons/tfi";
 import { HiFilter } from "react-icons/hi";
 import { FaSort } from "react-icons/fa";
@@ -11,6 +12,8 @@ import { useState } from "react";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import useMenuCloseEvents from "../../hooks/useMenuCloseEvents";
 import { Navigation } from "../../layouts";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const schema = z.object({
   word: z.string({
@@ -21,37 +24,53 @@ const schema = z.object({
 
 const Words = CSSModules(
   () => {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+    } = useForm({
       defaultValues: {
         word: "",
         filter: "",
         radio: "",
-        search: ""
-      }, resolver: zodResolver(schema)
+        search: "",
+      },
+      resolver: zodResolver(schema),
     });
 
-    const onSubmit = handleSubmit((data) => {
-      console.log(data)
+    // const {data, status, error} = useQuery({queryKey: ["words", ], queryFn: () => {
+    //   return axios.get(`${import.meta.env.VITE_API_DOMAIN}/words`)
+    // }})
+
+    const { data, status, error, mutate }: any = useMutation({
+      mutationFn: (formData) => {
+        return axios.post(`${import.meta.env.VITE_API_DOMAIN}/words`, formData);
+      },
     });
+    console.log(data);
+    console.log(status);
+    console.log(error);
+
+    const onSubmit = handleSubmit(mutate);
 
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const handleFilter = () => {
       setIsFilterOpen((prevValue) => !prevValue);
-    }
+    };
 
     const handleSort = () => {
       setIsSortOpen((prevValue) => !prevValue);
-    }
+    };
 
     const closeSortDropdown = () => {
       setIsSortOpen(false);
-    }
+    };
 
     const closeFilterDropdown = () => {
       setIsFilterOpen(false);
-    }
+    };
 
     const sortDropdownId = "SortDropdown";
     const sortButtonId = "SortBtnDropdown";
@@ -75,20 +94,32 @@ const Words = CSSModules(
                 <input
                   {...register("word", { required: true })}
                   placeholder="Add word..."
-                  styleName="words__input words__input--add" />
+                  styleName="words__input words__input--add"
+                />
                 <p styleName="words__error">{errors.word?.message}</p>
               </div>
-              <button styleName="words__button words__button--add" type="submit">ADD</button>
+              <button
+                styleName="words__button words__button--add"
+                type="submit"
+              >
+                ADD
+              </button>
             </form>
             <div styleName="words__container">
               <div styleName="words__inputs">
-                <input {...register("search")} placeholder="Search for words in your collection..." styleName="words__input words__input--search" />
+                <input
+                  {...register("search")}
+                  placeholder="Search for words in your collection..."
+                  styleName="words__input words__input--search"
+                />
                 <div styleName="words__buttons">
                   <button styleName="words__button words__button--import">
                     <TfiImport styleName="words__icon" />
                     Import Words
                   </button>
-                  <button styleName="words__button words__button--sort" onClick={handleSort}
+                  <button
+                    styleName="words__button words__button--sort"
+                    onClick={handleSort}
                     aria-controls={sortDropdownId}
                     aria-haspopup="true"
                     aria-expanded={isSortOpen}
@@ -98,7 +129,9 @@ const Words = CSSModules(
                     <FaSort styleName="words__icon words__icon--sort" />
                     Sort
                   </button>
-                  <button styleName="words__button words__button--filter" onClick={handleFilter}
+                  <button
+                    styleName="words__button words__button--filter"
+                    onClick={handleFilter}
                     aria-controls={filterDropdownId}
                     aria-haspopup="true"
                     aria-expanded={isFilterOpen}
@@ -112,73 +145,82 @@ const Words = CSSModules(
               </div>
             </div>
           </div>
-          <ul styleName={`words__options words__options--${isSortOpen && "active"} words__options--sort`}
+          <ul
+            styleName={`words__options words__options--${
+              isSortOpen && "active"
+            } words__options--sort`}
             role="menu"
             aria-label="Sort options"
             id={sortDropdownId}
           >
             <li role="none" styleName="words__triangle"></li>
-            <li styleName="words__option"
-              role="menuitem"
-            >
+            <li styleName="words__option" role="menuitem">
               <button styleName="words__button words__button--option">
                 Sort by A-Z
               </button>
             </li>
-            <li styleName="words__option"
-              role="menuitem"
-            >
+            <li styleName="words__option" role="menuitem">
               <button styleName="words__button words__button--option">
                 Sort by Z-A
               </button>
             </li>
-            <li styleName="words__option"
-              role="menuitem"
-            >
+            <li styleName="words__option" role="menuitem">
               <button styleName="words__button words__button--option">
                 Newest
               </button>
             </li>
-            <li styleName="words__option"
-              role="menuitem"
-            >
+            <li styleName="words__option" role="menuitem">
               <button styleName="words__button words__button--option">
                 Oldest
               </button>
             </li>
           </ul>
-          <ul styleName={`words__options words__options--${isFilterOpen && "active"} words__options--filter`}
+          <ul
+            styleName={`words__options words__options--${
+              isFilterOpen && "active"
+            } words__options--filter`}
             role="menu"
             aria-label="Filter options"
             id={filterDropdownId}
           >
             <li role="none" styleName="words__triangle"></li>
-            <li styleName="words__option"
-              role="menuitem"
-            >
-              <input {...register("radio")} id="any" type="radio" styleName="" value="Any" />
-              <label styleName="words__label" htmlFor="any">Any</label>
+            <li styleName="words__option" role="menuitem">
+              <input
+                {...register("radio")}
+                id="any"
+                type="radio"
+                styleName=""
+                value="Any"
+              />
+              <label styleName="words__label" htmlFor="any">
+                Any
+              </label>
             </li>
-            <li styleName="words__option"
-              role="menuitem"
-            >
-              <input {...register("radio")} type="radio" styleName="" value="Learned" />
-              <label styleName="words__label" htmlFor="learned">Learned</label>
+            <li styleName="words__option" role="menuitem">
+              <input
+                {...register("radio")}
+                type="radio"
+                styleName=""
+                value="Learned"
+              />
+              <label styleName="words__label" htmlFor="learned">
+                Learned
+              </label>
             </li>
-            <li styleName="words__option"
-              role="menuitem"
-            >
-              <input {...register("radio")} type="radio" styleName="" value="Unlearned" />
-              <label styleName="words__label" htmlFor="unlearned">Unlearned</label>
+            <li styleName="words__option" role="menuitem">
+              <input
+                {...register("radio")}
+                type="radio"
+                styleName=""
+                value="Unlearned"
+              />
+              <label styleName="words__label" htmlFor="unlearned">
+                Unlearned
+              </label>
             </li>
           </ul>
         </div>
-        <div styleName="words__list">
-          <Word />
-          <Word />
-          <Word />
-          <Word />
-        </div>
+        <div styleName="words__list">{}</div>
       </div>
     );
   },

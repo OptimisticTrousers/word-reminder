@@ -1,48 +1,21 @@
+// import axios from "axios";
 import {
-  createBrowserRouter,
+  createMemoryRouter,
   createRoutesFromElements,
-  Navigate,
   Route,
   RouterProvider,
 } from "react-router-dom";
 import App from "./App";
-import { Words, Login, WordsByDurations, Register } from "./pages";
-import { useQuery } from "@tanstack/react-query";
+import { Login, Register, Words, WordsByDurations } from "./pages";
 
 const RouteSwitch = () => {
-  const {
-    data: user,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["user"],
-    queryFn: () =>
-      fetch(`${import.meta.env.VITE_API_DOMAIN}/auth/current`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => res.json()),
-  });
-
-  console.log(user);
-
-  if (isLoading) {
-    return <h1>Loading...</h1>;
-  }
-
-  if (isError) {
-    console.error("Error fetching user: ", error);
-    return <h1>Error loading user data</h1>;
-  }
-
-  const router = createBrowserRouter(
+  const router = createMemoryRouter(
     createRoutesFromElements(
       <Route path="/" element={<App />}>
         <Route index element={<Words />} />
+        <Route path="wordsByDurations" element={<WordsByDurations />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-        <Route path="wordsByDurations" element={<WordsByDurations />} />
       </Route>
     )
   );

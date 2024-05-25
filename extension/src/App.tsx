@@ -1,7 +1,10 @@
-import { Outlet } from "react-router-dom";
 import CSSModules from "react-css-modules";
-import styles from "./App.module.css";
+import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "./components/Loading";
+import styles from "./assets/App.module.css";
+import { Error500 } from "./pages";
 import "react-toastify/dist/ReactToastify.css";
 
 const App = CSSModules(
@@ -18,6 +21,33 @@ const App = CSSModules(
     //     },
     //   });
     // };
+    const {
+      data: user,
+      isLoading,
+      isError,
+      error,
+    } = useQuery({
+      queryKey: ["user"],
+      queryFn: () => {
+        return fetch(`${import.meta.env.VITE_API_DOMAIN}/auth/current`, {
+          method: "GET",
+          mode: "cors",
+          credentials: "include",
+        }).then((res) => {
+          return res.json();
+        });
+      },
+    });
+
+    if (isLoading) {
+      return <Loading />;
+    }
+
+    if (isError) {
+      return <Error500 message={error.message} />;
+    }
+
+    console.log(user);
 
     return (
       <>

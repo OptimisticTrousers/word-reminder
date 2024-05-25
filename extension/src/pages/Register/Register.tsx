@@ -39,16 +39,16 @@ const Register = CSSModules(
     const { data, status, error, mutate }: any = useMutation({
       mutationFn: (formData) => {
         return axios.post(
-          `${import.meta.env.VITE_API_DOMAIN}/auth/register`,
+          `${import.meta.env.VITE_API_DOMAIN}/auth/signup`,
           formData
         );
       },
       onSuccess: () => {
-        toast.success("You have successfully logged in!");
+        toast.success("You have successfully registered!");
         navigate("/");
       },
       onError: () => {
-        toast.error("There was an issue logging in!");
+        toast.error("There was an issue registering!");
       },
     });
 
