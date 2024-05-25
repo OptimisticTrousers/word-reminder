@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CSSModules from "react-css-modules";
 import styles from "../../assets/Auth.module.css";
 import { useForm } from "react-hook-form";
@@ -34,26 +35,26 @@ const Login = CSSModules(
 
     const navigate = useNavigate();
 
-    const { data, status, error } = useMutation({
+    const { data, status, error, mutate }: any = useMutation({
       mutationFn: (formData) => {
         return fetch(`${import.meta.env.VITE_API_DOMAIN}/auth/login`, {
-          body: JSON.stringify(formData)
-        })
-      }, onSuccess: () => {
+          body: JSON.stringify(formData),
+        });
+      },
+      onSuccess: () => {
         toast.success("You have successfully logged in!");
-        navigate("/")
-      }, onError: () => {
-        toast.error("There was an issue logging in!")
-      }
-    })
-
-    console.log(data)
-
-    const onSubmit = handleSubmit((data) => {
-      console.log(data);
-      console.log(status);
-      console.log(error);
+        navigate("/");
+      },
+      onError: () => {
+        toast.error("There was an issue logging in!");
+      },
     });
+
+    console.log(data);
+    console.log(status);
+    console.log(error);
+
+    const onSubmit = handleSubmit(mutate);
 
     return (
       <section styleName="auth auth--login">
@@ -87,7 +88,9 @@ const Login = CSSModules(
             />
             <p styleName="auth__error">{errors.username?.message}</p>
           </div>
-          <button styleName="auth__button" type="submit">Login</button>
+          <button styleName="auth__button" type="submit">
+            Login
+          </button>
         </form>
         <p styleName="auth__create">
           New around here? <Link to="/register">Create account</Link>

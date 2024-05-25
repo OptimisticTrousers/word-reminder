@@ -22,17 +22,11 @@ export const user_delete = [
   logout_user,
 ];
 
-// @desc    Get a user (public details)
-// @route   GET /api/users/:userId
+// @desc    Get the current user (public details)
+// @route   GET /api/users/current
 // @access  Private
 export const user_detail = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
-  if (isValidObjectId(userId)) {
-    const user = User.findById(userId).exec();
-    res.status(200).json(user);
-    return;
-  }
-  res.status(200).json(req.user);
+  res.status(200).json(req.user ? req.user : null);
 });
 
 // @desc    Update user details

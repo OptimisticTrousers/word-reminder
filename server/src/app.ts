@@ -1,6 +1,7 @@
 import Agenda, { Job } from "agenda";
 import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
 import session from "express-session";
 import mongoose from "mongoose";
@@ -13,6 +14,9 @@ import User from "./models/user";
 import WordsByDuration from "./models/wordsByDuration";
 import routes from "./routes/index";
 import createWordsByDuration from "./utils/createRandomWordsByDuration";
+import { config } from "dotenv";
+
+config();
 
 const app = express();
 
@@ -99,8 +103,9 @@ if (!secret) {
 }
 
 app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(logger("dev"));
 app.use(
   session({

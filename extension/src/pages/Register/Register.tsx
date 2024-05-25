@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CSSModules from "react-css-modules";
 import styles from "../../assets/Auth.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const schema = z.object({
   username: z.string({
@@ -30,17 +34,41 @@ const Register = CSSModules(
       resolver: zodResolver(schema),
     });
 
-    const onSubmit = handleSubmit((data) => {
-      console.log(data);
+    const navigate = useNavigate();
+
+    const { data, status, error, mutate }: any = useMutation({
+      mutationFn: (formData) => {
+        return axios.post(
+          `${import.meta.env.VITE_API_DOMAIN}/auth/register`,
+          formData
+        );
+      },
+      onSuccess: () => {
+        toast.success("You have successfully logged in!");
+        navigate("/");
+      },
+      onError: () => {
+        toast.error("There was an issue logging in!");
+      },
     });
+
+    console.log(data);
+    console.log(status);
+    console.log(error);
+
+    const onSubmit = handleSubmit(mutate);
 
     return (
       <section styleName="auth auth--register">
         <form styleName="auth__form" onSubmit={onSubmit}>
           <nav styleName="auth__navigation">
-            <Link styleName="auth__link" to="/login">Cancel</Link>
+            <Link styleName="auth__link" to="/login">
+              Cancel
+            </Link>
             <h3 styleName="auth__title">Create account</h3>
-            <button styleName="auth__button" type="submit">Submit</button>
+            <button styleName="auth__button" type="submit">
+              Submit
+            </button>
           </nav>
           <div styleName="auth__control">
             <label htmlFor="username" styleName="auth__label">
