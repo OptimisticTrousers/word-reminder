@@ -15,7 +15,7 @@ import User from "./models/user";
 import WordsByDuration from "./models/wordsByDuration";
 import routes from "./routes/index";
 import createWordsByDuration from "./utils/createRandomWordsByDuration";
-import { current_user, login_user } from "./controllers/authController";
+import accessControlAllow from "./middleware/accessControlAllow";
 
 config();
 
@@ -159,7 +159,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // routes
-app.use("/api", routes);
+app.use("/api", accessControlAllow, routes);
 
 // catch 404 and forward to error handler
 app.use(notFoundHandler);

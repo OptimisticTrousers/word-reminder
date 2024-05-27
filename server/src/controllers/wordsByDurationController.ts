@@ -26,19 +26,6 @@ export const words_by_duration_create = [
     .isString()
     .if(body("options.recurring.isRecurring").notEmpty()),
   body("options.reminder").optional().isString(),
-  body("wordsByDurationLength")
-    .optional()
-    .isInt()
-    .custom((value, { req }) => {
-      if ((!value || value.length === 0) && !req.body.words) {
-        // neither a list of words nor a number providing the length of a words by duration has been provided
-        return Promise.reject(
-          "List of words or number expressing the length of a words by duration must be provided"
-        );
-      }
-      // User has included one of either text or image. Continue with request handling
-      return true;
-    }),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const {
