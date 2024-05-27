@@ -1,0 +1,55 @@
+.create {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  color: white;
+  height: min-content;
+  margin-bottom: 2rem;
+}
+
+.create--light > div:hover {
+  background-color: var(--light-hover);
+}
+
+.create > div {
+  margin-bottom: 0;
+}
+
+.create > div:hover {
+  cursor: pointer;
+}
+
+.create--dark > div:hover {
+  background-color: rgb(12, 11, 9);
+}
+
+.create__container {
+  display: flex;
+  align-items: center;
+}
+
+.create__icon {
+  width: 3rem;
+  height: 3rem;
+  margin-right: 12px;
+}
+
+.create__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.create__title {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  text-align: start;
+}
+
+.create__description {
+  margin-top: 0;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: rgb(107, 114, 128);
+}

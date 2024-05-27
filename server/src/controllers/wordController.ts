@@ -6,28 +6,35 @@ import UserWord from "../models/userWord";
 import Word from "../models/word";
 
 const createWord = async (userId: string, word: string) => {
-  const callback = async (userId: string, word: string) => {
+  const callback = async (word: string) => {
     const data = await fetch(
       `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
     );
 
     const json = await data.json();
     if (json.message) return null;
+    console.log(json);
     return {
-      word: json.word,
-      origin: json.origin,
-      meanings: json.meanings,
-      audio: json.phonetics[0].audio,
+      phonetic: json[0].phonetics[1].text,
+      word: json[0].word,
+      origin: json[0].origin || "unknown",
+      meanings: json[0].meanings,
+      audio: json[0].phonetics[0].audio,
     };
   };
   const options = { upsert: true, new: true };
-  const wordData = await callback(userId, word);
+  const wordData = await callback(word);
   if (!wordData) return null;
-  await Word.findOneAndUpdate({ word }, wordData, options);
+  const savedWord = await Word.findOneAndUpdate(
+    { word },
+    wordData,
+    options
+  ).exec();
   const userWord = await UserWord.findOneAndUpdate(
-    { userId, word: wordData },
+    { userId },
+    { word: savedWord!._id },
     { ...options, setDefaultsOnInsert: true }
-  );
+  ).exec();
   return userWord;
 };
 
@@ -121,6 +128,11 @@ export const word_create = [
     const { userId } = req.params;
     const { word } = req.body;
     const newWord = await createWord(userId, word);
+    if (!newWord) {
+      res
+        .status(204)
+        .json({ message: "Word does not exist. Please try again." });
+    }
     res.status(200).json(newWord);
   }),
 ];
@@ -200,6 +212,7 @@ export const word_list = [
     }
     const words = await UserWord.find({ userId, ...fields })
       .sort(sortOptions)
+      .populate("word")
       .exec();
     res.status(200).json(words);
   }),

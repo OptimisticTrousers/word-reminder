@@ -4,7 +4,6 @@ import styles from "./Words.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-// import Word from "../../components/Word/Word";
 import { TfiImport } from "react-icons/tfi";
 import { HiFilter } from "react-icons/hi";
 import { FaSort } from "react-icons/fa";
@@ -12,8 +11,9 @@ import { useState } from "react";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import useMenuCloseEvents from "../../hooks/useMenuCloseEvents";
 import { Navigation } from "../../layouts";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { NoMore, UserWord } from "../../components";
+import useHttp from "../../hooks/useHttp";
 
 const schema = z.object({
   word: z.string({
@@ -38,20 +38,40 @@ const Words = CSSModules(
       resolver: zodResolver(schema),
     });
 
-    // const {data, status, error} = useQuery({queryKey: ["words", ], queryFn: () => {
-    //   return axios.get(`${import.meta.env.VITE_API_DOMAIN}/words`)
-    // }})
+    const { get, post } = useHttp();
 
-    const { data, status, error, mutate }: any = useMutation({
-      mutationFn: (formData) => {
-        return axios.post(`${import.meta.env.VITE_API_DOMAIN}/words`, formData);
+    const {
+      data: userWords,
+      isSuccess,
+      error: userWordsError,
+    } = useQuery({
+      queryKey: ["words"],
+      queryFn: () => {
+        return get(
+          `${
+            import.meta.env.VITE_API_DOMAIN
+          }/users/665164760636f4834e053388/words`
+        );
       },
     });
-    console.log(data);
-    console.log(status);
-    console.log(error);
 
-    const onSubmit = handleSubmit(mutate);
+    const {
+      data: word,
+      status: wordStatus,
+      error: wordError,
+      mutate: wordMutate,
+    }: any = useMutation({
+      mutationFn: (formData) => {
+        return post(
+          `${
+            import.meta.env.VITE_API_DOMAIN
+          }/users/665164760636f4834e053388/words`,
+          formData
+        );
+      },
+    });
+
+    const onSubmit = handleSubmit(wordMutate);
 
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -220,7 +240,20 @@ const Words = CSSModules(
             </li>
           </ul>
         </div>
-        <div styleName="words__list">{}</div>
+        <div styleName="words__list">
+          {isSuccess &&
+            userWords.map((userWord: any) => {
+              return <UserWord {...userWord} />;
+            })}
+          {!userWords && (
+            <NoMore
+              title={"No more words"}
+              description={
+                "Add more words to see more words in your collection"
+              }
+            />
+          )}
+        </div>
       </div>
     );
   },

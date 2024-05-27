@@ -7,7 +7,7 @@ import * as z from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
+import useHttp from "../../hooks/useHttp";
 
 const schema = z.object({
   username: z.string({
@@ -34,21 +34,20 @@ const Login = CSSModules(
       resolver: zodResolver(schema),
     });
 
+    const { post } = useHttp();
+
     const navigate = useNavigate();
 
     const { data, status, error, mutate }: any = useMutation({
       mutationFn: (formData) => {
-        return axios.post(
-          `${import.meta.env.VITE_API_DOMAIN}/auth/login`,
-          formData,
-          { withCredentials: true }
-        );
+        return post(`${import.meta.env.VITE_API_DOMAIN}/login`, formData);
       },
       onSuccess: () => {
         toast.success("You have successfully logged in!");
         navigate("/");
       },
-      onError: () => {
+      onError: (error) => {
+        console.log(error);
         toast.error("There was an issue logging in!");
       },
     });

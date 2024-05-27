@@ -1,41 +1,98 @@
-import CSSModules from "react-css-modules"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC } from "react";
+import CSSModules from "react-css-modules";
+import { ImPlay3 } from "react-icons/im";
 import styles from "./Word.module.css";
-import { MdDelete } from "react-icons/md";
-import { BsInfoCircleFill } from "react-icons/bs";
-import { useRef, useState } from "react";
+interface Props {
+  learned: boolean;
+  userId: string;
+  word: {
+    _id: string;
+    word: string;
+    origin: string;
+    phonetic: string;
+    meanings: [
+      {
+        partOfSpeech: string;
+        definitions: [
+          {
+            definition: string;
+            example: string;
+            synonyms: string[];
+            antonyms: string[];
+          }
+        ];
+      }
+    ];
+  };
+  audio: string;
+}
 
-const Word = CSSModules(() => {
-    const accordion = useRef<HTMLDivElement | null>(null);
-    const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-
-    const handleAccordion = () => {
-        setIsAccordionOpen((prevValue) => !prevValue);
-        if (accordion.current) {
-            accordion.current.style.maxHeight = accordion.current?.style.maxHeight !== "0px" ? `0px` : `${accordion.current?.scrollHeight}px`
-        }
-    }
+const Word: FC<Props> = CSSModules(
+  ({ word: { word, meanings, origin, phonetic } }) => {
     return (
-        <div>
-            <article styleName="word">
-                <p styleName="word__name">Superfluous</p>
-                <div styleName="word__divider"></div>
-                <div styleName="word__buttons">
-                    <button styleName="word__button word__button--info" onClick={handleAccordion}>
-                        <BsInfoCircleFill styleName="word__icon" />
-                    </button>
-                    <button styleName="word__delete word__button--delete">
-                        <MdDelete styleName="word__icon" />
-                    </button>
-                </div>
-            </article>
-            <div ref={accordion}
-                styleName={`panel ${isAccordionOpen && "panel--active"}`}
-
-            >
-                <p styleName="panel__paragraph">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur labore optio earum eius autem, voluptate repudiandae. Sit quis earum fugiat aliquam iste sint architecto provident dolores nam dolore, quos error?</p>
-            </div>
+      <div styleName="word">
+        <div styleName="word__top">
+          <div styleName="word__title">
+            <h2 styleName="word__text">{word}</h2>
+            <p styleName="word__phonetic">{phonetic}</p>
+          </div>
+          <button styleName="word__button">
+            <ImPlay3 styleName="word__icon" />
+          </button>
         </div>
-    )
-}, styles, { allowMultiple: true, handleNotFoundStyleName: "ignore" })
+        <div styleName="word__container">
+          <div styleName="word__block">
+            <h3 styleName="word__subtitle">Origin</h3>
+            <p styleName="word__description">{origin}</p>
+          </div>
+          {meanings.map((meaning: any) => (
+            <div styleName="word__meanings" key={meaning}>
+              <span styleName="word__part-of-speech">
+                {meaning.partOfSpeech} <hr styleName="word__line" />
+              </span>
+              <div styleName="word__block">
+                <h3 styleName="word__subtitle">Meanings</h3>
+                <ul styleName="word__definitions">
+                  {meaning.definitions.map(({ definition }: any) => (
+                    <li styleName="word__definition" key={definition}>
+                      {definition}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div styleName="word__block">
+                <h3 styleName="word__subtitle">Synonyms</h3>
+                <ul styleName="word__definitions">
+                  {meaning.definitions.map((definition: any) =>
+                    definition.synonyms.map((synonym: any) => (
+                      <li styleName="word__definition" key={definition}>
+                        {synonym}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+              <div styleName="word__block">
+                <h3 styleName="word__subtitle">Antonyms</h3>
+                <ul styleName="word__definitions">
+                  {meaning.definitions.map((definition: any) =>
+                    definition.antonyms.map((antonym: any) => (
+                      <li styleName="word__definition" key={antonym}>
+                        {antonym}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  },
+  styles,
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
+);
 
 export default Word;

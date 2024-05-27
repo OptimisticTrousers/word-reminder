@@ -7,6 +7,6 @@ const router = Router();
 
 router.route("/:userId").get(user_delete).delete(user_update);
 router.use("/:userId/words", wordRouter);
-router.use("/:userId/wordsByDuration", wordsByDurationRouter);
+router.use("/:userId/wordsByDurations", wordsByDurationRouter);
 
 export default router;

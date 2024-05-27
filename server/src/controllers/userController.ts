@@ -22,13 +22,6 @@ export const user_delete = [
   logout_user,
 ];
 
-// @desc    Get the current user (public details)
-// @route   GET /api/users/current
-// @access  Private
-export const user_detail = asyncHandler(async (req, res) => {
-  res.status(200).json(req.user ? req.user : null);
-});
-
 // @desc    Update user details
 // @route   PUT /api/users/:userId
 // @access  Private

@@ -5,6 +5,13 @@ import { body, validationResult } from "express-validator";
 import passport from "passport";
 import User from "../models/user";
 
+// @desc    Get the current user (public details)
+// @route   GET /api/auth/current
+// @access  Private
+export const current_user = asyncHandler(async (req, res) => {
+  res.status(200).json(req.user ? req.user : null);
+});
+
 // @desc    Authenticate a user and return cookie
 // @route   POST /api/auth/login
 // @access  Public
@@ -27,9 +34,9 @@ export const logout_user = (
 };
 
 // @desc    Register new user
-// @route   POST /api/auth/register
+// @route   POST /api/auth/signup
 // @access  Public
-export const register_user = [
+export const signup_user = [
   // Validate and sanitize fields.
   body("username", "'Username' is required.").trim().escape(),
   body("password", "'Password' is required.").trim().escape(),
@@ -54,7 +61,6 @@ export const register_user = [
     });
 
     await user.save();
-    console.log("good");
   }),
   login_user,
 ];
