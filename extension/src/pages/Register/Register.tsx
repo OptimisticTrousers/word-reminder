@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import CSSModules from "react-css-modules";
-import styles from "../../assets/Auth.module.css";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import CSSModules from "react-css-modules";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+import * as z from "zod";
+import styles from "../../assets/Auth.module.css";
+import { ErrorMessage } from "../../components";
+import useHttp from "../../hooks/useHttp";
+import { Error500 } from "..";
 
 const schema = z.object({
   username: z.string({
@@ -20,13 +21,15 @@ const schema = z.object({
   }),
 });
 
+type Schema = z.infer<typeof schema>;
+
 const Register = CSSModules(
   () => {
     const {
       register,
       handleSubmit,
       formState: { errors },
-    } = useForm({
+    } = useForm<Schema>({
       defaultValues: {
         username: "",
         password: "",
@@ -34,33 +37,39 @@ const Register = CSSModules(
       resolver: zodResolver(schema),
     });
 
+    const { post } = useHttp();
+
     const navigate = useNavigate();
 
-    const { data, status, error, mutate }: any = useMutation({
-      mutationFn: (formData) => {
-        return axios.post(
-          `${import.meta.env.VITE_API_DOMAIN}/auth/signup`,
-          formData
-        );
+    const { data, status, error, mutate } = useMutation({
+      mutationFn: (data: Schema) => {
+        return post(`${import.meta.env.VITE_API_DOMAIN}/auth/signup`, data);
       },
-      onSuccess: () => {
-        toast.success("You have successfully registered!");
+      onSuccess: (data) => {
+        toast.success(`You have successfully registered, ${data.username}!`);
         navigate("/");
       },
-      onError: () => {
+      onError: (error) => {
+        console.error(error);
         toast.error("There was an issue registering!");
       },
     });
 
-    console.log(data);
-    console.log(status);
-    console.log(error);
+    const onSubmit = (data: Schema) => {
+      mutate(data);
+    };
 
-    const onSubmit = handleSubmit(mutate);
+    const disabled = status === "pending";
+
+    console.log(data);
+
+    if (error) {
+      return <Error500 message={error.message} />;
+    }
 
     return (
       <section styleName="auth auth--register">
-        <form styleName="auth__form" onSubmit={onSubmit}>
+        <form styleName="auth__form" onSubmit={handleSubmit(onSubmit)}>
           <nav styleName="auth__navigation">
             <Link styleName="auth__link" to="/login">
               Cancel
@@ -75,9 +84,13 @@ const Register = CSSModules(
               <span styleName="auth__bold">Username</span>
             </label>
             <input
-              {...register("username", { required: "This is required." })}
               styleName="auth__input"
+              {...register("username", { required: "This is required." })}
+              disabled={disabled}
             />
+            {errors.username?.message && (
+              <ErrorMessage message={errors.username.message} />
+            )}
           </div>
           <p styleName="auth__error">{errors.username?.message}</p>
           <div styleName="auth__control">
@@ -85,11 +98,15 @@ const Register = CSSModules(
               <span styleName="auth__bold">Password</span>
             </label>
             <input
-              {...register("password", { required: "This is required." })}
               styleName="auth__input"
+              type="password"
+              {...register("password", { required: "This is required." })}
+              disabled={disabled}
             />
+            {errors.password?.message && (
+              <ErrorMessage message={errors.password.message} />
+            )}
           </div>
-          <p styleName="auth__error">{errors.password?.message}</p>
           <p styleName="auth__help">
             <b>Important:</b> Your password cannot be recovered if you forget
             it!

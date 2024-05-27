@@ -3,6 +3,7 @@ import { FC } from "react";
 import CSSModules from "react-css-modules";
 import { ImPlay3 } from "react-icons/im";
 import styles from "./Word.module.css";
+import useTextToSpeech from "../../hooks/useTextToSpeech";
 interface Props {
   learned: boolean;
   userId: string;
@@ -11,6 +12,7 @@ interface Props {
     word: string;
     origin: string;
     phonetic: string;
+    audio: string;
     meanings: [
       {
         partOfSpeech: string;
@@ -25,11 +27,19 @@ interface Props {
       }
     ];
   };
-  audio: string;
 }
 
 const Word: FC<Props> = CSSModules(
-  ({ word: { word, meanings, origin, phonetic } }) => {
+  ({ word: { word, meanings, origin, phonetic, audio } }) => {
+    const { handlePlay } = useTextToSpeech(word);
+    const handleAudio = () => {
+      if (!audio) {
+        handlePlay();
+      } else {
+        const newAudio = new Audio(audio);
+        newAudio.play();
+      }
+    };
     return (
       <div styleName="word">
         <div styleName="word__top">
@@ -37,7 +47,7 @@ const Word: FC<Props> = CSSModules(
             <h2 styleName="word__text">{word}</h2>
             <p styleName="word__phonetic">{phonetic}</p>
           </div>
-          <button styleName="word__button">
+          <button styleName="word__button" onClick={handleAudio}>
             <ImPlay3 styleName="word__icon" />
           </button>
         </div>

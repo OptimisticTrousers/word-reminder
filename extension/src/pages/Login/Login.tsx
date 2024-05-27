@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import CSSModules from "react-css-modules";
-import styles from "../../assets/Auth.module.css";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import CSSModules from "react-css-modules";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
+import * as z from "zod";
+import styles from "../../assets/Auth.module.css";
+import { ErrorMessage } from "../../components";
 import useHttp from "../../hooks/useHttp";
+import { Error500 } from "..";
 
 const schema = z.object({
   username: z.string({
@@ -20,13 +21,15 @@ const schema = z.object({
   }),
 });
 
+type Schema = z.infer<typeof schema>;
+
 const Login = CSSModules(
   () => {
     const {
       register,
       handleSubmit,
       formState: { errors },
-    } = useForm({
+    } = useForm<Schema>({
       defaultValues: {
         username: "",
         password: "",
@@ -38,25 +41,31 @@ const Login = CSSModules(
 
     const navigate = useNavigate();
 
-    const { data, status, error, mutate }: any = useMutation({
-      mutationFn: (formData) => {
-        return post(`${import.meta.env.VITE_API_DOMAIN}/login`, formData);
+    const { data, status, error, mutate } = useMutation({
+      mutationFn: (data: Schema) => {
+        return post(`http://localhost:5000/api/auth/login`, data);
       },
-      onSuccess: () => {
-        toast.success("You have successfully logged in!");
+      onSuccess: (data) => {
+        toast.success(`You have successfully logged in, ${data.username}!`);
         navigate("/");
       },
       onError: (error) => {
-        console.log(error);
+        console.error(error);
         toast.error("There was an issue logging in!");
       },
     });
 
-    console.log(data);
-    console.log(status);
-    console.log(error);
+    const onSubmit = (data: Schema) => {
+      mutate(data);
+    };
 
-    const onSubmit = handleSubmit(mutate);
+    const disabled = status === "pending";
+
+    console.log(data);
+
+    if (error) {
+      return <Error500 message={error.message} />;
+    }
 
     return (
       <section styleName="auth auth--login">
@@ -68,29 +77,35 @@ const Login = CSSModules(
             </p>
           </div>
         </div>
-        <form styleName="auth__form" onSubmit={onSubmit}>
+        <form styleName="auth__form" onSubmit={handleSubmit(onSubmit)}>
           <div styleName="auth__control">
             <label htmlFor="username" styleName="auth__label">
               <span styleName="auth__bold">Username</span>
             </label>
             <input
-              {...register("username", { required: "This is required." })}
               styleName="auth__input"
+              {...register("username", { required: "This is required." })}
+              disabled={disabled}
             />
-            <p styleName="auth__error">{errors.username?.message}</p>
+            {errors.username?.message && (
+              <ErrorMessage message={errors.username.message} />
+            )}
           </div>
           <div styleName="auth__control">
             <label htmlFor="password" styleName="auth__label">
               <span styleName="auth__bold">Password</span>
             </label>
             <input
+              styleName="auth__input"
               type="password"
               {...register("password", { required: "This is required." })}
-              styleName="auth__input"
+              disabled={disabled}
             />
-            <p styleName="auth__error">{errors.username?.message}</p>
+            {errors.password?.message && (
+              <ErrorMessage message={errors.password.message} />
+            )}
           </div>
-          <button styleName="auth__button" type="submit">
+          <button styleName="auth__button" type="submit" disabled={disabled}>
             Login
           </button>
         </form>

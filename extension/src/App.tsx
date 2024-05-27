@@ -1,6 +1,6 @@
 import CSSModules from "react-css-modules";
+import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import ProtectedRoute from "./components/ProtectedRoutes";
 import styles from "./assets/App.module.css";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -9,7 +9,7 @@ const App = CSSModules(
     return (
       <>
         <main styleName="main main--dark">
-          <ProtectedRoute />
+          <Outlet />
         </main>
         <ToastContainer />
       </>

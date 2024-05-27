@@ -1,45 +1,29 @@
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { Error500 } from "../../pages";
-import Loading from "../Loading";
+import { Navigate, Outlet } from "react-router-dom";
 import useHttp from "../../hooks/useHttp";
+import Loading from "../Loading";
+import { Error500 } from "../../pages";
 
 const ProtectedRoutes = () => {
   const { get } = useHttp();
-  const {
-    data: user,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
+  const { data, status, error } = useQuery({
     queryKey: ["user"],
     queryFn: () => {
       return get(`${import.meta.env.VITE_API_DOMAIN}/auth/current`);
     },
   });
 
-  const location = useLocation();
-
-  if (isLoading) {
+  if (status === "pending") {
     return <Loading />;
   }
 
-  if (isError) {
+  if (status === "error") {
     return <Error500 message={error.message} />;
   }
 
-  console.log(user);
+  console.log(data);
 
-  return (
-    <>
-      {/* {(!location.pathname.includes("/signup") ||
-        (!location.pathname.includes("/login") && user === null)) && (
-        <Navigate replace={true} to="/login" />
-      )} */}
-      <Outlet />
-    </>
-  );
+  return data ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoutes;

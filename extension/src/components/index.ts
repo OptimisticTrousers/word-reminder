@@ -7,3 +7,4 @@ export { default as NoMore } from "./NoMore";
 export { default as DeleteWordsByDurationModal } from "./DeleteWordsByDurationModal";
 export { default as CreateWordsByDuration } from "./CreateWordsByDuration";
 export { default as CreateWordsByDurationModal } from "./CreateWordsByDurationModal";
+export { default as ErrorMessage } from "./ErrorMessage";

@@ -28,18 +28,6 @@ const CreateWordsByDurationModal: FC<Props> = CSSModules(
   ({ toggleModal }) => {
     const { theme } = useContext(ThemeContext);
 
-    const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({
-      defaultValues: {
-        from: "",
-        to: "",
-      },
-      resolver: zodResolver(schema),
-    });
-
     const { get, post } = useHttp();
     const {
       data: userWords,
@@ -54,6 +42,29 @@ const CreateWordsByDurationModal: FC<Props> = CSSModules(
           }/users/665164760636f4834e053388/words`
         );
       },
+    });
+
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+    } = useForm({
+      defaultValues: {
+        words: userWords,
+        from: "",
+        to: "",
+        options: {
+          isActive: true,
+          hasReminderOnLoad: false,
+          hasDuplicateWords: false,
+          recurring: {
+            isRecurring: false,
+            interval: "7 days",
+          },
+          reminder: "4 hours",
+        },
+      },
+      resolver: zodResolver(schema),
     });
 
     const { data, status, error, mutate }: any = useMutation({
@@ -76,6 +87,9 @@ const CreateWordsByDurationModal: FC<Props> = CSSModules(
       mutate(data);
     });
 
+    const createRandomWordsByDuration = () => {
+    };
+
     return (
       <ModalContainer
         title="Create Words By Duration"
@@ -83,7 +97,8 @@ const CreateWordsByDurationModal: FC<Props> = CSSModules(
       >
         <form styleName="modal__form" onSubmit={onSubmit}>
           <fieldset styleName="modal__words">
-            <button>Select random words</button>
+            <button>Select All</button>
+            <button>Deselect All</button>
             <legend>Words</legend>
             {userWordsStatus === "success" &&
               userWords.map((userWord: any) => {
@@ -105,55 +120,71 @@ const CreateWordsByDurationModal: FC<Props> = CSSModules(
             <legend>Times</legend>
             <div styleName="words-by-durations__control">
               <label htmlFor="from">From</label>
-              <input type="datetime-local" {...register("from")} />
+              <input
+                type="datetime-local"
+                {...(register("from"), { required: true })}
+              />
             </div>
             <div styleName="words-by-durations__control">
               <label htmlFor="to">To</label>
-              <input type="datetime-local" {...register("to")} />
+              <input
+                type="datetime-local"
+                {...register("to", { required: true })}
+              />
             </div>
           </fieldset>
           <fieldset styleName="words-by-durations__options">
             <legend>Options</legend>
             <div styleName="words-by-durations__control">
-              <input type="checkbox" id="isActive" name="isActive" />
+              <input type="checkbox" {...register("options.isActive")} />
               <label htmlFor="isActive">Is Active</label>
             </div>
             <div styleName="words-by-durations__control">
               <input
                 type="checkbox"
-                id="hasReminderOnLoad"
-                name="hasReminderOnLoad"
+                {...register("options.hasReminderOnLoad")}
               />
               <label htmlFor="hasReminderOnLoad">Has Reminder On Load</label>
             </div>
             <div styleName="words-by-durations__control">
               <input
                 type="checkbox"
-                id="hasDuplicateWords"
-                name="hasDuplicateWords"
+                {...register("options.hasDuplicateWords")}
               />
               <label htmlFor="hasDuplicateWords">Has Duplicate Words</label>
             </div>
             <div styleName="words-by-durations__control">
-              <input type="checkbox" id="isRecurring" name="isRecurring" />
+              <input
+                type="checkbox"
+                {...register("options.recurring.isRecurring")}
+              />
               <label htmlFor="isRecurring">Is Recurring</label>
             </div>
             <div styleName="words-by-durations__control">
-              <input type="text" id="interval" name="interval" />
+              <input type="text" {...register("options.recurring.interval")} />
               <label htmlFor="interval">Interval</label>
             </div>
             <div styleName="words-by-durations__control">
-              <input type="text" id="reminder" name="reminder" />
+              <input type="text" {...register("options.reminder")} />
               <label htmlFor="reminder">Reminder</label>
             </div>
           </fieldset>
-          <button
-            styleName="modal__button modal__button--submit"
-            disabled={status === "pending"}
-            type="submit"
-          >
-            {status === "pending" ? "Creating..." : "Create"}
-          </button>
+          <div styleName="modal__buttons">
+            <button
+              styleName="modal__button modal__button--submit"
+              disabled={status === "pending"}
+              type="submit"
+            >
+              {status === "pending" ? "Creating..." : "Create"}
+            </button>
+            <button
+              styleName="modal__button modal__button--random"
+              type="button"
+              onClick={createRandomWordsByDuration}
+            >
+              Random Default
+            </button>
+          </div>
         </form>
       </ModalContainer>
     );
