@@ -13,28 +13,29 @@ const createWord = async (userId: string, word: string) => {
 
     const json = await data.json();
     if (json.message) return null;
-    console.log(json);
     return {
-      phonetic: json[0].phonetics[1].text,
+      phonetic: json[0].phonetics[0].text,
       word: json[0].word,
-      origin: json[0].origin || "unknown",
+      origin: json[0].origin,
       meanings: json[0].meanings,
       audio: json[0].phonetics[0].audio,
     };
   };
-  const options = { upsert: true, new: true };
   const wordData = await callback(word);
   if (!wordData) return null;
-  const savedWord = await Word.findOneAndUpdate(
-    { word },
-    wordData,
-    options
-  ).exec();
-  const userWord = await UserWord.findOneAndUpdate(
-    { userId },
-    { word: savedWord!._id },
-    { ...options, setDefaultsOnInsert: true }
-  ).exec();
+  const existingWord = await Word.exists({ word }).exec();
+  let newUserWord = existingWord;
+  if (!existingWord) {
+    const newWord = new Word(wordData);
+    await newWord.save();
+    newUserWord = newWord;
+  }
+  const userWord = new UserWord({
+    userId,
+    word: newUserWord,
+    learned: false,
+  });
+  await userWord.save();
   return userWord;
 };
 
@@ -90,7 +91,6 @@ export const word_create = [
         if (record.length > 1) {
           for (let i = 0; i < record.length; i++) {
             word = record[i];
-            console.log(word);
             words.push(word);
             const newWord = await createWord(userId, word);
             if (newWord) {
@@ -99,7 +99,6 @@ export const word_create = [
           }
         } else {
           word = record[0];
-          console.log(word);
           words.push(word); // Capture only the first column if there are multiple
           const newWord = await createWord(userId, word);
           if (newWord) {
@@ -154,34 +153,26 @@ export const word_list = [
   query("search").optional().trim().escape().isString(),
   query("sort").optional().trim().escape().isString(),
   query("learned").optional().isBoolean(),
+  query("page").optional().isNumeric(),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { sort, search, learned } = req.query;
+    const perPage = 6;
+    const { learned, page, search, sort } = req.query;
     if (search) {
-      const words = await UserWord.aggregate([
-        {
-          $match: {
-            userId,
-          },
-        },
+      const userWords = await UserWord.aggregate([
         {
           $search: {
-            index: "word_storer-userWords-static",
+            index: "word_storer-userwords-dynamic",
             text: {
               query: search,
-              path: ["word", "origin", "meanings.definitions"],
+              path: "*",
             },
           },
         },
-        {
-          $set: {
-            score: {
-              $meta: "searchScore",
-            },
-          },
-        },
-      ]).exec();
-      res.status(200).json(words);
+      ]);
+
+      console.log(userWords);
+      res.status(200).json(userWords);
       return;
     } else if (learned) {
       const words = await UserWord.find({ userId, learned }).exec();

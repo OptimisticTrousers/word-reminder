@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const WordSchema = new Schema(
   {
     word: { type: String, required: true, unique: true },
-    origin: { type: String, required: true },
+    origin: { type: String },
     phonetic: { type: String, required: true },
     meanings: [
       {
@@ -12,14 +12,14 @@ const WordSchema = new Schema(
         definitions: [
           {
             definition: { type: String, required: true },
-            example: { type: String, required: true },
+            example: { type: String },
             synonyms: [{ type: String }],
             antonyms: [{ type: String }],
           },
         ],
       },
     ],
-    audio: { type: String, required: true },
+    audio: { type: String },
   },
   {
     timestamps: true,

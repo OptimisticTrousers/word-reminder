@@ -15,7 +15,26 @@ export const current_user = asyncHandler(async (req, res) => {
 // @desc    Authenticate a user and return cookie
 // @route   POST /api/auth/login
 // @access  Public
-export const login_user = passport.authenticate("local");
+export const login_user = (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate(
+    "local",
+    { failWithError: false },
+    (err: Error, user: Express.User) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.status(401).json({ message: "No such user exists." });
+      }
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        res.status(200).json(user);
+      });
+    }
+  )(req, res, next);
+};
 
 // @desc    Logout a user
 // @route   GET /api/auth/logout

@@ -20,6 +20,12 @@ const UserSchema = new Schema(
         delete ret.password;
       },
     },
+    toObject: {
+      transform(doc, ret) {
+        // Delete password for security reasons so that the client doesn't have access to the password field
+        delete ret.password;
+      },
+    },
   }
 );
 

@@ -158,6 +158,8 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+app.use(passport.session());
+
 // routes
 app.use("/api", accessControlAllow, routes);
 
