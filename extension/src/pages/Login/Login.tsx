@@ -7,8 +7,8 @@ import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
 import styles from "../../assets/Auth.module.css";
 import { ErrorMessage } from "../../components";
+import useAuth from "../../hooks/useAuth";
 import useHttp from "../../hooks/useHttp";
-import { Error500 } from "..";
 
 const schema = z.object({
   username: z.string({
@@ -36,22 +36,28 @@ const Login = CSSModules(
       },
       resolver: zodResolver(schema),
     });
+    const { dispatch } = useAuth();
 
     const { post } = useHttp();
 
     const navigate = useNavigate();
 
-    const { data, status, error, mutate } = useMutation({
+    const { status, mutate } = useMutation({
       mutationFn: (data: Schema) => {
-        return post(`http://localhost:5000/api/auth/login`, data);
+        return post(`${import.meta.env.VITE_API_DOMAIN}/auth/login`, data);
       },
-      onSuccess: (data) => {
-        toast.success(`You have successfully logged in, ${data.username}!`);
-        navigate("/");
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error("There was an issue logging in!");
+      onSettled: (data) => {
+        if (data.message) {
+          toast.error(data.message);
+        } else if (data.status) {
+          toast.error(
+            `An unknown ${data.status} error occured while logging in.`
+          );
+        } else {
+          dispatch({ type: "LOGIN", payload: data });
+          toast.success(`You have successfully logged in, ${data.username}!`);
+          navigate("/words");
+        }
       },
     });
 
@@ -60,12 +66,6 @@ const Login = CSSModules(
     };
 
     const disabled = status === "pending";
-
-    console.log(data);
-
-    if (error) {
-      return <Error500 message={error.message} />;
-    }
 
     return (
       <section styleName="auth auth--login">
@@ -84,7 +84,7 @@ const Login = CSSModules(
             </label>
             <input
               styleName="auth__input"
-              {...register("username", { required: "This is required." })}
+              {...register("username", { required: true })}
               disabled={disabled}
             />
             {errors.username?.message && (
@@ -98,7 +98,7 @@ const Login = CSSModules(
             <input
               styleName="auth__input"
               type="password"
-              {...register("password", { required: "This is required." })}
+              {...register("password", { required: true })}
               disabled={disabled}
             />
             {errors.password?.message && (

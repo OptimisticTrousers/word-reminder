@@ -5,7 +5,7 @@ import ModalContainer from "../ModalContainer";
 import styles from "./CreateWordsByDuration.module.css";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useHttp from "../../hooks/useHttp";
-import { ThemeContext } from "../../context/ThemeProvider";
+import { ThemeContext } from "../../context/ThemeContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -87,8 +87,7 @@ const CreateWordsByDurationModal: FC<Props> = CSSModules(
       mutate(data);
     });
 
-    const createRandomWordsByDuration = () => {
-    };
+    const createRandomWordsByDuration = () => {};
 
     return (
       <ModalContainer

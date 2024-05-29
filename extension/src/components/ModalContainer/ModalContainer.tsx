@@ -3,7 +3,7 @@ import CSSModules from "react-css-modules";
 import { AiFillCloseSquare } from "react-icons/ai";
 import styles from "./ModalContainer.module.css";
 import useDisableScroll from "../../hooks/useDisableScroll";
-import { ThemeContext } from "../../context/ThemeProvider";
+import { ThemeContext } from "../../context/ThemeContext";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;

@@ -8,33 +8,9 @@ import useHttp from "../../hooks/useHttp";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Word } from "..";
+import { IUserWord } from "../../context/AuthContext";
 
-interface Props {
-  learned: boolean;
-  userId: string;
-  word: {
-    _id: string;
-    word: string;
-    origin: string;
-    phonetic: string;
-    meanings: [
-      {
-        partOfSpeech: string;
-        definitions: [
-          {
-            definition: string;
-            example: string;
-            synonyms: string[];
-            antonyms: string[];
-          }
-        ];
-      }
-    ];
-  };
-  audio: string;
-}
-
-const UserWord: FC<Props> = CSSModules(
+const UserWord: FC<IUserWord> = CSSModules(
   (props) => {
     const accordion = useRef<HTMLDivElement | null>(null);
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);

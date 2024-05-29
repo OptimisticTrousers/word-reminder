@@ -7,8 +7,8 @@ import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
 import styles from "../../assets/Auth.module.css";
 import { ErrorMessage } from "../../components";
+import useAuth from "../../hooks/useAuth";
 import useHttp from "../../hooks/useHttp";
-import { Error500 } from "..";
 
 const schema = z.object({
   username: z.string({
@@ -23,7 +23,7 @@ const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-const Register = CSSModules(
+const Signup = CSSModules(
   () => {
     const {
       register,
@@ -37,21 +37,27 @@ const Register = CSSModules(
       resolver: zodResolver(schema),
     });
 
+    const { dispatch } = useAuth();
     const { post } = useHttp();
 
     const navigate = useNavigate();
 
-    const { data, status, error, mutate } = useMutation({
+    const { status, mutate } = useMutation({
       mutationFn: (data: Schema) => {
         return post(`${import.meta.env.VITE_API_DOMAIN}/auth/signup`, data);
       },
-      onSuccess: (data) => {
-        toast.success(`You have successfully registered, ${data.username}!`);
-        navigate("/");
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error("There was an issue registering!");
+      onSettled: (data) => {
+        if (data.message) {
+          toast.error(data.message);
+        } else if (data.status) {
+          toast.error(
+            `An unknown ${data.status} error occured while signing up.`
+          );
+        } else {
+          dispatch({ type: "LOGIN", payload: data });
+          toast.success(`You have successfully signed up, ${data.username}!`);
+          navigate("/");
+        }
       },
     });
 
@@ -60,12 +66,6 @@ const Register = CSSModules(
     };
 
     const disabled = status === "pending";
-
-    console.log(data);
-
-    if (error) {
-      return <Error500 message={error.message} />;
-    }
 
     return (
       <section styleName="auth auth--register">
@@ -119,4 +119,4 @@ const Register = CSSModules(
   { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
-export default Register;
+export default Signup;

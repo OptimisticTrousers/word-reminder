@@ -1,78 +1,67 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import CSSModules from "react-css-modules";
-import styles from "./Words.module.css";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { TfiImport } from "react-icons/tfi";
-import { HiFilter } from "react-icons/hi";
-import { FaSort } from "react-icons/fa";
 import { useState } from "react";
+import CSSModules from "react-css-modules";
+import { useForm } from "react-hook-form";
+import { FaSort } from "react-icons/fa";
+import { HiFilter } from "react-icons/hi";
+import { TfiImport } from "react-icons/tfi";
+import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as z from "zod";
+import { ErrorMessage, NoMore, UserWord } from "../../components";
+import { IUserWord } from "../../context/AuthContext";
+import useAuth from "../../hooks/useAuth";
+import useHttp from "../../hooks/useHttp";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import useMenuCloseEvents from "../../hooks/useMenuCloseEvents";
+import useUserWords from "../../hooks/useUserWords";
 import { Navigation } from "../../layouts";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { NoMore, UserWord } from "../../components";
-import useHttp from "../../hooks/useHttp";
+import styles from "./Words.module.css";
 
-const schema = z.object({
-  word: z.string({
-    required_error: "Word is required",
-    invalid_type_error: "Wordmust be a string",
+const MAX_FILE_SIZE = 500000;
+const ACCEPTED_FILE_TYPES = [".csv", "text/csv"];
+
+const userWordSchema = z
+  .object({
+    word: z.string().optional(),
+    csv: z
+      .any()
+      .optional()
+      .refine(
+        (files) =>
+          !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
+        "Max file size is 5 MB."
+      )
+      .refine(
+        (files) =>
+          !files ||
+          files.length === 0 ||
+          ACCEPTED_FILE_TYPES.includes(files[0].type),
+        "Only .csv files are accepted."
+      ),
+  })
+  .refine(
+    (data) => data.word || (data.csv && data.csv.length > 0),
+    "Either 'word' or 'csv' must be provided."
+  );
+
+const querySchema = z.object({
+  search: z.string({
+    invalid_type_error: "Search must be a string",
+  }),
+  learned: z.boolean({
+    invalid_type_error: "Learned must be a boolean",
+  }),
+  sort: z.string({
+    invalid_type_error: "Sort must be a string",
   }),
 });
 
+type UserWordSchema = z.infer<typeof userWordSchema>;
+type QuerySchema = z.infer<typeof querySchema>;
+
 const Words = CSSModules(
   () => {
-    const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({
-      defaultValues: {
-        word: "",
-        filter: "",
-        radio: "",
-        search: "",
-      },
-      resolver: zodResolver(schema),
-    });
-
-    const { get, post } = useHttp();
-
-    const {
-      data: userWords,
-      isSuccess,
-      error: userWordsError,
-    } = useQuery({
-      queryKey: ["words"],
-      queryFn: () => {
-        return get(
-          `${
-            import.meta.env.VITE_API_DOMAIN
-          }/users/665164760636f4834e053388/words`
-        );
-      },
-    });
-
-    const {
-      data: word,
-      status: wordStatus,
-      error: wordError,
-      mutate: wordMutate,
-    }: any = useMutation({
-      mutationFn: (formData) => {
-        return post(
-          `${
-            import.meta.env.VITE_API_DOMAIN
-          }/users/665164760636f4834e053388/words`,
-          formData
-        );
-      },
-    });
-
-    const onSubmit = handleSubmit(wordMutate);
-
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -104,23 +93,118 @@ const Words = CSSModules(
     useKeyboardNavigation(filterDropdownId);
     useMenuCloseEvents(filterDropdownId, filterButtonId, closeFilterDropdown);
 
+    const {
+      register: userWordRegister,
+      handleSubmit: userWordHandleSubmit,
+      formState: { errors: userWordErrors },
+    } = useForm<UserWordSchema>({
+      resolver: zodResolver(userWordSchema),
+    });
+
+    const {
+      register: queryRegister,
+      watch,
+      formState: { errors: queryErrors },
+    } = useForm<QuerySchema>({
+      resolver: zodResolver(querySchema),
+    });
+
+    const {
+      state: { user },
+    } = useAuth();
+
+    const { learned, sort, search } = watch();
+    const queryClient = useQueryClient();
+
+    const { post } = useHttp();
+
+    const { userWords, userWordsStatus, userWordsError } = useUserWords({
+      learned,
+      sort,
+      search,
+    });
+
+    const userId = user!._id;
+    const { status: createdUserWordStatus, mutate: createdUserWordMutate } =
+      useMutation({
+        mutationFn: (data: UserWordSchema) => {
+          return post(
+            `${import.meta.env.VITE_API_DOMAIN}/users/${userId}/words`,
+            data
+          );
+        },
+        onSettled: (data) => {
+          const username = user!.username;
+          if (data.message) {
+            toast.error(data.message);
+          } else if (data.status) {
+            toast.error(
+              `An unknown ${data.status} error occured while creating a new word.`
+            );
+          } else {
+            if (data.valid && data.invalid) {
+              toast.success(
+                `You have successfully created ${data.valid.length} new word(s), but ${data.invalid} words were not inserted, ${username}!`
+              );
+            } else {
+              toast.success(
+                `You have successfully created a new word, ${username}!`
+              );
+            }
+            queryClient.invalidateQueries({
+              queryKey: [userId, "words", { learned, search, sort }],
+            });
+          }
+        },
+      });
+
+    const onSubmit = (data: UserWordSchema) => {
+      createdUserWordMutate(data);
+    };
+
+    const disabled = createdUserWordStatus === "pending";
+
     return (
       <div styleName="words">
         <div styleName="words__top">
           <Navigation />
           <div styleName="words__container">
-            <form styleName="words__form" onSubmit={onSubmit}>
+            <form
+              styleName="words__form"
+              onSubmit={userWordHandleSubmit(onSubmit)}
+            >
+              <div styleName="words__control">
+                <label htmlFor="csv" styleName="words__label">
+                  <input
+                    styleName="words__button words__button--import"
+                    {...userWordRegister("csv")}
+                    type="file"
+                    disabled={disabled}
+                  />
+                  <TfiImport styleName="words__icon" />
+                  Import Words
+                </label>
+                {userWordErrors.csv?.message && (
+                  <ErrorMessage
+                    message={userWordErrors.csv.message.toString()}
+                  />
+                )}
+              </div>
               <div styleName="words__control">
                 <input
-                  {...register("word", { required: true })}
+                  {...userWordRegister("word")}
+                  type="search"
                   placeholder="Add word..."
                   styleName="words__input words__input--add"
                 />
-                <p styleName="words__error">{errors.word?.message}</p>
+                {userWordErrors.word?.message && (
+                  <ErrorMessage message={userWordErrors.word.message} />
+                )}
               </div>
               <button
                 styleName="words__button words__button--add"
                 type="submit"
+                disabled={disabled}
               >
                 ADD
               </button>
@@ -128,15 +212,11 @@ const Words = CSSModules(
             <div styleName="words__container">
               <div styleName="words__inputs">
                 <input
-                  {...register("search")}
+                  {...queryRegister("search")}
                   placeholder="Search for words in your collection..."
                   styleName="words__input words__input--search"
                 />
                 <div styleName="words__buttons">
-                  <button styleName="words__button words__button--import">
-                    <TfiImport styleName="words__icon" />
-                    Import Words
-                  </button>
                   <button
                     styleName="words__button words__button--sort"
                     onClick={handleSort}
@@ -166,33 +246,77 @@ const Words = CSSModules(
             </div>
           </div>
           <ul
-            styleName={`words__options words__options--${
-              isSortOpen && "active"
-            } words__options--sort`}
+            styleName={`words__options ${isSortOpen && "words__options--active"}
+         words__options--sort`}
             role="menu"
             aria-label="Sort options"
             id={sortDropdownId}
           >
             <li role="none" styleName="words__triangle"></li>
+            <li role="none" styleName="words__error">
+              {queryErrors.sort?.message && (
+                <ErrorMessage message={queryErrors.sort.message} />
+              )}
+            </li>
             <li styleName="words__option" role="menuitem">
-              <button styleName="words__button words__button--option">
+              <input
+                {...queryRegister("sort")}
+                id="bestMatch"
+                type="radio"
+                value=""
+                styleName="words__radio"
+              />
+              <label styleName="words__label" htmlFor="bestMatch">
+                Best Match
+              </label>
+            </li>
+            <li styleName="words__option" role="menuitem">
+              <input
+                {...queryRegister("sort")}
+                id="a-z"
+                type="radio"
+                value="a-z"
+                styleName="words__radio"
+              />
+              <label styleName="words__label" htmlFor="a-z">
                 Sort by A-Z
-              </button>
+              </label>
             </li>
             <li styleName="words__option" role="menuitem">
-              <button styleName="words__button words__button--option">
+              <input
+                {...queryRegister("sort")}
+                id="z-a"
+                type="radio"
+                value="z-a"
+                styleName="words__radio"
+              />
+              <label styleName="words__label" htmlFor="z-a">
                 Sort by Z-A
-              </button>
+              </label>
             </li>
             <li styleName="words__option" role="menuitem">
-              <button styleName="words__button words__button--option">
+              <input
+                {...queryRegister("sort")}
+                id="newest"
+                type="radio"
+                value="newest"
+                styleName="words__radio"
+              />
+              <label styleName="words__label" htmlFor="newest">
                 Newest
-              </button>
+              </label>
             </li>
             <li styleName="words__option" role="menuitem">
-              <button styleName="words__button words__button--option">
+              <input
+                {...queryRegister("sort")}
+                id="oldest"
+                value="oldest"
+                type="radio"
+                styleName="words__radio"
+              />
+              <label styleName="words__label" htmlFor="oldest">
                 Oldest
-              </button>
+              </label>
             </li>
           </ul>
           <ul
@@ -203,14 +327,19 @@ const Words = CSSModules(
             aria-label="Filter options"
             id={filterDropdownId}
           >
+            <li role="none" styleName="words__error">
+              {queryErrors.learned?.message && (
+                <ErrorMessage message={queryErrors.learned.message} />
+              )}
+            </li>
             <li role="none" styleName="words__triangle"></li>
             <li styleName="words__option" role="menuitem">
               <input
-                {...register("radio")}
+                {...queryRegister("learned")}
                 id="any"
                 type="radio"
-                styleName=""
-                value="Any"
+                styleName="words__radio"
+                value=""
               />
               <label styleName="words__label" htmlFor="any">
                 Any
@@ -218,10 +347,11 @@ const Words = CSSModules(
             </li>
             <li styleName="words__option" role="menuitem">
               <input
-                {...register("radio")}
+                {...queryRegister("learned")}
                 type="radio"
-                styleName=""
-                value="Learned"
+                styleName="words__radio"
+                id="learned"
+                value="true"
               />
               <label styleName="words__label" htmlFor="learned">
                 Learned
@@ -229,10 +359,11 @@ const Words = CSSModules(
             </li>
             <li styleName="words__option" role="menuitem">
               <input
-                {...register("radio")}
+                {...queryRegister("learned")}
                 type="radio"
-                styleName=""
-                value="Unlearned"
+                styleName="words__radio"
+                id="unlearned"
+                value="false"
               />
               <label styleName="words__label" htmlFor="unlearned">
                 Unlearned
@@ -241,17 +372,21 @@ const Words = CSSModules(
           </ul>
         </div>
         <div styleName="words__list">
-          {isSuccess &&
-            userWords.map((userWord: any) => {
-              return <UserWord {...userWord} />;
+          {userWordsStatus === "success" &&
+            userWords &&
+            userWords.map((userWord: IUserWord) => {
+              return <UserWord key={userWord._id} {...userWord} />;
             })}
-          {!userWords && (
+          {userWordsStatus === "success" && !userWords && (
             <NoMore
               title={"No more words"}
               description={
                 "Add more words to see more words in your collection"
               }
             />
+          )}
+          {userWordsStatus === "error" && userWordsError && (
+            <ErrorMessage message={userWordsError.message} />
           )}
         </div>
       </div>
@@ -260,7 +395,7 @@ const Words = CSSModules(
   styles,
   {
     allowMultiple: true,
-    handleNotFoundStyleName: "log",
+    handleNotFoundStyleName: "ignore",
   }
 );
 

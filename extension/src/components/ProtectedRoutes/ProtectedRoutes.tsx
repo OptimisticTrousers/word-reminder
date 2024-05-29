@@ -21,9 +21,7 @@ const ProtectedRoutes = () => {
     return <Error500 message={error.message} />;
   }
 
-  console.log(data);
-
-  return data ? <Outlet /> : <Navigate to="/login" replace />;
+  return data ? <Outlet /> : <Navigate to="/" replace />;
 };
 
 export default ProtectedRoutes;

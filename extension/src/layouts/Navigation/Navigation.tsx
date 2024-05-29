@@ -26,7 +26,7 @@ const Navigation = CSSModules(
               color: isActive ? "red" : "inherit",
             };
           }}
-          to="/"
+          to="/words"
           styleName={`navigation__link--tab ${
             isWordsActive && "words__button--tab--active"
           }`}

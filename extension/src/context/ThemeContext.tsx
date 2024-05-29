@@ -13,7 +13,7 @@ interface ThemeContext {
 // Create an instance of React Context
 export const ThemeContext = createContext<ThemeContext>({} as ThemeContext);
 
-export const ThemeProvider: FC<Props> = ({ children }) => {
+const ThemeProvider: FC<Props> = ({ children }) => {
   const [value] = useLocalStorage("theme", "dark");
   const [theme, setTheme] = useState(value);
 
@@ -36,3 +36,5 @@ export const ThemeProvider: FC<Props> = ({ children }) => {
     </ThemeContext.Provider>
   );
 };
+
+export default ThemeProvider;

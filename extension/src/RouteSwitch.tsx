@@ -1,7 +1,7 @@
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import { ProtectedRoutes } from "./components";
-import { Login, Register, Words, WordsByDurations } from "./pages";
+import { Login, Signup, Words, WordsByDurations } from "./pages";
 
 const RouteSwitch = () => {
   const router = createMemoryRouter([
@@ -9,18 +9,18 @@ const RouteSwitch = () => {
       element: <App />,
       children: [
         {
-          path: "/login",
+          path: "/",
           element: <Login />,
         },
         {
-          path: "/register",
-          element: <Register />,
+          path: "/signup",
+          element: <Signup />,
         },
         {
           element: <ProtectedRoutes />,
           children: [
             {
-              path: "/",
+              path: "/words",
               element: <Words />,
             },
             {

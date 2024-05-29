@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import CSSModules from "react-css-modules";
 import { FcPlus } from "react-icons/fc";
 import styles from "./CreateWordsByDuration.module.css";
-import { ThemeContext } from "../../context/ThemeProvider";
+import { ThemeContext } from "../../context/ThemeContext";
 import CreateWordsByDurationModal from "../CreateWordsByDurationModal/CreateWordsByDurationModal";
 
 const CreateWordsByDuration = CSSModules(

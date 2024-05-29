@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CSSModules from "react-css-modules";
 import styles from "./WordsByDurations.module.css";
 import { Navigation } from "../../layouts";
 import { useQuery } from "@tanstack/react-query";
-import useHttp from "../../hooks/useHttp";
 import { CreateWordsByDuration, NoMore } from "../../components";
+import useHttp from "../../hooks/useHttp";
 
 const WordsByDurations = CSSModules(
   () => {
@@ -13,7 +14,6 @@ const WordsByDurations = CSSModules(
       status,
       isSuccess,
       isPending,
-      error,
     } = useQuery({
       queryKey: ["wordsByDurations"],
       queryFn: () => {
