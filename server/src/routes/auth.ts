@@ -4,7 +4,7 @@ import {
   login_user,
   logout_user,
   signup_user,
-} from "../controllers/authController";
+} from "../controllers/sessionController";
 
 const router = Router();
 

@@ -1,12 +1,16 @@
 import { Router } from "express";
-import { user_delete, user_update } from "../controllers/userController";
+
+import { logout_user } from "../controllers/sessionController";
+import { delete_user, signup_user } from "../controllers/userController";
+import { validateUser } from "../middleware/validateUser";
+import { validateUserId } from "../middleware/validateUserId";
 import wordRouter from "./words";
-import wordsByDurationRouter from "./wordsByDuration";
 
 const router = Router();
 
-router.route("/:userId").get(user_delete).delete(user_update);
+router.route("/").post(validateUser, signup_user);
+router.route("/:userId").delete(validateUserId, delete_user, logout_user);
 router.use("/:userId/words", wordRouter);
-router.use("/:userId/wordsByDurations", wordsByDurationRouter);
+// router.use("/:userId/wordsByDurations", wordsByDurationRouter);
 
 export default router;

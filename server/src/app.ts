@@ -1,147 +1,79 @@
-import Agenda, { Job } from "agenda";
 import bcrypt from "bcryptjs";
+import connectPgSimple from "connect-pg-simple";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { config } from "dotenv";
 import express from "express";
 import session from "express-session";
-import mongoose from "mongoose";
 import logger from "morgan";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+
+import { pool } from "./db/pool";
 import errorHandler from "./middleware/errorHandler";
 import notFoundHandler from "./middleware/notFoundHandler";
-import User from "./models/user";
-import WordsByDuration from "./models/wordsByDuration";
 import routes from "./routes/index";
-import createWordsByDuration from "./utils/createRandomWordsByDuration";
-import accessControlAllow from "./middleware/accessControlAllow";
-
-config();
+import { variables } from "./utils/variables";
 
 const app = express();
 
-const mongoDb = process.env.DB_STRING;
+const pgSession = connectPgSimple(session);
 
-if (!mongoDb) {
-  throw new Error("DB_STRING value is not defined in .env file");
-}
-
-mongoose.connect(mongoDb);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "mongo connection error"));
-
-const agenda = new Agenda({
-  db: { address: mongoDb, collection: "agendaJobs" },
+const sessionStore = new pgSession({
+  pool,
+  tableName: "session",
 });
-
-agenda.define("create_agenda", async (job: Job) => {
-  const {
-    userId,
-    from,
-    to,
-    wordsByDurationLength,
-    options: {
-      isActive,
-      hasReminderOnLoad,
-      hasDuplicateWords,
-      recurring: { isRecurring, interval },
-      reminder,
-    },
-  } = job.attrs.data;
-  await createWordsByDuration(
-    userId,
-    from,
-    to,
-    wordsByDurationLength,
-    {
-      isActive,
-      hasReminderOnLoad,
-      hasDuplicateWords,
-      recurring: {
-        isRecurring,
-        interval,
-      },
-      reminder,
-    },
-    () => {},
-    () => {},
-    () => {}
-  );
-});
-
-agenda.define("activate_words_by_duration", async (job: Job) => {
-  const { wordsByDurationId } = job.attrs.data;
-  await WordsByDuration.findByIdAndUpdate(
-    wordsByDurationId,
-    { active: true },
-    { new: true }
-  ).exec();
-});
-
-agenda.define("learned_words", async (job: Job) => {
-  const { wordsByDurationId } = job.attrs.data;
-  await WordsByDuration.findByIdAndUpdate(wordsByDurationId, {
-    $set: { "words.learned": true },
-  }).exec();
-});
-
-(async () => {
-  await agenda.start();
-})();
-
-async function graceful() {
-  await agenda.stop();
-  process.exit(0);
-}
-
-process.on("SIGTERM", graceful);
-process.on("SIGINT", graceful);
-
-const secret = process.env.SECRET;
-if (!secret) {
-  throw new Error("SECRET value is not defined in .env file");
-}
 
 app.use(cookieParser());
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     credentials: true,
   })
 );
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(express.urlencoded({ extended: false }));
+
 app.use(logger("dev"));
+
 app.use(
   session({
-    secret,
+    secret: variables.SECRET,
     resave: false,
     saveUninitialized: true,
+    store: sessionStore,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // Equals 1 day (1 day * 24 hr/1 day * 60 min/1 hr * 60 sec/1 min * 1000 ms/1 sec )
+    },
   })
 );
 
+app.use(passport.session());
+
 passport.use(
   new LocalStrategy(async (username, password, done) => {
-    return User.findOne({ username })
-      .exec()
-      .then((user) => {
-        if (!user) {
-          return done(null, false, { message: "Incorrect username" });
-        }
-        bcrypt
-          .compare(password, user.password as string)
-          .then((result) => {
-            if (result) {
-              // passwords match! log user in
-              return done(null, user);
-            }
-            // passwords do not match!
-            return done(null, false, { message: "Incorrect password" });
-          })
-          .catch(done);
-      })
-      .catch(done);
+    try {
+      const { rows } = await pool.query(
+        "SELECT * FROM users WHERE username = $1",
+        [username]
+      );
+      const user = rows[0];
+      if (!user) {
+        return done(null, false, { message: "Incorrect username." });
+      }
+      const match = await bcrypt.compare(password, user.password);
+      if (match) {
+        // passwords match! log user in
+        delete user.password;
+        return done(null, user);
+      }
+      // passwords do not match!
+      return done(null, false, { message: "Incorrect password." });
+    } catch (error) {
+      done(error);
+    }
   })
 );
 
@@ -149,27 +81,22 @@ passport.serializeUser((user, done) => {
   done(null, (user as { id: string }).id);
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (id: string, done) => {
   try {
-    const user = await User.findById(id).exec();
+    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
+      id,
+    ]);
+    const user = rows[0];
     done(null, user);
   } catch (err) {
     done(err);
   }
 });
 
-app.use(passport.session());
+app.use("/api", routes);
 
-// routes
-app.use("/api", accessControlAllow, routes);
-
-// catch 404 and forward to error handler
 app.use(notFoundHandler);
 
-// error handler
 app.use(errorHandler);
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log("Server running..."));
-
-export default agenda;
+export { app };

@@ -6,7 +6,9 @@ const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  res.status(err.status || 500).json(err);
+  res
+    .status(err.status || 500)
+    .json({ message: err.message || "Internal Server Error." });
 };
 
 export default errorHandler;
