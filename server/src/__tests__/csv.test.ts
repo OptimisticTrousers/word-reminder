@@ -51,5 +51,19 @@ describe("csv", () => {
       ]);
       expect(error).toBeNull();
     });
+
+    it("elimates empty strings at the end of each row if they end in a comma", async () => {
+      const filePath = resolve(__dirname, "../csv/incorrect.csv");
+
+      const { records, error } = await csv.read(filePath);
+
+      expect(records).toEqual([
+        ["dispensation"],
+        ["serreptitously"],
+        ["gutatory"],
+        ["patronage"],
+      ]);
+      expect(error).toBeNull();
+    });
   });
 });
