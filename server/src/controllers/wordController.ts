@@ -33,63 +33,16 @@ export const create_word = [
     }),
   errorValidationHandler,
   // @desc    Upload files in order to add them into the database
-  // asyncHandler(async (req, res, next) => {
-  //   const { userId } = req.params;
-  //   // If a CSV file is not provided, then go to the next request handler
-  //   if (!req.file) {
-  //     next();
-  //     return;
-  //   }
-  //   const words: string[] = [];
-  //   let invalidWords = 0;
-  //   const parser = parse({
-  //     delimiter: ",",
-  //     relax_column_count: true, // Relax column count to avoid errors with varying columns
-  //     skip_empty_lines: true, // Skip any empty lines in the file
-  //     trim: true, // Automatically trim values
-  //   });
-
-  //   // Use the readable stream api to consume records
-  //   parser.on("readable", async () => {
-  //     let record;
-  //     while ((record = parser.read()) !== null) {
-  //       // Assuming each record could have multiple columns but you want the first column
-  //       let word;
-  //       if (record.length > 1) {
-  //         for (let i = 0; i < record.length; i++) {
-  //           word = record[i];
-  //           words.push(word);
-  //           const newWord = await createWord(userId, word);
-  //           if (newWord) {
-  //             invalidWords++;
-  //           }
-  //         }
-  //       } else {
-  //         word = record[0];
-  //         words.push(word); // Capture only the first column if there are multiple
-  //         const newWord = await createWord(userId, word);
-  //         if (newWord) {
-  //           invalidWords++;
-  //         }
-  //       }
-  //     }
-  //   });
-
-  //   // Catch any error
-  //   parser.on("error", (err) => {
-  //     console.error(err.message);
-  //     res.status(500).json({ message: `Parsing error: ${err.message}` });
-  //   });
-
-  //   parser.on("end", async () => {
-  //     const length = words.length;
-  //     const validWords = length - invalidWords;
-  //     res.status(200).json({ valid: validWords, invalid: invalidWords });
-  //   });
-  //   // Write buffer to parser and end
-  //   parser.write(req.file.buffer.toString());
-  //   parser.end();
-  // }),
+  asyncHandler(async (req, res, next) => {
+    const { userId } = req.params;
+    // If a CSV file is not provided, then go to the next request handler
+    if (!req.file) {
+      next();
+      return;
+    }
+    const words: string[] = [];
+    let invalidWords = 0;
+  }),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const { word } = req.body;
