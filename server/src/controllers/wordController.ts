@@ -1,7 +1,7 @@
 import { parse } from "csv-parse";
 import asyncHandler from "express-async-handler";
 import { body, query, validationResult } from "express-validator";
-import upload from "../config/multer";
+import { upload } from "../config/multer";
 import { Http } from "../utils/http";
 // import UserWord from "../models/userWord";
 // import Word from "../models/word";
@@ -109,12 +109,16 @@ export const create_word = [
       newWord = await wordQueries.createWord(json);
     }
 
-    await userWordQueries.createUserWord(
+    const { userWord, message } = await userWordQueries.createUserWord(
       userId,
       newWord ? newWord.id : existingWord.id
     );
 
-    res.status(200).json({ word: newWord || existingWord });
+    if (!userWord) {
+      res.status(409).json({ word: null, message });
+    }
+
+    res.status(200).json({ word: newWord || existingWord, message });
   }),
 ];
 

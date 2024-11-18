@@ -12,9 +12,7 @@ const csvFilter = (
   }
 };
 
-const upload = multer({
+export const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: csvFilter,
 });
-
-export default upload;
