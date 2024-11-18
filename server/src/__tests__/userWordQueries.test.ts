@@ -74,7 +74,7 @@ describe("userWordQueries", () => {
         sampleUser1.password
       );
 
-      const newUserWord = await userWordQueries.createUserWord(
+      const { userWord } = await userWordQueries.createUserWord(
         newUser.id,
         newWord.id
       );
@@ -82,11 +82,33 @@ describe("userWordQueries", () => {
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser.id
       );
-      expect(newUserWord.user_id).toBe(newUser.id);
-      expect(newUserWord.word_id).toBe(newWord.id);
-      expect(newUserWord.learned).toBe(false);
-      expect(new Date(newUserWord.created_at).getTime()).toBeLessThanOrEqual(
+      expect(userWord.user_id).toBe(newUser.id);
+      expect(userWord.word_id).toBe(newWord.id);
+      expect(userWord.learned).toBe(false);
+      expect(new Date(userWord.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
+      );
+      expect(userWordsExists).toBe(true);
+    });
+
+    it("does nothing when the user word already exists", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const { message } = await userWordQueries.createUserWord(
+        newUser.id,
+        newWord.id
+      );
+      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
+        newUser.id
+      );
+      expect(message).toBe(
+        "You have already added this word in your dictionary."
       );
       expect(userWordsExists).toBe(true);
     });
@@ -95,12 +117,15 @@ describe("userWordQueries", () => {
       const newWord = await wordQueries.createWord(word);
       const userId = "1";
 
-      const userWord = await userWordQueries.createUserWord(userId, newWord.id);
+      const { message } = await userWordQueries.createUserWord(
+        userId,
+        newWord.id
+      );
 
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         userId
       );
-      expect(userWord.message).toBe(`User with ID ${userId} does not exist.`);
+      expect(message).toBe(`User with ID ${userId} does not exist.`);
       expect(userWordsExists).toBe(false);
     });
 
@@ -111,12 +136,15 @@ describe("userWordQueries", () => {
         sampleUser1.password
       );
 
-      const userWord = await userWordQueries.createUserWord(newUser.id, wordId);
+      const { message } = await userWordQueries.createUserWord(
+        newUser.id,
+        wordId
+      );
 
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser.id
       );
-      expect(userWord.message).toBe(`Word with ID ${wordId} does not exist.`);
+      expect(message).toBe(`Word with ID ${wordId} does not exist.`);
       expect(userWordsExists).toBe(false);
     });
 
@@ -124,13 +152,217 @@ describe("userWordQueries", () => {
       const wordId = "1";
       const userId = "1";
 
-      const userWord = await userWordQueries.createUserWord(userId, wordId);
+      const { message } = await userWordQueries.createUserWord(userId, wordId);
 
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         userId
       );
-      expect(userWord.message).toBe(`User with ID ${userId} does not exist.`);
+      expect(message).toBe(`User with ID ${userId} does not exist.`);
       expect(userWordsExists).toBe(false);
+    });
+  });
+
+  describe("getUserWordsByUserId", () => {
+    it("gets the user word by user ID", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const existingUserWords = await userWordQueries.getUserWordsByUserId(
+        newUser.id
+      );
+      const existingUserWord = existingUserWords[0];
+      expect(existingUserWord.user_id).toBe(newUser.id);
+      expect(existingUserWord.word_id).toBe(newWord.id);
+      expect(existingUserWord.learned).toBe(false);
+      expect(
+        new Date(existingUserWord.created_at).getTime()
+      ).toBeLessThanOrEqual(Date.now());
+    });
+
+    it("returns an empty list of rows if the user has no user words", async () => {
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+
+      const existingUserWords = await userWordQueries.getUserWordsByUserId(
+        newUser.id
+      );
+
+      expect(existingUserWords).toEqual([]);
+    });
+  });
+
+  describe("existsUserWordsByUserId", () => {
+    it("returns true when the user word exists", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const userWordsExist = await userWordQueries.existsUserWordsByUserId(
+        newUser.id
+      );
+
+      expect(userWordsExist).toBe(true);
+    });
+
+    it("returns false when no user words for the user exist", async () => {
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+
+      const userWordsExist = await userWordQueries.existsUserWordsByUserId(
+        newUser.id
+      );
+
+      expect(userWordsExist).toBe(false);
+    });
+  });
+
+  describe("getUserWord", () => {
+    it("gets the user word by user and word IDs", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const { userWord } = await userWordQueries.getUserWord(
+        newUser.id,
+        newWord.id
+      );
+
+      expect(userWord.user_id).toBe(newUser.id);
+      expect(userWord.word_id).toBe(newWord.id);
+      expect(userWord.learned).toBe(false);
+      expect(new Date(userWord.created_at).getTime()).toBeLessThanOrEqual(
+        Date.now()
+      );
+    });
+
+    it("returns a message when the user does not exist", async () => {
+      const userId = "2";
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const { message } = await userWordQueries.getUserWord("2", newWord.id);
+
+      expect(message).toBe(`User with ID ${userId} does not exist.`);
+    });
+
+    it("returns a message when the word does not exist", async () => {
+      const wordId = "2";
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const { message } = await userWordQueries.getUserWord(newUser.id, wordId);
+
+      expect(message).toBe(`Word with ID ${wordId} does not exist.`);
+    });
+
+    it("returns a message when the user and word does not exist", async () => {
+      const userId = "2";
+      const wordId = "2";
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const { message } = await userWordQueries.getUserWord(userId, wordId);
+
+      expect(message).toBe(`User with ID ${userId} does not exist.`);
+    });
+  });
+
+  describe("userWordExists", () => {
+    it("returns true if the user word exists", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+      await userWordQueries.createUserWord(newUser.id, newWord.id);
+
+      const userWordExists = await userWordQueries.userWordExists(
+        newUser.id,
+        newWord.id
+      );
+
+      expect(userWordExists).toBe(true);
+    });
+
+    it("returns false when the user word does not exist", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+
+      const userWordExists = await userWordQueries.userWordExists(
+        newUser.id,
+        newWord.id
+      );
+
+      expect(userWordExists).toBe(false);
+    });
+
+    it("returns false when the user does not exist", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const userId = "1";
+
+      const userWordExists = await userWordQueries.userWordExists(
+        userId,
+        newWord.id
+      );
+
+      expect(userWordExists).toBe(false);
+    });
+
+    it("returns false when the word does not exist", async () => {
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+      const wordId = "2";
+      await userWordQueries.createUserWord(newUser.id, wordId);
+
+      const userWordExists = await userWordQueries.userWordExists(
+        newUser.id,
+        wordId
+      );
+
+      expect(userWordExists).toBe(false);
+    });
+
+    it("returns a message when the user and word does not exist", async () => {
+      const userId = "2";
+      const wordId = "2";
+      await userWordQueries.createUserWord(userId, wordId);
+
+      const { message } = await userWordQueries.getUserWord(userId, wordId);
+
+      expect(message).toBe(`User with ID ${userId} does not exist.`);
     });
   });
 
@@ -141,10 +373,10 @@ describe("userWordQueries", () => {
         sampleUser1.username,
         sampleUser1.password
       );
-
       await userWordQueries.createUserWord(newUser.id, newWord.id);
 
       await userWordQueries.deleteUserWord(newUser.id, newWord.id);
+
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser.id
       );
@@ -156,12 +388,15 @@ describe("userWordQueries", () => {
       const userId = "1";
       await userWordQueries.createUserWord(userId, newWord.id);
 
-      const userWord = await userWordQueries.deleteUserWord(userId, newWord.id);
+      const { message } = await userWordQueries.deleteUserWord(
+        userId,
+        newWord.id
+      );
 
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         userId
       );
-      expect(userWord.message).toBe(`User with ID ${userId} does not exist.`);
+      expect(message).toBe(`User with ID ${userId} does not exist.`);
       expect(userWordsExists).toBe(false);
     });
 
@@ -173,12 +408,15 @@ describe("userWordQueries", () => {
       );
       await userWordQueries.createUserWord(newUser.id, wordId);
 
-      const userWord = await userWordQueries.deleteUserWord(newUser.id, wordId);
+      const { message } = await userWordQueries.deleteUserWord(
+        newUser.id,
+        wordId
+      );
 
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser.id
       );
-      expect(userWord.message).toBe(`Word with ID ${wordId} does not exist.`);
+      expect(message).toBe(`Word with ID ${wordId} does not exist.`);
       expect(userWordsExists).toBe(false);
     });
 
@@ -187,12 +425,12 @@ describe("userWordQueries", () => {
       const userId = "1";
       await userWordQueries.createUserWord(userId, wordId);
 
-      const userWord = await userWordQueries.deleteUserWord(userId, wordId);
+      const { message } = await userWordQueries.deleteUserWord(userId, wordId);
 
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         userId
       );
-      expect(userWord.message).toBe(`User with ID ${userId} does not exist.`);
+      expect(message).toBe(`User with ID ${userId} does not exist.`);
       expect(userWordsExists).toBe(false);
     });
   });
@@ -233,7 +471,10 @@ describe("userWordQueries", () => {
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser.id
       );
-      expect(deletedUserWords).toEqual([userWord1, userWord2]);
+      expect(deletedUserWords).toEqual([
+        userWord1.userWord,
+        userWord2.userWord,
+      ]);
       expect(userWordsExists).toBe(false);
     });
 
