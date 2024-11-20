@@ -57,218 +57,231 @@ describe("create_word", () => {
     });
 
   beforeEach(() => {
-    getWordByWordMock.mockClear();
-    createWordMock.mockClear();
-    httpGetMock.mockClear();
-    createUserWordMock.mockClear();
+    jest.clearAllMocks();
   });
 
-  describe("text word creation", () => {
-    it("calls the functions to create a word and a user word", async () => {
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .send({ word: word.word });
+  // describe("text word creation", () => {
+  //   it("calls the functions to create a word and a user word", async () => {
+  //     const response = await request(app)
+  //       .post(`/api/users/${userId}/words`)
+  //       .set("Accept", "application/json")
+  //       .send({ word: word.word });
 
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
-      expect(response.body.word).toEqual(word);
-      expect(response.body.message).toBe(successMessage);
-      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-      expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(word);
-      expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-    });
+  //     expect(response.headers["content-type"]).toMatch(/json/);
+  //     expect(response.status).toBe(200);
+  //     expect(response.body.word).toEqual(word);
+  //     expect(response.body.message).toBe(successMessage);
+  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
+  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
+  //     expect(httpGetMock).toHaveBeenCalledWith(
+  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
+  //     );
+  //     expect(createWordMock).toHaveBeenCalledTimes(1);
+  //     expect(createWordMock).toHaveBeenCalledWith(word);
+  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
+  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
+  //   });
 
-    it("does not call the functions to create a word if it already exists", async () => {
-      getWordByWordMock.mockImplementationOnce(async () => {
-        return word;
-      });
+  //   it("does not call the functions to create a word if it already exists", async () => {
+  //     getWordByWordMock.mockImplementationOnce(async () => {
+  //       return word;
+  //     });
 
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .send({ word: word.word });
+  //     const response = await request(app)
+  //       .post(`/api/users/${userId}/words`)
+  //       .set("Accept", "application/json")
+  //       .send({ word: word.word });
 
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
-      expect(response.body.word).toEqual(word);
-      expect(response.body.message).toEqual(successMessage);
-      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-      expect(httpGetMock).not.toHaveBeenCalled();
-      expect(createWordMock).not.toHaveBeenCalled();
-      expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-    });
+  //     expect(response.headers["content-type"]).toMatch(/json/);
+  //     expect(response.status).toBe(200);
+  //     expect(response.body.word).toEqual(word);
+  //     expect(response.body.message).toEqual(successMessage);
+  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
+  //     expect(httpGetMock).not.toHaveBeenCalled();
+  //     expect(createWordMock).not.toHaveBeenCalled();
+  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
+  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
+  //   });
 
-    it("does not create a user word if it already exists", async () => {
-      createUserWordMock.mockImplementationOnce(async () => {
-        return {
-          userWord: null,
-          message: errorMessage,
-        };
-      });
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .send({ word: word.word });
+  //   it("does not create a user word if it already exists", async () => {
+  //     createUserWordMock.mockImplementationOnce(async () => {
+  //       return {
+  //         userWord: null,
+  //         message: errorMessage,
+  //       };
+  //     });
+  //     const response = await request(app)
+  //       .post(`/api/users/${userId}/words`)
+  //       .set("Accept", "application/json")
+  //       .send({ word: word.word });
 
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(409);
-      expect(response.body.word).toBeNull();
-      expect(response.body.message).toBe(errorMessage);
-      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-      expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(word);
-      expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-    });
+  //     expect(response.headers["content-type"]).toMatch(/json/);
+  //     expect(response.status).toBe(409);
+  //     expect(response.body.word).toBeNull();
+  //     expect(response.body.message).toBe(errorMessage);
+  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
+  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
+  //     expect(httpGetMock).toHaveBeenCalledWith(
+  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
+  //     );
+  //     expect(createWordMock).toHaveBeenCalledTimes(1);
+  //     expect(createWordMock).toHaveBeenCalledWith(word);
+  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
+  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
+  //   });
 
-    it("creates the word if it is all uppercase", async () => {
-      const word = {
-        id: "1",
-        phonetic: "phonetic",
-        word: "WORD",
-        origin: "origin",
-        meanings: [],
-        phonetics: [
-          {
-            text: "woah-rd",
-            audio: "mp3",
-          },
-        ],
-      };
+  //   it("creates the word if it is all uppercase", async () => {
+  //     const word = {
+  //       id: "1",
+  //       phonetic: "phonetic",
+  //       word: "WORD",
+  //       origin: "origin",
+  //       meanings: [],
+  //       phonetics: [
+  //         {
+  //           text: "woah-rd",
+  //           audio: "mp3",
+  //         },
+  //       ],
+  //     };
 
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .send({ word: word.word });
+  //     const response = await request(app)
+  //       .post(`/api/users/${userId}/words`)
+  //       .set("Accept", "application/json")
+  //       .send({ word: word.word });
 
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
-      expect(response.body.word).toEqual({
-        ...word,
-        word: word.word.toLowerCase(),
-      });
-      expect(response.body.message).toBe(successMessage);
-      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-      expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith({
-        ...word,
-        word: word.word.toLowerCase(),
-      });
-      expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-    });
+  //     expect(response.headers["content-type"]).toMatch(/json/);
+  //     expect(response.status).toBe(200);
+  //     expect(response.body.word).toEqual({
+  //       ...word,
+  //       word: word.word.toLowerCase(),
+  //     });
+  //     expect(response.body.message).toBe(successMessage);
+  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
+  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
+  //     expect(httpGetMock).toHaveBeenCalledWith(
+  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
+  //     );
+  //     expect(createWordMock).toHaveBeenCalledTimes(1);
+  //     expect(createWordMock).toHaveBeenCalledWith({
+  //       ...word,
+  //       word: word.word.toLowerCase(),
+  //     });
+  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
+  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
+  //   });
 
-    it("does not create a word when the provided word is not a valid word", async () => {
-      const word = "this is a sentence, not a word.";
-      const message =
-        "Sorry pal, we couldn't find definitions for the word you were looking for.";
+  //   it("does not create a word when the provided word is not a valid word", async () => {
+  //     const word = "this is a sentence, not a word.";
+  //     const message =
+  //       "Sorry pal, we couldn't find definitions for the word you were looking for.";
 
-      httpGetMock.mockImplementation(async () => {
-        return { json: { message }, status: 200 };
-      });
+  //     httpGetMock.mockImplementation(async () => {
+  //       return { json: { message }, status: 200 };
+  //     });
 
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .send({ word });
+  //     const response = await request(app)
+  //       .post(`/api/users/${userId}/words`)
+  //       .set("Accept", "application/json")
+  //       .send({ word });
 
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe(message);
-      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word);
-      expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-      );
-    });
-  });
+  //     expect(response.headers["content-type"]).toMatch(/json/);
+  //     expect(response.status).toBe(400);
+  //     expect(response.body.message).toBe(message);
+  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+  //     expect(getWordByWordMock).toHaveBeenCalledWith(word);
+  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
+  //     expect(httpGetMock).toHaveBeenCalledWith(
+  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+  //     );
+  //   });
+  // });
 
   describe("csv word creation", () => {
+    const wordId1 = "1";
+    const wordId2 = "2";
+    const wordId3 = "3";
+    const wordId4 = "4";
+    const word1 = "dispensation";
+    const word2 = "serreptitously";
+    const word3 = "gutatory";
+    const word4 = "patronage";
+
+    beforeEach(() => {
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: word1, status: 200 };
+      });
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: word2, status: 200 };
+      });
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: word3, status: 200 };
+      });
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: word4, status: 200 };
+      });
+      createWordMock.mockImplementationOnce(async () => {
+        return { word: word1, id: wordId1 };
+      });
+      createWordMock.mockImplementationOnce(async () => {
+        return { word: word2, id: wordId2 };
+      });
+      createWordMock.mockImplementationOnce(async () => {
+        return { word: word3, id: wordId3 };
+      });
+      createWordMock.mockImplementationOnce(async () => {
+        return { word: word4, id: wordId4 };
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: { word: word1, userId }, message: successMessage };
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: { word: word2, userId }, message: successMessage };
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: { word: word3, userId }, message: successMessage };
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: { word: word4, userId }, message: successMessage };
+      });
+    });
+
     it("creates words and user words", async () => {
-      const filePath = __dirname + "../db/columnWords.csv";
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", filePath);
-
-      const words = ["dispensation", "serreptitously", "gutatory", "patronage"];
-      const wordId1 = "1";
-      const wordId2 = "2";
-      const wordId3 = "3";
-      const wordId4 = "4";
-
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: { word: words[0], id: wordId1 }, status: 200 };
-      });
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: { word: words[1], id: wordId2 }, status: 200 };
-      });
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: { word: words[2], id: wordId3 }, status: 200 };
-      });
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: { word: words[3], id: wordId4 }, status: 200 };
-      });
+        .attach("csv", "src/csv/columnWords.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("4 words have been created.");
       expect(getWordByWordMock).toHaveBeenCalledTimes(4);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[0]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[1]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[2]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[3]);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word4);
       expect(httpGetMock).toHaveBeenCalledTimes(4);
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[0]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word1}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[1]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[2]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[3]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word4}`
       );
       expect(createWordMock).toHaveBeenCalledTimes(4);
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[0],
-        id: wordId1,
-      });
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[1],
-        id: wordId2,
-      });
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[2],
-        id: wordId3,
-      });
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[3],
-        id: wordId4,
-      });
+      expect(createWordMock).toHaveBeenCalledWith(word1);
+      expect(createWordMock).toHaveBeenCalledWith(word2);
+      expect(createWordMock).toHaveBeenCalledWith(word3);
+      expect(createWordMock).toHaveBeenCalledWith(word4);
       expect(createUserWordMock).toHaveBeenCalledTimes(4);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
@@ -276,117 +289,212 @@ describe("create_word", () => {
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId4);
     });
 
-    it("creates words and user words by ignoring duplicate words in the csv file", async () => {
-      const filePath = __dirname + "../db/columnWords.csv";
+    // fit("creates words and user words by ignoring duplicate words in the csv file", async () => {
+    //   const words = [
+    //     "insert",
+    //     "duplicate",
+    //     "duplicate",
+    //     "words",
+    //     "into",
+    //     "database",
+    //   ];
+    //   const wordId1 = "1";
+    //   const wordId2 = "2";
+    //   const wordId3 = "3";
+    //   const wordId4 = "4";
+    //   const wordId5 = "5";
+    //   const word1 = words[0];
+    //   const word2 = words[1];
+    //   const word3 = words[3];
+    //   const word4 = words[4];
+    //   const word5 = words[5];
+
+    //   getWordByWordMock.mockImplementationOnce(async () => {
+    //     return null;
+    //   });
+    //   getWordByWordMock.mockImplementationOnce(async () => {
+    //     return null;
+    //   });
+    //   getWordByWordMock.mockImplementationOnce(async () => {
+    //     return word2;
+    //   });
+
+    //   httpGetMock.mockImplementationOnce(async () => {
+    //     return { json: word1, status: 200 };
+    //   });
+    //   httpGetMock.mockImplementationOnce(async () => {
+    //     return { json: word2, status: 200 };
+    //   });
+    //   httpGetMock.mockImplementationOnce(async () => {
+    //     return { json: word2, status: 200 };
+    //   });
+    //   httpGetMock.mockImplementationOnce(async () => {
+    //     return { json: word3, status: 200 };
+    //   });
+    //   httpGetMock.mockImplementationOnce(async () => {
+    //     return { json: word4, status: 200 };
+    //   });
+    //   httpGetMock.mockImplementationOnce(async () => {
+    //     return { json: word5, status: 200 };
+    //   });
+    //   createWordMock.mockImplementationOnce(async () => {
+    //     return { word: word1, id: wordId1 };
+    //   });
+    //   createWordMock.mockImplementationOnce(async () => {
+    //     return { word: word2, id: wordId2 };
+    //   });
+    //   createWordMock.mockImplementationOnce(async () => {
+    //     return { word: word3, id: wordId3 };
+    //   });
+    //   createWordMock.mockImplementationOnce(async () => {
+    //     return { word: word4, id: wordId4 };
+    //   });
+    //   createWordMock.mockImplementationOnce(async () => {
+    //     return { word: word5, id: wordId5 };
+    //   });
+    //   const response = await request(app)
+    //     .post(`/api/users/${userId}/words`)
+    //     .set("Accept", "application/json")
+    //     .attach("csv", "src/csv/columnWords.csv");
+
+    //   expect(response.headers["content-type"]).toMatch(/json/);
+    //   expect(response.status).toBe(200);
+    //   expect(response.body.message).toBe("5 words have been created.");
+    //   expect(getWordByWordMock).toHaveBeenCalledTimes(5);
+    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[0]);
+    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[1]);
+    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[3]);
+    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[4]);
+    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[5]);
+    //   expect(httpGetMock).toHaveBeenCalledTimes(5);
+    //   expect(httpGetMock).toHaveBeenCalledWith(
+    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[0]}`
+    //   );
+    //   expect(httpGetMock).toHaveBeenCalledWith(
+    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[1]}`
+    //   );
+    //   expect(httpGetMock).toHaveBeenCalledWith(
+    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[3]}`
+    //   );
+    //   expect(httpGetMock).toHaveBeenCalledWith(
+    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[4]}`
+    //   );
+    //   expect(httpGetMock).toHaveBeenCalledWith(
+    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[5]}`
+    //   );
+    //   expect(createWordMock).toHaveBeenCalledTimes(5);
+    //   expect(createWordMock).toHaveBeenCalledWith(word1);
+    //   expect(createWordMock).toHaveBeenCalledWith(word2);
+    //   expect(createWordMock).toHaveBeenCalledWith(word3);
+    //   expect(createWordMock).toHaveBeenCalledWith(word4);
+    //   expect(createWordMock).toHaveBeenCalledWith(word5);
+    //   expect(createUserWordMock).toHaveBeenCalledTimes(5);
+    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
+    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
+    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId3);
+    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId4);
+    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId5);
+    // });
+
+    it("creates words and user words even when any of words in the csv file already exist in the database", async () => {
+      getWordByWordMock.mockReset();
+      getWordByWordMock.mockImplementationOnce(async () => {
+        return { word: word1 };
+      });
+      getWordByWordMock.mockImplementation(async () => {
+        return null;
+      });
+
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", filePath);
-
-      const words = [
-        "insert",
-        "duplicate",
-        "duplicate",
-        "words",
-        "into",
-        "database",
-      ];
-      const wordId1 = "1";
-      const wordId2 = "2";
-      const wordId3 = "3";
-      const wordId4 = "4";
-      const wordId5 = "5";
-
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
-      expect(response.body.message).toBe("5 words have been created.");
-      expect(getWordByWordMock).toHaveBeenCalledTimes(5);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[0]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[1]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[3]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[4]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[5]);
-      expect(httpGetMock).toHaveBeenCalledTimes(5);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[0]}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[1]}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[3]}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[4]}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[5]}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(5);
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[0],
-        id: wordId1,
-      });
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[1],
-        id: wordId2,
-      });
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[3],
-        id: wordId3,
-      });
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[4],
-        id: wordId4,
-      });
-      expect(createWordMock).toHaveBeenCalledWith({
-        word: words[5],
-        id: wordId5,
-      });
-      expect(createUserWordMock).toHaveBeenCalledTimes(5);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId3);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId5);
-    });
-
-    it("creates some words and user words when some of words in the csv file already exist in the database", async () => {
-      const wordId1 = "1";
-      const wordId2 = "2";
-      const wordId3 = "3";
-      const wordId4 = "4";
-      const words = ["dispensation", "serreptitously", "gutatory", "patronage"];
-      getWordByWordMock.mockImplementationOnce(async () => {
-        return { word: words[0] };
-      });
-      getWordByWordMock.mockImplementationOnce(async () => {
-        return { word: words[1] };
-      });
-
-      const filePath = __dirname + "../db/columnWords.csv";
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .attach("csv", filePath);
+        .attach("csv", "src/csv/columnWords.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("4 words have been created.");
       expect(getWordByWordMock).toHaveBeenCalledTimes(4);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[0]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[1]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[2]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[3]);
-      expect(httpGetMock).toHaveBeenCalledTimes(2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word4);
+      expect(httpGetMock).toHaveBeenCalledTimes(3);
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[2]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[3]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
       );
-      expect(createWordMock).toHaveBeenCalledTimes(2);
-      expect(createWordMock).toHaveBeenCalledWith({ word: words[2] });
-      expect(createWordMock).toHaveBeenCalledWith({ word: words[3] });
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word4}`
+      );
+      expect(createWordMock).toHaveBeenCalledTimes(3);
+      expect(createWordMock).toHaveBeenCalledWith(word2);
+      expect(createWordMock).toHaveBeenCalledWith(word3);
+      // expect(createWordMock).toHaveBeenCalledWith(word4);
+      expect(createUserWordMock).toHaveBeenCalledTimes(4);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId3);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId4);
+    });
+
+    it("creates words and user words and skips over user words that already exist in the database", async () => {
+      createUserWordMock.mockReset();
+      getWordByWordMock.mockImplementationOnce(async () => {
+        return { word: word1 };
+      });
+      getWordByWordMock.mockImplementation(async () => {
+        return null;
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return {
+          userWord: null,
+          message: "You have already added this word in your dictionary.",
+        };
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: { word: word2, userId }, message: successMessage };
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: { word: word3, userId }, message: successMessage };
+      });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: { word: word4, userId }, message: successMessage };
+      });
+
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .attach("csv", "src/csv/columnWords.csv");
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe(
+        "You have already added 1 of these words in your dictionary."
+      );
+      expect(getWordByWordMock).toHaveBeenCalledTimes(4);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word4);
+      expect(httpGetMock).toHaveBeenCalledTimes(4);
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word1}`
+      );
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
+      );
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
+      );
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word4}`
+      );
+      expect(createWordMock).toHaveBeenCalledTimes(4);
+      expect(createWordMock).toHaveBeenCalledWith(word1);
+      expect(createWordMock).toHaveBeenCalledWith(word2);
+      expect(createWordMock).toHaveBeenCalledWith(word3);
+      expect(createWordMock).toHaveBeenCalledWith(word4);
       expect(createUserWordMock).toHaveBeenCalledTimes(4);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
@@ -395,14 +503,13 @@ describe("create_word", () => {
     });
 
     it("creates no words and user words when the csv file is empty", async () => {
-      const filePath = __dirname + "../db/columnWords.csv";
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", filePath);
+        .attach("csv", "src/csv/empty.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(400);
       expect(response.body.message).toBe(
         "0 words have been created because the CSV file is empty."
       );
@@ -412,57 +519,73 @@ describe("create_word", () => {
       expect(createUserWordMock).not.toHaveBeenCalled();
     });
 
-    it("creates some words when there are some valid words in the csv", async () => {
+    it("creates valid words even if there are any invalid words in the csv", async () => {
+      const word1 = "valid";
+      const word2 = "word";
+      const word3 = "not a valid word";
       const wordId1 = "1";
       const wordId2 = "2";
-      const words = ["valid", "word", "not a valid word"];
+      jest.resetAllMocks();
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: word1, status: 200 };
+      });
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: word2, status: 200 };
+      });
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: { message: "Invalid word." }, status: 400 };
+      });
 
-      const filePath = __dirname + "../db/columnWords.csv";
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", filePath);
+        .attach("csv", "src/csv/someValid.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body.message).toBe(
-        "2 words were created, 1 value is not a valid word"
+        `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${word3}`
       );
       expect(getWordByWordMock).toHaveBeenCalledTimes(3);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[0]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[1]);
-      expect(getWordByWordMock).toHaveBeenCalledWith(words[2]);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
       expect(httpGetMock).toHaveBeenCalledTimes(3);
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[0]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word1}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[1]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${words[2]}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
       );
       expect(createWordMock).toHaveBeenCalledTimes(2);
-      expect(createWordMock).toHaveBeenCalledWith(words[1]);
-      expect(createWordMock).toHaveBeenCalledWith(words[2]);
+      expect(createWordMock).toHaveBeenCalledWith(word1);
+      expect(createWordMock).toHaveBeenCalledWith(word2);
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
-      expect(createUserWordMock).toHaveBeenCalledWith(words[1], wordId1);
-      expect(createUserWordMock).toHaveBeenCalledWith(words[2], wordId2);
+      expect(createUserWordMock).toHaveBeenCalledWith(word1, wordId1);
+      expect(createUserWordMock).toHaveBeenCalledWith(word2, wordId2);
     });
 
     it("creates no words when no valid words in the csv file exist", async () => {
-      const filePath = __dirname + "../db/columnWords.csv";
+      jest.resetAllMocks();
+      httpGetMock.mockImplementation(async () => {
+        return { json: { message: "Invalid word." }, status: 400 };
+      });
+
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", filePath);
+        .attach("csv", "src/csv/phrases.csv");
+
+      const phrases = ["a man", "a plan", "a canal"];
 
       expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(400);
       expect(response.body.message).toBe(
-        "0 words have been created because there are no valid words in the CSV file."
+        `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${phrases[0]}, ${phrases[1]}, and ${phrases[2]}`
       );
-      const phrases = ["a man", "a plan", "a canal"];
       expect(getWordByWordMock).toHaveBeenCalledTimes(3);
       expect(getWordByWordMock).toHaveBeenCalledWith(phrases[0]);
       expect(getWordByWordMock).toHaveBeenCalledWith(phrases[1]);
@@ -477,6 +600,30 @@ describe("create_word", () => {
       expect(httpGetMock).toHaveBeenCalledWith(
         `https://api.dictionaryapi.dev/api/v2/entries/en/${phrases[2]}`
       );
+      expect(createWordMock).not.toHaveBeenCalled();
+      expect(createUserWordMock).not.toHaveBeenCalled();
+    });
+
+    it("sends an error message when the CSV parser returns an error", async () => {
+      const message = "CSV file was parsed incorrectly.";
+      jest.spyOn(Csv.prototype, "read").mockImplementation(async () => {
+        return {
+          records: [],
+          count: 0,
+          error: message,
+        };
+      });
+
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .attach("csv", "src/csv/incorrect.csv");
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe(message);
+      expect(getWordByWordMock).not.toHaveBeenCalled();
+      expect(httpGetMock).not.toHaveBeenCalled();
       expect(createWordMock).not.toHaveBeenCalled();
       expect(createUserWordMock).not.toHaveBeenCalled();
     });

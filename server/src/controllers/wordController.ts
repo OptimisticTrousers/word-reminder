@@ -9,16 +9,18 @@ import { Http } from "../utils/http";
 import { UserWordQueries } from "../db/userWordQueries";
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
 import { Word, WordQueries } from "../db/wordQueries";
+import { Csv } from "../utils/csv";
 
 const userWordQueries = new UserWordQueries();
 const wordQueries = new WordQueries();
 const http = new Http();
+const csv = new Csv();
 
 // @desc Add new word and user word
 // @route POST /api/users/:userId/words
 // @access Private
 export const create_word = [
-  upload.single("file"),
+  upload.single("csv"),
   // Check for the user to create a word with either text or csv upload, but with neither
   body("word")
     .trim()
@@ -40,8 +42,75 @@ export const create_word = [
       next();
       return;
     }
-    const words: string[] = [];
-    let invalidWords = 0;
+    const { records, error, count } = await csv.read(req.file.buffer);
+
+    if (error) {
+      res.status(400).json({ message: error });
+    }
+
+    if (records.length == 0) {
+      res.status(400).json({
+        message: "0 words have been created because the CSV file is empty.",
+      });
+    }
+
+    const invalidWords = [];
+    let wordCount = 0;
+
+    for (let i = 0; i < records.length; i++) {
+      for (let j = 0; j < records[i].length; j++) {
+        const word = records[i][j];
+        const existingWord = await wordQueries.getWordByWord(word);
+        let newWord = null;
+
+        if (!existingWord) {
+          const { json } = await http.get(
+            `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+          );
+
+          if (json.message) {
+            invalidWords.push(word);
+            continue;
+          }
+
+          newWord = await wordQueries.createWord(json);
+        }
+
+        const { userWord } = await userWordQueries.createUserWord(
+          userId,
+          newWord ? newWord.id : existingWord.id
+        );
+
+        if (userWord) {
+          wordCount++;
+        }
+      }
+    }
+
+    if (invalidWords.length > 0) {
+      const formatter = new Intl.ListFormat("en", {
+        style: "long",
+        type: "conjunction",
+      });
+
+      res.status(400).json({
+        message: `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${formatter.format(
+          invalidWords
+        )}`,
+      });
+      return;
+    }
+
+    if (wordCount < count) {
+      res.status(200).json({
+        message: `You have already added ${
+          count - wordCount
+        } of these words in your dictionary.`,
+      });
+    }
+
+    res.status(200).json({ message: `${wordCount} words have been created.` });
+    return;
   }),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
