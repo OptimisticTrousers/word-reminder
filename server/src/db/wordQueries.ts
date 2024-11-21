@@ -6,10 +6,11 @@ export interface Word {
   phonetic?: string;
   word: string;
   origin?: string;
+  license?: License;
+  sourceUrls?: string[];
 }
-
 interface Phonetic {
-  text: string;
+  text?: string;
   audio?: string;
 }
 
@@ -25,6 +26,11 @@ interface Definition {
   antonyms?: string[];
 }
 
+interface License {
+  name: string;
+  url: string;
+}
+
 type DefinitionId = Definition & { meaningId: string };
 
 type MeaningId = Meaning & { wordId: string };
@@ -32,7 +38,12 @@ type MeaningId = Meaning & { wordId: string };
 type PhoneticId = Phonetic & { wordId: string };
 
 export class WordQueries extends Queries {
-  async createWord({ meanings, phonetics, phonetic, word, origin }: Word) {
+  async createWord(json: Word[]) {
+    const word = json[0].word;
+    const origin = json[0].origin;
+    const phonetic = json[0].phonetic;
+    const meanings = json[0].meanings;
+    const phonetics = json[0].phonetics;
     const { rows } = await this.pool.query(
       "INSERT INTO words(word, origin, phonetic) VALUES ($1, $2, $3) RETURNING *",
       [word.toLowerCase(), origin, phonetic]

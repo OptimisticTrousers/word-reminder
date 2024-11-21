@@ -51,7 +51,7 @@ export class Database {
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         word VARCHAR (45) UNIQUE NOT NULL,
         origin TEXT,
-        phonetic TEXT NOT NULL,
+        phonetic TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
 
@@ -59,7 +59,7 @@ export class Database {
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         audio TEXT,
         source_url TEXT,
-        text TEXT NOT NULL,
+        text TEXT,
         word_id INTEGER REFERENCES words(id)
       );
 

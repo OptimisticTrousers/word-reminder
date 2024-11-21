@@ -6,200 +6,294 @@ import "../db/testPopulatedb";
 describe("wordQueries", () => {
   const wordQueries = new WordQueries();
 
-  const word = {
-    word: "hello",
-    phonetic: "həˈləʊ",
-    phonetics: [
-      {
-        text: "həˈləʊ",
-        audio:
-          "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
-      },
-      {
-        text: "hɛˈləʊ",
-      },
-    ],
-    origin: "early 19th century: variant of earlier hollo ; related to holla.",
-    meanings: [
-      {
-        partOfSpeech: "exclamation",
-        definitions: [
-          {
-            definition: "used as a greeting or to begin a phone conversation.",
-            example: "hello there, Katie!",
-            synonyms: [],
-            antonyms: [],
+  const json = [
+    {
+      word: "hello",
+      phonetics: [
+        {
+          audio:
+            "https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3",
+          sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=75797336",
+          license: {
+            name: "BY-SA 4.0",
+            url: "https://creativecommons.org/licenses/by-sa/4.0",
           },
-        ],
-      },
-      {
-        partOfSpeech: "noun",
-        definitions: [
-          {
-            definition: "an utterance of ‘hello’; a greeting.",
-            example: "she was getting polite nods and hellos from people",
-            synonyms: [],
-            antonyms: [],
+        },
+        {
+          text: "/həˈləʊ/",
+          audio:
+            "https://api.dictionaryapi.dev/media/pronunciations/en/hello-uk.mp3",
+          sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=9021983",
+          license: {
+            name: "BY 3.0 US",
+            url: "https://creativecommons.org/licenses/by/3.0/us",
           },
-        ],
+        },
+        {
+          text: "/həˈloʊ/",
+          audio: "",
+        },
+      ],
+      meanings: [
+        {
+          partOfSpeech: "noun",
+          definitions: [
+            {
+              definition: '"Hello!" or an equivalent greeting.',
+              synonyms: [],
+              antonyms: [],
+            },
+          ],
+          synonyms: ["greeting"],
+          antonyms: [],
+        },
+        {
+          partOfSpeech: "verb",
+          definitions: [
+            {
+              definition: 'To greet with "hello".',
+              synonyms: [],
+              antonyms: [],
+            },
+          ],
+          synonyms: [],
+          antonyms: [],
+        },
+        {
+          partOfSpeech: "interjection",
+          definitions: [
+            {
+              definition:
+                "A greeting (salutation) said when meeting someone or acknowledging someone’s arrival or presence.",
+              synonyms: [],
+              antonyms: [],
+              example: "Hello, everyone.",
+            },
+            {
+              definition: "A greeting used when answering the telephone.",
+              synonyms: [],
+              antonyms: [],
+              example: "Hello? How may I help you?",
+            },
+            {
+              definition:
+                "A call for response if it is not clear if anyone is present or listening, or if a telephone conversation may have been disconnected.",
+              synonyms: [],
+              antonyms: [],
+              example: "Hello? Is anyone there?",
+            },
+            {
+              definition:
+                "Used sarcastically to imply that the person addressed or referred to has done something the speaker or writer considers to be foolish.",
+              synonyms: [],
+              antonyms: [],
+              example:
+                "You just tried to start your car with your cell phone. Hello?",
+            },
+            {
+              definition: "An expression of puzzlement or discovery.",
+              synonyms: [],
+              antonyms: [],
+              example: "Hello! What’s going on here?",
+            },
+          ],
+          synonyms: [],
+          antonyms: ["bye", "goodbye"],
+        },
+      ],
+      license: {
+        name: "CC BY-SA 3.0",
+        url: "https://creativecommons.org/licenses/by-sa/3.0",
       },
-      {
-        partOfSpeech: "verb",
-        definitions: [
-          {
-            definition: "say or shout ‘hello’.",
-            example: "I pressed the phone button and helloed",
-            synonyms: [],
-            antonyms: [],
-          },
-        ],
-      },
-    ],
-  };
+      sourceUrls: ["https://en.wiktionary.org/wiki/hello"],
+    },
+  ];
+
+  const word = json[0].word;
+  const phonetics = json[0].phonetics;
+  const meanings = json[0].meanings;
 
   describe("createWord", () => {
     it("creates word with all fields", async () => {
-      await wordQueries.createWord(word);
+      await wordQueries.createWord(json);
 
-      const wordExists = await wordQueries.wordExistsByWord(word.word);
+      const wordExists = await wordQueries.wordExistsByWord(word);
       expect(wordExists).toBe(true);
     });
 
     it("creates word without an origin field", async () => {
-      await wordQueries.createWord({
-        word: word.word,
-        phonetics: word.phonetics,
-        phonetic: word.phonetic,
-        meanings: word.meanings,
-      });
+      await wordQueries.createWord([
+        {
+          word,
+          phonetics,
+          meanings,
+        },
+      ]);
 
-      const wordExists = await wordQueries.wordExistsByWord(word.word);
+      const wordExists = await wordQueries.wordExistsByWord(word);
       expect(wordExists).toBe(true);
     });
 
-    it("creates definitions, meanings, and phonetics after a word is created", async () => {
-      const newWord = await wordQueries.createWord(word);
+    it("creates word after a word is created", async () => {
+      const newWord = await wordQueries.createWord(json);
 
       const { rows } = await pool.query(
-        `SELECT words.*, meanings.*, definitions.*, phonetics.* 
+        `SELECT words.*
          FROM words 
-         JOIN meanings ON meanings.word_id = words.id 
-         JOIN definitions ON definitions.meaning_id = meanings.id 
-         JOIN phonetics ON phonetics.word_id = words.id 
          WHERE words.id = $1`,
         [newWord.id]
       );
 
       expect(rows).toEqual([
         {
-          antonyms: [],
-          audio:
-            "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
           created_at: expect.any(Date),
-          definition: "used as a greeting or to begin a phone conversation.",
-          example: "hello there, Katie!",
+          id: 1,
+          origin: null,
+          phonetic: null,
+          word: "hello",
+        },
+      ]);
+      expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
+        Date.now()
+      );
+    });
+
+    it("creates meanings after a word is created", async () => {
+      const newWord = await wordQueries.createWord(json);
+
+      const { rows } = await pool.query(
+        `SELECT meanings.*
+         FROM words 
+         JOIN meanings ON meanings.word_id = words.id 
+         WHERE words.id = $1`,
+        [newWord.id]
+      );
+
+      expect(rows).toEqual([
+        {
+          id: 1,
+          part_of_speech: "noun",
+          word_id: 1,
+        },
+        {
+          id: 2,
+          part_of_speech: "verb",
+          word_id: 1,
+        },
+        {
+          id: 3,
+          part_of_speech: "interjection",
+          word_id: 1,
+        },
+      ]);
+    });
+
+    it("creates definitions after a word is created", async () => {
+      const newWord = await wordQueries.createWord(json);
+
+      const { rows } = await pool.query(
+        `SELECT definitions.*
+         FROM words 
+         JOIN meanings ON meanings.word_id = words.id 
+         JOIN definitions ON definitions.meaning_id = meanings.id 
+         WHERE words.id = $1`,
+        [newWord.id]
+      );
+      expect(rows).toEqual([
+        {
+          antonyms: [],
+          definition: '"Hello!" or an equivalent greeting.',
+          example: null,
           id: 1,
           meaning_id: 1,
-          origin:
-            "early 19th century: variant of earlier hollo ; related to holla.",
-          part_of_speech: "exclamation",
-          phonetic: "həˈləʊ",
-          source_url: null,
           synonyms: [],
-          text: "həˈləʊ",
-          word: "hello",
-          word_id: 1,
         },
         {
           antonyms: [],
-          audio:
-            "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
-          created_at: expect.any(Date),
-          definition: "an utterance of ‘hello’; a greeting.",
-          example: "she was getting polite nods and hellos from people",
-          id: 1,
-          meaning_id: 2,
-          origin:
-            "early 19th century: variant of earlier hollo ; related to holla.",
-          part_of_speech: "noun",
-          phonetic: "həˈləʊ",
-          source_url: null,
-          synonyms: [],
-          text: "həˈləʊ",
-          word: "hello",
-          word_id: 1,
-        },
-        {
-          antonyms: [],
-          audio:
-            "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
-          created_at: expect.any(Date),
-          definition: "say or shout ‘hello’.",
-          example: "I pressed the phone button and helloed",
-          id: 1,
-          meaning_id: 3,
-          origin:
-            "early 19th century: variant of earlier hollo ; related to holla.",
-          part_of_speech: "verb",
-          phonetic: "həˈləʊ",
-          source_url: null,
-          synonyms: [],
-          text: "həˈləʊ",
-          word: "hello",
-          word_id: 1,
-        },
-        {
-          antonyms: [],
-          audio: null,
-          created_at: expect.any(Date),
-          definition: "used as a greeting or to begin a phone conversation.",
-          example: "hello there, Katie!",
-          id: 2,
-          meaning_id: 1,
-          origin:
-            "early 19th century: variant of earlier hollo ; related to holla.",
-          part_of_speech: "exclamation",
-          phonetic: "həˈləʊ",
-          source_url: null,
-          synonyms: [],
-          text: "hɛˈləʊ",
-          word: "hello",
-          word_id: 1,
-        },
-        {
-          antonyms: [],
-          audio: null,
-          created_at: expect.any(Date),
-          definition: "an utterance of ‘hello’; a greeting.",
-          example: "she was getting polite nods and hellos from people",
+          definition: 'To greet with "hello".',
+          example: null,
           id: 2,
           meaning_id: 2,
-          origin:
-            "early 19th century: variant of earlier hollo ; related to holla.",
-          part_of_speech: "noun",
-          phonetic: "həˈləʊ",
-          source_url: null,
           synonyms: [],
-          text: "hɛˈləʊ",
-          word: "hello",
-          word_id: 1,
         },
         {
           antonyms: [],
-          audio: null,
-          created_at: expect.any(Date),
-          definition: "say or shout ‘hello’.",
-          example: "I pressed the phone button and helloed",
-          id: 2,
+          definition:
+            "A greeting (salutation) said when meeting someone or acknowledging someone’s arrival or presence.",
+          example: "Hello, everyone.",
+          id: 3,
           meaning_id: 3,
-          origin:
-            "early 19th century: variant of earlier hollo ; related to holla.",
-          part_of_speech: "verb",
-          phonetic: "həˈləʊ",
-          source_url: null,
           synonyms: [],
-          text: "hɛˈləʊ",
-          word: "hello",
+        },
+        {
+          antonyms: [],
+          definition: "A greeting used when answering the telephone.",
+          example: "Hello? How may I help you?",
+          id: 4,
+          meaning_id: 3,
+          synonyms: [],
+        },
+        {
+          antonyms: [],
+          definition:
+            "A call for response if it is not clear if anyone is present or listening, or if a telephone conversation may have been disconnected.",
+          example: "Hello? Is anyone there?",
+          id: 5,
+          meaning_id: 3,
+          synonyms: [],
+        },
+        {
+          antonyms: [],
+          definition:
+            "Used sarcastically to imply that the person addressed or referred to has done something the speaker or writer considers to be foolish.",
+          example:
+            "You just tried to start your car with your cell phone. Hello?",
+          id: 6,
+          meaning_id: 3,
+          synonyms: [],
+        },
+        {
+          antonyms: [],
+          definition: "An expression of puzzlement or discovery.",
+          example: "Hello! What’s going on here?",
+          id: 7,
+          meaning_id: 3,
+          synonyms: [],
+        },
+      ]);
+    });
+    it("creates phonetics after a word is created", async () => {
+      const newWord = await wordQueries.createWord(json);
+
+      const { rows } = await pool.query(
+        `SELECT phonetics.* 
+         FROM words 
+         JOIN phonetics ON phonetics.word_id = words.id 
+         WHERE words.id = $1`,
+        [newWord.id]
+      );
+      expect(rows).toEqual([
+        {
+          audio:
+            "https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3",
+          id: 1,
+          source_url: null,
+          text: null,
+          word_id: 1,
+        },
+        {
+          audio:
+            "https://api.dictionaryapi.dev/media/pronunciations/en/hello-uk.mp3",
+          id: 2,
+          source_url: null,
+          text: "/həˈləʊ/",
+          word_id: 1,
+        },
+        {
+          audio: "",
+          id: 3,
+          source_url: null,
+          text: "/həˈloʊ/",
           word_id: 1,
         },
       ]);
@@ -208,7 +302,7 @@ describe("wordQueries", () => {
 
   describe("wordExistsById", () => {
     it("returns true when word exists", async () => {
-      const newWord = await wordQueries.createWord(word);
+      const newWord = await wordQueries.createWord(json);
 
       const wordExists = await wordQueries.wordExistsById(newWord.id);
 
@@ -224,19 +318,17 @@ describe("wordQueries", () => {
 
   describe("wordExistsByWord", () => {
     it("returns true when word exists", async () => {
-      await wordQueries.createWord(word);
+      await wordQueries.createWord(json);
 
-      const wordExists = await wordQueries.wordExistsByWord(word.word);
+      const wordExists = await wordQueries.wordExistsByWord(word);
 
       expect(wordExists).toBe(true);
     });
 
     it("returns true when the word exists in a different case", async () => {
-      await wordQueries.createWord(word);
+      await wordQueries.createWord(json);
 
-      const wordExists = await wordQueries.wordExistsByWord(
-        word.word.toUpperCase()
-      );
+      const wordExists = await wordQueries.wordExistsByWord(word.toUpperCase());
 
       expect(wordExists).toBe(true);
     });
@@ -250,26 +342,34 @@ describe("wordQueries", () => {
 
   describe("getWordByWord", () => {
     it("returns a word", async () => {
-      await wordQueries.createWord(word);
+      await wordQueries.createWord(json);
 
-      const newWord = await wordQueries.getWordByWord(word.word);
+      const newWord = await wordQueries.getWordByWord(word);
 
-      expect(newWord.word).toBe(word.word);
-      expect(newWord.origin).toBe(word.origin);
-      expect(newWord.phonetic).toBe(word.phonetic);
+      expect(newWord).toEqual({
+        created_at: expect.any(Date),
+        id: 1,
+        origin: null,
+        phonetic: null,
+        word: "hello",
+      });
       expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
     });
 
     it("returns word when the word exists in a different case", async () => {
-      await wordQueries.createWord(word);
+      await wordQueries.createWord(json);
 
-      const newWord = await wordQueries.getWordByWord(word.word.toUpperCase());
+      const newWord = await wordQueries.getWordByWord(word.toUpperCase());
 
-      expect(newWord.word).toBe(word.word);
-      expect(newWord.origin).toBe(word.origin);
-      expect(newWord.phonetic).toBe(word.phonetic);
+      expect(newWord).toEqual({
+        created_at: expect.any(Date),
+        id: 1,
+        origin: null,
+        phonetic: null,
+        word: "hello",
+      });
       expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
@@ -284,13 +384,17 @@ describe("wordQueries", () => {
 
   describe("getWordById", () => {
     it("returns a correct word", async () => {
-      const { id } = await wordQueries.createWord(word);
+      const { id } = await wordQueries.createWord(json);
 
       const newWord = await wordQueries.getWordById(id);
 
-      expect(newWord.word).toBe(word.word);
-      expect(newWord.origin).toBe(word.origin);
-      expect(newWord.phonetic).toBe(word.phonetic);
+      expect(newWord).toEqual({
+        created_at: expect.any(Date),
+        id: 1,
+        origin: null,
+        phonetic: null,
+        word: "hello",
+      });
       expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
