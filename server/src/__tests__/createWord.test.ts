@@ -252,6 +252,12 @@ describe("create_word", () => {
     };
 
     it("calls the functions to create a word and a user word", async () => {
+      /* Mock implementation of the `getWordByWord` function:
+      - This mock simulates a scenario where the queried word does not exist in the database.
+
+      - Purpose: To test the behavior of the application when a word needs to be fetched from an external API and added to the database.
+
+      - Example Use Case: Ensures that the system correctly handles the creation of a new word if it doesn't already exist in the database. */
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {

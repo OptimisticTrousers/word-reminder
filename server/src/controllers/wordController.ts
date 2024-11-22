@@ -68,11 +68,13 @@ export const create_word = [
             `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
           );
 
+          /* If the word is invalid, add it to the `invalidWords` array and continue processing. There is no reason to create a word or a user word if the word is invalid. */
           if (json.message) {
             invalidWords.push(word);
             continue;
           }
 
+          // If the word is valid, create it in the database.
           newWord = await wordQueries.createWord(json);
         }
 
@@ -81,12 +83,19 @@ export const create_word = [
           newWord ? newWord.id : existingWord.id
         );
 
+        /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
         if (userWord) {
           wordCount++;
         }
       }
     }
 
+    /* Invalid Words Response:
+    - Collect all invalid words in one go to avoid multiple server requests.
+
+    - Example: If a CSV file contains 100 words and 10 are invalid, sending all 10 invalid words in one response allows the user to fix them all at once, rather than resubmitting the file repeatedly for each invalid word.
+
+    - Without this approach, the user would have to fix the first invalid word, resubmit, and repeat the process 10 times, significantly increasing the server load and user frustration. */
     if (invalidWords.length > 0) {
       const formatter = new Intl.ListFormat("en", {
         style: "long",
@@ -101,6 +110,12 @@ export const create_word = [
       return;
     }
 
+    /* Existing User Words Response:
+    - Process all words in the CSV file, creating new user words for valid entries and skipping duplicates.
+
+    - Example: If the user imports a CSV file with 50 words and 10 already exist in their dictionary, the server creates 40 new entries and informs the user that 10 words were already added previously.
+
+    - This avoids stopping at the first duplicate and provides a summary for the user. */
     if (wordCount < count) {
       res.status(200).json({
         message: `You have already added ${
