@@ -46,7 +46,7 @@ export class WordQueries extends Queries {
     const phonetics = json[0].phonetics;
     const { rows } = await this.pool.query(
       "INSERT INTO words(word, origin, phonetic) VALUES ($1, $2, $3) RETURNING *",
-      [word.toLowerCase(), origin, phonetic]
+      [word, origin, phonetic]
     );
 
     const newWord = rows[0];

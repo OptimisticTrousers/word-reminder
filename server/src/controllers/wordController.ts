@@ -1,20 +1,16 @@
-import { parse } from "csv-parse";
 import asyncHandler from "express-async-handler";
-import { body, query, validationResult } from "express-validator";
-import { upload } from "../config/multer";
-import { Http } from "../utils/http";
-// import UserWord from "../models/userWord";
-// import Word from "../models/word";
+import { body } from "express-validator";
 
-import { UserWordQueries } from "../db/userWordQueries";
+import { upload } from "../config/multer";
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
-import { Word, WordQueries } from "../db/wordQueries";
+import { UserWordQueries } from "../db/userWordQueries";
 import { Csv } from "../utils/csv";
+import { Http } from "../utils/http";
+import { WordQueries } from "../db/wordQueries";
 
 const userWordQueries = new UserWordQueries();
 const wordQueries = new WordQueries();
 const http = new Http();
-const csv = new Csv();
 
 // @desc Add new word and user word
 // @route POST /api/users/:userId/words
@@ -25,6 +21,7 @@ export const create_word = [
   body("word")
     .trim()
     .escape()
+    .toLowerCase()
     .custom((value, { req }) => {
       if ((!value || value.length === 0) && !req.file) {
         // neither word nor csv has been provided
@@ -42,16 +39,19 @@ export const create_word = [
       next();
       return;
     }
+    const csv = new Csv();
     const { records, error, count } = await csv.read(req.file.buffer);
 
     if (error) {
       res.status(400).json({ message: error });
+      return;
     }
 
     if (records.length == 0) {
       res.status(400).json({
         message: "0 words have been created because the CSV file is empty.",
       });
+      return;
     }
 
     const invalidWords = [];
@@ -105,12 +105,12 @@ export const create_word = [
       res.status(200).json({
         message: `You have already added ${
           count - wordCount
-        } of these words in your dictionary.`,
+        } of these words in your dictionary. New words have been created if they were not already in your dictionary.`,
       });
+      return;
     }
 
     res.status(200).json({ message: `${wordCount} words have been created.` });
-    return;
   }),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
@@ -149,9 +149,10 @@ export const create_word = [
 // @access  Private
 export const delete_user_word = asyncHandler(async (req, res) => {
   const { wordId, userId } = req.params;
-  const deletedUserWord = await userWordQueries.deleteUserWord(userId, wordId);
+  const { userWord: deletedUserWord, message } =
+    await userWordQueries.deleteUserWord(userId, wordId);
 
-  res.status(200).json({ userWord: deletedUserWord });
+  res.status(200).json({ userWord: deletedUserWord, message });
 });
 
 // @desc    Get all words

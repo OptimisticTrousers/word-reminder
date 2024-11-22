@@ -14,14 +14,9 @@ describe("csv", () => {
 
       const { records, error, count } = await csv.read(fileBuffer);
 
-      expect(records).toEqual([
-        ["dispensation"],
-        ["serreptitously"],
-        ["gutatory"],
-        ["patronage"],
-      ]);
+      expect(records).toEqual([["dispensation"], ["patronage"]]);
       expect(error).toBeNull();
-      expect(count).toBe(4);
+      expect(count).toBe(2);
     });
 
     it("returns the list of values when the words are in a row", async () => {

@@ -4,253 +4,661 @@ import request from "supertest";
 import { UserWordQueries } from "../db/userWordQueries";
 import { WordQueries } from "../db/wordQueries";
 import { create_word } from "../controllers/wordController";
-import { Http } from "../utils/http";
 import { Csv } from "../utils/csv";
+import { Http } from "../utils/http";
 
 describe("create_word", () => {
-  const word = {
-    id: "1",
-    phonetic: "phonetic",
-    word: "word",
-    origin: "origin",
-    meanings: [],
-    phonetics: [
-      {
-        text: "woah-rd",
-        audio: "mp3",
-      },
-    ],
-  };
-  const userId = "1";
-  const userWord = {
-    id: "1",
-    user_id: userId,
-    word_id: word.id,
-    learned: false,
-  };
-  const successMessage = "Success!";
-  const errorMessage = "You have already added this word in your dictionary.";
-
   const app = express();
   app.use(express.json());
   app.post("/api/users/:userId/words", create_word);
-
-  const createUserWordMock = jest
-    .spyOn(UserWordQueries.prototype, "createUserWord")
-    .mockImplementation(async () => {
-      return { userWord, message: successMessage };
-    });
-  const getWordByWordMock = jest
-    .spyOn(WordQueries.prototype, "getWordByWord")
-    .mockImplementation(async () => {
-      return null;
-    });
-  const createWordMock = jest
-    .spyOn(WordQueries.prototype, "createWord")
-    .mockImplementation(async () => {
-      return word;
-    });
-  const httpGetMock = jest
-    .spyOn(Http.prototype, "get")
-    .mockImplementation(async () => {
-      return { json: word, status: 200 };
-    });
+  const successMessage = "Success!";
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // describe("text word creation", () => {
-  //   it("calls the functions to create a word and a user word", async () => {
-  //     const response = await request(app)
-  //       .post(`/api/users/${userId}/words`)
-  //       .set("Accept", "application/json")
-  //       .send({ word: word.word });
+  describe("text word creation", () => {
+    const response1 = [
+      {
+        word: "word",
+        phonetic: "/wɜːd/",
+        phonetics: [
+          {
+            text: "/wɜːd/",
+            audio: "",
+          },
+          {
+            text: "/wɝd/",
+            audio:
+              "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+            sourceUrl:
+              "https://commons.wikimedia.org/w/index.php?curid=1197728",
+            license: {
+              name: "BY-SA 3.0",
+              url: "https://creativecommons.org/licenses/by-sa/3.0",
+            },
+          },
+        ],
+        meanings: [
+          {
+            partOfSpeech: "noun",
+            definitions: [
+              {
+                definition:
+                  "The smallest unit of language that has a particular meaning and can be expressed by itself; the smallest discrete, meaningful unit of language. (contrast morpheme.)",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition: "Something like such a unit of language:",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "The fact or act of speaking, as opposed to taking action. .",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "Something that someone said; a comment, utterance; speech.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "A watchword or rallying cry, a verbal signal (even when consisting of multiple words).",
+                synonyms: [],
+                antonyms: [],
+                example: "mum's the word",
+              },
+              {
+                definition: "A proverb or motto.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition: "News; tidings (used without an article).",
+                synonyms: [],
+                antonyms: [],
+                example: "Have you had any word from John yet?",
+              },
+              {
+                definition:
+                  "An order; a request or instruction; an expression of will.",
+                synonyms: [],
+                antonyms: [],
+                example: "Don't fire till I give the word",
+              },
+              {
+                definition: "A promise; an oath or guarantee.",
+                synonyms: ["promise"],
+                antonyms: [],
+                example: "I give you my word that I will be there on time.",
+              },
+              {
+                definition: "A brief discussion or conversation.",
+                synonyms: [],
+                antonyms: [],
+                example: "Can I have a word with you?",
+              },
+              {
+                definition: "(in the plural) See words.",
+                synonyms: [],
+                antonyms: [],
+                example:
+                  "There had been words between him and the secretary about the outcome of the meeting.",
+              },
+              {
+                definition:
+                  "(sometimes Word) Communication from God; the message of the Christian gospel; the Bible, Scripture.",
+                synonyms: ["Bible", "word of God"],
+                antonyms: [],
+                example:
+                  "Her parents had lived in Botswana, spreading the word among the tribespeople.",
+              },
+              {
+                definition: "(sometimes Word) Logos, Christ.",
+                synonyms: ["God", "Logos"],
+                antonyms: [],
+              },
+            ],
+            synonyms: [
+              "Bible",
+              "word of God",
+              "God",
+              "Logos",
+              "promise",
+              "vocable",
+            ],
+            antonyms: [],
+          },
+          {
+            partOfSpeech: "verb",
+            definitions: [
+              {
+                definition:
+                  "To say or write (something) using particular words; to phrase (something).",
+                synonyms: ["express", "phrase", "put into words", "state"],
+                antonyms: [],
+                example: "I’m not sure how to word this letter to the council.",
+              },
+              {
+                definition: "To flatter with words, to cajole.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition: "To ply or overpower with words.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition: "To conjure with a word.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "To speak, to use words; to converse, to discourse.",
+                synonyms: [],
+                antonyms: [],
+              },
+            ],
+            synonyms: ["express", "phrase", "put into words", "state"],
+            antonyms: [],
+          },
+          {
+            partOfSpeech: "interjection",
+            definitions: [
+              {
+                definition:
+                  'Truth, indeed, that is the truth! The shortened form of the statement "My word is my bond."',
+                synonyms: [],
+                antonyms: [],
+                example:
+                  '"Yo, that movie was epic!" / "Word?" ("You speak the truth?") / "Word." ("I speak the truth.")',
+              },
+              {
+                definition:
+                  "(stereotypically) An abbreviated form of word up; a statement of the acknowledgment of fact with a hint of nonchalant approval.",
+                synonyms: [],
+                antonyms: [],
+              },
+            ],
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+        license: {
+          name: "CC BY-SA 3.0",
+          url: "https://creativecommons.org/licenses/by-sa/3.0",
+        },
+        sourceUrls: ["https://en.wiktionary.org/wiki/word"],
+      },
+      {
+        word: "word",
+        phonetic: "/wɜːd/",
+        phonetics: [
+          {
+            text: "/wɜːd/",
+            audio: "",
+          },
+          {
+            text: "/wɝd/",
+            audio:
+              "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+            sourceUrl:
+              "https://commons.wikimedia.org/w/index.php?curid=1197728",
+            license: {
+              name: "BY-SA 3.0",
+              url: "https://creativecommons.org/licenses/by-sa/3.0",
+            },
+          },
+        ],
+        meanings: [
+          {
+            partOfSpeech: "verb",
+            definitions: [
+              {
+                definition: "(except in set phrases) To be, become, betide.",
+                synonyms: [],
+                antonyms: [],
+                example: "Well worth thee, me friend.",
+              },
+            ],
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+        license: {
+          name: "CC BY-SA 3.0",
+          url: "https://creativecommons.org/licenses/by-sa/3.0",
+        },
+        sourceUrls: [
+          "https://en.wiktionary.org/wiki/word",
+          "https://en.wiktionary.org/wiki/worth",
+        ],
+      },
+    ];
+    const userId = "1";
+    const wordId = "1";
+    const userWord = {
+      id: "1",
+      user_id: userId,
+      word_id: wordId,
+      learned: false,
+    };
 
-  //     expect(response.headers["content-type"]).toMatch(/json/);
-  //     expect(response.status).toBe(200);
-  //     expect(response.body.word).toEqual(word);
-  //     expect(response.body.message).toBe(successMessage);
-  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
-  //     expect(httpGetMock).toHaveBeenCalledWith(
-  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
-  //     );
-  //     expect(createWordMock).toHaveBeenCalledTimes(1);
-  //     expect(createWordMock).toHaveBeenCalledWith(word);
-  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
-  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-  //   });
+    it("calls the functions to create a word and a user word", async () => {
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return null;
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementation(async () => {
+          return { json: response1, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementation(async () => {
+          return { ...response1[0], id: wordId };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementation(async () => {
+          return { userWord, message: successMessage };
+        });
 
-  //   it("does not call the functions to create a word if it already exists", async () => {
-  //     getWordByWordMock.mockImplementationOnce(async () => {
-  //       return word;
-  //     });
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .send({ word: response1[0].word });
 
-  //     const response = await request(app)
-  //       .post(`/api/users/${userId}/words`)
-  //       .set("Accept", "application/json")
-  //       .send({ word: word.word });
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body.word).toEqual({ ...response1[0], id: wordId });
+      expect(response.body.message).toBe(successMessage);
+      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(httpGetMock).toHaveBeenCalledTimes(1);
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
+      );
+      expect(createWordMock).toHaveBeenCalledTimes(1);
+      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createUserWordMock).toHaveBeenCalledTimes(1);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
+    });
 
-  //     expect(response.headers["content-type"]).toMatch(/json/);
-  //     expect(response.status).toBe(200);
-  //     expect(response.body.word).toEqual(word);
-  //     expect(response.body.message).toEqual(successMessage);
-  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-  //     expect(httpGetMock).not.toHaveBeenCalled();
-  //     expect(createWordMock).not.toHaveBeenCalled();
-  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
-  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-  //   });
+    it("does not call the functions to create a word if it already exists", async () => {
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return { ...response1[0], id: wordId };
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementation(async () => {
+          return { json: response1, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementation(async () => {
+          return { ...response1[0], id: wordId };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementation(async () => {
+          return { userWord, message: successMessage };
+        });
 
-  //   it("does not create a user word if it already exists", async () => {
-  //     createUserWordMock.mockImplementationOnce(async () => {
-  //       return {
-  //         userWord: null,
-  //         message: errorMessage,
-  //       };
-  //     });
-  //     const response = await request(app)
-  //       .post(`/api/users/${userId}/words`)
-  //       .set("Accept", "application/json")
-  //       .send({ word: word.word });
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .send({ word: response1[0].word });
 
-  //     expect(response.headers["content-type"]).toMatch(/json/);
-  //     expect(response.status).toBe(409);
-  //     expect(response.body.word).toBeNull();
-  //     expect(response.body.message).toBe(errorMessage);
-  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
-  //     expect(httpGetMock).toHaveBeenCalledWith(
-  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
-  //     );
-  //     expect(createWordMock).toHaveBeenCalledTimes(1);
-  //     expect(createWordMock).toHaveBeenCalledWith(word);
-  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
-  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-  //   });
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body.word).toEqual({ ...response1[0], id: wordId });
+      expect(response.body.message).toEqual(successMessage);
+      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(httpGetMock).not.toHaveBeenCalled();
+      expect(createWordMock).not.toHaveBeenCalled();
+      expect(createUserWordMock).toHaveBeenCalledTimes(1);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
+    });
 
-  //   it("creates the word if it is all uppercase", async () => {
-  //     const word = {
-  //       id: "1",
-  //       phonetic: "phonetic",
-  //       word: "WORD",
-  //       origin: "origin",
-  //       meanings: [],
-  //       phonetics: [
-  //         {
-  //           text: "woah-rd",
-  //           audio: "mp3",
-  //         },
-  //       ],
-  //     };
+    it("does not create a user word if it already exists", async () => {
+      const message = "You have already added this word in your dictionary.";
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return null;
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementation(async () => {
+          return { json: response1, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementation(async () => {
+          return { ...response1[0], id: wordId };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementation(async () => {
+          return {
+            userWord: null,
+            message,
+          };
+        });
 
-  //     const response = await request(app)
-  //       .post(`/api/users/${userId}/words`)
-  //       .set("Accept", "application/json")
-  //       .send({ word: word.word });
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .send({ word: response1[0].word });
 
-  //     expect(response.headers["content-type"]).toMatch(/json/);
-  //     expect(response.status).toBe(200);
-  //     expect(response.body.word).toEqual({
-  //       ...word,
-  //       word: word.word.toLowerCase(),
-  //     });
-  //     expect(response.body.message).toBe(successMessage);
-  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-  //     expect(getWordByWordMock).toHaveBeenCalledWith(word.word);
-  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
-  //     expect(httpGetMock).toHaveBeenCalledWith(
-  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word.word}`
-  //     );
-  //     expect(createWordMock).toHaveBeenCalledTimes(1);
-  //     expect(createWordMock).toHaveBeenCalledWith({
-  //       ...word,
-  //       word: word.word.toLowerCase(),
-  //     });
-  //     expect(createUserWordMock).toHaveBeenCalledTimes(1);
-  //     expect(createUserWordMock).toHaveBeenCalledWith(userId, word.id);
-  //   });
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(409);
+      expect(response.body.word).toBeNull();
+      expect(response.body.message).toBe(message);
+      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(httpGetMock).toHaveBeenCalledTimes(1);
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
+      );
+      expect(createWordMock).toHaveBeenCalledTimes(1);
+      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createUserWordMock).toHaveBeenCalledTimes(1);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
+    });
 
-  //   it("does not create a word when the provided word is not a valid word", async () => {
-  //     const word = "this is a sentence, not a word.";
-  //     const message =
-  //       "Sorry pal, we couldn't find definitions for the word you were looking for.";
+    it("creates the word if it is all uppercase", async () => {
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return null;
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementation(async () => {
+          return { json: response1, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementation(async () => {
+          return { ...response1[0], id: wordId };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementation(async () => {
+          return { userWord, message: successMessage };
+        });
 
-  //     httpGetMock.mockImplementation(async () => {
-  //       return { json: { message }, status: 200 };
-  //     });
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .send({ word: response1[0].word.toUpperCase() });
 
-  //     const response = await request(app)
-  //       .post(`/api/users/${userId}/words`)
-  //       .set("Accept", "application/json")
-  //       .send({ word });
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body.word).toEqual({ ...response1[0], id: wordId });
+      expect(response.body.message).toBe(successMessage);
+      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(httpGetMock).toHaveBeenCalledTimes(1);
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
+      );
+      expect(createWordMock).toHaveBeenCalledTimes(1);
+      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createUserWordMock).toHaveBeenCalledTimes(1);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
+    });
 
-  //     expect(response.headers["content-type"]).toMatch(/json/);
-  //     expect(response.status).toBe(400);
-  //     expect(response.body.message).toBe(message);
-  //     expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-  //     expect(getWordByWordMock).toHaveBeenCalledWith(word);
-  //     expect(httpGetMock).toHaveBeenCalledTimes(1);
-  //     expect(httpGetMock).toHaveBeenCalledWith(
-  //       `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-  //     );
-  //   });
-  // });
+    it("does not create a word when the provided word is not a valid word", async () => {
+      const word = "this is a sentence, not a word.";
+      const message =
+        "Sorry pal, we couldn't find definitions for the word you were looking for.";
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return null;
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementation(async () => {
+          return { json: { message }, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementation(async () => {
+          return { ...response1[0], id: wordId };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementation(async () => {
+          return { userWord, message: successMessage };
+        });
+
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .send({ word });
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe(message);
+      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(word);
+      expect(httpGetMock).toHaveBeenCalledTimes(1);
+      expect(httpGetMock).toHaveBeenCalledWith(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+      );
+      expect(createWordMock).not.toHaveBeenCalled();
+      expect(createUserWordMock).not.toHaveBeenCalled();
+    });
+  });
 
   describe("csv word creation", () => {
+    const response1 = [
+      {
+        word: "dispensation",
+        phonetic: "/dɪsˌpɛnˈseɪʃən/",
+        phonetics: [
+          {
+            text: "/dɪsˌpɛnˈseɪʃən/",
+            audio:
+              "https://api.dictionaryapi.dev/media/pronunciations/en/dispensation-uk.mp3",
+            sourceUrl:
+              "https://commons.wikimedia.org/w/index.php?curid=90913126",
+            license: {
+              name: "BY-SA 4.0",
+              url: "https://creativecommons.org/licenses/by-sa/4.0",
+            },
+          },
+        ],
+        meanings: [
+          {
+            partOfSpeech: "noun",
+            definitions: [
+              {
+                definition:
+                  "The act of dispensing or dealing out; distribution; often used of the distribution of good and evil by God to man, or more generically, of the acts and modes of his administration.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "That which is dispensed, dealt out, or appointed; that which is enjoined or bestowed",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "A system of principles, promises, and rules ordained and administered; scheme; economy; as, the Patriarchal, Mosaic, and Christian dispensations.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "The relaxation of a law in a particular case; permission to do something forbidden, or to omit doing something enjoined; specifically, in the Roman Catholic Church, exemption from some ecclesiastical law or obligation to God which a man has incurred of his own free will (oaths, vows, etc.).",
+                synonyms: [],
+                antonyms: [],
+              },
+            ],
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+        license: {
+          name: "CC BY-SA 3.0",
+          url: "https://creativecommons.org/licenses/by-sa/3.0",
+        },
+        sourceUrls: ["https://en.wiktionary.org/wiki/dispensation"],
+      },
+    ];
+
+    const response2 = [
+      {
+        word: "patronage",
+        phonetic: "/ˈpeɪtɹənɪd͡ʒ/",
+        phonetics: [
+          {
+            text: "/ˈpeɪtɹənɪd͡ʒ/",
+            audio: "",
+          },
+        ],
+        meanings: [
+          {
+            partOfSpeech: "noun",
+            definitions: [
+              {
+                definition:
+                  "The act of providing approval and support; backing; championship.",
+                synonyms: [],
+                antonyms: [],
+                example:
+                  "His vigorous patronage of the conservatives got him in trouble with progressives.",
+              },
+              {
+                definition: "Customers collectively; clientele; business.",
+                synonyms: [],
+                antonyms: [],
+                example: "The restaurant had an upper-class patronage.",
+              },
+              {
+                definition:
+                  "A communication that indicates lack of respect by patronizing the recipient; condescension; disdain.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "Granting favours or giving contracts or making appointments to office in return for political support.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition: "Guardianship, as of a saint; tutelary care.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition: "The right of nomination to political office.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "The right of presentation to church or ecclesiastical benefice; advowson.",
+                synonyms: [],
+                antonyms: [],
+              },
+            ],
+            synonyms: [],
+            antonyms: [],
+          },
+          {
+            partOfSpeech: "verb",
+            definitions: [
+              {
+                definition: "To support by being a patron of.",
+                synonyms: [],
+                antonyms: [],
+              },
+              {
+                definition:
+                  "To be a regular customer or client of; to patronize",
+                synonyms: ["keep going", "support"],
+                antonyms: [],
+              },
+            ],
+            synonyms: ["keep going", "support"],
+            antonyms: [],
+          },
+        ],
+        license: {
+          name: "CC BY-SA 3.0",
+          url: "https://creativecommons.org/licenses/by-sa/3.0",
+        },
+        sourceUrls: ["https://en.wiktionary.org/wiki/patronage"],
+      },
+    ];
+    const userId = "1";
     const wordId1 = "1";
     const wordId2 = "2";
-    const wordId3 = "3";
-    const wordId4 = "4";
-    const word1 = "dispensation";
-    const word2 = "serreptitously";
-    const word3 = "gutatory";
-    const word4 = "patronage";
-
-    beforeEach(() => {
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: word1, status: 200 };
-      });
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: word2, status: 200 };
-      });
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: word3, status: 200 };
-      });
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: word4, status: 200 };
-      });
-      createWordMock.mockImplementationOnce(async () => {
-        return { word: word1, id: wordId1 };
-      });
-      createWordMock.mockImplementationOnce(async () => {
-        return { word: word2, id: wordId2 };
-      });
-      createWordMock.mockImplementationOnce(async () => {
-        return { word: word3, id: wordId3 };
-      });
-      createWordMock.mockImplementationOnce(async () => {
-        return { word: word4, id: wordId4 };
-      });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: { word: word1, userId }, message: successMessage };
-      });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: { word: word2, userId }, message: successMessage };
-      });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: { word: word3, userId }, message: successMessage };
-      });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: { word: word4, userId }, message: successMessage };
-      });
-    });
+    const userWord1 = {
+      id: "1",
+      user_id: userId,
+      word_id: wordId1,
+      learned: false,
+    };
+    const userWord2 = {
+      id: "1",
+      user_id: userId,
+      word_id: wordId2,
+      learned: false,
+    };
 
     it("creates words and user words", async () => {
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return null;
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementationOnce(async () => {
+          return { json: response1, status: 200 };
+        });
+      httpGetMock.mockImplementationOnce(async () => {
+        return { json: response2, status: 200 };
+      });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementationOnce(async () => {
+          return { ...response1[0], id: wordId1 };
+        });
+      createWordMock.mockImplementationOnce(async () => {
+        return { ...response2[0], id: wordId2 };
+      });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementationOnce(async () => {
+          return { userWord: userWord1, message: successMessage };
+        });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: userWord2, message: successMessage };
+      });
+
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
@@ -258,151 +666,51 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe("4 words have been created.");
-      expect(getWordByWordMock).toHaveBeenCalledTimes(4);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word2);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word4);
-      expect(httpGetMock).toHaveBeenCalledTimes(4);
+      expect(response.body.message).toBe("2 words have been created.");
+      expect(getWordByWordMock).toHaveBeenCalledTimes(2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
+      expect(httpGetMock).toHaveBeenCalledTimes(2);
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word1}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
       );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word4}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(4);
-      expect(createWordMock).toHaveBeenCalledWith(word1);
-      expect(createWordMock).toHaveBeenCalledWith(word2);
-      expect(createWordMock).toHaveBeenCalledWith(word3);
-      expect(createWordMock).toHaveBeenCalledWith(word4);
-      expect(createUserWordMock).toHaveBeenCalledTimes(4);
+      expect(createWordMock).toHaveBeenCalledTimes(2);
+      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createWordMock).toHaveBeenCalledWith(response2);
+      expect(createUserWordMock).toHaveBeenCalledTimes(2);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId3);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId4);
     });
 
-    // fit("creates words and user words by ignoring duplicate words in the csv file", async () => {
-    //   const words = [
-    //     "insert",
-    //     "duplicate",
-    //     "duplicate",
-    //     "words",
-    //     "into",
-    //     "database",
-    //   ];
-    //   const wordId1 = "1";
-    //   const wordId2 = "2";
-    //   const wordId3 = "3";
-    //   const wordId4 = "4";
-    //   const wordId5 = "5";
-    //   const word1 = words[0];
-    //   const word2 = words[1];
-    //   const word3 = words[3];
-    //   const word4 = words[4];
-    //   const word5 = words[5];
-
-    //   getWordByWordMock.mockImplementationOnce(async () => {
-    //     return null;
-    //   });
-    //   getWordByWordMock.mockImplementationOnce(async () => {
-    //     return null;
-    //   });
-    //   getWordByWordMock.mockImplementationOnce(async () => {
-    //     return word2;
-    //   });
-
-    //   httpGetMock.mockImplementationOnce(async () => {
-    //     return { json: word1, status: 200 };
-    //   });
-    //   httpGetMock.mockImplementationOnce(async () => {
-    //     return { json: word2, status: 200 };
-    //   });
-    //   httpGetMock.mockImplementationOnce(async () => {
-    //     return { json: word2, status: 200 };
-    //   });
-    //   httpGetMock.mockImplementationOnce(async () => {
-    //     return { json: word3, status: 200 };
-    //   });
-    //   httpGetMock.mockImplementationOnce(async () => {
-    //     return { json: word4, status: 200 };
-    //   });
-    //   httpGetMock.mockImplementationOnce(async () => {
-    //     return { json: word5, status: 200 };
-    //   });
-    //   createWordMock.mockImplementationOnce(async () => {
-    //     return { word: word1, id: wordId1 };
-    //   });
-    //   createWordMock.mockImplementationOnce(async () => {
-    //     return { word: word2, id: wordId2 };
-    //   });
-    //   createWordMock.mockImplementationOnce(async () => {
-    //     return { word: word3, id: wordId3 };
-    //   });
-    //   createWordMock.mockImplementationOnce(async () => {
-    //     return { word: word4, id: wordId4 };
-    //   });
-    //   createWordMock.mockImplementationOnce(async () => {
-    //     return { word: word5, id: wordId5 };
-    //   });
-    //   const response = await request(app)
-    //     .post(`/api/users/${userId}/words`)
-    //     .set("Accept", "application/json")
-    //     .attach("csv", "src/csv/columnWords.csv");
-
-    //   expect(response.headers["content-type"]).toMatch(/json/);
-    //   expect(response.status).toBe(200);
-    //   expect(response.body.message).toBe("5 words have been created.");
-    //   expect(getWordByWordMock).toHaveBeenCalledTimes(5);
-    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[0]);
-    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[1]);
-    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[3]);
-    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[4]);
-    //   expect(getWordByWordMock).toHaveBeenCalledWith(words[5]);
-    //   expect(httpGetMock).toHaveBeenCalledTimes(5);
-    //   expect(httpGetMock).toHaveBeenCalledWith(
-    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[0]}`
-    //   );
-    //   expect(httpGetMock).toHaveBeenCalledWith(
-    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[1]}`
-    //   );
-    //   expect(httpGetMock).toHaveBeenCalledWith(
-    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[3]}`
-    //   );
-    //   expect(httpGetMock).toHaveBeenCalledWith(
-    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[4]}`
-    //   );
-    //   expect(httpGetMock).toHaveBeenCalledWith(
-    //     `https://api.dictionaryapi.dev/api/v2/entries/en/${words[5]}`
-    //   );
-    //   expect(createWordMock).toHaveBeenCalledTimes(5);
-    //   expect(createWordMock).toHaveBeenCalledWith(word1);
-    //   expect(createWordMock).toHaveBeenCalledWith(word2);
-    //   expect(createWordMock).toHaveBeenCalledWith(word3);
-    //   expect(createWordMock).toHaveBeenCalledWith(word4);
-    //   expect(createWordMock).toHaveBeenCalledWith(word5);
-    //   expect(createUserWordMock).toHaveBeenCalledTimes(5);
-    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
-    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
-    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId3);
-    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId4);
-    //   expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId5);
-    // });
-
-    it("creates words and user words even when any of words in the csv file already exist in the database", async () => {
-      getWordByWordMock.mockReset();
+    it("creates user words even when any of words in the csv file already exist in the database", async () => {
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementationOnce(async () => {
+          return { ...response1[0], id: wordId1 };
+        });
       getWordByWordMock.mockImplementationOnce(async () => {
-        return { word: word1 };
-      });
-      getWordByWordMock.mockImplementation(async () => {
         return null;
+      });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementationOnce(async () => {
+          return { json: response2, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementationOnce(async () => {
+          return { ...response2[0], id: wordId2 };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementationOnce(async () => {
+          return { userWord: userWord1, message: successMessage };
+        });
+      createUserWordMock.mockImplementationOnce(async () => {
+        return { userWord: userWord2, message: successMessage };
       });
 
       const response = await request(app)
@@ -412,56 +720,53 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe("4 words have been created.");
-      expect(getWordByWordMock).toHaveBeenCalledTimes(4);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word2);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word4);
-      expect(httpGetMock).toHaveBeenCalledTimes(3);
+      expect(response.body.message).toBe("2 words have been created.");
+      expect(getWordByWordMock).toHaveBeenCalledTimes(2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
+      expect(httpGetMock).toHaveBeenCalledTimes(1);
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
       );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word4}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(3);
-      expect(createWordMock).toHaveBeenCalledWith(word2);
-      expect(createWordMock).toHaveBeenCalledWith(word3);
-      // expect(createWordMock).toHaveBeenCalledWith(word4);
-      expect(createUserWordMock).toHaveBeenCalledTimes(4);
+      expect(createWordMock).toHaveBeenCalledTimes(1);
+      expect(createWordMock).toHaveBeenCalledWith(response2);
+      expect(createUserWordMock).toHaveBeenCalledTimes(2);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId3);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId4);
     });
 
     it("creates words and user words and skips over user words that already exist in the database", async () => {
-      createUserWordMock.mockReset();
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementationOnce(async () => {
+          return { ...response1[0], id: wordId1 };
+        });
       getWordByWordMock.mockImplementationOnce(async () => {
-        return { word: word1 };
-      });
-      getWordByWordMock.mockImplementation(async () => {
         return null;
       });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementationOnce(async () => {
+          return { json: response2, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementationOnce(async () => {
+          return { ...response2[0], id: wordId2 };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementationOnce(async () => {
+          return {
+            userWord: null,
+            message,
+          };
+        });
       createUserWordMock.mockImplementationOnce(async () => {
-        return {
-          userWord: null,
-          message: "You have already added this word in your dictionary.",
-        };
+        return { userWord: userWord2, message: successMessage };
       });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: { word: word2, userId }, message: successMessage };
-      });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: { word: word3, userId }, message: successMessage };
-      });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: { word: word4, userId }, message: successMessage };
-      });
+      const message =
+        "You have already added 1 of these words in your dictionary. New words have been created if they were not already in your dictionary.";
 
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
@@ -470,39 +775,34 @@ describe("create_word", () => {
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe(
-        "You have already added 1 of these words in your dictionary."
+        "You have already added 1 of these words in your dictionary. New words have been created if they were not already in your dictionary."
       );
-      expect(getWordByWordMock).toHaveBeenCalledTimes(4);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word2);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word4);
-      expect(httpGetMock).toHaveBeenCalledTimes(4);
+      expect(getWordByWordMock).toHaveBeenCalledTimes(2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
+      expect(httpGetMock).toHaveBeenCalledTimes(1);
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word1}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
       );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word4}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(4);
-      expect(createWordMock).toHaveBeenCalledWith(word1);
-      expect(createWordMock).toHaveBeenCalledWith(word2);
-      expect(createWordMock).toHaveBeenCalledWith(word3);
-      expect(createWordMock).toHaveBeenCalledWith(word4);
-      expect(createUserWordMock).toHaveBeenCalledTimes(4);
+      expect(createWordMock).toHaveBeenCalledTimes(1);
+      expect(createWordMock).toHaveBeenCalledWith(response2);
+      expect(createUserWordMock).toHaveBeenCalledTimes(2);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
       expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId3);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId4);
     });
 
     it("creates no words and user words when the csv file is empty", async () => {
+      const getWordByWordMock = jest.spyOn(
+        WordQueries.prototype,
+        "getWordByWord"
+      );
+      const httpGetMock = jest.spyOn(Http.prototype, "get");
+      const createWordMock = jest.spyOn(WordQueries.prototype, "createWord");
+      const createUserWordMock = jest.spyOn(
+        UserWordQueries.prototype,
+        "createUserWord"
+      );
+
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
@@ -519,22 +819,105 @@ describe("create_word", () => {
       expect(createUserWordMock).not.toHaveBeenCalled();
     });
 
-    it("creates valid words even if there are any invalid words in the csv", async () => {
-      const word1 = "valid";
-      const word2 = "word";
-      const word3 = "not a valid word";
-      const wordId1 = "1";
-      const wordId2 = "2";
-      jest.resetAllMocks();
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: word1, status: 200 };
-      });
-      httpGetMock.mockImplementationOnce(async () => {
-        return { json: word2, status: 200 };
-      });
+    it("creates no valid words when there are any invalid words in the csv", async () => {
+      const response1 = [
+        {
+          word: "valid",
+          phonetic: "/ˈvælɪd/",
+          phonetics: [
+            {
+              text: "/ˈvælɪd/",
+              audio:
+                "https://api.dictionaryapi.dev/media/pronunciations/en/valid-uk.mp3",
+              sourceUrl:
+                "https://commons.wikimedia.org/w/index.php?curid=94709661",
+              license: {
+                name: "BY-SA 4.0",
+                url: "https://creativecommons.org/licenses/by-sa/4.0",
+              },
+            },
+          ],
+          meanings: [
+            {
+              partOfSpeech: "adjective",
+              definitions: [
+                {
+                  definition: "Well grounded or justifiable, pertinent.",
+                  synonyms: [],
+                  antonyms: [],
+                  example:
+                    "I will believe him as soon as he offers a valid answer.",
+                },
+                {
+                  definition:
+                    "Acceptable, proper or correct; in accordance with the rules.",
+                  synonyms: [],
+                  antonyms: [],
+                  example: "A valid format for the date is MM/DD/YY.",
+                },
+                {
+                  definition:
+                    "Related to the current topic, or presented within context, relevant.",
+                  synonyms: [],
+                  antonyms: [],
+                },
+                {
+                  definition:
+                    "Of a formula or system: such that it evaluates to true regardless of the input values.",
+                  synonyms: [],
+                  antonyms: [],
+                },
+                {
+                  definition:
+                    "Of an argument: whose conclusion is always true whenever its premises are true.",
+                  synonyms: [],
+                  antonyms: [],
+                  example:
+                    "An argument is valid if and only if the set consisting of both (1) all of its premises and (2) the contradictory of its conclusion is inconsistent.",
+                },
+                {
+                  definition: "Effective.",
+                  synonyms: [],
+                  antonyms: [],
+                  example:
+                    "He is a priest now: although his ordination was contrary to the law of the church, it was still valid.",
+                },
+              ],
+              synonyms: [],
+              antonyms: ["invalid", "nonvalid"],
+            },
+          ],
+          license: {
+            name: "CC BY-SA 3.0",
+            url: "https://creativecommons.org/licenses/by-sa/3.0",
+          },
+          sourceUrls: ["https://en.wiktionary.org/wiki/valid"],
+        },
+      ];
+      const word2 = "not a valid word";
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return null;
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementationOnce(async () => {
+          return { json: response1, status: 200 };
+        });
       httpGetMock.mockImplementationOnce(async () => {
         return { json: { message: "Invalid word." }, status: 400 };
       });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "createWord")
+        .mockImplementationOnce(async () => {
+          return { ...response1[0], id: wordId1 };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .mockImplementationOnce(async () => {
+          return { userWord: userWord1, message: successMessage };
+        });
 
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
@@ -542,44 +925,48 @@ describe("create_word", () => {
         .attach("csv", "src/csv/someValid.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(400);
       expect(response.body.message).toBe(
-        `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${word3}`
+        `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${word2}`
       );
-      expect(getWordByWordMock).toHaveBeenCalledTimes(3);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word1);
+      expect(getWordByWordMock).toHaveBeenCalledTimes(2);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(word2);
-      expect(getWordByWordMock).toHaveBeenCalledWith(word3);
-      expect(httpGetMock).toHaveBeenCalledTimes(3);
+      expect(httpGetMock).toHaveBeenCalledTimes(2);
       expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word1}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
       );
       expect(httpGetMock).toHaveBeenCalledWith(
         `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
       );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word3}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(2);
-      expect(createWordMock).toHaveBeenCalledWith(word1);
-      expect(createWordMock).toHaveBeenCalledWith(word2);
-      expect(createUserWordMock).toHaveBeenCalledTimes(2);
-      expect(createUserWordMock).toHaveBeenCalledWith(word1, wordId1);
-      expect(createUserWordMock).toHaveBeenCalledWith(word2, wordId2);
+      expect(createWordMock).toHaveBeenCalledTimes(1);
+      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createUserWordMock).toHaveBeenCalledTimes(1);
+      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
     });
 
     it("creates no words when no valid words in the csv file exist", async () => {
-      jest.resetAllMocks();
-      httpGetMock.mockImplementation(async () => {
-        return { json: { message: "Invalid word." }, status: 400 };
-      });
+      const phrases = ["a man", "a plan", "a canal"];
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getWordByWord")
+        .mockImplementation(async () => {
+          return null;
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementation(async () => {
+          return { json: { message: "Invalid word." }, status: 400 };
+        });
+      const createWordMock = jest.spyOn(WordQueries.prototype, "createWord");
+      const createUserWordMock = jest.spyOn(
+        UserWordQueries.prototype,
+        "createUserWord"
+      );
 
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
         .attach("csv", "src/csv/phrases.csv");
-
-      const phrases = ["a man", "a plan", "a canal"];
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
@@ -605,8 +992,18 @@ describe("create_word", () => {
     });
 
     it("sends an error message when the CSV parser returns an error", async () => {
+      const getWordByWordMock = jest.spyOn(
+        WordQueries.prototype,
+        "getWordByWord"
+      );
+      const httpGetMock = jest.spyOn(Http.prototype, "get");
+      const createWordMock = jest.spyOn(WordQueries.prototype, "createWord");
+      const createUserWordMock = jest.spyOn(
+        UserWordQueries.prototype,
+        "createUserWord"
+      );
       const message = "CSV file was parsed incorrectly.";
-      jest.spyOn(Csv.prototype, "read").mockImplementation(async () => {
+      jest.spyOn(Csv.prototype, "read").mockImplementationOnce(async () => {
         return {
           records: [],
           count: 0,
@@ -630,6 +1027,7 @@ describe("create_word", () => {
   });
 
   it("returns 400 status code when neither a word or csv file was provided", async () => {
+    const userId = "1";
     const response = await request(app)
       .post(`/api/users/${userId}/words`)
       .set("Accept", "application/json")
