@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 
-import { variables } from "../utils/variables";
+import { variables } from "../config/variables";
 
 export const pool = new Pool({
   connectionString:

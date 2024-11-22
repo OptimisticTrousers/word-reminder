@@ -4,7 +4,7 @@ import request from "supertest";
 
 import { signup_user } from "../controllers/userController";
 import { UserQueries } from "../db/userQueries";
-import { variables } from "../utils/variables";
+import { variables } from "../config/variables";
 
 describe("signup_user", () => {
   const app = express();

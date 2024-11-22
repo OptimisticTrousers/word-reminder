@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 
 import { OmitPassword, UserQueries } from "../db/userQueries";
 import { UserWordQueries } from "../db/userWordQueries";
-import { variables } from "../utils/variables";
+import { variables } from "../config/variables";
 
 const userQueries = new UserQueries();
 const userWordQueries = new UserWordQueries();

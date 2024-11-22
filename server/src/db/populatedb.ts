@@ -1,6 +1,6 @@
 // Importing file that populates mock data for the database
 import { Database } from "./database";
-import { variables } from "../utils/variables";
+import { variables } from "../config/variables";
 
 // Deleting all of the documents in each collection in the database for the real Mongo database
 (async () => {

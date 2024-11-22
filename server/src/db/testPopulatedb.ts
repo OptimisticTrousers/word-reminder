@@ -1,6 +1,6 @@
 import { Database } from "./database";
 import { pool } from "./pool";
-import { variables } from "../utils/variables";
+import { variables } from "../config/variables";
 
 const database = new Database(variables.TEST_DATABASE_URL);
 
