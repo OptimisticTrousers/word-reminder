@@ -46,7 +46,7 @@ describe("validateUserId", () => {
     const user = await userQueries.createUser("username", "password");
 
     const response = await request(app)
-      .delete(`/api/users/${user.id}`)
+      .delete(`/api/users/${user!.id}`)
       .set("Accept", "application/json");
 
     expect(response.status).toBe(200);

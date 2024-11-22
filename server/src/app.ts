@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import connectPgSimple from "connect-pg-simple";
+import connectPgSimple, { PGStore } from "connect-pg-simple";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express from "express";
+import express, { Express } from "express";
 import session from "express-session";
 import logger from "morgan";
 import passport from "passport";
@@ -12,13 +12,13 @@ import { pool } from "./db/pool";
 import errorHandler from "./middleware/errorHandler";
 import notFoundHandler from "./middleware/notFoundHandler";
 import routes from "./routes/index";
-import { variables } from "./utils/variables";
+import { variables } from "./config/variables";
 
-const app = express();
+const app: Express = express();
 
-const pgSession = connectPgSimple(session);
+const pgSession: typeof PGStore = connectPgSimple(session);
 
-const sessionStore = new pgSession({
+const sessionStore: PGStore = new pgSession({
   pool,
   tableName: "session",
 });

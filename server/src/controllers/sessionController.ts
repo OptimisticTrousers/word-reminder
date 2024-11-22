@@ -5,7 +5,7 @@ import passport from "passport";
 // @desc    Get the current user (public details)
 // @route   GET /api/session
 // @access  Private
-export const current_user = asyncHandler(async (req, res) => {
+export const current_user = asyncHandler(async (req, res): Promise<void> => {
   res.status(200).json({ user: req.user });
 });
 
@@ -14,7 +14,7 @@ export const current_user = asyncHandler(async (req, res) => {
 // @access  Public
 export const login_user = asyncHandler(
   // Process request after validation and sanitization.
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     passport.authenticate("local", (err: Error, user: Express.User) => {
       if (err) {
         return next(err);
@@ -37,15 +37,13 @@ export const login_user = asyncHandler(
 // @desc    Logout a user
 // @route   DELETE /api/session
 // @access  Public
-export const logout_user = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.status(204).json({});
-  });
-};
+export const logout_user = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.status(204).json({});
+    });
+  }
+);

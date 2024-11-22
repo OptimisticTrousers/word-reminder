@@ -249,6 +249,7 @@ describe("create_word", () => {
       user_id: userId,
       word_id: wordId,
       learned: false,
+      created_at: new Date(),
     };
 
     it("calls the functions to create a word and a user word", async () => {
@@ -261,7 +262,7 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return null;
+          return undefined;
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -271,7 +272,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId };
+          return { ...response1[0], id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -286,7 +287,11 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.word).toEqual({ ...response1[0], id: wordId });
+      expect(response.body.word).toEqual({
+        ...response1[0],
+        id: wordId,
+        created_at: expect.any(String),
+      });
       expect(response.body.message).toBe(successMessage);
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
@@ -304,7 +309,7 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId };
+          return { ...response1[0], id: wordId, created_at: new Date() };
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -314,7 +319,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId };
+          return { ...response1[0], id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -329,7 +334,11 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.word).toEqual({ ...response1[0], id: wordId });
+      expect(response.body.word).toEqual({
+        ...response1[0],
+        id: wordId,
+        created_at: expect.any(String),
+      });
       expect(response.body.message).toEqual(successMessage);
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
@@ -344,7 +353,7 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return null;
+          return undefined;
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -354,7 +363,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId };
+          return { ...response1[0], id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -390,7 +399,7 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return null;
+          return undefined;
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -400,7 +409,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId };
+          return { ...response1[0], id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -415,7 +424,11 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.word).toEqual({ ...response1[0], id: wordId });
+      expect(response.body.word).toEqual({
+        ...response1[0],
+        id: wordId,
+        created_at: expect.any(String),
+      });
       expect(response.body.message).toBe(successMessage);
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
@@ -436,7 +449,7 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return null;
+          return undefined;
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -446,7 +459,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId };
+          return { ...response1[0], id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -626,19 +639,21 @@ describe("create_word", () => {
       user_id: userId,
       word_id: wordId1,
       learned: false,
+      created_at: new Date(),
     };
     const userWord2 = {
       id: "1",
       user_id: userId,
       word_id: wordId2,
       learned: false,
+      created_at: new Date(),
     };
 
     it("creates words and user words", async () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return null;
+          return undefined;
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -651,10 +666,10 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1 };
+          return { ...response1[0], id: wordId1, created_at: new Date() };
         });
       createWordMock.mockImplementationOnce(async () => {
-        return { ...response2[0], id: wordId2 };
+        return { ...response2[0], id: wordId2, created_at: new Date() };
       });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -695,10 +710,10 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1 };
+          return { ...response1[0], id: wordId1, created_at: new Date() };
         });
       getWordByWordMock.mockImplementationOnce(async () => {
-        return null;
+        return undefined;
       });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -708,7 +723,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementationOnce(async () => {
-          return { ...response2[0], id: wordId2 };
+          return { ...response2[0], id: wordId2, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -745,10 +760,10 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1 };
+          return { ...response1[0], id: wordId1, created_at: new Date() };
         });
       getWordByWordMock.mockImplementationOnce(async () => {
-        return null;
+        return undefined;
       });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -758,7 +773,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementationOnce(async () => {
-          return { ...response2[0], id: wordId2 };
+          return { ...response2[0], id: wordId2, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -904,7 +919,7 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return null;
+          return undefined;
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")
@@ -917,7 +932,7 @@ describe("create_word", () => {
       const createWordMock = jest
         .spyOn(WordQueries.prototype, "createWord")
         .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1 };
+          return { ...response1[0], id: wordId1, created_at: new Date() };
         });
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
@@ -956,7 +971,7 @@ describe("create_word", () => {
       const getWordByWordMock = jest
         .spyOn(WordQueries.prototype, "getWordByWord")
         .mockImplementation(async () => {
-          return null;
+          return undefined;
         });
       const httpGetMock = jest
         .spyOn(Http.prototype, "get")

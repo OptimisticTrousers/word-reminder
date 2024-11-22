@@ -1,6 +1,20 @@
+import { QueryResult } from "pg";
+
 import { Queries } from "./queries";
 import { UserQueries } from "./userQueries";
 import { WordQueries } from "./wordQueries";
+
+type Verification = { userWord: UserWord | null; message: string } | null;
+
+interface UserWord {
+  id: string;
+  word_id: string;
+  user_id: string;
+  learned: boolean;
+  created_at: Date;
+}
+
+export type UserQueryResult = Verification | { userWord: UserWord; message: string };
 
 export class UserWordQueries extends Queries {
   userQueries: UserQueries;
@@ -12,8 +26,11 @@ export class UserWordQueries extends Queries {
     this.wordQueries = new WordQueries();
   }
 
-  private async verifyIds(userId: string, wordId: string) {
-    const userExists = await this.userQueries.userExistsById(userId);
+  private async verifyIds(
+    userId: string,
+    wordId: string
+  ): Promise<Verification> {
+    const userExists: boolean = await this.userQueries.userExistsById(userId);
 
     if (!userExists) {
       return {
@@ -22,7 +39,7 @@ export class UserWordQueries extends Queries {
       };
     }
 
-    const wordExists = await this.wordQueries.wordExistsById(wordId);
+    const wordExists: boolean = await this.wordQueries.wordExistsById(wordId);
 
     if (!wordExists) {
       return {
@@ -34,12 +51,15 @@ export class UserWordQueries extends Queries {
     return null;
   }
 
-  async createUserWord(userId: string, wordId: string) {
-    const verification = await this.verifyIds(userId, wordId);
+  async createUserWord(
+    userId: string,
+    wordId: string
+  ): Promise<UserQueryResult> {
+    const verification: Verification = await this.verifyIds(userId, wordId);
 
     if (verification) return verification;
 
-    const existingUserWord = await this.userWordExists(userId, wordId);
+    const existingUserWord: boolean = await this.userWordExists(userId, wordId);
 
     if (existingUserWord) {
       return {
@@ -48,58 +68,61 @@ export class UserWordQueries extends Queries {
       };
     }
 
-    const { rows } = await this.pool.query(
+    const { rows }: QueryResult<UserWord> = await this.pool.query(
       "INSERT INTO user_words(user_id, word_id) VALUES ($1, $2) RETURNING *",
       [userId, wordId]
     );
 
-    const userWord = rows[0];
+    const userWord: UserWord = rows[0];
 
     return { userWord, message: "Success!" };
   }
 
-  async getUserWord(userId: string, wordId: string) {
-    const verification = await this.verifyIds(userId, wordId);
+  async getUserWord(userId: string, wordId: string): Promise<UserQueryResult> {
+    const verification: Verification = await this.verifyIds(userId, wordId);
 
     if (verification) return verification;
 
-    const { rows } = await this.pool.query(
+    const { rows }: QueryResult<UserWord> = await this.pool.query(
       "SELECT * FROM user_words WHERE user_id = $1 AND word_id = $2",
       [userId, wordId]
     );
 
-    const userWord = rows[0];
+    const userWord: UserWord = rows[0];
 
     return { userWord, message: "Success!" };
   }
 
-  async userWordExists(userId: string, wordId: string) {
-    const { userWord } = await this.getUserWord(userId, wordId);
+  async userWordExists(userId: string, wordId: string): Promise<boolean> {
+    const result: UserQueryResult = await this.getUserWord(userId, wordId);
 
-    if (userWord) {
+    if (result && result.userWord) {
       return true;
     }
 
     return false;
   }
 
-  async deleteUserWord(userId: string, wordId: string) {
-    const verification = await this.verifyIds(userId, wordId);
+  async deleteUserWord(
+    userId: string,
+    wordId: string
+  ): Promise<UserQueryResult> {
+    const verification: Verification = await this.verifyIds(userId, wordId);
 
     if (verification) return verification;
 
-    const { rows } = await this.pool.query(
+    const { rows }: QueryResult<UserWord> = await this.pool.query(
       "DELETE FROM user_words WHERE user_id = $1 AND word_id = $2",
       [userId, wordId]
     );
 
-    const userWord = rows[0];
+    const userWord: UserWord = rows[0];
 
     return { userWord, message: "Success!" };
   }
 
-  async deleteAllUserWords(userId: string) {
-    const { rows } = await this.pool.query(
+  async deleteAllUserWords(userId: string): Promise<UserWord[]> {
+    const { rows }: QueryResult<UserWord> = await this.pool.query(
       "DELETE FROM user_words WHERE user_id = $1 RETURNING *",
       [userId]
     );
@@ -107,8 +130,8 @@ export class UserWordQueries extends Queries {
     return rows;
   }
 
-  async getUserWordsByUserId(userId: string) {
-    const { rows } = await this.pool.query(
+  async getUserWordsByUserId(userId: string): Promise<UserWord[]> {
+    const { rows }: QueryResult<UserWord> = await this.pool.query(
       "SELECT * FROM user_words WHERE user_id = $1",
       [userId]
     );
@@ -116,8 +139,8 @@ export class UserWordQueries extends Queries {
     return rows;
   }
 
-  async existsUserWordsByUserId(userId: string) {
-    const userWords = await this.getUserWordsByUserId(userId);
+  async existsUserWordsByUserId(userId: string): Promise<boolean> {
+    const userWords: UserWord[] = await this.getUserWordsByUserId(userId);
 
     if (userWords.length) {
       return true;

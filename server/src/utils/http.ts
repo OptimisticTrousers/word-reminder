@@ -10,14 +10,14 @@ export class Http {
     params: Params,
     method: RequestMethods,
     options: RequestInit
-  ) {
-    const queryString = Object.entries(params)
+  ): Promise<{ json: any; status: number }> {
+    const queryString: string = Object.entries(params)
       .map((param) => {
         return `${param[0]}=${param[1]}`;
       })
       .join("&");
 
-    const response = await fetch(`${url}?${queryString}`, {
+    const response: Response = await fetch(`${url}?${queryString}`, {
       method,
       headers: {
         "Content-Type": "application/json",
@@ -25,9 +25,9 @@ export class Http {
       ...options,
     });
 
-    const json = await response.json();
+    const json: any = await response.json();
 
-    return { status: response.status, json };
+    return { json, status: response.status };
   }
 
   async get(url: string, params: Params = {}, options: RequestInit = {}) {

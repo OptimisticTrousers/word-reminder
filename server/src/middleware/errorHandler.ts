@@ -1,7 +1,12 @@
-import { ErrorRequestHandler } from "express";
+import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 
 // error handler
-const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
+const errorHandler: ErrorRequestHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  _next: NextFunction
+): void => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

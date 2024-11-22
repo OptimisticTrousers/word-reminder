@@ -13,8 +13,9 @@ import { variables } from "../utils/variables";
     console.log("Successfully reset database.");
     await database.stopConnection();
   } catch (err) {
-    const SPLIT_DATABASE_URL = variables.DATABASE_URL.split("/");
-    const DATABASE_NAME = SPLIT_DATABASE_URL[SPLIT_DATABASE_URL.length - 1];
+    const SPLIT_DATABASE_URL: string[] = variables.DATABASE_URL.split("/");
+    const DATABASE_NAME: string =
+      SPLIT_DATABASE_URL[SPLIT_DATABASE_URL.length - 1];
     console.error(
       `An error occurred while deleting all of the tables in the ${DATABASE_NAME} database: ${err}.`
     );

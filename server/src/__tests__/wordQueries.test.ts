@@ -353,7 +353,7 @@ describe("wordQueries", () => {
         phonetic: null,
         word: "hello",
       });
-      expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
+      expect(new Date(newWord!.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
     });
@@ -370,7 +370,7 @@ describe("wordQueries", () => {
         phonetic: null,
         word: "hello",
       });
-      expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
+      expect(new Date(newWord!.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
     });
@@ -395,7 +395,7 @@ describe("wordQueries", () => {
         phonetic: null,
         word: "hello",
       });
-      expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
+      expect(new Date(newWord!.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
     });

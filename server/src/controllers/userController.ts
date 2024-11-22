@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 
-import { UserQueries } from "../db/userQueries";
+import { OmitPassword, UserQueries } from "../db/userQueries";
 import { UserWordQueries } from "../db/userWordQueries";
 import { variables } from "../utils/variables";
 
@@ -11,12 +11,14 @@ const userWordQueries = new UserWordQueries();
 // @desc    Delete single user
 // @route   DELETE /api/users/:userId
 // @access  Private
-export const delete_user = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
-  await userQueries.deleteUserById(userId);
-  await userWordQueries.deleteAllUserWords(userId);
-  next();
-});
+export const delete_user = asyncHandler(
+  async (req, _res, next): Promise<void> => {
+    const userId: string = req.params.userId;
+    await userQueries.deleteUserById(userId);
+    await userWordQueries.deleteAllUserWords(userId);
+    next();
+  }
+);
 
 // // @desc    Update user details
 // // @route   PUT /api/users/:userId
@@ -123,13 +125,13 @@ export const delete_user = asyncHandler(async (req, res, next) => {
 // @access  Public
 export const signup_user =
   // Process request after validation and sanitization.
-  asyncHandler(async (req, res) => {
-    const hashedPassword = await bcrypt.hash(
+  asyncHandler(async (req, res): Promise<void> => {
+    const hashedPassword: string = await bcrypt.hash(
       req.body.password,
       Number(variables.SALT)
     );
 
-    const user = await userQueries.createUser(
+    const user: OmitPassword | null = await userQueries.createUser(
       req.body.username,
       hashedPassword
     );

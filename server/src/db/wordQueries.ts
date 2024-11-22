@@ -1,3 +1,5 @@
+import { QueryResult } from "pg";
+
 import { Queries } from "./queries";
 
 export interface Word {
@@ -9,6 +11,11 @@ export interface Word {
   license?: License;
   sourceUrls?: string[];
 }
+
+interface WordWithId extends Word {
+  id: string;
+  created_at: Date;
+}
 interface Phonetic {
   text?: string;
   audio?: string;
@@ -19,11 +26,19 @@ interface Meaning {
   definitions: Definition[];
 }
 
+interface MeaningWithId extends Meaning {
+  id: string;
+}
+
 interface Definition {
   definition: string;
   example?: string;
   synonyms?: string[];
   antonyms?: string[];
+}
+
+interface PhoneticWithId extends Meaning {
+  id: string;
 }
 
 interface License {
@@ -38,27 +53,27 @@ type MeaningId = Meaning & { wordId: string };
 type PhoneticId = Phonetic & { wordId: string };
 
 export class WordQueries extends Queries {
-  async createWord(json: Word[]) {
-    const word = json[0].word;
-    const origin = json[0].origin;
-    const phonetic = json[0].phonetic;
-    const meanings = json[0].meanings;
-    const phonetics = json[0].phonetics;
-    const { rows } = await this.pool.query(
+  async createWord(json: Word[]): Promise<WordWithId> {
+    const word: string = json[0].word;
+    const origin: string | undefined = json[0].origin;
+    const phonetic: string | undefined = json[0].phonetic;
+    const meanings: Meaning[] = json[0].meanings;
+    const phonetics: Phonetic[] = json[0].phonetics;
+    const { rows }: QueryResult<WordWithId> = await this.pool.query(
       "INSERT INTO words(word, origin, phonetic) VALUES ($1, $2, $3) RETURNING *",
       [word, origin, phonetic]
     );
 
-    const newWord = rows[0];
+    const newWord: WordWithId = rows[0];
 
     for (let i = 0; i < meanings.length; i++) {
-      const meaning = meanings[i];
+      const meaning: Meaning = meanings[i];
 
       await this.createMeaning({ wordId: newWord.id, ...meaning });
     }
 
     for (let i = 0; i < phonetics.length; i++) {
-      const phonetic = phonetics[i];
+      const phonetic: Phonetic = phonetics[i];
 
       await this.createPhonetic({
         wordId: newWord.id,
@@ -69,8 +84,8 @@ export class WordQueries extends Queries {
     return newWord;
   }
 
-  async wordExistsByWord(word: string) {
-    const existingWord = await this.getWordByWord(word);
+  async wordExistsByWord(word: string): Promise<boolean> {
+    const existingWord: WordWithId | undefined = await this.getWordByWord(word);
 
     if (existingWord) {
       return true;
@@ -79,8 +94,8 @@ export class WordQueries extends Queries {
     return false;
   }
 
-  async wordExistsById(id: string) {
-    const existingWord = await this.getWordById(id);
+  async wordExistsById(id: string): Promise<boolean> {
+    const existingWord: WordWithId | undefined = await this.getWordById(id);
 
     if (existingWord) {
       return true;
@@ -89,56 +104,42 @@ export class WordQueries extends Queries {
     return false;
   }
 
-  async getWordByWord(word: string) {
-    const { rows } = await this.pool.query(
+  async getWordByWord(word: string): Promise<WordWithId | undefined> {
+    const { rows }: QueryResult<WordWithId> = await this.pool.query(
       "SELECT * FROM words WHERE word = $1",
       [word.toLowerCase()]
     );
 
-    const existingWord = rows[0];
+    const existingWord: WordWithId | undefined = rows[0];
 
     return existingWord;
   }
 
-  async getWordById(id: string) {
-    const { rows } = await this.pool.query(
+  async getWordById(id: string): Promise<WordWithId | undefined> {
+    const { rows }: QueryResult<WordWithId> = await this.pool.query(
       "SELECT * FROM words WHERE id = $1",
       [id]
     );
 
-    const word = rows[0];
+    const word: WordWithId | undefined = rows[0];
 
     return word;
-  }
-
-  async getWordInformation(wordId: string) {
-    const { rows } = await this.pool.query(
-      `SELECT FROM words 
-         JOIN meanings 
-          ON meanings.word_id = words.id 
-         JOIN definitions 
-          ON definitions.meaning_id = meanings.id 
-         JOIN phonetics 
-          ON phonetics.word_id = words.id 
-         WHERE word_id = $1`,
-      [wordId]
-    );
   }
 
   private async createMeaning({
     wordId,
     definitions,
     partOfSpeech,
-  }: MeaningId) {
-    const { rows } = await this.pool.query(
+  }: MeaningId): Promise<void> {
+    const { rows }: QueryResult<MeaningWithId> = await this.pool.query(
       "INSERT INTO meanings(part_of_speech, word_id) VALUES ($1, $2) RETURNING *",
       [partOfSpeech, wordId]
     );
 
-    const meaning = rows[0];
+    const meaning: MeaningWithId = rows[0];
 
     for (let i = 0; i < definitions.length; i++) {
-      const definition = definitions[i];
+      const definition: Definition = definitions[i];
 
       await this.createDefinition({ meaningId: meaning.id, ...definition });
     }
@@ -150,24 +151,28 @@ export class WordQueries extends Queries {
     example,
     synonyms,
     antonyms,
-  }: DefinitionId) {
-    const { rows } = await this.pool.query(
+  }: DefinitionId): Promise<MeaningWithId> {
+    const { rows }: QueryResult<MeaningWithId> = await this.pool.query(
       "INSERT INTO definitions(meaning_id, definition, example, synonyms, antonyms) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [meaningId, definition, example, synonyms, antonyms]
     );
 
-    const meaning = rows[0];
+    const meaning: MeaningWithId = rows[0];
 
     return meaning;
   }
 
-  private async createPhonetic({ audio, text, wordId }: PhoneticId) {
-    const { rows } = await this.pool.query(
+  private async createPhonetic({
+    audio,
+    text,
+    wordId,
+  }: PhoneticId): Promise<PhoneticWithId> {
+    const { rows }: QueryResult<PhoneticWithId> = await this.pool.query(
       "INSERT INTO phonetics(audio, text, word_id) VALUES ($1, $2, $3) RETURNING *",
       [audio, text, wordId]
     );
 
-    const phonetic = rows[0];
+    const phonetic: PhoneticWithId = rows[0];
 
     return phonetic;
   }

@@ -22,7 +22,7 @@ export const create_word = [
     .trim()
     .escape()
     .toLowerCase()
-    .custom((value, { req }) => {
+    .custom((value: string, { req }): Promise<string> | boolean => {
       if ((!value || value.length === 0) && !req.file) {
         // neither word nor csv has been provided
         return Promise.reject("Word or CSV file is required.");
@@ -32,7 +32,7 @@ export const create_word = [
     }),
   errorValidationHandler,
   // @desc    Upload files in order to add them into the database
-  asyncHandler(async (req, res, next) => {
+  asyncHandler(async (req, res, next): Promise<void> => {
     const { userId } = req.params;
     // If a CSV file is not provided, then go to the next request handler
     if (!req.file) {
@@ -40,7 +40,13 @@ export const create_word = [
       return;
     }
     const csv = new Csv();
-    const { records, error, count } = await csv.read(req.file.buffer);
+    const {
+      records,
+      error,
+      count,
+    }: { records: string[][]; error: any; count: number } = await csv.read(
+      req.file.buffer
+    );
 
     if (error) {
       res.status(400).json({ message: error });
@@ -78,10 +84,11 @@ export const create_word = [
           newWord = await wordQueries.createWord(json);
         }
 
-        const { userWord } = await userWordQueries.createUserWord(
+        const result = await userWordQueries.createUserWord(
           userId,
-          newWord ? newWord.id : existingWord.id
+          newWord ? newWord.id : existingWord!.id
         );
+        const userWord = result?.userWord;
 
         /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
         if (userWord) {
@@ -146,10 +153,12 @@ export const create_word = [
       newWord = await wordQueries.createWord(json);
     }
 
-    const { userWord, message } = await userWordQueries.createUserWord(
+    const result = await userWordQueries.createUserWord(
       userId,
-      newWord ? newWord.id : existingWord.id
+      newWord ? newWord.id : existingWord!.id
     );
+    const userWord = result?.userWord;
+    const message = result?.message;
 
     if (!userWord) {
       res.status(409).json({ word: null, message });
@@ -163,11 +172,13 @@ export const create_word = [
 // @route   DELETE /api/users/:userId/words/:wordId
 // @access  Private
 export const delete_user_word = asyncHandler(async (req, res) => {
-  const { wordId, userId } = req.params;
-  const { userWord: deletedUserWord, message } =
-    await userWordQueries.deleteUserWord(userId, wordId);
+  const userId: string = req.params.userId;
+  const wordId: string = req.params.wordId;
+  const result = await userWordQueries.deleteUserWord(userId, wordId);
+  const userWord = result?.userWord;
+  const message = result?.message;
 
-  res.status(200).json({ userWord: deletedUserWord, message });
+  res.status(200).json({ userWord, message });
 });
 
 // @desc    Get all words

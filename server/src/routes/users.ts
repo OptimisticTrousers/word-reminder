@@ -6,7 +6,7 @@ import { validateUser } from "../middleware/validateUser";
 import { validateUserId } from "../middleware/validateUserId";
 import wordRouter from "./words";
 
-const router = Router();
+const router: Router = Router();
 
 router.route("/").post(validateUser, signup_user);
 router.route("/:userId").delete(validateUserId, delete_user, logout_user);

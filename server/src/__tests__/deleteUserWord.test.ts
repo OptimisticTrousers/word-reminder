@@ -13,10 +13,11 @@ describe("delete_user_word", () => {
     const userId = "1";
     const wordId = "1";
     const userWord = {
-      id: 1,
+      id: "1",
       user_id: userId,
       word_id: wordId,
       learned: false,
+      created_at: new Date(),
     };
     const message = "Success";
     const deleteUserWordMock = jest

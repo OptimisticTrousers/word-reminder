@@ -20,7 +20,7 @@ describe("signup_user", () => {
     const createUserMock = jest
       .spyOn(UserQueries.prototype, "createUser")
       .mockImplementation(async () => {
-        return { username: user.username };
+        return { id: "1", username: user.username, created_at: new Date() };
       });
 
     const response = await request(app)
@@ -38,6 +38,7 @@ describe("signup_user", () => {
       expect.any(String)
     );
     expect(response.body.user.username).toBe(user.username);
+    expect(response.body.user.created_at).toEqual(expect.any(String));
     expect(response.body.user.password).toBeUndefined();
   });
 });

@@ -1,6 +1,6 @@
 import { app } from "./app";
-import { variables } from "./utils/variables";
+import { variables } from "./config/variables";
 
-const port = variables.SERVER_PORT || 5000;
+const port = Number(variables.SERVER_PORT) || 5000;
 
 app.listen(port, () => console.log("Server running..."));

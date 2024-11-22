@@ -115,7 +115,7 @@ describe("userQueries", () => {
         newUser.password
       );
 
-      const userExists = await userQueries.userExistsById(user.id);
+      const userExists = await userQueries.userExistsById(user!.id);
       expect(userExists).toBe(true);
     });
 
@@ -137,9 +137,9 @@ describe("userQueries", () => {
         newUser.password
       );
 
-      expect(user.username).toBe(newUser.username);
-      expect(user.password).toBeUndefined();
-      expect(new Date(user.created_at).getTime()).toBeLessThanOrEqual(
+      expect(user!.username).toBe(newUser.username);
+      expect(user!.password).toBeUndefined();
+      expect(new Date(user!.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
     });

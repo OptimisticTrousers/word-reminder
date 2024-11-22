@@ -1,13 +1,12 @@
-import fs from "fs";
-import { parse } from "csv-parse";
-import { finished } from "stream/promises";
+import { parse, Parser } from "csv-parse";
 import { Readable } from "stream";
+import { finished } from "stream/promises";
 
 export class Csv {
-  private removeDuplicates(record: string[]) {
+  private removeDuplicates(record: string[]): string[] {
     const set = new Set<string>();
     for (let i = 0; i < record.length; i++) {
-      const word = record[i];
+      const word: string = record[i];
       if (word !== "") {
         set.add(word);
       }
@@ -22,7 +21,7 @@ export class Csv {
     count: number;
   }> {
     const records: string[][] = [];
-    const parser = Readable.from(buffer).pipe(
+    const parser: Parser = Readable.from(buffer).pipe(
       parse({
         delimiter: ",",
         relax_column_count: true, // Relax column count to avoid errors with varying columns
@@ -35,15 +34,15 @@ export class Csv {
 
     parser
       .on("readable", () => {
-        let record;
+        let record: string[];
         while ((record = parser.read()) !== null) {
           // Work with each record
-          const trimmedRecord = this.removeDuplicates(record);
+          const trimmedRecord: string[] = this.removeDuplicates(record);
           count += trimmedRecord.length;
           records.push(trimmedRecord);
         }
       })
-      .on("error", (error) => {
+      .on("error", (error: Error) => {
         return { records, error, count };
       });
 

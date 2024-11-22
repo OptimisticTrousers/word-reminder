@@ -7,7 +7,7 @@ import {
 } from "../controllers/sessionController";
 import { validateUser } from "../middleware/validateUser";
 
-const router = Router();
+const router: Router = Router();
 
 router
   .route("/")
