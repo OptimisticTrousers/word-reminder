@@ -1,13 +1,18 @@
 import { Router } from "express";
+
 import {
   delete_user_word,
-  // word_create,
-  // word_list,
+  create_word,
+  word_list,
 } from "../controllers/wordController";
+import { validateUserId } from "../middleware/validateUserId";
 
 const router = Router({ mergeParams: true });
 
-// router.route("/").get(word_list).post(word_create);
-router.delete("/:wordId", delete_user_word);
+router
+  .route("/")
+  .get(validateUserId, word_list)
+  .post(validateUserId, create_word);
+router.delete("/:wordId", validateUserId, delete_user_word);
 
 export default router;
