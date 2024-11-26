@@ -18,12 +18,12 @@ describe("delete_user_word", () => {
       word_id: wordId,
       learned: false,
       created_at: new Date(),
+      updated_at: new Date()
     };
-    const message = "Success";
     const deleteUserWordMock = jest
       .spyOn(UserWordQueries.prototype, "deleteUserWord")
       .mockImplementation(async () => {
-        return { userWord, message };
+        return userWord;
       });
 
     const response = await request(app)
@@ -37,6 +37,5 @@ describe("delete_user_word", () => {
     expect(response.body.userWord.user_id).toBe(userId);
     expect(response.body.userWord.word_id).toBe(wordId);
     expect(response.body.userWord.learned).toBe(false);
-    expect(response.body.message).toBe(message);
   });
 });

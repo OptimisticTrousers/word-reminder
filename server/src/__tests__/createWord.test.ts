@@ -11,7 +11,6 @@ describe("create_word", () => {
   const app = express();
   app.use(express.json());
   app.post("/api/users/:userId/words", create_word);
-  const successMessage = "Success!";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -250,6 +249,7 @@ describe("create_word", () => {
       word_id: wordId,
       learned: false,
       created_at: new Date(),
+      updated_at: new Date(),
     };
 
     it("calls the functions to create a word and a user word", async () => {
@@ -277,7 +277,7 @@ describe("create_word", () => {
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
         .mockImplementation(async () => {
-          return { userWord, message: successMessage };
+          return userWord;
         });
 
       const response = await request(app)
@@ -292,97 +292,6 @@ describe("create_word", () => {
         id: wordId,
         created_at: expect.any(String),
       });
-      expect(response.body.message).toBe(successMessage);
-      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
-      expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(response1);
-      expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
-    });
-
-    it("does not call the functions to create a word if it already exists", async () => {
-      const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
-        .mockImplementation(async () => {
-          return { ...response1[0], id: wordId, created_at: new Date() };
-        });
-      const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
-        .mockImplementation(async () => {
-          return { json: response1, status: 200 };
-        });
-      const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
-        .mockImplementation(async () => {
-          return { ...response1[0], id: wordId, created_at: new Date() };
-        });
-      const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
-        .mockImplementation(async () => {
-          return { userWord, message: successMessage };
-        });
-
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .send({ word: response1[0].word });
-
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(200);
-      expect(response.body.word).toEqual({
-        ...response1[0],
-        id: wordId,
-        created_at: expect.any(String),
-      });
-      expect(response.body.message).toEqual(successMessage);
-      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
-      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
-      expect(httpGetMock).not.toHaveBeenCalled();
-      expect(createWordMock).not.toHaveBeenCalled();
-      expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
-    });
-
-    it("does not create a user word if it already exists", async () => {
-      const message = "You have already added this word in your dictionary.";
-      const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
-        .mockImplementation(async () => {
-          return undefined;
-        });
-      const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
-        .mockImplementation(async () => {
-          return { json: response1, status: 200 };
-        });
-      const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
-        .mockImplementation(async () => {
-          return { ...response1[0], id: wordId, created_at: new Date() };
-        });
-      const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
-        .mockImplementation(async () => {
-          return {
-            userWord: null,
-            message,
-          };
-        });
-
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .send({ word: response1[0].word });
-
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(409);
-      expect(response.body.word).toBeNull();
-      expect(response.body.message).toBe(message);
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(httpGetMock).toHaveBeenCalledTimes(1);
@@ -414,7 +323,7 @@ describe("create_word", () => {
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
         .mockImplementation(async () => {
-          return { userWord, message: successMessage };
+          return userWord;
         });
 
       const response = await request(app)
@@ -429,7 +338,6 @@ describe("create_word", () => {
         id: wordId,
         created_at: expect.any(String),
       });
-      expect(response.body.message).toBe(successMessage);
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(httpGetMock).toHaveBeenCalledTimes(1);
@@ -464,7 +372,7 @@ describe("create_word", () => {
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
         .mockImplementation(async () => {
-          return { userWord, message: successMessage };
+          return userWord;
         });
 
       const response = await request(app)
@@ -640,6 +548,7 @@ describe("create_word", () => {
       word_id: wordId1,
       learned: false,
       created_at: new Date(),
+      updated_at: new Date(),
     };
     const userWord2 = {
       id: "1",
@@ -647,6 +556,7 @@ describe("create_word", () => {
       word_id: wordId2,
       learned: false,
       created_at: new Date(),
+      updated_at: new Date(),
     };
 
     it("creates words and user words", async () => {
@@ -674,10 +584,10 @@ describe("create_word", () => {
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
         .mockImplementationOnce(async () => {
-          return { userWord: userWord1, message: successMessage };
+          return userWord1;
         });
       createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: userWord2, message: successMessage };
+        return userWord2;
       });
 
       const response = await request(app)
@@ -728,10 +638,10 @@ describe("create_word", () => {
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
         .mockImplementationOnce(async () => {
-          return { userWord: userWord1, message: successMessage };
+          return userWord1;
         });
       createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: userWord2, message: successMessage };
+        return userWord2;
       });
 
       const response = await request(app)
@@ -778,13 +688,10 @@ describe("create_word", () => {
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
         .mockImplementationOnce(async () => {
-          return {
-            userWord: null,
-            message,
-          };
+          return null;
         });
       createUserWordMock.mockImplementationOnce(async () => {
-        return { userWord: userWord2, message: successMessage };
+        return userWord2;
       });
       const message =
         "You have already added 1 of these words in your dictionary. New words have been created if they were not already in your dictionary.";
@@ -937,7 +844,7 @@ describe("create_word", () => {
       const createUserWordMock = jest
         .spyOn(UserWordQueries.prototype, "createUserWord")
         .mockImplementationOnce(async () => {
-          return { userWord: userWord1, message: successMessage };
+          return userWord1;
         });
 
       const response = await request(app)

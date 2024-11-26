@@ -12,7 +12,7 @@ export interface Word {
   sourceUrls?: string[];
 }
 
-interface WordWithId extends Word {
+export interface WordWithId extends Word {
   id: string;
   created_at: Date;
 }
