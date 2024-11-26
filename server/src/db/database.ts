@@ -68,8 +68,14 @@ export class Database {
         user_id INTEGER REFERENCES users(id),
         word_id INTEGER REFERENCES words(id),
         learned BOOLEAN DEFAULT false NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
+
+      CREATE OR REPLACE TRIGGER set_timestamp
+      BEFORE UPDATE ON user_words
+      FOR EACH ROW
+      EXECUTE PROCEDURE trigger_set_timestamp();
 
       CREATE TABLE meanings (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
