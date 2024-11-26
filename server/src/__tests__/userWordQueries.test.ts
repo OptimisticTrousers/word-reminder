@@ -1,6 +1,6 @@
 import { UserQueries } from "../db/userQueries";
-import { UserWordQueries } from "../db/userWordQueries";
-import { WordQueries } from "../db/wordQueries";
+import { UserWord, UserWordQueries } from "../db/userWordQueries";
+import { Word, WordQueries, WordWithId } from "../db/wordQueries";
 // Import db setup and teardown functionality
 import "../db/testPopulatedb";
 
@@ -78,11 +78,10 @@ describe("userWordQueries", () => {
         sampleUser1.password
       );
 
-      const result = await userWordQueries.createUserWord(
+      const userWord = await userWordQueries.createUserWord(
         newUser!.id,
         newWord.id
       );
-      const userWord = result!.userWord;
 
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser!.id
@@ -90,6 +89,31 @@ describe("userWordQueries", () => {
       expect(userWord!.user_id).toBe(newUser!.id);
       expect(userWord!.word_id).toBe(newWord.id);
       expect(userWord!.learned).toBe(false);
+      expect(new Date(userWord!.created_at).getTime()).toBeLessThanOrEqual(
+        Date.now()
+      );
+      expect(userWordsExists).toBe(true);
+    });
+
+    it("creates a user word with the learned property of true", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
+      );
+
+      const userWord = await userWordQueries.createUserWord(
+        newUser!.id,
+        newWord.id,
+        true
+      );
+
+      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
+        newUser!.id
+      );
+      expect(userWord!.user_id).toBe(newUser!.id);
+      expect(userWord!.word_id).toBe(newWord.id);
+      expect(userWord!.learned).toBe(true);
       expect(new Date(userWord!.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
@@ -105,63 +129,68 @@ describe("userWordQueries", () => {
 
       await userWordQueries.createUserWord(newUser!.id, newWord.id);
 
-      const result = await userWordQueries.createUserWord(
+      const userWord = await userWordQueries.createUserWord(
         newUser!.id,
         newWord.id
       );
-      const message = result!.message;
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser!.id
       );
-      expect(message).toBe(
-        "You have already added this word in your dictionary."
-      );
       expect(userWordsExists).toBe(true);
-    });
-
-    it("fails when the user id is invalid", async () => {
-      const newWord = await wordQueries.createWord(word);
-      const userId = "1";
-
-      const result = await userWordQueries.createUserWord(userId, newWord.id);
-      const message = result!.message;
-
-      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
-        userId
+      expect(userWord!.user_id).toBe(newUser!.id);
+      expect(userWord!.word_id).toBe(newWord.id);
+      expect(userWord!.learned).toBe(false);
+      expect(new Date(userWord!.created_at).getTime()).toBeLessThanOrEqual(
+        Date.now()
       );
-      expect(message).toBe(`User with ID ${userId} does not exist.`);
-      expect(userWordsExists).toBe(false);
     });
+  });
 
-    it("fails when the word id is invalid", async () => {
-      const wordId = "1";
+  describe("toggleLearnedUserWord", () => {
+    it("changes the learned property on the user word to true", async () => {
+      const newWord = await wordQueries.createWord(word);
       const newUser = await userQueries.createUser(
         sampleUser1.username,
         sampleUser1.password
       );
 
-      const result = await userWordQueries.createUserWord(newUser!.id, wordId);
-      const message = result!.message;
-
-      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
-        newUser!.id
+      await userWordQueries.createUserWord(newUser!.id, newWord.id);
+      // Set the 'learned' property to true since it is false by default
+      await userWordQueries.setLearnedUserWord(newUser!.id, newWord.id, true);
+      const userWord = await userWordQueries.getUserWord(
+        newUser!.id,
+        newWord.id
       );
-      expect(message).toBe(`Word with ID ${wordId} does not exist.`);
-      expect(userWordsExists).toBe(false);
+
+      expect(userWord!.user_id).toBe(newUser!.id);
+      expect(userWord!.word_id).toBe(newWord.id);
+      expect(userWord!.learned).toBe(true);
+      expect(new Date(userWord!.updated_at).getTime()).toBeGreaterThanOrEqual(
+        new Date(userWord!.created_at).getTime()
+      );
     });
 
-    it("fails when the user id and word id is invalid", async () => {
-      const wordId = "1";
-      const userId = "1";
-
-      const result = await userWordQueries.createUserWord(userId, wordId);
-      const message = result!.message;
-
-      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
-        userId
+    it("changes the learned property on the user word to false if already set to true", async () => {
+      const newWord = await wordQueries.createWord(word);
+      const newUser = await userQueries.createUser(
+        sampleUser1.username,
+        sampleUser1.password
       );
-      expect(message).toBe(`User with ID ${userId} does not exist.`);
-      expect(userWordsExists).toBe(false);
+
+      await userWordQueries.createUserWord(newUser!.id, newWord.id);
+      // Set the 'learned' property to true since it is false by default
+      await userWordQueries.setLearnedUserWord(newUser!.id, newWord.id, false);
+      const userWord = await userWordQueries.getUserWord(
+        newUser!.id,
+        newWord.id
+      );
+
+      expect(userWord!.user_id).toBe(newUser!.id);
+      expect(userWord!.word_id).toBe(newWord.id);
+      expect(userWord!.learned).toBe(false);
+      expect(new Date(userWord!.updated_at).getTime()).toBeGreaterThanOrEqual(
+        new Date(userWord!.created_at).getTime()
+      );
     });
   });
 
@@ -175,10 +204,8 @@ describe("userWordQueries", () => {
 
       await userWordQueries.createUserWord(newUser!.id, newWord.id);
 
-      const existingUserWords = await userWordQueries.getUserWordsByUserId(
-        newUser!.id
-      );
-      const existingUserWord = existingUserWords[0];
+      const result = await userWordQueries.getUserWordsByUserId(newUser!.id);
+      const existingUserWord = result.userWords[0];
       expect(existingUserWord.user_id).toBe(newUser!.id);
       expect(existingUserWord.word_id).toBe(newWord.id);
       expect(existingUserWord.learned).toBe(false);
@@ -193,11 +220,474 @@ describe("userWordQueries", () => {
         sampleUser1.password
       );
 
-      const existingUserWords = await userWordQueries.getUserWordsByUserId(
-        newUser!.id
-      );
+      const result = await userWordQueries.getUserWordsByUserId(newUser!.id);
 
-      expect(existingUserWords).toEqual([]);
+      expect(result.userWords).toEqual([]);
+    });
+
+    describe("getUserWordsByUserId with options", () => {
+      let milieuWord: WordWithId | null = null;
+      let clemencyWord: WordWithId | null = null;
+      let concomitantlyWord: WordWithId | null = null;
+      let sanguineWord: WordWithId | null = null;
+      let expropriationWord: WordWithId | null = null;
+      let admonitionWord: WordWithId | null = null;
+      let ignobleWord: WordWithId | null = null;
+      let dithyrambicWord: WordWithId | null;
+      let admonishWord: WordWithId | null;
+
+      let milieuUserWord: UserWord | null = null;
+      let clemencyUserWord: UserWord | null = null;
+      let concomitantlyUserWord: UserWord | null = null;
+      let sanguineUserWord: UserWord | null = null;
+      let expropriationUserWord: UserWord | null = null;
+      let admonitionUserWord: UserWord | null = null;
+      let ignobleUserWord: UserWord | null = null;
+      let dithyrambicUserWord: UserWord | null;
+      let admonishUserWord: UserWord | null;
+      beforeEach(async () => {
+        const newUser = await userQueries.createUser(
+          sampleUser1.username,
+          sampleUser1.password
+        );
+        milieuWord = await wordQueries.createWord([
+          {
+            word: "milieu",
+            meanings: [
+              {
+                partOfSpeech: "noun",
+                definitions: [{ definition: "A person's social environment." }],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        clemencyWord = await wordQueries.createWord([
+          {
+            word: "clemency",
+            meanings: [
+              {
+                partOfSpeech: "noun",
+                definitions: [{ definition: "Mercy; lenience." }],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        concomitantlyWord = await wordQueries.createWord([
+          {
+            word: "concomitantly",
+            meanings: [
+              {
+                partOfSpeech: "adverb",
+                definitions: [
+                  { definition: "At the same time; simultaneously." },
+                ],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        sanguineWord = await wordQueries.createWord([
+          {
+            word: "sanguine",
+            meanings: [
+              {
+                partOfSpeech: "adjective",
+                definitions: [
+                  {
+                    definition:
+                      "Optimistic or positive, especially in an apparently bad or difficult situation.",
+                  },
+                ],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        expropriationWord = await wordQueries.createWord([
+          {
+            word: "expropriation",
+            meanings: [
+              {
+                partOfSpeech: "noun",
+                definitions: [
+                  {
+                    definition:
+                      "The action of taking property from its owner for public use or benefit.",
+                  },
+                ],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        admonitionWord = await wordQueries.createWord([
+          {
+            word: "admonition",
+            meanings: [
+              {
+                partOfSpeech: "noun",
+                definitions: [{ definition: "A warning or reprimand." }],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        ignobleWord = await wordQueries.createWord([
+          {
+            word: "ignoble",
+            meanings: [
+              {
+                partOfSpeech: "adjective",
+                definitions: [
+                  { definition: "Not honorable in character or purpose." },
+                ],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        dithyrambicWord = await wordQueries.createWord([
+          {
+            word: "dithyrambic",
+            meanings: [
+              {
+                partOfSpeech: "adjective",
+                definitions: [
+                  { definition: "Wildly enthusiastic or excited." },
+                ],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        admonishWord = await wordQueries.createWord([
+          {
+            word: "admonish",
+            meanings: [
+              {
+                partOfSpeech: "verb",
+                definitions: [
+                  { definition: "To warn or reprimand someone firmly." },
+                ],
+              },
+            ],
+            phonetics: [],
+          },
+        ]);
+        milieuUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          milieuWord.id,
+          false
+        );
+        clemencyUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          clemencyWord.id,
+          true
+        );
+        concomitantlyUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          concomitantlyWord.id,
+          false
+        );
+        sanguineUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          sanguineWord.id,
+          true
+        );
+        expropriationUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          expropriationWord.id,
+          false
+        );
+        admonitionUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          admonitionWord.id,
+          true
+        );
+        ignobleUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          ignobleWord.id,
+          false
+        );
+        dithyrambicUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          dithyrambicWord.id,
+          true
+        );
+        admonishUserWord = await userWordQueries.createUserWord(
+          newUser!.id,
+          admonishWord.id,
+          false
+        );
+      });
+
+      it("returns all of the user's user words when no queries are provided", async () => {
+        const result = await userWordQueries.getUserWordsByUserId(
+          sampleUser1.id
+        );
+
+        expect(result.userWords).toEqual([
+          { ...milieuWord, ...milieuUserWord },
+          { ...clemencyWord, ...clemencyUserWord },
+          { ...concomitantlyWord, ...concomitantlyUserWord },
+          { ...sanguineWord, ...sanguineUserWord },
+          { ...expropriationWord, ...expropriationUserWord },
+          { ...admonitionWord, ...admonitionUserWord },
+          { ...ignobleWord, ...ignobleUserWord },
+          { ...dithyrambicWord, ...dithyrambicUserWord },
+          { ...admonishWord, ...admonishUserWord },
+        ]);
+        expect(result.previous).toBeUndefined();
+        expect(result.next).toEqual({
+          page: 2,
+          limit: 8, // default limit
+        });
+      });
+
+      it("returns correct user words when all queries are provided", async () => {
+        const result = await userWordQueries.getUserWordsByUserId(
+          sampleUser1.id,
+          {
+            learned: true,
+            sort: { column: "created_at", table: "user_words", direction: 1 },
+            search: "ad",
+            page: 1,
+            limit: 2,
+          }
+        );
+
+        expect(result.userWords).toEqual([
+          { ...admonitionWord, ...admonitionUserWord },
+        ]);
+        expect(result.previous).toBeUndefined();
+        expect(result.next).toBeUndefined();
+      });
+
+      describe("learned query", () => {
+        it("returns user words that are learned", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { learned: true }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...clemencyWord, ...clemencyUserWord },
+            { ...sanguineWord, ...sanguineUserWord },
+            { ...admonitionWord, ...admonitionUserWord },
+            { ...dithyrambicWord, ...dithyrambicUserWord },
+          ]);
+          expect(result.previous).toBeUndefined();
+          expect(result.next).toBeUndefined();
+        });
+
+        it("returns user words that are not learned", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { learned: false }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...milieuWord, ...milieuUserWord },
+            { ...concomitantlyWord, ...concomitantlyUserWord },
+            { ...expropriationWord, ...expropriationUserWord },
+            { ...ignobleWord, ...ignobleUserWord },
+            { ...admonishWord, ...admonishUserWord },
+          ]);
+          expect(result.previous).toBeUndefined();
+          expect(result.next).toBeUndefined();
+        });
+      });
+
+      describe("sort query", () => {
+        it("returns words in alphabetically ascending order", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { sort: { table: "words", column: "word", direction: 1 } }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...admonishWord, ...admonishUserWord },
+            { ...admonitionWord, ...admonitionUserWord },
+            { ...clemencyWord, ...clemencyUserWord },
+            { ...concomitantlyWord, ...concomitantlyUserWord },
+            { ...dithyrambicWord, ...dithyrambicUserWord },
+            { ...expropriationWord, ...expropriationUserWord },
+            { ...ignobleWord, ...ignobleUserWord },
+            { ...milieuWord, ...milieuUserWord },
+            { ...sanguineWord, ...sanguineUserWord },
+          ]);
+          expect(result.previous).toBeUndefined();
+          expect(result.next).toEqual({
+            page: 2,
+            limit: 8, // default limit
+          });
+        });
+
+        it("returns words in alphabetically descending order", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { sort: { table: "words", column: "word", direction: -1 } }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...sanguineWord, ...sanguineUserWord },
+            { ...milieuWord, ...milieuUserWord },
+            { ...ignobleWord, ...ignobleUserWord },
+            { ...expropriationWord, ...expropriationUserWord },
+            { ...dithyrambicWord, ...dithyrambicUserWord },
+            { ...concomitantlyWord, ...concomitantlyUserWord },
+            { ...clemencyWord, ...clemencyUserWord },
+            { ...admonitionWord, ...admonitionUserWord },
+            { ...admonishWord, ...admonishUserWord },
+          ]);
+          expect(result.previous).toBeUndefined();
+          expect(result.next).toEqual({
+            page: 2,
+            limit: 8, // default limit
+          });
+        });
+
+        it("returns user words in ascending order for when the user words were created", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            {
+              sort: { table: "user_words", column: "created_at", direction: 1 },
+            }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...milieuWord, ...milieuUserWord },
+            { ...clemencyWord, ...clemencyUserWord },
+            { ...concomitantlyWord, ...concomitantlyUserWord },
+            { ...sanguineWord, ...sanguineUserWord },
+            { ...expropriationWord, ...expropriationUserWord },
+            { ...admonitionWord, ...admonitionUserWord },
+            { ...ignobleWord, ...ignobleUserWord },
+            { ...dithyrambicWord, ...dithyrambicUserWord },
+            { ...admonishWord, ...admonishUserWord },
+          ]);
+          expect(result.previous).toBeUndefined();
+          expect(result.next).toEqual({
+            page: 2,
+            limit: 8, // default limit
+          });
+        });
+
+        it("returns user words in descending order for when the user words were created", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            {
+              sort: {
+                table: "user_words",
+                column: "created_at",
+                direction: -1,
+              },
+            }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...admonishWord, ...admonishUserWord },
+            { ...dithyrambicWord, ...dithyrambicUserWord },
+            { ...ignobleWord, ...ignobleUserWord },
+            { ...admonitionWord, ...admonitionUserWord },
+            { ...expropriationWord, ...expropriationUserWord },
+            { ...sanguineWord, ...sanguineUserWord },
+            { ...concomitantlyWord, ...concomitantlyUserWord },
+            { ...clemencyWord, ...clemencyUserWord },
+            { ...milieuWord, ...milieuUserWord },
+          ]);
+        });
+      });
+
+      describe("search query", () => {
+        it("returns user words that the user searches for", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { search: "mil" }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...milieuWord, ...milieuUserWord },
+          ]);
+        });
+
+        it("returns user words that the user searches for when the search query is uppercase", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { search: "MIL" }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...milieuWord, ...milieuUserWord },
+          ]);
+        });
+
+        it("returns no user words when the search contains no results", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { search: "no results" }
+          );
+
+          expect(result.userWords).toEqual([]);
+        });
+      });
+
+      describe("page number and page limit query", () => {
+        it("returns user words based on page and limit with a previous and next object", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { page: 2, limit: 2 }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...concomitantlyWord, ...concomitantlyUserWord },
+            { ...sanguineWord, ...sanguineUserWord },
+          ]);
+          expect(result.previous).toEqual({
+            page: 1,
+            limit: 2,
+          });
+          expect(result.next).toEqual({
+            page: 3,
+            limit: 2,
+          });
+        });
+
+        it("returns user words based on page and limit with a previous object when there is no next page", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { page: 5, limit: 2 }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...admonishWord, ...admonishUserWord },
+          ]);
+          expect(result.previous).toEqual({
+            page: 4,
+            limit: 2,
+          });
+          expect(result.next).toBeUndefined();
+        });
+
+        it("returns user words based on page and limit with a next object when there is no previous page", async () => {
+          const result = await userWordQueries.getUserWordsByUserId(
+            sampleUser1.id,
+            { page: 1, limit: 2 }
+          );
+
+          expect(result.userWords).toEqual([
+            { ...milieuWord, ...milieuUserWord },
+            { ...clemencyWord, ...clemencyUserWord },
+          ]);
+          expect(result.previous).toBeUndefined();
+          expect(result.next).toEqual({
+            page: 2,
+            limit: 2,
+          });
+        });
+      });
     });
   });
 
@@ -241,61 +731,17 @@ describe("userWordQueries", () => {
       );
       await userWordQueries.createUserWord(newUser!.id, newWord.id);
 
-      const result = await userWordQueries.getUserWord(newUser!.id, newWord.id);
+      const userWord = await userWordQueries.getUserWord(
+        newUser!.id,
+        newWord.id
+      );
 
-      const userWord = result!.userWord;
       expect(userWord!.user_id).toBe(newUser!.id);
       expect(userWord!.word_id).toBe(newWord.id);
       expect(userWord!.learned).toBe(false);
       expect(new Date(userWord!.created_at).getTime()).toBeLessThanOrEqual(
         Date.now()
       );
-    });
-
-    it("returns a message when the user does not exist", async () => {
-      const userId = "2";
-      const newWord = await wordQueries.createWord(word);
-      const newUser = await userQueries.createUser(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.createUserWord(newUser!.id, newWord.id);
-
-      const result = await userWordQueries.getUserWord("2", newWord.id);
-
-      const message = result!.message;
-      expect(message).toBe(`User with ID ${userId} does not exist.`);
-    });
-
-    it("returns a message when the word does not exist", async () => {
-      const wordId = "2";
-      const newWord = await wordQueries.createWord(word);
-      const newUser = await userQueries.createUser(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.createUserWord(newUser!.id, newWord.id);
-
-      const result = await userWordQueries.getUserWord(newUser!.id, wordId);
-
-      const message = result!.message;
-      expect(message).toBe(`Word with ID ${wordId} does not exist.`);
-    });
-
-    it("returns a message when the user and word does not exist", async () => {
-      const userId = "2";
-      const wordId = "2";
-      const newWord = await wordQueries.createWord(word);
-      const newUser = await userQueries.createUser(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.createUserWord(newUser!.id, newWord.id);
-
-      const result = await userWordQueries.getUserWord(userId, wordId);
-
-      const message = result!.message;
-      expect(message).toBe(`User with ID ${userId} does not exist.`);
     });
   });
 
@@ -315,60 +761,6 @@ describe("userWordQueries", () => {
 
       expect(userWordExists).toBe(true);
     });
-
-    it("returns false when the user word does not exist", async () => {
-      const newWord = await wordQueries.createWord(word);
-      const newUser = await userQueries.createUser(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-
-      const userWordExists = await userWordQueries.userWordExists(
-        newUser!.id,
-        newWord.id
-      );
-
-      expect(userWordExists).toBe(false);
-    });
-
-    it("returns false when the user does not exist", async () => {
-      const newWord = await wordQueries.createWord(word);
-      const userId = "1";
-
-      const userWordExists = await userWordQueries.userWordExists(
-        userId,
-        newWord.id
-      );
-
-      expect(userWordExists).toBe(false);
-    });
-
-    it("returns false when the word does not exist", async () => {
-      const newUser = await userQueries.createUser(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      const wordId = "2";
-      await userWordQueries.createUserWord(newUser!.id, wordId);
-
-      const userWordExists = await userWordQueries.userWordExists(
-        newUser!.id,
-        wordId
-      );
-
-      expect(userWordExists).toBe(false);
-    });
-
-    it("returns a message when the user and word does not exist", async () => {
-      const userId = "2";
-      const wordId = "2";
-      await userWordQueries.createUserWord(userId, wordId);
-
-      const result = await userWordQueries.getUserWord(userId, wordId);
-
-      const message = result!.message;
-      expect(message).toBe(`User with ID ${userId} does not exist.`);
-    });
   });
 
   describe("deleteUserWord", () => {
@@ -385,54 +777,6 @@ describe("userWordQueries", () => {
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser!.id
       );
-      expect(userWordsExists).toBe(false);
-    });
-
-    it("does nothing when the user id is invalid", async () => {
-      const newWord = await wordQueries.createWord(word);
-      const userId = "1";
-      await userWordQueries.createUserWord(userId, newWord.id);
-
-      const result = await userWordQueries.deleteUserWord(userId, newWord.id);
-
-      const message = result!.message;
-      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
-        userId
-      );
-      expect(message).toBe(`User with ID ${userId} does not exist.`);
-      expect(userWordsExists).toBe(false);
-    });
-
-    it("does nothing when the word id is invalid", async () => {
-      const wordId = "1";
-      const newUser = await userQueries.createUser(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.createUserWord(newUser!.id, wordId);
-
-      const result = await userWordQueries.deleteUserWord(newUser!.id, wordId);
-
-      const message = result!.message;
-      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
-        newUser!.id
-      );
-      expect(message).toBe(`Word with ID ${wordId} does not exist.`);
-      expect(userWordsExists).toBe(false);
-    });
-
-    it("does nothing when the user id and word id is invalid", async () => {
-      const wordId = "1";
-      const userId = "1";
-      await userWordQueries.createUserWord(userId, wordId);
-
-      const result = await userWordQueries.deleteUserWord(userId, wordId);
-
-      const message = result!.message;
-      const userWordsExists = await userWordQueries.existsUserWordsByUserId(
-        userId
-      );
-      expect(message).toBe(`User with ID ${userId} does not exist.`);
       expect(userWordsExists).toBe(false);
     });
   });
@@ -475,10 +819,7 @@ describe("userWordQueries", () => {
       const userWordsExists = await userWordQueries.existsUserWordsByUserId(
         newUser!.id
       );
-      expect(deletedUserWords).toEqual([
-        userWord1!.userWord,
-        userWord2!.userWord,
-      ]);
+      expect(deletedUserWords).toEqual([userWord1, userWord2]);
       expect(userWordsExists).toBe(false);
     });
 

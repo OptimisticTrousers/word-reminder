@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
 import { upload } from "../config/multer";
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
@@ -44,7 +44,7 @@ export const create_word = [
       records,
       error,
       count,
-    }: { records: string[][]; error: any; count: number } = await csv.read(
+    }: { records: string[][]; error: unknown; count: number } = await csv.read(
       req.file.buffer
     );
 
@@ -84,11 +84,10 @@ export const create_word = [
           newWord = await wordQueries.createWord(json);
         }
 
-        const result = await userWordQueries.createUserWord(
+        const userWord = await userWordQueries.createUserWord(
           userId,
           newWord ? newWord.id : existingWord!.id
         );
-        const userWord = result?.userWord;
 
         /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
         if (userWord) {
@@ -153,18 +152,12 @@ export const create_word = [
       newWord = await wordQueries.createWord(json);
     }
 
-    const result = await userWordQueries.createUserWord(
+    await userWordQueries.createUserWord(
       userId,
       newWord ? newWord.id : existingWord!.id
     );
-    const userWord = result?.userWord;
-    const message = result?.message;
 
-    if (!userWord) {
-      res.status(409).json({ word: null, message });
-    }
-
-    res.status(200).json({ word: newWord || existingWord, message });
+    res.status(200).json({ word: newWord || existingWord });
   }),
 ];
 
@@ -174,72 +167,99 @@ export const create_word = [
 export const delete_user_word = asyncHandler(async (req, res) => {
   const userId: string = req.params.userId;
   const wordId: string = req.params.wordId;
-  const result = await userWordQueries.deleteUserWord(userId, wordId);
-  const userWord = result?.userWord;
-  const message = result?.message;
+  const userWord = await userWordQueries.deleteUserWord(userId, wordId);
 
-  res.status(200).json({ userWord, message });
+  res.status(200).json({ userWord });
 });
 
 // @desc    Get all words
 // @route   GET /api/users/:userId/words
 // @access  Private
-// export const word_list = [
-//   query("search").optional().trim().escape().isString(),
-//   query("sort").optional().trim().escape().isString(),
-//   query("learned").optional().isBoolean(),
-//   query("page").optional().isNumeric(),
-//   asyncHandler(async (req, res) => {
-//     const { userId } = req.params;
-//     const perPage = 6;
-//     const { learned, page, search, sort } = req.query;
-//     if (search) {
-//       const userWords = await UserWord.aggregate([
-//         {
-//           $search: {
-//             index: "word_storer-userwords-dynamic",
-//             text: {
-//               query: search,
-//               path: "*",
-//             },
-//           },
-//         },
-//       ]);
+export const word_list = [
+  query("column")
+    .optional()
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage("'column' must be a non-empty string."),
+  query("direction")
+    .optional()
+    .trim()
+    .escape()
+    .isInt()
+    .withMessage("'direction' must be an integer."),
+  query("table")
+    .optional()
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage("'table' must be a non-empty string."),
+  query().custom((_, { req }) => {
+    const query = req.query;
+    const column = query?.column;
+    const direction = query?.direction;
+    const table = query?.table;
+    const hasSortingParams = column || direction || table;
+    const allSortingParamsProvided = column && direction && table;
 
-//       console.log(userWords);
-//       res.status(200).json(userWords);
-//       return;
-//     } else if (learned) {
-//       const words = await UserWord.find({ userId, learned }).exec();
-//       res.status(200).json(words);
-//       return;
-//     }
-//     let sortOptions = {};
-//     switch (sort) {
-//       case "alphabeticallyAscending":
-//         sortOptions = { word: 1 };
-//         break;
-//       case "alphabeticallyDescending":
-//         sortOptions = { word: -1 };
-//         break;
-//       case "ascending":
-//         sortOptions = { created_at: 1 };
-//         break;
-//       case "descending":
-//         sortOptions = { created_at: -1 };
-//         break;
-//       default:
-//         sortOptions = {};
-//         break;
-//     }
-//     let fields = {};
-//     if (learned) {
-//       fields = { learned };
-//     }
-//     const words = await UserWord.find({ userId, ...fields })
-//       .sort(sortOptions)
-//       .populate("word")
-//       .exec();
-//     res.status(200).json(words);
-//   }),
-// ];
+    if (hasSortingParams && !allSortingParamsProvided) {
+      return Promise.reject(
+        "'column', 'direction', and 'table' must all be provided together for sorting."
+      );
+    }
+
+    return true;
+  }),
+  query("learned")
+    .optional()
+    .isBoolean()
+    .withMessage("'learned' must be a boolean."),
+  query("limit").optional().isInt().withMessage("'limit' must be an integer."),
+  query("page").optional().isInt().withMessage("'page' must be an integer."),
+  query().custom((_, { req }) => {
+    const query = req.query;
+    const page = query?.page;
+    const limit = query?.limit;
+    const hasPaginationParams = page || limit;
+    const allPaginationParamsProvided = page && limit;
+
+    if (hasPaginationParams && !allPaginationParamsProvided) {
+      return Promise.reject(
+        "'page' and 'limit' must both be provided for pagination."
+      );
+    }
+
+    return true;
+  }),
+  query("search")
+    .optional()
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage("'search' must be a non-empty string."),
+  errorValidationHandler,
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { column, direction, table, learned, limit, page, search } =
+      req.query;
+
+    const options = {
+      ...(column &&
+        direction &&
+        table && {
+          sort: {
+            column: String(column),
+            direction: Number(direction),
+            table: String(table),
+          },
+        }),
+      ...(learned !== undefined && { learned: Boolean(learned) }),
+      ...(limit && page && { limit: Number(limit), page: Number(page) }),
+      ...(search && { search: String(search) }),
+    };
+
+    const result = await userWordQueries.getUserWordsByUserId(userId, options);
+
+    res.status(200).json(result);
+  }),
+];
