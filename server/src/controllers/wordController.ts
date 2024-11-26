@@ -63,36 +63,42 @@ export const create_word = [
     const invalidWords = [];
     let wordCount = 0;
 
-    for (let i = 0; i < records.length; i++) {
-      for (let j = 0; j < records[i].length; j++) {
-        const word = records[i][j];
+    for (const record of records) {
+      for (const word of record) {
+        // Check if the word already exists in the database
         const existingWord = await wordQueries.getWordByWord(word);
-        let newWord = null;
-
-        if (!existingWord) {
-          const { json } = await http.get(
-            `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+        if (existingWord) {
+          // Create user word and increment count if successful
+          const userWord = await userWordQueries.createUserWord(
+            userId,
+            existingWord.id
           );
 
-          /* If the word is invalid, add it to the `invalidWords` array and continue processing. There is no reason to create a word or a user word if the word is invalid. */
-          if (json.message) {
-            invalidWords.push(word);
-            continue;
-          }
+          /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
+          if (userWord) wordCount++;
 
-          // If the word is valid, create it in the database.
-          newWord = await wordQueries.createWord(json);
+          continue;
         }
+
+        const { json } = await http.get(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+        );
+
+        /* If the word is invalid, add it to the `invalidWords` array and continue processing. There is no reason to create a word or a user word if the word is invalid. */
+        if (json.message) {
+          invalidWords.push(word);
+          continue;
+        }
+
+        const newWord = await wordQueries.createWord(json);
 
         const userWord = await userWordQueries.createUserWord(
           userId,
-          newWord ? newWord.id : existingWord!.id
+          newWord.id
         );
 
         /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
-        if (userWord) {
-          wordCount++;
-        }
+        if (userWord) wordCount++;
       }
     }
 
@@ -136,28 +142,32 @@ export const create_word = [
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const { word } = req.body;
+
     const existingWord = await wordQueries.getWordByWord(word);
-    let newWord = null;
 
-    if (!existingWord) {
-      const { json } = await http.get(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-      );
+    if (existingWord) {
+      await userWordQueries.createUserWord(userId, existingWord.id);
 
-      if (json.message) {
-        res.status(400).json({ message: json.message });
-        return;
-      }
-
-      newWord = await wordQueries.createWord(json);
+      res.status(200).json({ word: existingWord });
+      return;
     }
 
-    await userWordQueries.createUserWord(
-      userId,
-      newWord ? newWord.id : existingWord!.id
+    const { json } = await http.get(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
     );
 
-    res.status(200).json({ word: newWord || existingWord });
+    // Handle API error response
+    if (json.message) {
+      res.status(400).json({ message: json.message });
+      return;
+    }
+
+    const newWord = await wordQueries.createWord(json);
+
+    // Associate the new word with the user
+    await userWordQueries.createUserWord(userId, newWord.id);
+
+    res.status(200).json({ word: newWord });
   }),
 ];
 
