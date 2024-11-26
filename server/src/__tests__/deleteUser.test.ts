@@ -21,16 +21,19 @@ describe("delete_user", () => {
   it("calls the methods to delete the user and the user's user words", async () => {
     const deleteUserByIdMock = jest
       .spyOn(UserQueries.prototype, "deleteUserById")
-      .mockImplementation(jest.fn());
+      .mockImplementation(jest.fn())
+      .mockName("deleteUserById");
     const deleteAllUserWordsMock = jest
       .spyOn(UserWordQueries.prototype, "deleteAllUserWords")
-      .mockImplementation(jest.fn());
+      .mockImplementation(jest.fn())
+      .mockName("deleteUserById");
     const userId = "1";
 
     const response = await request(app)
       .delete(`/api/users/${userId}`)
       .set("Accept", "application/json");
 
+    expect(response.headers["content-type"]).toMatch(/json/);
     expect(deleteUserByIdMock).toHaveBeenCalledTimes(1);
     expect(deleteUserByIdMock).toHaveBeenCalledWith(userId);
     expect(deleteAllUserWordsMock).toHaveBeenCalledTimes(1);
