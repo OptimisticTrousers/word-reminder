@@ -1,6 +1,6 @@
 import { UserQueries } from "../db/userQueries";
 import { UserWord, UserWordQueries } from "../db/userWordQueries";
-import { Word, WordQueries, WordWithId } from "../db/wordQueries";
+import { WordQueries, WordWithId } from "../db/wordQueries";
 // Import db setup and teardown functionality
 import "../db/testPopulatedb";
 

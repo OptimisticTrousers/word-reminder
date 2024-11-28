@@ -702,9 +702,7 @@ describe("create_word", () => {
         .attach("csv", "src/csv/columnWords.csv");
 
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe(
-        "You have already added 1 of these words in your dictionary. New words have been created if they were not already in your dictionary."
-      );
+      expect(response.body.message).toBe(message);
       expect(getWordByWordMock).toHaveBeenCalledTimes(2);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
