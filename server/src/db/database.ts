@@ -91,6 +91,22 @@ export class Database {
         synonyms TEXT ARRAY,
         antonyms TEXT ARRAY
       );
+
+      CREATE TABLE word_reminders (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        user_id INTEGER REFERENCES users(id),
+        from TIMESTAMPTZ NOT NULL,
+        to TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
+      CREATE OR REPLACE TRIGGER set_timestamp
+      BEFORE UPDATE ON user_words
+      FOR EACH ROW
+      EXECUTE PROCEDURE trigger_set_timestamp();
+
+      CREATE
     `;
 
     // console.log("Seeding...");

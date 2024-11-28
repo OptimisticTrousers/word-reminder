@@ -11,6 +11,6 @@ const router: Router = Router();
 router.route("/").post(validateUser, signup_user);
 router.route("/:userId").delete(validateUserId, delete_user, logout_user);
 router.use("/:userId/words", wordRouter);
-// router.use("/:userId/wordsByDurations", wordsByDurationRouter);
+// router.use("/:userId/wordReminders", wordsByDurationRouter);
 
 export default router;
