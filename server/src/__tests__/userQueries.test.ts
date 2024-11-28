@@ -13,7 +13,10 @@ describe("userQueries", () => {
 
   describe("getById", () => {
     it("returns a correct user by ID", async () => {
-      await userQueries.create(sampleUser1.username, sampleUser1.password);
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
       const user = await userQueries.getById(sampleUser1.id);
 
@@ -39,7 +42,10 @@ describe("userQueries", () => {
 
   describe("getByUsername", () => {
     it("returns a correct user by username", async () => {
-      await userQueries.create(sampleUser1.username, sampleUser1.password);
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
       const user = await userQueries.getByUsername(sampleUser1.username);
 
@@ -65,7 +71,10 @@ describe("userQueries", () => {
 
   describe("deleteById", () => {
     it("deletes a user", async () => {
-      await userQueries.create(sampleUser1.username, sampleUser1.password);
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
       await userQueries.deleteById(sampleUser1.id);
 
@@ -74,7 +83,10 @@ describe("userQueries", () => {
     });
 
     it("no error is returned when the user does not exist", async () => {
-      await userQueries.create(sampleUser1.username, sampleUser1.password);
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
       const user = await userQueries.deleteById("2");
 
@@ -84,10 +96,10 @@ describe("userQueries", () => {
 
   describe("create", () => {
     it("creates a user", async () => {
-      const user = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
       const createdAtTimestamp = new Date(user!.created_at).getTime();
       const updatedAtTimestamp = new Date(user!.updated_at).getTime();
@@ -108,8 +120,14 @@ describe("userQueries", () => {
         password: "password",
       };
 
-      await userQueries.create(newUser.username, newUser.password);
-      const user = await userQueries.create(newUser.username, newUser.password);
+      await userQueries.create({
+        username: newUser.username,
+        password: newUser.password,
+      });
+      const user = await userQueries.create({
+        username: newUser.username,
+        password: newUser.password,
+      });
 
       expect(user).toEqual(null);
     });

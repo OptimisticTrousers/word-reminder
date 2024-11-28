@@ -72,13 +72,17 @@ describe("userWordQueries", () => {
 
   describe("create", () => {
     it("creates user word", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
-      const userWord = await userWordQueries.create(newUser!.id, newWord.id);
+      const userWord = await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
@@ -96,17 +100,17 @@ describe("userWordQueries", () => {
     });
 
     it("creates a user word with the learned property of true", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
-      const userWord = await userWordQueries.create(
-        newUser!.id,
-        newWord.id,
-        true
-      );
+      const userWord = await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: true,
+      });
 
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
@@ -124,14 +128,22 @@ describe("userWordQueries", () => {
     });
 
     it("does nothing when the user word already exists", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.create(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
-      const userWord = await userWordQueries.create(newUser!.id, newWord.id);
+      const userWord = await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
@@ -151,17 +163,28 @@ describe("userWordQueries", () => {
 
   describe("setLearned", () => {
     it("changes the learned property on the user word to true", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.create(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
       // Set the 'learned' property to true since it is false by default
-      await userWordQueries.setLearned(newUser!.id, newWord.id, true);
+      await userWordQueries.setLearned({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: true,
+      });
 
-      const userWord = await userWordQueries.get(newUser!.id, newWord.id);
+      const userWord = await userWordQueries.get({
+        userId: newUser!.id,
+        wordId: newWord.id,
+      });
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
       const nowTimestamp = Date.now();
@@ -178,17 +201,28 @@ describe("userWordQueries", () => {
     });
 
     it("changes the learned property on the user word to false if already set to true", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.create(newUser!.id, newWord.id, true);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: true,
+      });
 
       // Set the 'learned' property to true since it is false by default
-      await userWordQueries.setLearned(newUser!.id, newWord.id, false);
+      await userWordQueries.setLearned({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
-      const userWord = await userWordQueries.get(newUser!.id, newWord.id);
+      const userWord = await userWordQueries.get({
+        userId: newUser!.id,
+        wordId: newWord.id,
+      });
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
       const nowTimestamp = Date.now();
@@ -207,12 +241,16 @@ describe("userWordQueries", () => {
 
   describe("getByUserId", () => {
     it("gets the user word by user ID", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.create(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
       const result = await userWordQueries.getByUserId(newUser!.id);
 
@@ -238,10 +276,10 @@ describe("userWordQueries", () => {
     });
 
     it("returns an empty list of rows if the user has no user words", async () => {
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
       const result = await userWordQueries.getByUserId(newUser!.id);
 
@@ -271,181 +309,201 @@ describe("userWordQueries", () => {
       let dithyrambicUserWord: UserWord | undefined = undefined;
       let admonishUserWord: UserWord | undefined = undefined;
       beforeEach(async () => {
-        const newUser = await userQueries.create(
-          sampleUser1.username,
-          sampleUser1.password
-        );
-        milieuWord = await wordQueries.create([
-          {
-            word: "milieu",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [{ definition: "A person's social environment." }],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        clemencyWord = await wordQueries.create([
-          {
-            word: "clemency",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [{ definition: "Mercy; lenience." }],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        concomitantlyWord = await wordQueries.create([
-          {
-            word: "concomitantly",
-            meanings: [
-              {
-                partOfSpeech: "adverb",
-                definitions: [
-                  { definition: "At the same time; simultaneously." },
-                ],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        sanguineWord = await wordQueries.create([
-          {
-            word: "sanguine",
-            meanings: [
-              {
-                partOfSpeech: "adjective",
-                definitions: [
-                  {
-                    definition:
-                      "Optimistic or positive, especially in an apparently bad or difficult situation.",
-                  },
-                ],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        expropriationWord = await wordQueries.create([
-          {
-            word: "expropriation",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [
-                  {
-                    definition:
-                      "The action of taking property from its owner for public use or benefit.",
-                  },
-                ],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        admonitionWord = await wordQueries.create([
-          {
-            word: "admonition",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [{ definition: "A warning or reprimand." }],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        ignobleWord = await wordQueries.create([
-          {
-            word: "ignoble",
-            meanings: [
-              {
-                partOfSpeech: "adjective",
-                definitions: [
-                  { definition: "Not honorable in character or purpose." },
-                ],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        dithyrambicWord = await wordQueries.create([
-          {
-            word: "dithyrambic",
-            meanings: [
-              {
-                partOfSpeech: "adjective",
-                definitions: [
-                  { definition: "Wildly enthusiastic or excited." },
-                ],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        admonishWord = await wordQueries.create([
-          {
-            word: "admonish",
-            meanings: [
-              {
-                partOfSpeech: "verb",
-                definitions: [
-                  { definition: "To warn or reprimand someone firmly." },
-                ],
-              },
-            ],
-            phonetics: [],
-          },
-        ]);
-        milieuUserWord = await userWordQueries.create(
-          newUser!.id,
-          milieuWord.id,
-          false
-        );
-        clemencyUserWord = await userWordQueries.create(
-          newUser!.id,
-          clemencyWord.id,
-          true
-        );
-        concomitantlyUserWord = await userWordQueries.create(
-          newUser!.id,
-          concomitantlyWord.id,
-          false
-        );
-        sanguineUserWord = await userWordQueries.create(
-          newUser!.id,
-          sanguineWord.id,
-          true
-        );
-        expropriationUserWord = await userWordQueries.create(
-          newUser!.id,
-          expropriationWord.id,
-          false
-        );
-        admonitionUserWord = await userWordQueries.create(
-          newUser!.id,
-          admonitionWord.id,
-          true
-        );
-        ignobleUserWord = await userWordQueries.create(
-          newUser!.id,
-          ignobleWord.id,
-          false
-        );
-        dithyrambicUserWord = await userWordQueries.create(
-          newUser!.id,
-          dithyrambicWord.id,
-          true
-        );
-        admonishUserWord = await userWordQueries.create(
-          newUser!.id,
-          admonishWord.id,
-          false
-        );
+        const newUser = await userQueries.create({
+          username: sampleUser1.username,
+          password: sampleUser1.password,
+        });
+        milieuWord = await wordQueries.create({
+          json: [
+            {
+              word: "milieu",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    { definition: "A person's social environment." },
+                  ],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        clemencyWord = await wordQueries.create({
+          json: [
+            {
+              word: "clemency",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [{ definition: "Mercy; lenience." }],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        concomitantlyWord = await wordQueries.create({
+          json: [
+            {
+              word: "concomitantly",
+              meanings: [
+                {
+                  partOfSpeech: "adverb",
+                  definitions: [
+                    { definition: "At the same time; simultaneously." },
+                  ],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        sanguineWord = await wordQueries.create({
+          json: [
+            {
+              word: "sanguine",
+              meanings: [
+                {
+                  partOfSpeech: "adjective",
+                  definitions: [
+                    {
+                      definition:
+                        "Optimistic or positive, especially in an apparently bad or difficult situation.",
+                    },
+                  ],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        expropriationWord = await wordQueries.create({
+          json: [
+            {
+              word: "expropriation",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition:
+                        "The action of taking property from its owner for public use or benefit.",
+                    },
+                  ],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        admonitionWord = await wordQueries.create({
+          json: [
+            {
+              word: "admonition",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [{ definition: "A warning or reprimand." }],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        ignobleWord = await wordQueries.create({
+          json: [
+            {
+              word: "ignoble",
+              meanings: [
+                {
+                  partOfSpeech: "adjective",
+                  definitions: [
+                    { definition: "Not honorable in character or purpose." },
+                  ],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        dithyrambicWord = await wordQueries.create({
+          json: [
+            {
+              word: "dithyrambic",
+              meanings: [
+                {
+                  partOfSpeech: "adjective",
+                  definitions: [
+                    { definition: "Wildly enthusiastic or excited." },
+                  ],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        admonishWord = await wordQueries.create({
+          json: [
+            {
+              word: "admonish",
+              meanings: [
+                {
+                  partOfSpeech: "verb",
+                  definitions: [
+                    { definition: "To warn or reprimand someone firmly." },
+                  ],
+                },
+              ],
+              phonetics: [],
+            },
+          ],
+        });
+        milieuUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: milieuWord.id,
+          learned: false,
+        });
+        clemencyUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: clemencyWord.id,
+          learned: true,
+        });
+        concomitantlyUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: concomitantlyWord.id,
+          learned: false,
+        });
+        sanguineUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: sanguineWord.id,
+          learned: true,
+        });
+        expropriationUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: expropriationWord.id,
+          learned: false,
+        });
+        admonitionUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: admonitionWord.id,
+          learned: true,
+        });
+        ignobleUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: ignobleWord.id,
+          learned: false,
+        });
+        dithyrambicUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: dithyrambicWord.id,
+          learned: true,
+        });
+        admonishUserWord = await userWordQueries.create({
+          userId: newUser!.id,
+          wordId: admonishWord.id,
+          learned: false,
+        });
       });
 
       it("returns all of the user's user words when no queries are provided", async () => {
@@ -712,14 +770,21 @@ describe("userWordQueries", () => {
 
   describe("get", () => {
     it("gets the user word by user and word IDs", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.create(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
-      const userWord = await userWordQueries.get(newUser!.id, newWord.id);
+      const userWord = await userWordQueries.get({
+        userId: newUser!.id,
+        wordId: newWord.id,
+      });
 
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
@@ -739,12 +804,16 @@ describe("userWordQueries", () => {
 
   describe("getById", () => {
     it("returns a correct user word by ID", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      const newUserWord = await userWordQueries.create(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const newUserWord = await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
       const existingUserWord = await userWordQueries.getById(newUserWord.id);
 
@@ -768,12 +837,16 @@ describe("userWordQueries", () => {
     });
 
     it("returns undefined when the user word does not exist", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      await userWordQueries.create(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
       const existingUserWord = await userWordQueries.getById("2");
 
@@ -783,26 +856,33 @@ describe("userWordQueries", () => {
 
   describe("delete", () => {
     it("deletes the user word", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      const newUserWord = await userWordQueries.create(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const newUserWord = await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord.id,
+        learned: false,
+      });
 
-      await userWordQueries.delete(newUser!.id, newWord.id);
+      await userWordQueries.delete({ userId: newUser!.id, wordId: newWord.id });
 
       const userWords = await userWordQueries.getById(newUserWord!.id);
       expect(userWords).toBeUndefined();
     });
 
     it("does nothing if the user word does not exist", async () => {
-      const newWord = await wordQueries.create(json);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      const userWord = await userWordQueries.delete(newUser!.id, newWord.id);
+      const newWord = await wordQueries.create({ json });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const userWord = await userWordQueries.delete({
+        userId: newUser!.id,
+        wordId: newWord.id,
+      });
 
       expect(userWord).toBeUndefined();
     });
@@ -810,36 +890,42 @@ describe("userWordQueries", () => {
 
   describe("deleteAll", () => {
     it("deletes all of the user's words", async () => {
-      const newWord1 = await wordQueries.create(json);
-      const newWord2 = await wordQueries.create([
-        {
-          phonetic: "phonetic",
-          phonetics: [
-            {
-              text: "/wɝd/",
-              audio:
-                "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
-            },
-          ],
-          word: "word",
-          origin: "origin",
-          meanings: [],
-        },
-      ]);
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
-      const newUserWord1 = await userWordQueries.create(
-        newUser!.id,
-        newWord1.id
-      );
-      const newUserWord2 = await userWordQueries.create(
-        newUser!.id,
-        newWord2.id
-      );
+      const newWord1 = await wordQueries.create({ json });
+      const newWord2 = await wordQueries.create({
+        json: [
+          {
+            phonetic: "phonetic",
+            phonetics: [
+              {
+                text: "/wɝd/",
+                audio:
+                  "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+              },
+            ],
+            word: "word",
+            origin: "origin",
+            meanings: [],
+          },
+        ],
+      });
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const newUserWord1 = await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord1.id,
+        learned: false,
+      });
+      const newUserWord2 = await userWordQueries.create({
+        userId: newUser!.id,
+        wordId: newWord2.id,
+        learned: false,
+      });
 
-      const deletedUserWords = await userWordQueries.deleteAll(newUser!.id);
+      const deletedUserWords = await userWordQueries.deleteAllByUserId(
+        newUser!.id
+      );
 
       const result = await userWordQueries.getByUserId(newUser!.id);
       expect(deletedUserWords).toEqual([newUserWord1, newUserWord2]);
@@ -849,12 +935,14 @@ describe("userWordQueries", () => {
     });
 
     it("does not fail if the user has no user words", async () => {
-      const newUser = await userQueries.create(
-        sampleUser1.username,
-        sampleUser1.password
-      );
+      const newUser = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
 
-      const deletedUserWords = await userWordQueries.deleteAll(newUser!.id);
+      const deletedUserWords = await userWordQueries.deleteAllByUserId(
+        newUser!.id
+      );
 
       const result = await userWordQueries.getByUserId(newUser!.id);
       expect(deletedUserWords).toEqual([]);

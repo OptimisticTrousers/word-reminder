@@ -303,7 +303,11 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith(response1);
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        userId,
+        wordId,
+        learned: false,
+      });
     });
 
     it("creates the word if it is all uppercase", async () => {
@@ -351,7 +355,11 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith(response1);
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId);
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        userId,
+        wordId,
+        learned: false,
+      });
     });
 
     it("does not create a word when the provided word is not a valid word", async () => {
@@ -616,8 +624,16 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledWith(response1);
       expect(createWordMock).toHaveBeenCalledWith(response2);
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        userId,
+        wordId: wordId1,
+        learned: false,
+      });
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        userId,
+        wordId: wordId2,
+        learned: false,
+      });
     });
 
     it("creates user words even when any of words in the csv file already exist in the database", async () => {
@@ -666,8 +682,16 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith(response2);
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        userId,
+        wordId: wordId1,
+        learned: false,
+      });
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        userId,
+        wordId: wordId2,
+        learned: false,
+      });
     });
 
     it("creates no words and user words when the csv file is empty", async () => {
@@ -818,7 +842,11 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith(response1);
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        userId,
+        wordId: wordId1,
+        learned: false,
+      });
     });
 
     it("creates no words when no valid words in the csv file exist", async () => {

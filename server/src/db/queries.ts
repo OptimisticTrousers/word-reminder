@@ -5,7 +5,7 @@ import { pool } from "./pool";
 export class Queries<T> {
   private columns: string[];
   private table: string;
-  pool: Pool;
+  protected pool: Pool;
 
   constructor(columns: string[], table: string) {
     this.columns = columns;

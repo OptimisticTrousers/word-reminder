@@ -47,7 +47,10 @@ describe("validateUserId", () => {
   });
 
   it("calls the following request handler when the user exists and the user id is valid", async () => {
-    const user = await userQueries.create("username", "password");
+    const user = await userQueries.create({
+      username: "username",
+      password: "password",
+    });
 
     const response = await request(app)
       .delete(`/api/users/${user!.id}`)

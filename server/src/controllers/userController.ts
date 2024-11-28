@@ -15,7 +15,7 @@ export const delete_user = asyncHandler(
   async (req, _res, next): Promise<void> => {
     const userId: string = req.params.userId;
     await userQueries.deleteById(userId);
-    await userWordQueries.deleteAll(userId);
+    await userWordQueries.deleteAllByUserId(userId);
     next();
   }
 );
@@ -131,10 +131,10 @@ export const signup_user =
       Number(variables.SALT)
     );
 
-    const user: User | null = await userQueries.create(
-      req.body.username,
-      hashedPassword
-    );
+    const user: User | null = await userQueries.create({
+      username: req.body.username,
+      password: hashedPassword,
+    });
 
     res.status(200).json({ user });
   });

@@ -20,7 +20,12 @@ describe("signup_user", () => {
     const createUserMock = jest
       .spyOn(UserQueries.prototype, "create")
       .mockImplementation(async () => {
-        return { id: "1", username: user.username, created_at: new Date(), updated_at: new Date() };
+        return {
+          id: "1",
+          username: user.username,
+          created_at: new Date(),
+          updated_at: new Date(),
+        };
       });
 
     const response = await request(app)
@@ -33,10 +38,10 @@ describe("signup_user", () => {
     expect(hashSpy).toHaveBeenCalledTimes(1);
     expect(hashSpy).toHaveBeenCalledWith(user.password, Number(variables.SALT));
     expect(createUserMock).toHaveBeenCalledTimes(1);
-    expect(createUserMock).toHaveBeenCalledWith(
-      user.username,
-      expect.any(String)
-    );
+    expect(createUserMock).toHaveBeenCalledWith({
+      username: user.username,
+      password: expect.any(String),
+    });
     expect(response.body.user.username).toBe(user.username);
     expect(response.body.user.created_at).toEqual(expect.any(String));
     expect(response.body.user.password).toBeUndefined();

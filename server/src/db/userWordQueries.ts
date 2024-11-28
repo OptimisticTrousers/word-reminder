@@ -34,12 +34,16 @@ export class UserWordQueries extends Queries<UserWord> {
     this.wordQueries = new WordQueries();
   }
 
-  async create(
-    userId: string,
-    wordId: string,
-    learned: boolean = false
-  ): Promise<UserWord> {
-    const existingUserWord = await this.get(userId, wordId);
+  async create({
+    userId,
+    wordId,
+    learned,
+  }: {
+    userId: string;
+    wordId: string;
+    learned: boolean;
+  }): Promise<UserWord> {
+    const existingUserWord = await this.get({ userId, wordId });
 
     if (existingUserWord) {
       return existingUserWord;
@@ -57,11 +61,15 @@ export class UserWordQueries extends Queries<UserWord> {
     return rows[0];
   }
 
-  async setLearned(
-    userId: string,
-    wordId: string,
-    learned: boolean
-  ): Promise<void> {
+  async setLearned({
+    userId,
+    wordId,
+    learned,
+  }: {
+    userId: string;
+    wordId: string;
+    learned: boolean;
+  }): Promise<void> {
     await this.pool.query(
       `
     UPDATE user_words
@@ -73,7 +81,13 @@ export class UserWordQueries extends Queries<UserWord> {
     );
   }
 
-  async get(userId: string, wordId: string): Promise<UserWord | undefined> {
+  async get({
+    userId,
+    wordId,
+  }: {
+    userId: string;
+    wordId: string;
+  }): Promise<UserWord | undefined> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       `
     SELECT * FROM user_words
@@ -86,7 +100,13 @@ export class UserWordQueries extends Queries<UserWord> {
     return rows[0];
   }
 
-  async delete(userId: string, wordId: string): Promise<UserWord> {
+  async delete({
+    userId,
+    wordId,
+  }: {
+    userId: string;
+    wordId: string;
+  }): Promise<UserWord> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       `
     DELETE FROM user_words
@@ -100,7 +120,7 @@ export class UserWordQueries extends Queries<UserWord> {
     return rows[0];
   }
 
-  async deleteAll(userId: string): Promise<UserWord[]> {
+  async deleteAllByUserId(userId: string): Promise<UserWord[]> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       `
     DELETE FROM user_words

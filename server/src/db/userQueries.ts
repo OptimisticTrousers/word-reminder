@@ -14,7 +14,13 @@ export class UserQueries extends Queries<User> {
     super(["id", "username", "created_at", "updated_at"], "users");
   }
 
-  async create(username: string, password: string): Promise<User | null> {
+  async create({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<User | null> {
     const existingUser = await this.getByUsername(username);
 
     if (existingUser) {

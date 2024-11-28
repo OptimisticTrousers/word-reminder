@@ -69,10 +69,11 @@ export const create_word = [
         const existingWord = await wordQueries.getByWord(word);
         if (existingWord) {
           // Create user word and increment count if successful
-          const userWord = await userWordQueries.create(
+          const userWord = await userWordQueries.create({
             userId,
-            existingWord.id
-          );
+            wordId: existingWord.id,
+            learned: false,
+          });
 
           /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
           if (userWord) wordCount++;
@@ -92,7 +93,11 @@ export const create_word = [
 
         const newWord = await wordQueries.create(json);
 
-        const userWord = await userWordQueries.create(userId, newWord.id);
+        const userWord = await userWordQueries.create({
+          userId,
+          wordId: newWord.id,
+          learned: false,
+        });
 
         /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
         if (userWord) wordCount++;
@@ -128,7 +133,11 @@ export const create_word = [
     const existingWord = await wordQueries.getByWord(word);
 
     if (existingWord) {
-      await userWordQueries.create(userId, existingWord.id);
+      await userWordQueries.create({
+        userId,
+        wordId: existingWord.id,
+        learned: false,
+      });
 
       res.status(200).json({ word: existingWord });
       return;
@@ -147,7 +156,11 @@ export const create_word = [
     const newWord = await wordQueries.create(json);
 
     // Associate the new word with the user
-    await userWordQueries.create(userId, newWord.id);
+    await userWordQueries.create({
+      userId,
+      wordId: newWord.id,
+      learned: false,
+    });
 
     res.status(200).json({ word: newWord });
   }),
@@ -159,7 +172,7 @@ export const create_word = [
 export const delete_user_word = asyncHandler(async (req, res) => {
   const userId: string = req.params.userId;
   const wordId: string = req.params.wordId;
-  const userWord = await userWordQueries.delete(userId, wordId);
+  const userWord = await userWordQueries.delete({ userId, wordId });
 
   res.status(200).json({ userWord });
 });

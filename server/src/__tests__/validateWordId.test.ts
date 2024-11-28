@@ -47,7 +47,7 @@ describe("validateWordId", () => {
   });
 
   it("calls the following request handler when the word exists and the word id is valid", async () => {
-    const word = [
+    const json = [
       {
         word: "hello",
         phonetic: "həˈləʊ",
@@ -102,7 +102,7 @@ describe("validateWordId", () => {
       },
     ];
 
-    const newWord = await wordQueries.create(word);
+    const newWord = await wordQueries.create({ json });
 
     const response = await request(app)
       .delete(`/api/words/${newWord.id}`)

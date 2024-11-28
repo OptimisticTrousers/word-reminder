@@ -47,7 +47,7 @@ export class WordQueries extends Queries<Word> {
     super(["*"], "words");
   }
 
-  async create(json: Json): Promise<Word> {
+  async create({ json }: { json: Json }): Promise<Word> {
     const existingWord = await this.getByWord(json[0].word);
 
     if (existingWord) {

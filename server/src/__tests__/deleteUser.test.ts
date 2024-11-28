@@ -24,7 +24,7 @@ describe("delete_user", () => {
       .mockImplementation(jest.fn())
       .mockName("deleteById");
     const deleteAllUserWordsMock = jest
-      .spyOn(UserWordQueries.prototype, "deleteAll")
+      .spyOn(UserWordQueries.prototype, "deleteAllByUserId")
       .mockImplementation(jest.fn())
       .mockName("deleteAll");
     const userId = "1";

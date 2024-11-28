@@ -112,7 +112,7 @@ describe("wordQueries", () => {
 
   describe("create", () => {
     it("creates word after a word is created", async () => {
-      const newWord = await wordQueries.create(json);
+      const newWord = await wordQueries.create({ json });
 
       const createdAtTimestamp = new Date(newWord.created_at).getTime();
       const nowTimestamp = Date.now();
@@ -125,8 +125,8 @@ describe("wordQueries", () => {
     });
 
     it("returns word if the word word was already created", async () => {
-      await wordQueries.create(json);
-      const newWord = await wordQueries.create(json);
+      await wordQueries.create({ json });
+      const newWord = await wordQueries.create({ json });
 
       const createdAtTimestamp = new Date(newWord.created_at).getTime();
       const nowTimestamp = Date.now();
@@ -141,7 +141,7 @@ describe("wordQueries", () => {
 
   describe("getByWord", () => {
     it("returns a word", async () => {
-      const newWord = await wordQueries.create(json);
+      const newWord = await wordQueries.create({ json });
 
       const existingWord = await wordQueries.getByWord(word);
 
@@ -149,7 +149,7 @@ describe("wordQueries", () => {
     });
 
     it("returns word when the word exists in a different case", async () => {
-      const newWord = await wordQueries.create(json);
+      const newWord = await wordQueries.create({ json });
 
       const existingWord = await wordQueries.getByWord(word.toUpperCase());
 
@@ -165,7 +165,7 @@ describe("wordQueries", () => {
 
   describe("getById", () => {
     it("returns a correct word by ID", async () => {
-      const newWord = await wordQueries.create(json);
+      const newWord = await wordQueries.create({ json });
 
       const existingWord = await wordQueries.getById(newWord.id);
 
