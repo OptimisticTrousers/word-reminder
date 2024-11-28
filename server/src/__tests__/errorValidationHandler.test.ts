@@ -31,7 +31,9 @@ describe("errorValidationHandler", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.errors).toBeDefined();
+    expect(response.body).toEqual({
+      errors: expect.any(Array),
+    });
   });
 
   it("the next request handler is called", async () => {
@@ -47,6 +49,8 @@ describe("errorValidationHandler", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe(message);
+    expect(response.body).toEqual({
+      message,
+    });
   });
 });

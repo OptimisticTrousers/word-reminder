@@ -29,15 +29,17 @@ describe("validateUser", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      {
-        location: "body",
-        msg: "Username must be specified.",
-        path: "username",
-        type: "field",
-        value: "",
-      },
-    ]);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "Username must be specified.",
+          path: "username",
+          type: "field",
+          value: "",
+        },
+      ],
+    });
   });
 
   it("returns 400 status code when the password is not provided", async () => {
@@ -53,15 +55,17 @@ describe("validateUser", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      {
-        location: "body",
-        msg: "Password must be specified.",
-        path: "password",
-        type: "field",
-        value: "",
-      },
-    ]);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "Password must be specified.",
+          path: "password",
+          type: "field",
+          value: "",
+        },
+      ],
+    });
   });
 
   it("returns 400 status code when the username is greater than 255 characters", async () => {
@@ -78,16 +82,18 @@ describe("validateUser", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      {
-        location: "body",
-        msg: "Username cannot be greater than 255 characters.",
-        path: "username",
-        type: "field",
-        value:
-          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      },
-    ]);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "Username cannot be greater than 255 characters.",
+          path: "username",
+          type: "field",
+          value:
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+      ],
+    });
   });
 
   it("returns 400 status code when the password is greater than 72 characters", async () => {
@@ -104,16 +110,18 @@ describe("validateUser", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      {
-        location: "body",
-        msg: "Password cannot be greater than 72 characters.",
-        path: "password",
-        type: "field",
-        value:
-          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      },
-    ]);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "Password cannot be greater than 72 characters.",
+          path: "password",
+          type: "field",
+          value:
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+      ],
+    });
   });
 
   it("returns 400 status code when the username is greater than 255 characters and password is greater than 72 characters", async () => {
@@ -131,24 +139,26 @@ describe("validateUser", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      {
-        location: "body",
-        msg: "Username cannot be greater than 255 characters.",
-        path: "username",
-        type: "field",
-        value:
-          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      },
-      {
-        location: "body",
-        msg: "Password cannot be greater than 72 characters.",
-        path: "password",
-        type: "field",
-        value:
-          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      },
-    ]);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "Username cannot be greater than 255 characters.",
+          path: "username",
+          type: "field",
+          value:
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+        {
+          location: "body",
+          msg: "Password cannot be greater than 72 characters.",
+          path: "password",
+          type: "field",
+          value:
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+      ],
+    });
   });
 
   it("the next request handler is called", async () => {
@@ -164,6 +174,6 @@ describe("validateUser", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe(message);
+    expect(response.body).toEqual({ message });
   });
 });

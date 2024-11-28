@@ -10,7 +10,7 @@ describe("current_user", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
-    expect(response.body.user).toBeUndefined();
+    expect(response.body).toEqual({});
   });
 
   it("returns user when the user is logged in", async () => {
@@ -33,6 +33,6 @@ describe("current_user", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
-    expect(response.body.user).toBeUndefined();
+    expect(response.body).toEqual({});
   });
 });

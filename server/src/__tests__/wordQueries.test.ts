@@ -1,4 +1,3 @@
-import { pool } from "../db/pool";
 import { WordQueries } from "../db/wordQueries";
 // Import db setup and teardown functionality
 import "../db/testPopulatedb";
@@ -110,298 +109,71 @@ describe("wordQueries", () => {
   ];
 
   const word = json[0].word;
-  const phonetics = json[0].phonetics;
-  const meanings = json[0].meanings;
 
-  describe("createWord", () => {
-    it("creates word with all fields", async () => {
-      await wordQueries.createWord(json);
-
-      const wordExists = await wordQueries.wordExistsByWord(word);
-      expect(wordExists).toBe(true);
-    });
-
-    it("creates word without an origin field", async () => {
-      await wordQueries.createWord([
-        {
-          word,
-          phonetics,
-          meanings,
-        },
-      ]);
-
-      const wordExists = await wordQueries.wordExistsByWord(word);
-      expect(wordExists).toBe(true);
-    });
-
+  describe("create", () => {
     it("creates word after a word is created", async () => {
-      const newWord = await wordQueries.createWord(json);
+      const newWord = await wordQueries.create(json);
 
-      const { rows } = await pool.query(
-        `SELECT words.*
-         FROM words 
-         WHERE words.id = $1`,
-        [newWord.id]
-      );
-
-      expect(rows).toEqual([
-        {
-          created_at: expect.any(Date),
-          id: 1,
-          origin: null,
-          phonetic: null,
-          word: "hello",
-        },
-      ]);
-      expect(new Date(newWord.created_at).getTime()).toBeLessThanOrEqual(
-        Date.now()
-      );
-    });
-
-    it("creates meanings after a word is created", async () => {
-      const newWord = await wordQueries.createWord(json);
-
-      const { rows } = await pool.query(
-        `SELECT meanings.*
-         FROM words 
-         JOIN meanings ON meanings.word_id = words.id 
-         WHERE words.id = $1`,
-        [newWord.id]
-      );
-
-      expect(rows).toEqual([
-        {
-          id: 1,
-          part_of_speech: "noun",
-          word_id: 1,
-        },
-        {
-          id: 2,
-          part_of_speech: "verb",
-          word_id: 1,
-        },
-        {
-          id: 3,
-          part_of_speech: "interjection",
-          word_id: 1,
-        },
-      ]);
-    });
-
-    it("creates definitions after a word is created", async () => {
-      const newWord = await wordQueries.createWord(json);
-
-      const { rows } = await pool.query(
-        `SELECT definitions.*
-         FROM words 
-         JOIN meanings ON meanings.word_id = words.id 
-         JOIN definitions ON definitions.meaning_id = meanings.id 
-         WHERE words.id = $1`,
-        [newWord.id]
-      );
-      expect(rows).toEqual([
-        {
-          antonyms: [],
-          definition: '"Hello!" or an equivalent greeting.',
-          example: null,
-          id: 1,
-          meaning_id: 1,
-          synonyms: [],
-        },
-        {
-          antonyms: [],
-          definition: 'To greet with "hello".',
-          example: null,
-          id: 2,
-          meaning_id: 2,
-          synonyms: [],
-        },
-        {
-          antonyms: [],
-          definition:
-            "A greeting (salutation) said when meeting someone or acknowledging someone’s arrival or presence.",
-          example: "Hello, everyone.",
-          id: 3,
-          meaning_id: 3,
-          synonyms: [],
-        },
-        {
-          antonyms: [],
-          definition: "A greeting used when answering the telephone.",
-          example: "Hello? How may I help you?",
-          id: 4,
-          meaning_id: 3,
-          synonyms: [],
-        },
-        {
-          antonyms: [],
-          definition:
-            "A call for response if it is not clear if anyone is present or listening, or if a telephone conversation may have been disconnected.",
-          example: "Hello? Is anyone there?",
-          id: 5,
-          meaning_id: 3,
-          synonyms: [],
-        },
-        {
-          antonyms: [],
-          definition:
-            "Used sarcastically to imply that the person addressed or referred to has done something the speaker or writer considers to be foolish.",
-          example:
-            "You just tried to start your car with your cell phone. Hello?",
-          id: 6,
-          meaning_id: 3,
-          synonyms: [],
-        },
-        {
-          antonyms: [],
-          definition: "An expression of puzzlement or discovery.",
-          example: "Hello! What’s going on here?",
-          id: 7,
-          meaning_id: 3,
-          synonyms: [],
-        },
-      ]);
-    });
-    it("creates phonetics after a word is created", async () => {
-      const newWord = await wordQueries.createWord(json);
-
-      const { rows } = await pool.query(
-        `SELECT phonetics.* 
-         FROM words 
-         JOIN phonetics ON phonetics.word_id = words.id 
-         WHERE words.id = $1`,
-        [newWord.id]
-      );
-      expect(rows).toEqual([
-        {
-          audio:
-            "https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3",
-          id: 1,
-          source_url: null,
-          text: null,
-          word_id: 1,
-        },
-        {
-          audio:
-            "https://api.dictionaryapi.dev/media/pronunciations/en/hello-uk.mp3",
-          id: 2,
-          source_url: null,
-          text: "/həˈləʊ/",
-          word_id: 1,
-        },
-        {
-          audio: "",
-          id: 3,
-          source_url: null,
-          text: "/həˈloʊ/",
-          word_id: 1,
-        },
-      ]);
-    });
-  });
-
-  describe("wordExistsById", () => {
-    it("returns true when word exists", async () => {
-      const newWord = await wordQueries.createWord(json);
-
-      const wordExists = await wordQueries.wordExistsById(newWord.id);
-
-      expect(wordExists).toBe(true);
-    });
-
-    it("returns false when word does not exist", async () => {
-      const wordExists = await wordQueries.wordExistsById("1");
-
-      expect(wordExists).toBe(false);
-    });
-  });
-
-  describe("wordExistsByWord", () => {
-    it("returns true when word exists", async () => {
-      await wordQueries.createWord(json);
-
-      const wordExists = await wordQueries.wordExistsByWord(word);
-
-      expect(wordExists).toBe(true);
-    });
-
-    it("returns true when the word exists in a different case", async () => {
-      await wordQueries.createWord(json);
-
-      const wordExists = await wordQueries.wordExistsByWord(word.toUpperCase());
-
-      expect(wordExists).toBe(true);
-    });
-
-    it("returns false when word does not exist", async () => {
-      const wordExists = await wordQueries.wordExistsByWord("nonexistent");
-
-      expect(wordExists).toBe(false);
-    });
-  });
-
-  describe("getWordByWord", () => {
-    it("returns a word", async () => {
-      await wordQueries.createWord(json);
-
-      const newWord = await wordQueries.getWordByWord(word);
-
+      const createdAtTimestamp = new Date(newWord.created_at).getTime();
+      const nowTimestamp = Date.now();
       expect(newWord).toEqual({
-        created_at: expect.any(Date),
         id: 1,
-        origin: null,
-        phonetic: null,
-        word: "hello",
+        details: json,
+        created_at: expect.any(Date),
       });
-      expect(new Date(newWord!.created_at).getTime()).toBeLessThanOrEqual(
-        Date.now()
-      );
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("returns word if the word word was already created", async () => {
+      await wordQueries.create(json);
+      const newWord = await wordQueries.create(json);
+
+      const createdAtTimestamp = new Date(newWord.created_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(newWord).toEqual({
+        id: 1,
+        details: json,
+        created_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+  });
+
+  describe("getByWord", () => {
+    it("returns a word", async () => {
+      const newWord = await wordQueries.create(json);
+
+      const existingWord = await wordQueries.getByWord(word);
+
+      expect(newWord).toEqual(existingWord);
     });
 
     it("returns word when the word exists in a different case", async () => {
-      await wordQueries.createWord(json);
+      const newWord = await wordQueries.create(json);
 
-      const newWord = await wordQueries.getWordByWord(word.toUpperCase());
+      const existingWord = await wordQueries.getByWord(word.toUpperCase());
 
-      expect(newWord).toEqual({
-        created_at: expect.any(Date),
-        id: 1,
-        origin: null,
-        phonetic: null,
-        word: "hello",
-      });
-      expect(new Date(newWord!.created_at).getTime()).toBeLessThanOrEqual(
-        Date.now()
-      );
+      expect(newWord).toEqual(existingWord);
     });
 
     it("returns undefined when the word does not exist", async () => {
-      const word = await wordQueries.getWordByWord("undefined");
+      const word = await wordQueries.getByWord("undefined");
 
       expect(word).toBeUndefined();
     });
   });
 
-  describe("getWordById", () => {
-    it("returns a correct word", async () => {
-      const { id } = await wordQueries.createWord(json);
+  describe("getById", () => {
+    it("returns a correct word by ID", async () => {
+      const newWord = await wordQueries.create(json);
 
-      const newWord = await wordQueries.getWordById(id);
+      const existingWord = await wordQueries.getById(newWord.id);
 
-      expect(newWord).toEqual({
-        created_at: expect.any(Date),
-        id: 1,
-        origin: null,
-        phonetic: null,
-        word: "hello",
-      });
-      expect(new Date(newWord!.created_at).getTime()).toBeLessThanOrEqual(
-        Date.now()
-      );
+      expect(newWord).toEqual(existingWord);
     });
 
     it("returns undefined when the word does not exist", async () => {
-      const word = await wordQueries.getWordById("1");
+      const word = await wordQueries.getById("1");
 
       expect(word).toBeUndefined();
     });

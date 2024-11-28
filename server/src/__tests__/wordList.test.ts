@@ -24,7 +24,7 @@ describe("word_list", () => {
   };
 
   const getUserWordsByUserIdMock = jest
-    .spyOn(UserWordQueries.prototype, "getUserWordsByUserId")
+    .spyOn(UserWordQueries.prototype, "getByUserId")
     .mockImplementation(async () => {
       return {
         userWords: [userWord],
@@ -50,9 +50,9 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).toHaveBeenCalledWith(userId, {});
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.userWords).toEqual([userWordISO]);
-      expect(response.body.previous).toBeUndefined();
-      expect(response.body.next).toBeUndefined();
+      expect(response.body).toEqual({
+        userWords: [userWordISO],
+      });
     });
   });
 
@@ -88,7 +88,9 @@ describe("word_list", () => {
       });
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.userWords).toEqual([userWordISO]);
+      expect(response.body).toEqual({
+        userWords: [userWordISO],
+      });
     });
   });
 
@@ -105,7 +107,7 @@ describe("word_list", () => {
       });
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.userWords).toEqual([userWordISO]);
+      expect(response.body).toEqual({ userWords: [userWordISO] });
     });
 
     it("returns errors with status code 400 when the learned option is not a boolean", async () => {
@@ -117,15 +119,18 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'learned' must be a boolean.",
-          path: "learned",
-          type: "field",
-          value: "hello",
-        },
-      ]);
+
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'learned' must be a boolean.",
+            path: "learned",
+            type: "field",
+            value: "hello",
+          },
+        ],
+      });
     });
   });
 
@@ -151,7 +156,7 @@ describe("word_list", () => {
       });
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.userWords).toEqual([userWordISO]);
+      expect(response.body).toEqual({ userWords: [userWordISO] });
     });
 
     it("returns errors with status code 400 when the sort query options do not have the 'table' field", async () => {
@@ -164,18 +169,20 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: {
-            column: "word",
-            direction: "1",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: {
+              column: "word",
+              direction: "1",
+            },
           },
-        },
-      ]);
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the the sort query options do not have the 'direction' field", async () => {
@@ -191,15 +198,17 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: { column: "word", table: "words" },
-        },
-      ]);
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: { column: "word", table: "words" },
+          },
+        ],
+      });
     });
 
     it("returns errors with status code 400 words when the sort query options do not have the 'column' field", async () => {
@@ -215,18 +224,20 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: {
-            direction: "1",
-            table: "words",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: {
+              direction: "1",
+              table: "words",
+            },
           },
-        },
-      ]);
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the sort query options do not have the 'table' and 'direction' fields", async () => {
@@ -241,17 +252,19 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: {
-            column: "word",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: {
+              column: "word",
+            },
           },
-        },
-      ]);
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the sort query options do not have the 'table' and 'column' fields", async () => {
@@ -266,17 +279,19 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: {
-            direction: "1",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: {
+              direction: "1",
+            },
           },
-        },
-      ]);
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the sort query options do not have the 'direction' and 'column' fields", async () => {
@@ -291,17 +306,19 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: {
-            table: "words",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: {
+              table: "words",
+            },
           },
-        },
-      ]);
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the column is a non-empty string", async () => {
@@ -318,26 +335,28 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'column' must be a non-empty string.",
-          path: "column",
-          type: "field",
-          value: "",
-        },
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: {
-            column: "",
-            direction: "1",
-            table: "words",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'column' must be a non-empty string.",
+            path: "column",
+            type: "field",
+            value: "",
           },
-        },
-      ]);
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: {
+              column: "",
+              direction: "1",
+              table: "words",
+            },
+          },
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the direction is not a number", async () => {
@@ -354,15 +373,17 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'direction' must be an integer.",
-          path: "direction",
-          type: "field",
-          value: "true",
-        },
-      ]);
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'direction' must be an integer.",
+            path: "direction",
+            type: "field",
+            value: "true",
+          },
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the table is a non-empty string", async () => {
@@ -379,26 +400,28 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'table' must be a non-empty string.",
-          path: "table",
-          type: "field",
-          value: "",
-        },
-        {
-          location: "query",
-          msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-          path: "",
-          type: "field",
-          value: {
-            column: "word",
-            direction: "1",
-            table: "",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'table' must be a non-empty string.",
+            path: "table",
+            type: "field",
+            value: "",
           },
-        },
-      ]);
+          {
+            location: "query",
+            msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+            path: "",
+            type: "field",
+            value: {
+              column: "word",
+              direction: "1",
+              table: "",
+            },
+          },
+        ],
+      });
     });
   });
 
@@ -416,9 +439,9 @@ describe("word_list", () => {
       });
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.userWords).toEqual([userWordISO]);
-      expect(response.body.previous).toBeUndefined();
-      expect(response.body.next).toBeUndefined();
+      expect(response.body).toEqual({
+        userWords: [userWordISO],
+      });
     });
 
     it("returns errors with status code 400 when the search query option is empty", async () => {
@@ -431,15 +454,17 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'search' must be a non-empty string.",
-          path: "search",
-          type: "field",
-          value: "",
-        },
-      ]);
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'search' must be a non-empty string.",
+            path: "search",
+            type: "field",
+            value: "",
+          },
+        ],
+      });
     });
   });
 
@@ -459,9 +484,9 @@ describe("word_list", () => {
       });
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.userWords).toEqual([userWordISO]);
-      expect(response.body.previous).toBeUndefined();
-      expect(response.body.next).toBeUndefined();
+      expect(response.body).toEqual({
+        userWords: [userWordISO],
+      });
     });
 
     it("returns errors with status code 400 when the page size is not a number and the page limit is provided", async () => {
@@ -474,15 +499,17 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'page' must be an integer.",
-          path: "page",
-          type: "field",
-          value: "undefined",
-        },
-      ]);
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'page' must be an integer.",
+            path: "page",
+            type: "field",
+            value: "undefined",
+          },
+        ],
+      });
     });
 
     it("returns errors with status code 400 when the page limit is not a number and the page size is provided", async () => {
@@ -495,15 +522,17 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'limit' must be an integer.",
-          path: "limit",
-          type: "field",
-          value: "undefined",
-        },
-      ]);
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'limit' must be an integer.",
+            path: "limit",
+            type: "field",
+            value: "undefined",
+          },
+        ],
+      });
     });
 
     it("returns errors with 400 status code when the page limit is provided and the page size is not provided", async () => {
@@ -516,17 +545,19 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'page' and 'limit' must both be provided for pagination.",
-          path: "",
-          type: "field",
-          value: {
-            limit: "6",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'page' and 'limit' must both be provided for pagination.",
+            path: "",
+            type: "field",
+            value: {
+              limit: "6",
+            },
           },
-        },
-      ]);
+        ],
+      });
     });
 
     it("returns errors with 400 status code when the page limit is not provided and the page size is provided", async () => {
@@ -539,17 +570,19 @@ describe("word_list", () => {
       expect(getUserWordsByUserIdMock).not.toHaveBeenCalled();
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual([
-        {
-          location: "query",
-          msg: "'page' and 'limit' must both be provided for pagination.",
-          path: "",
-          type: "field",
-          value: {
-            page: "1",
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "query",
+            msg: "'page' and 'limit' must both be provided for pagination.",
+            path: "",
+            type: "field",
+            value: {
+              page: "1",
+            },
           },
-        },
-      ]);
+        ],
+      });
     });
   });
 });

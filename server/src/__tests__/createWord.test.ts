@@ -260,7 +260,7 @@ describe("create_word", () => {
 
       - Example Use Case: Ensures that the system correctly handles the creation of a new word if it doesn't already exist in the database. */
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
+        .spyOn(WordQueries.prototype, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
@@ -270,12 +270,12 @@ describe("create_word", () => {
           return { json: response1, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
+        .spyOn(WordQueries.prototype, "create")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId, created_at: new Date() };
+          return { details: response1, id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .spyOn(UserWordQueries.prototype, "create")
         .mockImplementation(async () => {
           return userWord;
         });
@@ -287,10 +287,12 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.word).toEqual({
-        ...response1[0],
-        id: wordId,
-        created_at: expect.any(String),
+      expect(response.body).toEqual({
+        word: {
+          details: response1,
+          id: wordId,
+          created_at: expect.any(String),
+        },
       });
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
@@ -306,7 +308,7 @@ describe("create_word", () => {
 
     it("creates the word if it is all uppercase", async () => {
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
+        .spyOn(WordQueries.prototype, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
@@ -316,12 +318,12 @@ describe("create_word", () => {
           return { json: response1, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
+        .spyOn(WordQueries.prototype, "create")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId, created_at: new Date() };
+          return { details: response1, id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .spyOn(UserWordQueries.prototype, "create")
         .mockImplementation(async () => {
           return userWord;
         });
@@ -333,10 +335,12 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.word).toEqual({
-        ...response1[0],
-        id: wordId,
-        created_at: expect.any(String),
+      expect(response.body).toEqual({
+        word: {
+          details: response1,
+          id: wordId,
+          created_at: expect.any(String),
+        },
       });
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
@@ -355,7 +359,7 @@ describe("create_word", () => {
       const message =
         "Sorry pal, we couldn't find definitions for the word you were looking for.";
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
+        .spyOn(WordQueries.prototype, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
@@ -365,12 +369,12 @@ describe("create_word", () => {
           return { json: { message }, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
+        .spyOn(WordQueries.prototype, "create")
         .mockImplementation(async () => {
-          return { ...response1[0], id: wordId, created_at: new Date() };
+          return { details: response1, id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .spyOn(UserWordQueries.prototype, "create")
         .mockImplementation(async () => {
           return userWord;
         });
@@ -382,7 +386,7 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe(message);
+      expect(response.body).toEqual({ message });
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(word);
       expect(httpGetMock).toHaveBeenCalledTimes(1);
@@ -561,7 +565,7 @@ describe("create_word", () => {
 
     it("creates words and user words", async () => {
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
+        .spyOn(WordQueries.prototype, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
@@ -574,15 +578,15 @@ describe("create_word", () => {
         return { json: response2, status: 200 };
       });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
+        .spyOn(WordQueries.prototype, "create")
         .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1, created_at: new Date() };
+          return { details: response1, id: wordId1, created_at: new Date() };
         });
       createWordMock.mockImplementationOnce(async () => {
-        return { ...response2[0], id: wordId2, created_at: new Date() };
+        return { details: response2, id: wordId2, created_at: new Date() };
       });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .spyOn(UserWordQueries.prototype, "create")
         .mockImplementationOnce(async () => {
           return userWord1;
         });
@@ -597,7 +601,7 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe("2 words have been created.");
+      expect(response.body).toEqual({ message: "2 words have been created." });
       expect(getWordByWordMock).toHaveBeenCalledTimes(2);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
@@ -618,9 +622,9 @@ describe("create_word", () => {
 
     it("creates user words even when any of words in the csv file already exist in the database", async () => {
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
+        .spyOn(WordQueries.prototype, "getByWord")
         .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1, created_at: new Date() };
+          return { details: response1, id: wordId1, created_at: new Date() };
         });
       getWordByWordMock.mockImplementationOnce(async () => {
         return undefined;
@@ -631,12 +635,12 @@ describe("create_word", () => {
           return { json: response2, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
+        .spyOn(WordQueries.prototype, "create")
         .mockImplementationOnce(async () => {
-          return { ...response2[0], id: wordId2, created_at: new Date() };
+          return { details: response2, id: wordId2, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .spyOn(UserWordQueries.prototype, "create")
         .mockImplementationOnce(async () => {
           return userWord1;
         });
@@ -651,58 +655,7 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe("2 words have been created.");
-      expect(getWordByWordMock).toHaveBeenCalledTimes(2);
-      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
-      expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
-      expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
-      );
-      expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(response2);
-      expect(createUserWordMock).toHaveBeenCalledTimes(2);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId1);
-      expect(createUserWordMock).toHaveBeenCalledWith(userId, wordId2);
-    });
-
-    it("creates words and user words and skips over user words that already exist in the database", async () => {
-      const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
-        .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1, created_at: new Date() };
-        });
-      getWordByWordMock.mockImplementationOnce(async () => {
-        return undefined;
-      });
-      const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
-        .mockImplementationOnce(async () => {
-          return { json: response2, status: 200 };
-        });
-      const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
-        .mockImplementationOnce(async () => {
-          return { ...response2[0], id: wordId2, created_at: new Date() };
-        });
-      const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
-        .mockImplementationOnce(async () => {
-          return null;
-        });
-      createUserWordMock.mockImplementationOnce(async () => {
-        return userWord2;
-      });
-      const message =
-        "You have already added 1 of these words in your dictionary. New words have been created if they were not already in your dictionary.";
-
-      const response = await request(app)
-        .post(`/api/users/${userId}/words`)
-        .set("Accept", "application/json")
-        .attach("csv", "src/csv/columnWords.csv");
-
-      expect(response.status).toBe(200);
-      expect(response.body.message).toBe(message);
+      expect(response.body).toEqual({ message: "2 words have been created." });
       expect(getWordByWordMock).toHaveBeenCalledTimes(2);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
@@ -718,15 +671,12 @@ describe("create_word", () => {
     });
 
     it("creates no words and user words when the csv file is empty", async () => {
-      const getWordByWordMock = jest.spyOn(
-        WordQueries.prototype,
-        "getWordByWord"
-      );
+      const getWordByWordMock = jest.spyOn(WordQueries.prototype, "getByWord");
       const httpGetMock = jest.spyOn(Http.prototype, "get");
-      const createWordMock = jest.spyOn(WordQueries.prototype, "createWord");
+      const createWordMock = jest.spyOn(WordQueries.prototype, "create");
       const createUserWordMock = jest.spyOn(
         UserWordQueries.prototype,
-        "createUserWord"
+        "create"
       );
 
       const response = await request(app)
@@ -736,9 +686,9 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe(
-        "0 words have been created because the CSV file is empty."
-      );
+      expect(response.body).toEqual({
+        message: "0 words have been created because the CSV file is empty.",
+      });
       expect(getWordByWordMock).not.toHaveBeenCalled();
       expect(httpGetMock).not.toHaveBeenCalled();
       expect(createWordMock).not.toHaveBeenCalled();
@@ -822,7 +772,7 @@ describe("create_word", () => {
       ];
       const word2 = "not a valid word";
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
+        .spyOn(WordQueries.prototype, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
@@ -835,12 +785,12 @@ describe("create_word", () => {
         return { json: { message: "Invalid word." }, status: 400 };
       });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "createWord")
+        .spyOn(WordQueries.prototype, "create")
         .mockImplementationOnce(async () => {
-          return { ...response1[0], id: wordId1, created_at: new Date() };
+          return { details: response1, id: wordId1, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "createUserWord")
+        .spyOn(UserWordQueries.prototype, "create")
         .mockImplementationOnce(async () => {
           return userWord1;
         });
@@ -852,9 +802,9 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe(
-        `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${word2}`
-      );
+      expect(response.body).toEqual({
+        message: `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${word2}`,
+      });
       expect(getWordByWordMock).toHaveBeenCalledTimes(2);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(word2);
@@ -874,7 +824,7 @@ describe("create_word", () => {
     it("creates no words when no valid words in the csv file exist", async () => {
       const phrases = ["a man", "a plan", "a canal"];
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getWordByWord")
+        .spyOn(WordQueries.prototype, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
@@ -883,10 +833,10 @@ describe("create_word", () => {
         .mockImplementation(async () => {
           return { json: { message: "Invalid word." }, status: 400 };
         });
-      const createWordMock = jest.spyOn(WordQueries.prototype, "createWord");
+      const createWordMock = jest.spyOn(WordQueries.prototype, "create");
       const createUserWordMock = jest.spyOn(
         UserWordQueries.prototype,
-        "createUserWord"
+        "create"
       );
 
       const response = await request(app)
@@ -896,9 +846,9 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe(
-        `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${phrases[0]}, ${phrases[1]}, and ${phrases[2]}`
-      );
+      expect(response.body).toEqual({
+        message: `You have value(s) in your CSV file that are not words. Please change them to valid word(s) and re-import your words: ${phrases[0]}, ${phrases[1]}, and ${phrases[2]}`,
+      });
       expect(getWordByWordMock).toHaveBeenCalledTimes(3);
       expect(getWordByWordMock).toHaveBeenCalledWith(phrases[0]);
       expect(getWordByWordMock).toHaveBeenCalledWith(phrases[1]);
@@ -918,15 +868,12 @@ describe("create_word", () => {
     });
 
     it("sends an error message when the CSV parser returns an error", async () => {
-      const getWordByWordMock = jest.spyOn(
-        WordQueries.prototype,
-        "getWordByWord"
-      );
+      const getWordByWordMock = jest.spyOn(WordQueries.prototype, "getByWord");
       const httpGetMock = jest.spyOn(Http.prototype, "get");
-      const createWordMock = jest.spyOn(WordQueries.prototype, "createWord");
+      const createWordMock = jest.spyOn(WordQueries.prototype, "create");
       const createUserWordMock = jest.spyOn(
         UserWordQueries.prototype,
-        "createUserWord"
+        "create"
       );
       const message = "CSV file was parsed incorrectly.";
       jest.spyOn(Csv.prototype, "read").mockImplementationOnce(async () => {
@@ -944,7 +891,7 @@ describe("create_word", () => {
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe(message);
+      expect(response.body).toEqual({ message });
       expect(getWordByWordMock).not.toHaveBeenCalled();
       expect(httpGetMock).not.toHaveBeenCalled();
       expect(createWordMock).not.toHaveBeenCalled();
@@ -961,14 +908,16 @@ describe("create_word", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.errors).toEqual([
-      {
-        location: "body",
-        msg: "Word or CSV file is required.",
-        path: "word",
-        type: "field",
-        value: "",
-      },
-    ]);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "Word or CSV file is required.",
+          path: "word",
+          type: "field",
+          value: "",
+        },
+      ],
+    });
   });
 });

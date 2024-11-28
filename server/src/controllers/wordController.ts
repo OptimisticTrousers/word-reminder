@@ -2,15 +2,15 @@ import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 
 import { upload } from "../config/multer";
-import { errorValidationHandler } from "../middleware/errorValidationHandler";
 import { UserWordQueries } from "../db/userWordQueries";
+import { WordQueries } from "../db/wordQueries";
+import { errorValidationHandler } from "../middleware/errorValidationHandler";
 import { Csv } from "../utils/csv";
 import { Http } from "../utils/http";
-import { WordQueries } from "../db/wordQueries";
 
+const http = new Http();
 const userWordQueries = new UserWordQueries();
 const wordQueries = new WordQueries();
-const http = new Http();
 
 // @desc Add new word and user word
 // @route POST /api/users/:userId/words
@@ -66,10 +66,10 @@ export const create_word = [
     for (const record of records) {
       for (const word of record) {
         // Check if the word already exists in the database
-        const existingWord = await wordQueries.getWordByWord(word);
+        const existingWord = await wordQueries.getByWord(word);
         if (existingWord) {
           // Create user word and increment count if successful
-          const userWord = await userWordQueries.createUserWord(
+          const userWord = await userWordQueries.create(
             userId,
             existingWord.id
           );
@@ -90,12 +90,9 @@ export const create_word = [
           continue;
         }
 
-        const newWord = await wordQueries.createWord(json);
+        const newWord = await wordQueries.create(json);
 
-        const userWord = await userWordQueries.createUserWord(
-          userId,
-          newWord.id
-        );
+        const userWord = await userWordQueries.create(userId, newWord.id);
 
         /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
         if (userWord) wordCount++;
@@ -122,31 +119,16 @@ export const create_word = [
       return;
     }
 
-    /* Existing User Words Response:
-    - Process all words in the CSV file, creating new user words for valid entries and skipping duplicates.
-
-    - Example: If the user imports a CSV file with 50 words and 10 already exist in their dictionary, the server creates 40 new entries and informs the user that 10 words were already added previously.
-
-    - This avoids stopping at the first duplicate and provides a summary for the user. */
-    if (wordCount < count) {
-      res.status(200).json({
-        message: `You have already added ${
-          count - wordCount
-        } of these words in your dictionary. New words have been created if they were not already in your dictionary.`,
-      });
-      return;
-    }
-
     res.status(200).json({ message: `${wordCount} words have been created.` });
   }),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const { word } = req.body;
 
-    const existingWord = await wordQueries.getWordByWord(word);
+    const existingWord = await wordQueries.getByWord(word);
 
     if (existingWord) {
-      await userWordQueries.createUserWord(userId, existingWord.id);
+      await userWordQueries.create(userId, existingWord.id);
 
       res.status(200).json({ word: existingWord });
       return;
@@ -162,10 +144,10 @@ export const create_word = [
       return;
     }
 
-    const newWord = await wordQueries.createWord(json);
+    const newWord = await wordQueries.create(json);
 
     // Associate the new word with the user
-    await userWordQueries.createUserWord(userId, newWord.id);
+    await userWordQueries.create(userId, newWord.id);
 
     res.status(200).json({ word: newWord });
   }),
@@ -177,7 +159,7 @@ export const create_word = [
 export const delete_user_word = asyncHandler(async (req, res) => {
   const userId: string = req.params.userId;
   const wordId: string = req.params.wordId;
-  const userWord = await userWordQueries.deleteUserWord(userId, wordId);
+  const userWord = await userWordQueries.delete(userId, wordId);
 
   res.status(200).json({ userWord });
 });
@@ -268,7 +250,7 @@ export const word_list = [
       ...(search && { search: String(search) }),
     };
 
-    const result = await userWordQueries.getUserWordsByUserId(userId, options);
+    const result = await userWordQueries.getByUserId(userId, options);
 
     res.status(200).json(result);
   }),

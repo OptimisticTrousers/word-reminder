@@ -5,7 +5,7 @@ import { app } from "../app";
 import "../db/testPopulatedb";
 
 describe("login_user", () => {
-  it("returns 401 status code when no user is found", async () => {
+  it("returns 401 status code when the username is incorrect", async () => {
     const user = {
       username: "username",
       password: "password",
@@ -14,11 +14,14 @@ describe("login_user", () => {
     const response = await request(app)
       .post("/api/sessions")
       .set("Accept", "application/json")
-      .send(user);
+      .send({ username: "wrong username", password: user.password });
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(401);
-    expect(response.body.user).toBeNull();
+    expect(response.body).toEqual({
+      user: null,
+      message: "Incorrect username.",
+    });
   });
 
   it("returns 401 status code when the password is incorrect", async () => {
@@ -34,11 +37,14 @@ describe("login_user", () => {
     const response = await request(app)
       .post("/api/sessions")
       .set("Accept", "application/json")
-      .send({ username: user.username, password: undefined });
+      .send({ username: user.username, password: "wrong password" });
 
     expect(response.headers["content-type"]).toMatch(/json/);
-    expect(response.status).toBe(400);
-    expect(response.body.user).toBeUndefined();
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      user: null,
+      message: "Incorrect password.",
+    });
   });
 
   it("returns user object after successful login", async () => {
@@ -55,7 +61,19 @@ describe("login_user", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
-    expect(response.body.user.username).toBe(user.username);
-    expect(response.body.user.password).toBeUndefined();
+    expect(response.body).toEqual({
+      user: {
+        id: 1,
+        username: user.username,
+        created_at: expect.any(String),
+        updated_at: expect.any(String),
+      },
+    });
+    expect(new Date(response.body.user.created_at).toString()).not.toBe(
+      "Invalid Date"
+    );
+    expect(new Date(response.body.user.updated_at).toString()).not.toBe(
+      "Invalid Date"
+    );
   });
 });

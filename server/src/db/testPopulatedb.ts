@@ -14,10 +14,6 @@ beforeEach(async () => {
   await database.populate();
 });
 
-afterEach(async () => {
-  await database.clear();
-});
-
 afterAll(async () => {
   await database.stopConnection();
   await pool.end();

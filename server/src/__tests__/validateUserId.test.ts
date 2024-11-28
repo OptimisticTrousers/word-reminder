@@ -29,7 +29,9 @@ describe("validateUserId", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("Invalid user ID.");
+    expect(response.body).toEqual({
+      message: "Invalid user ID.",
+    });
   });
 
   it("returns a 404 status code with user not found message", async () => {
@@ -39,17 +41,21 @@ describe("validateUserId", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe("User not found.");
+    expect(response.body).toEqual({
+      message: "User not found.",
+    });
   });
 
   it("calls the following request handler when the user exists and the user id is valid", async () => {
-    const user = await userQueries.createUser("username", "password");
+    const user = await userQueries.create("username", "password");
 
     const response = await request(app)
       .delete(`/api/users/${user!.id}`)
       .set("Accept", "application/json");
 
     expect(response.status).toBe(200);
-    expect(response.body.message).toEqual(message);
+    expect(response.body).toEqual({
+      message,
+    });
   });
 });

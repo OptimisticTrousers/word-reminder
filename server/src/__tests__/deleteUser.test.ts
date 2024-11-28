@@ -20,13 +20,13 @@ describe("delete_user", () => {
 
   it("calls the methods to delete the user and the user's user words", async () => {
     const deleteUserByIdMock = jest
-      .spyOn(UserQueries.prototype, "deleteUserById")
+      .spyOn(UserQueries.prototype, "deleteById")
       .mockImplementation(jest.fn())
-      .mockName("deleteUserById");
+      .mockName("deleteById");
     const deleteAllUserWordsMock = jest
-      .spyOn(UserWordQueries.prototype, "deleteAllUserWords")
+      .spyOn(UserWordQueries.prototype, "deleteAll")
       .mockImplementation(jest.fn())
-      .mockName("deleteUserById");
+      .mockName("deleteAll");
     const userId = "1";
 
     const response = await request(app)
@@ -39,6 +39,6 @@ describe("delete_user", () => {
     expect(deleteAllUserWordsMock).toHaveBeenCalledTimes(1);
     expect(deleteAllUserWordsMock).toHaveBeenCalledWith(userId);
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe(message);
+    expect(response.body).toEqual({ message });
   });
 });

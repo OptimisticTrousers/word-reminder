@@ -8,11 +8,11 @@ import logger from "morgan";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 
+import { variables } from "./config/variables";
 import { pool } from "./db/pool";
 import errorHandler from "./middleware/errorHandler";
 import notFoundHandler from "./middleware/notFoundHandler";
 import routes from "./routes/index";
-import { variables } from "./config/variables";
 
 const app: Express = express();
 

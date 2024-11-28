@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 
-import { OmitPassword, UserQueries } from "../db/userQueries";
-import { UserWordQueries } from "../db/userWordQueries";
 import { variables } from "../config/variables";
+import { User, UserQueries } from "../db/userQueries";
+import { UserWordQueries } from "../db/userWordQueries";
 
 const userQueries = new UserQueries();
 const userWordQueries = new UserWordQueries();
@@ -14,8 +14,8 @@ const userWordQueries = new UserWordQueries();
 export const delete_user = asyncHandler(
   async (req, _res, next): Promise<void> => {
     const userId: string = req.params.userId;
-    await userQueries.deleteUserById(userId);
-    await userWordQueries.deleteAllUserWords(userId);
+    await userQueries.deleteById(userId);
+    await userWordQueries.deleteAll(userId);
     next();
   }
 );
@@ -131,7 +131,7 @@ export const signup_user =
       Number(variables.SALT)
     );
 
-    const user: OmitPassword | null = await userQueries.createUser(
+    const user: User | null = await userQueries.create(
       req.body.username,
       hashedPassword
     );

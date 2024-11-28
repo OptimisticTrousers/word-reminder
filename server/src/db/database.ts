@@ -34,6 +34,21 @@ export class Database {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
 
+      CREATE TABLE words (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        details JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE user_words (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        user_id INTEGER REFERENCES users(id) NOT NULL,
+        word_id INTEGER REFERENCES words(id) NOT NULL,
+        learned BOOLEAN NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
       CREATE OR REPLACE FUNCTION trigger_set_timestamp()
       RETURNS TRIGGER AS $$
       BEGIN
@@ -47,66 +62,10 @@ export class Database {
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
 
-      CREATE TABLE words (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        word VARCHAR (45) UNIQUE NOT NULL,
-        origin TEXT,
-        phonetic TEXT,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-
-      CREATE TABLE phonetics (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        audio TEXT,
-        source_url TEXT,
-        text TEXT,
-        word_id INTEGER REFERENCES words(id)
-      );
-
-      CREATE TABLE user_words (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        user_id INTEGER REFERENCES users(id),
-        word_id INTEGER REFERENCES words(id),
-        learned BOOLEAN DEFAULT false NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-
       CREATE OR REPLACE TRIGGER set_timestamp
       BEFORE UPDATE ON user_words
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
-
-      CREATE TABLE meanings (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        part_of_speech TEXT NOT NULL,
-        word_id INTEGER REFERENCES words(id)
-      );
-
-      CREATE TABLE definitions (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        meaning_id INTEGER REFERENCES meanings(id),
-        definition TEXT,
-        example TEXT,
-        synonyms TEXT ARRAY,
-        antonyms TEXT ARRAY
-      );
-
-      CREATE TABLE word_reminders (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        user_id INTEGER REFERENCES users(id),
-        from TIMESTAMPTZ NOT NULL,
-        to TIMESTAMPTZ NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-
-      CREATE OR REPLACE TRIGGER set_timestamp
-      BEFORE UPDATE ON user_words
-      FOR EACH ROW
-      EXECUTE PROCEDURE trigger_set_timestamp();
-
-      CREATE
     `;
 
     // console.log("Seeding...");

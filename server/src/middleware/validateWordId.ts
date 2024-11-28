@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 
-import { WordQueries } from "../db/wordQueries";
+import { Word, WordQueries } from "../db/wordQueries";
 
 export const validateWordId = asyncHandler(
   async (req, res, next): Promise<void> => {
@@ -11,8 +11,8 @@ export const validateWordId = asyncHandler(
     }
 
     const wordQueries = new WordQueries();
-    const wordExists = await wordQueries.wordExistsById(wordId);
-    if (!wordExists) {
+    const word: Word | undefined = await wordQueries.getById(wordId);
+    if (!word) {
       res.status(404).json({ message: "Word not found." });
       return;
     }

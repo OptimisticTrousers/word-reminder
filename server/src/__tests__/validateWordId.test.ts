@@ -29,7 +29,9 @@ describe("validateWordId", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("Invalid word ID.");
+    expect(response.body).toEqual({
+      message: "Invalid word ID.",
+    });
   });
 
   it("returns a 404 status code with word not found message", async () => {
@@ -39,7 +41,9 @@ describe("validateWordId", () => {
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe("Word not found.");
+    expect(response.body).toEqual({
+      message: "Word not found.",
+    });
   });
 
   it("calls the following request handler when the word exists and the word id is valid", async () => {
@@ -98,13 +102,15 @@ describe("validateWordId", () => {
       },
     ];
 
-    const newWord = await wordQueries.createWord(word);
+    const newWord = await wordQueries.create(word);
 
     const response = await request(app)
       .delete(`/api/words/${newWord.id}`)
       .set("Accept", "application/json");
 
     expect(response.status).toBe(200);
-    expect(response.body.message).toEqual(message);
+    expect(response.body).toEqual({
+      message,
+    });
   });
 });

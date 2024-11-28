@@ -18,9 +18,9 @@ describe("signup_user", () => {
     };
     const hashSpy = jest.spyOn(bcrypt, "hash");
     const createUserMock = jest
-      .spyOn(UserQueries.prototype, "createUser")
+      .spyOn(UserQueries.prototype, "create")
       .mockImplementation(async () => {
-        return { id: "1", username: user.username, created_at: new Date() };
+        return { id: "1", username: user.username, created_at: new Date(), updated_at: new Date() };
       });
 
     const response = await request(app)

@@ -15,22 +15,25 @@ export const current_user = asyncHandler(async (req, res): Promise<void> => {
 export const login_user = asyncHandler(
   // Process request after validation and sanitization.
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    passport.authenticate("local", (err: Error, user: Express.User) => {
-      if (err) {
-        return next(err);
-      }
-
-      if (!user) {
-        return res.status(401).json({ user: null });
-      }
-
-      req.logIn(user, (err) => {
+    passport.authenticate(
+      "local",
+      (err: Error, user: Express.User, info: { message: string }) => {
         if (err) {
           return next(err);
         }
-        res.status(200).json({ user });
-      });
-    })(req, res, next);
+
+        if (!user) {
+          return res.status(401).json({ user: null, message: info.message });
+        }
+
+        req.logIn(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          res.status(200).json({ user });
+        });
+      }
+    )(req, res, next);
   }
 );
 

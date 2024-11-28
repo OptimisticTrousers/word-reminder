@@ -24,87 +24,96 @@ interface Result {
   next?: Page;
 }
 
-export class UserWordQueries extends Queries {
+export class UserWordQueries extends Queries<UserWord> {
   userQueries: UserQueries;
   wordQueries: WordQueries;
 
   constructor() {
-    super();
+    super(["*"], "user_words");
     this.userQueries = new UserQueries();
     this.wordQueries = new WordQueries();
   }
 
-  async createUserWord(
+  async create(
     userId: string,
     wordId: string,
     learned: boolean = false
-  ): Promise<UserWord | null> {
+  ): Promise<UserWord> {
+    const existingUserWord = await this.get(userId, wordId);
+
+    if (existingUserWord) {
+      return existingUserWord;
+    }
+
     const { rows }: QueryResult<UserWord> = await this.pool.query(
-      "INSERT INTO user_words(user_id, word_id, learned) VALUES ($1, $2, $3) RETURNING *",
+      `
+    INSERT INTO user_words(user_id, word_id, learned)
+    VALUES ($1, $2, $3)
+    RETURNING *;
+      `,
       [userId, wordId, learned]
     );
 
-    const userWord: UserWord = rows[0];
-
-    return userWord;
+    return rows[0];
   }
 
-  async setLearnedUserWord(
+  async setLearned(
     userId: string,
     wordId: string,
     learned: boolean
   ): Promise<void> {
     await this.pool.query(
-      "UPDATE user_words SET learned = $1 WHERE user_id = $2 AND word_id = $3",
+      `
+    UPDATE user_words
+    SET learned = $1
+    WHERE user_id = $2
+    AND word_id = $3;
+      `,
       [learned, userId, wordId]
     );
   }
 
-  async getUserWord(userId: string, wordId: string): Promise<UserWord | null> {
+  async get(userId: string, wordId: string): Promise<UserWord | undefined> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
-      "SELECT * FROM user_words WHERE user_id = $1 AND word_id = $2",
+      `
+    SELECT * FROM user_words
+    WHERE user_id = $1
+    AND word_id = $2;
+      `,
       [userId, wordId]
     );
 
-    const userWord: UserWord = rows[0];
-
-    return userWord;
+    return rows[0];
   }
 
-  async userWordExists(userId: string, wordId: string): Promise<boolean> {
-    const userWord: UserWord | null = await this.getUserWord(userId, wordId);
-
-    if (userWord) {
-      return true;
-    }
-
-    return false;
-  }
-
-  async deleteUserWord(
-    userId: string,
-    wordId: string
-  ): Promise<UserWord | null> {
+  async delete(userId: string, wordId: string): Promise<UserWord> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
-      "DELETE FROM user_words WHERE user_id = $1 AND word_id = $2",
+      `
+    DELETE FROM user_words
+    WHERE user_id = $1
+    AND word_id = $2
+    RETURNING *;
+      `,
       [userId, wordId]
     );
 
-    const userWord: UserWord = rows[0];
-
-    return userWord;
+    return rows[0];
   }
 
-  async deleteAllUserWords(userId: string): Promise<UserWord[]> {
+  async deleteAll(userId: string): Promise<UserWord[]> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
-      "DELETE FROM user_words WHERE user_id = $1 RETURNING *",
+      `
+    DELETE FROM user_words
+    WHERE user_id = $1
+    RETURNING *;
+      `,
       [userId]
     );
 
     return rows;
   }
 
-  async getUserWordsByUserId(
+  async getByUserId(
     userId: string,
     options: {
       learned?: boolean;
@@ -116,9 +125,17 @@ export class UserWordQueries extends Queries {
     } = {}
   ): Promise<Result> {
     const queryParts = [
-      "SELECT words.*, user_words.* FROM user_words",
-      "JOIN words ON user_words.word_id = words.id",
-      "WHERE user_id = $1",
+      `
+    SELECT words.*, user_words.*
+    FROM user_words
+      `,
+      `
+    JOIN words
+    ON user_words.word_id = words.id
+      `,
+      `
+    WHERE user_id = $1
+      `,
     ];
     const queryParams: unknown[] = [userId];
     let paramIndex = 1;
@@ -129,7 +146,15 @@ export class UserWordQueries extends Queries {
     }
 
     if (options.search) {
-      queryParts.push(`AND words.word ILIKE $${++paramIndex}`);
+      queryParts.push(
+        `
+      AND EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(words.details) AS detail
+        WHERE detail->>'word' ILIKE $${++paramIndex}
+      )
+        `
+      );
       queryParams.push(`%${options.search}%`);
     }
 
@@ -161,7 +186,6 @@ export class UserWordQueries extends Queries {
     }
 
     const query: string = queryParts.join(" ");
-
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       query,
       queryParams
@@ -184,14 +208,5 @@ export class UserWordQueries extends Queries {
     }
 
     return result;
-  }
-
-  async existsUserWordsByUserId(userId: string): Promise<boolean> {
-    const result: Result = await this.getUserWordsByUserId(userId);
-
-    if (result.userWords.length) {
-      return true;
-    }
-    return false;
   }
 }
