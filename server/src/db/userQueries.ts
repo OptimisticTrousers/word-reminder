@@ -29,9 +29,9 @@ export class UserQueries extends Queries<User> {
 
     const { rows }: QueryResult<User> = await this.pool.query(
       `
-    INSERT INTO users(username, password)
+    INSERT INTO ${this.table}(username, password)
     VALUES ($1, $2)
-    RETURNING id, username, created_at, updated_at;
+    RETURNING ${this.columns};
       `,
       [username, password]
     );
@@ -43,9 +43,9 @@ export class UserQueries extends Queries<User> {
     const { rows } = await this.pool.query(
       `
     DELETE
-    FROM users
+    FROM ${this.table}
     WHERE id = $1
-    RETURNING id, username, created_at, updated_at;
+    RETURNING ${this.columns};
       `,
       [id]
     );
@@ -56,7 +56,7 @@ export class UserQueries extends Queries<User> {
   async getByUsername(username: string): Promise<User | undefined> {
     const { rows }: QueryResult<User> = await this.pool.query(
       `
-    SELECT id, username, created_at, updated_at
+    SELECT ${this.columns}
     FROM users
     WHERE username = $1;
       `,

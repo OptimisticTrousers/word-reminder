@@ -56,9 +56,9 @@ export class WordQueries extends Queries<Word> {
 
     const { rows }: QueryResult<Word> = await this.pool.query(
       `
-    INSERT INTO words(details)
+    INSERT INTO ${this.table}(details)
     VALUES ($1)
-    RETURNING *;
+    RETURNING ${this.columns};
       `,
       [JSON.stringify(json)]
     );
@@ -69,8 +69,8 @@ export class WordQueries extends Queries<Word> {
   async getByWord(word: string): Promise<Word | undefined> {
     const { rows }: QueryResult<Word> = await this.pool.query(
       `
-    SELECT *
-    FROM words
+    SELECT ${this.columns}
+    FROM ${this.table}
     WHERE
       EXISTS (
         SELECT 1

@@ -51,9 +51,9 @@ export class UserWordQueries extends Queries<UserWord> {
 
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       `
-    INSERT INTO user_words(user_id, word_id, learned)
+    INSERT INTO ${this.table}(user_id, word_id, learned)
     VALUES ($1, $2, $3)
-    RETURNING *;
+    RETURNING ${this.columns};
       `,
       [userId, wordId, learned]
     );
@@ -72,7 +72,7 @@ export class UserWordQueries extends Queries<UserWord> {
   }): Promise<void> {
     await this.pool.query(
       `
-    UPDATE user_words
+    UPDATE ${this.table}
     SET learned = $1
     WHERE user_id = $2
     AND word_id = $3;
@@ -90,7 +90,7 @@ export class UserWordQueries extends Queries<UserWord> {
   }): Promise<UserWord | undefined> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       `
-    SELECT * FROM user_words
+    SELECT ${this.columns} FROM ${this.table}
     WHERE user_id = $1
     AND word_id = $2;
       `,
@@ -109,10 +109,10 @@ export class UserWordQueries extends Queries<UserWord> {
   }): Promise<UserWord> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       `
-    DELETE FROM user_words
+    DELETE FROM ${this.table}
     WHERE user_id = $1
     AND word_id = $2
-    RETURNING *;
+    RETURNING ${this.columns};
       `,
       [userId, wordId]
     );
@@ -123,9 +123,9 @@ export class UserWordQueries extends Queries<UserWord> {
   async deleteAllByUserId(userId: string): Promise<UserWord[]> {
     const { rows }: QueryResult<UserWord> = await this.pool.query(
       `
-    DELETE FROM user_words
+    DELETE FROM ${this.table}
     WHERE user_id = $1
-    RETURNING *;
+    RETURNING ${this.columns};
       `,
       [userId]
     );
@@ -146,12 +146,12 @@ export class UserWordQueries extends Queries<UserWord> {
   ): Promise<Result> {
     const queryParts = [
       `
-    SELECT words.*, user_words.*
-    FROM user_words
+    SELECT words.*, ${this.table}.*
+    FROM ${this.table}
       `,
       `
     JOIN words
-    ON user_words.word_id = words.id
+    ON ${this.table}.word_id = words.id
       `,
       `
     WHERE user_id = $1
@@ -161,7 +161,7 @@ export class UserWordQueries extends Queries<UserWord> {
     let paramIndex = 1;
 
     if (typeof options.learned === "boolean") {
-      queryParts.push(`AND user_words.learned = $${++paramIndex}`);
+      queryParts.push(`AND ${this.table}.learned = $${++paramIndex}`);
       queryParams.push(options.learned);
     }
 

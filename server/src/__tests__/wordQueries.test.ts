@@ -111,7 +111,7 @@ describe("wordQueries", () => {
   const word = json[0].word;
 
   describe("create", () => {
-    it("creates word after a word is created", async () => {
+    it("creates word", async () => {
       const newWord = await wordQueries.create({ json });
 
       const createdAtTimestamp = new Date(newWord.created_at).getTime();
@@ -124,7 +124,7 @@ describe("wordQueries", () => {
       expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
 
-    it("returns word if the word word was already created", async () => {
+    it("returns word if the word was already created", async () => {
       await wordQueries.create({ json });
       const newWord = await wordQueries.create({ json });
 
