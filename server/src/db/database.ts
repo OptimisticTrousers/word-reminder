@@ -49,6 +49,26 @@ export class Database {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
 
+      CREATE TABLE word_reminders (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        start TIMESTAMPTZ NOT NULL,
+        finish TIMESTAMPTZ NOT NULL,
+        duration TEXT NOT NULL,
+        reminder TEXT NOT NULL,
+        isActive BOOLEAN NOT NULL,
+        hasReminderOnload BOOLEAN NOT NULL,
+        isRecurring BOOLEAN NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE user_words_word_reminders (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        user_id INTEGER REFERENCES users(id) NOT NULL,
+        user_word_id INTEGER REFERENCES user_words(id) NOT NULL,
+        word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL 
+      );
+
       CREATE OR REPLACE FUNCTION trigger_set_timestamp()
       RETURNS TRIGGER AS $$
       BEGIN
@@ -64,6 +84,11 @@ export class Database {
 
       CREATE OR REPLACE TRIGGER set_timestamp
       BEFORE UPDATE ON user_words
+      FOR EACH ROW
+      EXECUTE PROCEDURE trigger_set_timestamp();
+
+      CREATE OR REPLACE TRIGGER set_timestamp
+      BEFORE UPDATE ON word_reminders
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
     `;
