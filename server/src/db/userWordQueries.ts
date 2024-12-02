@@ -13,15 +13,15 @@ export interface UserWord {
   updated_at: Date;
 }
 
-interface Page {
-  page: number;
-  limit: number;
-}
-
-interface Result {
+export interface Result {
   userWords: UserWord[];
   previous?: Page;
   next?: Page;
+}
+
+interface Page {
+  page: number;
+  limit: number;
 }
 
 export class UserWordQueries extends Queries<UserWord> {

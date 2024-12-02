@@ -2,8 +2,8 @@ import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 
 import { upload } from "../config/multer";
-import { UserWordQueries } from "../db/userWordQueries";
-import { WordQueries } from "../db/wordQueries";
+import { Result, UserWord, UserWordQueries } from "../db/userWordQueries";
+import { Word, WordQueries } from "../db/wordQueries";
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
 import { Csv } from "../utils/csv";
 import { Http } from "../utils/http";
@@ -43,7 +43,6 @@ export const create_word = [
     const {
       records,
       error,
-      count,
     }: { records: string[][]; error: unknown; count: number } = await csv.read(
       req.file.buffer
     );
@@ -60,16 +59,18 @@ export const create_word = [
       return;
     }
 
-    const invalidWords = [];
+    const invalidWords: string[] = [];
     let wordCount = 0;
 
     for (const record of records) {
       for (const word of record) {
         // Check if the word already exists in the database
-        const existingWord = await wordQueries.getByWord(word);
+        const existingWord: Word | undefined = await wordQueries.getByWord(
+          word
+        );
         if (existingWord) {
           // Create user word and increment count if successful
-          const userWord = await userWordQueries.create({
+          const userWord: UserWord | undefined = await userWordQueries.create({
             userId,
             wordId: existingWord.id,
             learned: false,
@@ -91,9 +92,9 @@ export const create_word = [
           continue;
         }
 
-        const newWord = await wordQueries.create({ json });
+        const newWord: Word = await wordQueries.create({ json });
 
-        const userWord = await userWordQueries.create({
+        const userWord: UserWord = await userWordQueries.create({
           userId,
           wordId: newWord.id,
           learned: false,
@@ -128,9 +129,9 @@ export const create_word = [
   }),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { word } = req.body;
+    const { word }: { word: string } = req.body;
 
-    const existingWord = await wordQueries.getByWord(word);
+    const existingWord: Word | undefined = await wordQueries.getByWord(word);
 
     if (existingWord) {
       await userWordQueries.create({
@@ -153,7 +154,7 @@ export const create_word = [
       return;
     }
 
-    const newWord = await wordQueries.create({ json });
+    const newWord: Word = await wordQueries.create({ json });
 
     // Associate the new word with the user
     await userWordQueries.create({
@@ -172,7 +173,7 @@ export const create_word = [
 export const delete_user_word = asyncHandler(async (req, res) => {
   const userId: string = req.params.userId;
   const wordId: string = req.params.wordId;
-  const userWord = await userWordQueries.delete({ userId, wordId });
+  const userWord: UserWord = await userWordQueries.delete({ userId, wordId });
 
   res.status(200).json({ userWord });
 });
@@ -263,7 +264,7 @@ export const word_list = [
       ...(search && { search: String(search) }),
     };
 
-    const result = await userWordQueries.getByUserId(userId, options);
+    const result: Result = await userWordQueries.getByUserId(userId, options);
 
     res.status(200).json(result);
   }),
