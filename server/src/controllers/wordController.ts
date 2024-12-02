@@ -91,7 +91,7 @@ export const create_word = [
           continue;
         }
 
-        const newWord = await wordQueries.create(json);
+        const newWord = await wordQueries.create({ json });
 
         const userWord = await userWordQueries.create({
           userId,
@@ -153,7 +153,7 @@ export const create_word = [
       return;
     }
 
-    const newWord = await wordQueries.create(json);
+    const newWord = await wordQueries.create({ json });
 
     // Associate the new word with the user
     await userWordQueries.create({

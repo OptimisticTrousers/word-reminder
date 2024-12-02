@@ -301,7 +301,7 @@ describe("create_word", () => {
         `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
       );
       expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
       expect(createUserWordMock).toHaveBeenCalledWith({
         userId,
@@ -353,7 +353,7 @@ describe("create_word", () => {
         `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
       );
       expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
       expect(createUserWordMock).toHaveBeenCalledWith({
         userId,
@@ -621,8 +621,8 @@ describe("create_word", () => {
         `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
       );
       expect(createWordMock).toHaveBeenCalledTimes(2);
-      expect(createWordMock).toHaveBeenCalledWith(response1);
-      expect(createWordMock).toHaveBeenCalledWith(response2);
+      expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
+      expect(createWordMock).toHaveBeenCalledWith({ json: response2 });
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
       expect(createUserWordMock).toHaveBeenCalledWith({
         userId,
@@ -680,7 +680,7 @@ describe("create_word", () => {
         `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
       );
       expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(response2);
+      expect(createWordMock).toHaveBeenCalledWith({ json: response2 });
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
       expect(createUserWordMock).toHaveBeenCalledWith({
         userId,
@@ -840,7 +840,7 @@ describe("create_word", () => {
         `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
       );
       expect(createWordMock).toHaveBeenCalledTimes(1);
-      expect(createWordMock).toHaveBeenCalledWith(response1);
+      expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
       expect(createUserWordMock).toHaveBeenCalledWith({
         userId,
