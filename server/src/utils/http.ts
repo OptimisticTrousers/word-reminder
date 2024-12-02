@@ -18,7 +18,9 @@ export class Http {
       })
       .join("&");
 
-    const response: Response = await fetch(`${url}?${queryString}`, {
+    const input = new URL(`${url}${queryString && `?${queryString}`}`);
+
+    const response: Response = await fetch(input, {
       method,
       headers: {
         "Content-Type": "application/json",
