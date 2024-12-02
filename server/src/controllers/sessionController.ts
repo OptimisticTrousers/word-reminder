@@ -3,14 +3,14 @@ import asyncHandler from "express-async-handler";
 import passport from "passport";
 
 // @desc    Get the current user (public details)
-// @route   GET /api/session
+// @route   GET /api/sessions
 // @access  Private
 export const current_user = asyncHandler(async (req, res): Promise<void> => {
   res.status(200).json({ user: req.user });
 });
 
 // @desc    Authenticate a user and return cookie
-// @route   POST /api/session
+// @route   POST /api/sessions
 // @access  Public
 export const login_user = asyncHandler(
   // Process request after validation and sanitization.
@@ -38,7 +38,7 @@ export const login_user = asyncHandler(
 );
 
 // @desc    Logout a user
-// @route   DELETE /api/session
+// @route   DELETE /api/sessions
 // @access  Public
 export const logout_user = asyncHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {

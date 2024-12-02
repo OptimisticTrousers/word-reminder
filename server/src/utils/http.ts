@@ -4,6 +4,7 @@ type Params = {
   [key: string]: unknown;
 };
 
+// TODO: Write tests for this Http Class
 export class Http {
   private async request(
     url: string,

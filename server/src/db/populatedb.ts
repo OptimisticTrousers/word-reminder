@@ -10,7 +10,7 @@ import { variables } from "../config/variables";
     await database.clear();
     console.log("Resetting database...");
     await database.populate();
-    console.log("Successfully reset database.");
+    console.log("Successfully populated database.");
     await database.stopConnection();
   } catch (err) {
     const SPLIT_DATABASE_URL: string[] = variables.DATABASE_URL.split("/");
