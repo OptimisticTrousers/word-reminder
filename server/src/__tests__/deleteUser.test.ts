@@ -2,9 +2,9 @@ import asyncHandler from "express-async-handler";
 import express from "express";
 import request from "supertest";
 
+import { delete_user } from "../controllers/userController";
 import { UserQueries } from "../db/userQueries";
 import { UserWordQueries } from "../db/userWordQueries";
-import { delete_user } from "../controllers/userController";
 
 describe("delete_user", () => {
   const message = "Success!";
@@ -34,11 +34,11 @@ describe("delete_user", () => {
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message });
     expect(deleteUserByIdMock).toHaveBeenCalledTimes(1);
     expect(deleteUserByIdMock).toHaveBeenCalledWith(userId);
     expect(deleteAllUserWordsMock).toHaveBeenCalledTimes(1);
     expect(deleteAllUserWordsMock).toHaveBeenCalledWith(userId);
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message });
   });
 });
