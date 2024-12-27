@@ -69,6 +69,13 @@ export class Database {
         word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL 
       );
 
+      CREATE TABLE subscriptions (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        endpoint TEXT UNIQUE NOT NULL,
+        p256dh TEXT UNIQUE NOT NULL,
+        auth TEXT UNIQUE NOT NULL
+      );
+
       CREATE OR REPLACE FUNCTION trigger_set_timestamp()
       RETURNS TRIGGER AS $$
       BEGIN
