@@ -140,43 +140,37 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
   });
 });
 
-// // @desc    Get the current words by duration
-// // @route   GET /api/users/:userId/wordsByDuration/:wordsByDurationId
-// // @access  Private
-// export const get_word_reminder = asyncHandler(async (req, res) => {
-//   const { wordByDurationId } = req.params;
-
-//   const wordsByDuration = await WordsByDuration.findById(
-//     wordByDurationId
-//   ).exec();
-//   res.status(200).json(wordsByDuration);
-// });
-
 // @desc  Get all word reminders
 // @route GET /api/users/:userId/wordReminders
-// @query page, limit 
+// @query column, direction, table, page, limit
 // @access Private
-export const word_reminder_list = asyncHandler(async (req, res) => {
-  const userId: string = req.params.userId;
-  const { page, limit } = req.query;
-  const options = {
-    ...(limit && page && { limit: Number(limit), page: Number(page) }),
-  };
-  const result: Result = await userWordsWordRemindersQueries.getByUserId(
-    userId,
-    options
-  );
+export const word_reminder_list = [
+  errorValidationHandler,
+  asyncHandler(async (req, res) => {
+    const userId: string = req.params.userId;
+    const { column, direction, table, page, limit } = req.query;
 
-  res.status(200).json(result);
-});
+    const options = {
+      ...(column &&
+        direction &&
+        table && {
+          sort: {
+            column: String(column),
+            direction: Number(direction),
+            table: String(table),
+          },
+        }),
+      ...(limit && page && { limit: Number(limit), page: Number(page) }),
+    };
 
-// // auto-create
-// // wordCount, hasDuplicateWords, reminder, hasReminderOnload, duration, isActive
+    const result: Result = await userWordsWordRemindersQueries.getByUserId(
+      userId,
+      options
+    );
 
-// // create
-// // end, isActive, hasReminderOnload, reminder
-
-// // rate limit all reqs when user is authenticated which is same as dictionary api, email and password with mandatory verification, forgot password option, zcxbvn require secure password, rate limit login and signup and reset password attempts progressively on a curve, ackee (mongo), shynet, offen for node.js analytics, multiple language options (spanish), maybe allow user to store words that are not in the directionary?
+    res.status(200).json(result);
+  }),
+];
 
 // // @desc Update a current words by duration
 // // @route PUT /api/users/:userId/wordsByDuration/:wordsByDurationId

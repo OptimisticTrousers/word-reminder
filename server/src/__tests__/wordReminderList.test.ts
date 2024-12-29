@@ -11,10 +11,14 @@ describe("word_reminder_list", () => {
   };
 
   const wordReminder1 = {
+    id: "1",
+    user_id: sampleUser1.id,
     finish: new Date(),
     reminder: "every 2 hours",
     is_active: true,
     has_reminder_onload: true,
+    created_at: new Date(),
+    updated_at: new Date(),
   };
 
   const milieuJson = [
@@ -132,7 +136,7 @@ describe("word_reminder_list", () => {
     .mockImplementation(async () => {
       return {
         userWords,
-        wordReminder: wordReminder1,
+        wordReminders: [wordReminder1],
       };
     });
 
