@@ -43,7 +43,7 @@ export class UserWordQueries extends Queries<UserWord> {
     word_id: string;
     learned: boolean;
   }): Promise<UserWord> {
-    const existingUserWord = await this.get({ user_id, word_id});
+    const existingUserWord = await this.get({ user_id, word_id });
 
     if (existingUserWord) {
       return existingUserWord;
@@ -182,40 +182,37 @@ export class UserWordQueries extends Queries<UserWord> {
       queryParams.push(`%${options.search}%`);
     }
 
-    const sortClauses: string[] = [];
     if (options.sort) {
       const sortClause = options.sort;
-      sortClauses.push(
-        `${sortClause.table}.${sortClause.column} ${
+      queryParts.push(
+        `ORDER BY ${sortClause.table}.${sortClause.column} ${
           sortClause.direction === 1 ? "ASC" : "DESC"
         }`
       );
-    }
-    if (sortClauses.length > 0) {
-      queryParts.push(`ORDER BY ${sortClauses.join(", ")}`);
     }
 
     const page: number = options.page || 1;
     const limit: number = options.limit || 8;
     const startIndex = (page - 1) * limit;
+
     const { rows: preLimitRows }: QueryResult<UserWord> = await this.pool.query(
       queryParts.join(" "),
       queryParams
     );
-    // calculate the length of the rows before applying a limit on it to see how many rows match the query
     const totalRows = preLimitRows.length;
+
     if (options.page && options.limit) {
       queryParts.push(`LIMIT $${++paramIndex} OFFSET $${++paramIndex}`);
       queryParams.push(options.limit, startIndex);
     }
 
-    const query: string = queryParts.join(" ");
     const { rows }: QueryResult<UserWord> = await this.pool.query(
-      query,
+      queryParts.join(" "),
       queryParams
     );
 
     let result: Result = { userWords: rows };
+
     if (startIndex > 0) {
       result.previous = {
         page: page - 1,

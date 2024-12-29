@@ -232,7 +232,7 @@ describe("userWordQueries", () => {
   });
 
   describe("getByUserId", () => {
-    it("gets the user words by user ID", async () => {
+    it("returns the user words", async () => {
       const newWord = await wordQueries.create({ json });
       const newUser = await userQueries.create({
         username: sampleUser1.username,
