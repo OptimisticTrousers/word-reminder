@@ -79,8 +79,8 @@ describe("userWordQueries", () => {
       });
 
       const userWord = await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
@@ -107,8 +107,8 @@ describe("userWordQueries", () => {
       });
 
       const userWord = await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: true,
       });
 
@@ -134,14 +134,14 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
       const userWord = await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
@@ -169,22 +169,18 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
       // Set the 'learned' property to true since it is false by default
-      await userWordQueries.setLearned({
-        userId: newUser!.id,
-        wordId: newWord.id,
+      const userWord = await userWordQueries.setLearned({
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: true,
       });
 
-      const userWord = await userWordQueries.get({
-        userId: newUser!.id,
-        wordId: newWord.id,
-      });
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
       const nowTimestamp = Date.now();
@@ -207,22 +203,18 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: true,
       });
 
       // Set the 'learned' property to true since it is false by default
-      await userWordQueries.setLearned({
-        userId: newUser!.id,
-        wordId: newWord.id,
+      const userWord = await userWordQueries.setLearned({
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
-      const userWord = await userWordQueries.get({
-        userId: newUser!.id,
-        wordId: newWord.id,
-      });
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
       const nowTimestamp = Date.now();
@@ -240,15 +232,15 @@ describe("userWordQueries", () => {
   });
 
   describe("getByUserId", () => {
-    it("gets the user word by user ID", async () => {
+    it("gets the user words by user ID", async () => {
       const newWord = await wordQueries.create({ json });
       const newUser = await userQueries.create({
         username: sampleUser1.username,
         password: sampleUser1.password,
       });
       await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
@@ -460,48 +452,48 @@ describe("userWordQueries", () => {
           ],
         });
         milieuUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: milieuWord.id,
+          user_id: newUser!.id,
+          word_id: milieuWord.id,
           learned: false,
         });
         clemencyUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: clemencyWord.id,
+          user_id: newUser!.id,
+          word_id: clemencyWord.id,
           learned: true,
         });
         concomitantlyUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: concomitantlyWord.id,
+          user_id: newUser!.id,
+          word_id: concomitantlyWord.id,
           learned: false,
         });
         sanguineUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: sanguineWord.id,
+          user_id: newUser!.id,
+          word_id: sanguineWord.id,
           learned: true,
         });
         expropriationUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: expropriationWord.id,
+          user_id: newUser!.id,
+          word_id: expropriationWord.id,
           learned: false,
         });
         admonitionUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: admonitionWord.id,
+          user_id: newUser!.id,
+          word_id: admonitionWord.id,
           learned: true,
         });
         ignobleUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: ignobleWord.id,
+          user_id: newUser!.id,
+          word_id: ignobleWord.id,
           learned: false,
         });
         dithyrambicUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: dithyrambicWord.id,
+          user_id: newUser!.id,
+          word_id: dithyrambicWord.id,
           learned: true,
         });
         admonishUserWord = await userWordQueries.create({
-          userId: newUser!.id,
-          wordId: admonishWord.id,
+          user_id: newUser!.id,
+          word_id: admonishWord.id,
           learned: false,
         });
       });
@@ -776,14 +768,14 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
       const userWord = await userWordQueries.get({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
       });
 
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
@@ -810,8 +802,8 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       const newUserWord = await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
@@ -843,8 +835,8 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
@@ -862,12 +854,15 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       const newUserWord = await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
         learned: false,
       });
 
-      await userWordQueries.delete({ userId: newUser!.id, wordId: newWord.id });
+      await userWordQueries.delete({
+        user_id: newUser!.id,
+        word_id: newWord.id,
+      });
 
       const userWords = await userWordQueries.getById(newUserWord!.id);
       expect(userWords).toBeUndefined();
@@ -880,15 +875,15 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       const userWord = await userWordQueries.delete({
-        userId: newUser!.id,
-        wordId: newWord.id,
+        user_id: newUser!.id,
+        word_id: newWord.id,
       });
 
       expect(userWord).toBeUndefined();
     });
   });
 
-  describe("deleteAll", () => {
+  describe("deleteAllByUserId", () => {
     it("deletes all of the user's words", async () => {
       const newWord1 = await wordQueries.create({ json });
       const newWord2 = await wordQueries.create({
@@ -913,13 +908,13 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
       const newUserWord1 = await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord1.id,
+        user_id: newUser!.id,
+        word_id: newWord1.id,
         learned: false,
       });
       const newUserWord2 = await userWordQueries.create({
-        userId: newUser!.id,
-        wordId: newWord2.id,
+        user_id: newUser!.id,
+        word_id: newWord2.id,
         learned: false,
       });
 
@@ -934,7 +929,7 @@ describe("userWordQueries", () => {
       });
     });
 
-    it("does not fail if the user has no user words", async () => {
+    it("returns empty list if the user has no user words", async () => {
       const newUser = await userQueries.create({
         username: sampleUser1.username,
         password: sampleUser1.password,

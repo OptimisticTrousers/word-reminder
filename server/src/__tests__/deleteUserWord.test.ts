@@ -34,7 +34,10 @@ describe("delete_user_word", () => {
 
     expect(response.status).toBe(200);
     expect(deleteUserWordMock).toHaveBeenCalledTimes(1);
-    expect(deleteUserWordMock).toHaveBeenCalledWith({ userId, wordId });
+    expect(deleteUserWordMock).toHaveBeenCalledWith({
+      user_id: userId,
+      word_id: wordId,
+    });
     expect(response.body).toEqual({
       userWord: {
         id: "1",

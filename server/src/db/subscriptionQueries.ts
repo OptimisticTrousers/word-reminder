@@ -2,7 +2,11 @@ import { QueryResult } from "pg";
 
 import { Queries } from "./queries";
 
-export interface Subscription {
+export interface Subscription extends SubscriptionParams {
+  id: number;
+}
+
+interface SubscriptionParams {
   endpoint: string;
   keys: {
     p256dh: string;
@@ -15,7 +19,7 @@ export class SubscriptionQueries extends Queries<Subscription> {
     super(["*"], "subscriptions");
   }
 
-  async create(subscription: Subscription): Promise<Subscription | null> {
+  async create(subscription: SubscriptionParams): Promise<Subscription> {
     const { rows }: QueryResult<Subscription> = await this.pool.query(
       `
     INSERT INTO ${this.table}(endpoint, p256dh, auth)
@@ -28,7 +32,7 @@ export class SubscriptionQueries extends Queries<Subscription> {
     return rows[0];
   }
 
-  async deleteById(id: string): Promise<Subscription> {
+  async deleteById(id: number): Promise<Subscription> {
     const { rows } = await this.pool.query(
       `
     DELETE

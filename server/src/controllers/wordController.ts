@@ -71,8 +71,8 @@ export const create_word = [
         if (existingWord) {
           // Create user word and increment count if successful
           const userWord: UserWord | undefined = await userWordQueries.create({
-            userId,
-            wordId: existingWord.id,
+            user_id: userId,
+            word_id: existingWord.id,
             learned: false,
           });
 
@@ -95,8 +95,8 @@ export const create_word = [
         const newWord: Word = await wordQueries.create({ json });
 
         const userWord: UserWord = await userWordQueries.create({
-          userId,
-          wordId: newWord.id,
+          user_id: userId,
+          word_id: newWord.id,
           learned: false,
         });
 
@@ -135,8 +135,8 @@ export const create_word = [
 
     if (existingWord) {
       await userWordQueries.create({
-        userId,
-        wordId: existingWord.id,
+        user_id: userId,
+        word_id: existingWord.id,
         learned: false,
       });
 
@@ -158,8 +158,8 @@ export const create_word = [
 
     // Associate the new word with the user
     await userWordQueries.create({
-      userId,
-      wordId: newWord.id,
+      user_id: userId,
+      word_id: newWord.id,
       learned: false,
     });
 
@@ -173,13 +173,17 @@ export const create_word = [
 export const delete_user_word = asyncHandler(async (req, res) => {
   const userId: string = req.params.userId;
   const wordId: string = req.params.wordId;
-  const userWord: UserWord = await userWordQueries.delete({ userId, wordId });
+  const userWord: UserWord = await userWordQueries.delete({
+    user_id: userId,
+    word_id: wordId,
+  });
 
   res.status(200).json({ userWord });
 });
 
 // @desc    Get all words
 // @route   GET /api/users/:userId/words
+// @query   column, direction, table, learned, limit, page, search
 // @access  Private
 export const word_list = [
   query("column")

@@ -5,7 +5,7 @@ import "../db/testPopulatedb";
 describe("subscriptionQueries", () => {
   const subscriptionQueries = new SubscriptionQueries();
 
-  const subscriptionId1 = "1";
+  const subscriptionId1 = 1;
 
   const subscription1 = {
     endpoint: "https://random-push-service.com/unique-id-1234/",
@@ -21,7 +21,7 @@ describe("subscriptionQueries", () => {
       const subscription = await subscriptionQueries.create(subscription1);
 
       expect(subscription).toEqual({
-        id: Number(subscriptionId1),
+        id: subscriptionId1,
         endpoint: subscription1.endpoint,
         p256dh: subscription1.keys.p256dh,
         auth: subscription1.keys.auth,
@@ -31,16 +31,16 @@ describe("subscriptionQueries", () => {
 
   describe("deleteById", () => {
     it("deletes a subscription", async () => {
-      await subscriptionQueries.create(subscription1);
+      const subscription = await subscriptionQueries.create(subscription1);
 
-      await subscriptionQueries.deleteById(subscriptionId1);
+      await subscriptionQueries.deleteById(subscription.id);
 
       const subscriptions = await subscriptionQueries.get();
       expect(subscriptions).toEqual([]);
     });
 
     it("no error is returned when the subscription does not exist", async () => {
-      await subscriptionQueries.deleteById("1");
+      await subscriptionQueries.deleteById(subscriptionId1);
 
       const subscriptions = await subscriptionQueries.get();
       expect(subscriptions).toEqual([]);
@@ -55,7 +55,7 @@ describe("subscriptionQueries", () => {
 
       expect(subscriptions).toEqual([
         {
-          id: Number(subscriptionId1),
+          id: subscriptionId1,
           endpoint: subscription1.endpoint,
           p256dh: subscription1.keys.p256dh,
           auth: subscription1.keys.auth,
