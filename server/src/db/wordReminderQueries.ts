@@ -10,34 +10,89 @@ export interface WordReminder extends WordReminderParams {
 
 interface WordReminderParams {
   user_id: string;
-  word_ids: string[];
-  from: Date;
-  // Start date and time when the reminder becomes active.
-  to: Date;
+  finish: Date;
   // End date and time when the reminder is no longer active.
-  hasReminderOnload: boolean;
+  has_reminder_onload: boolean;
   // Determines if the reminder should be shown immediately upon loading the application or feature. One notification will be shown if at least one notification was emitted after the last time the user signed onto the application.
-  isRecurring: boolean;
-  // Specifies if the reminder repeats at regular intervals.
-  duration: string;
-  // Defines the interval for recurring reminders (e.g., "daily", "weekly").
-  // Relevant only if `isRecurring` is `true`.
+  is_active: boolean;
+  // Specifies if the reminder is active
   reminder: string;
   // Defines how often a reminder notification is sent to the user which will include all of the words in this word reminder.
 }
 
 export class WordReminderQueries extends Queries<WordReminder> {
   constructor() {
-    super(["*"], "words");
+    super(["*"], "word_reminders");
   }
 
-  async create(wordReminder: WordReminder) {
+  async create(wordReminder: WordReminderParams): Promise<WordReminder> {
     const { rows }: QueryResult<WordReminder> = await this.pool.query(
       `
-     INSERT INTO word_reminders() 
-     VALUES
-     RETURNING *
-      `, []);
+     INSERT INTO ${this.table}(user_id, reminder, is_active, has_reminder_onload, finish) 
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING ${this.columns}
+      `,
+      [
+        wordReminder.user_id,
+        wordReminder.reminder,
+        wordReminder.is_active,
+        wordReminder.has_reminder_onload,
+        wordReminder.finish,
+      ]
+    );
+
+    return rows[0];
+  }
+
+  async deleteById(id: string): Promise<WordReminder> {
+    const { rows } = await this.pool.query(
+      `
+    DELETE 
+    FROM ${this.table}
+    WHERE id = $1
+    RETURNING ${this.columns};
+      `,
+      [id]
+    );
+
+    return rows[0];
+  }
+
+  async deleteAllByUserId(userId: string): Promise<WordReminder[]> {
+    const { rows }: QueryResult<WordReminder> = await this.pool.query(
+      `
+    DELETE FROM ${this.table}
+    WHERE user_id = $1
+    RETURNING ${this.columns};
+      `,
+      [userId]
+    );
+
+    return rows;
+  }
+
+  async update({
+    id,
+    finish,
+    reminder,
+    isActive,
+    hasReminderOnload,
+  }: {
+    id: string;
+    finish: Date;
+    reminder: string;
+    isActive: boolean;
+    hasReminderOnload: boolean;
+  }): Promise<WordReminder> {
+    const { rows }: QueryResult<WordReminder> = await this.pool.query(
+      `
+    UPDATE ${this.table}
+    SET finish = $1, reminder = $2, is_active = $3, has_reminder_onload = $4
+    WHERE id = $5
+    RETURNING ${this.columns}
+      `,
+      [finish, reminder, isActive, hasReminderOnload, id]
+    );
 
     return rows[0];
   }

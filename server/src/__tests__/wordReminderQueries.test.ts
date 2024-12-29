@@ -1,15 +1,11 @@
 import { WordReminderQueries } from "../db/wordReminderQueries";
 import { UserQueries } from "../db/userQueries";
-import { UserWordQueries } from "../db/userWordQueries";
-import { WordQueries } from "../db/wordQueries";
 // Import db setup and teardown functionality
 import "../db/testPopulatedb";
 
 describe("wordReminderQueries", () => {
   const userQueries = new UserQueries();
-  const userWordQueries = new UserWordQueries();
   const wordReminderQueries = new WordReminderQueries();
-  const wordQueries = new WordQueries();
 
   const sampleUser1 = {
     id: "1",
@@ -17,124 +13,167 @@ describe("wordReminderQueries", () => {
     password: "password",
   };
 
-  const milieuJson = [
-    {
-      word: "milieu",
-      meanings: [
-        {
-          partOfSpeech: "noun",
-          definitions: [{ definition: "A person's social environment." }],
-        },
-      ],
-      phonetics: [],
-    },
-  ];
-  const clemencyJson = [
-    {
-      word: "clemency",
-      meanings: [
-        {
-          partOfSpeech: "noun",
-          definitions: [{ definition: "Mercy; lenience." }],
-        },
-      ],
-      phonetics: [],
-    },
-  ];
+  const wordReminderId1 = "1";
+  const wordReminder1 = {
+    user_id: sampleUser1.id,
+    finish: new Date(),
+    reminder: "every 2 hours",
+    is_active: true,
+    has_reminder_onload: true,
+  };
 
   // option for including duplicate words in the auto create
   describe("create", () => {
     it("creates word reminder", async () => {
-      const clemencyWord = await wordQueries.create({ json: clemencyJson });
-      const milieuWord = await wordQueries.create({ json: milieuJson });
       await userQueries.create({
         username: sampleUser1.username,
         password: sampleUser1.password,
       });
-      const clemencyUserWord = await userWordQueries.create({
-        userId: sampleUser1.id,
-        wordId: milieuWord.id,
-        learned: false,
-      });
-      const milieuUserWord = await userWordQueries.create({
-        userId: sampleUser1.id,
-        wordId: clemencyWord.id,
-        learned: false,
-      });
 
-      // const wordReminder = await wordReminderQueries.create(sampleUser1, [
-      //   clemencyUserWord.id,
-      //   milieuUserWord.id,
-      // ]);
+      const wordReminder = await wordReminderQueries.create(wordReminder1);
 
-      // expect(wordReminder).toEqual({
-      //   id: 1,
-      //   user_id: sampleUser1.id,
-      //   from: expect.any(Date),
-      //   to: expect.any(Date),
-      //   created_at: expect.any(Date),
-      //   updated_at: expect.any(Date),
-      // });
+      const createdAtTimestamp = new Date(wordReminder!.created_at).getTime();
+      const updatedAtTimestamp = new Date(wordReminder!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(wordReminder).toEqual({
+        id: Number(wordReminderId1),
+        user_id: Number(wordReminder1.user_id),
+        reminder: wordReminder1.reminder,
+        is_active: wordReminder1.is_active,
+        has_reminder_onload: wordReminder1.has_reminder_onload,
+        finish: wordReminder1.finish,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
+  });
 
-    it("does nothing when the word reminder already exists", async () => {
-      const clemencyWord = await wordQueries.create({ json: clemencyJson });
-      const milieuWord = await wordQueries.create({ json: milieuJson });
+  describe("deleteById", () => {
+    it("deletes word reminder", async () => {
       await userQueries.create({
         username: sampleUser1.username,
         password: sampleUser1.password,
       });
-      const clemencyUserWord = await userWordQueries.create({
-        userId: sampleUser1.id,
-        wordId: milieuWord.id,
-        learned: false,
-      });
-      const milieuUserWord = await userWordQueries.create({
-        userId: sampleUser1.id,
-        wordId: clemencyWord.id,
-        learned: false,
-      });
-      // await wordReminderQueries.create(sampleUser1, [
-      //   clemencyUserWord.id,
-      //   milieuUserWord.id,
-      // ]);
+      await wordReminderQueries.create(wordReminder1);
 
-      // const wordReminder = await wordReminderQueries.create(sampleUser1, [
-      //   clemencyUserWord.id,
-      //   milieuUserWord.id,
-      // ]);
+      await wordReminderQueries.deleteById(wordReminderId1);
 
-      // expect(wordReminder).toEqual({
-      //   id: 1,
-      //   user_id: sampleUser1.id,
-      //   from: expect.any(Date),
-      //   to: expect.any(Date),
-      //   created_at: expect.any(Date),
-      //   updated_at: expect.any(Date),
-      // });
+      const wordReminder = await wordReminderQueries.getById(wordReminderId1);
+      expect(wordReminder).toBeUndefined();
+    });
+
+    it("does nothing if the word reminder does not exist", async () => {
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+
+      const wordReminder = await wordReminderQueries.deleteById("2");
+
+      expect(wordReminder).toBeUndefined();
     });
   });
 
-  describe("autoCreate", () => {
-    it("automatically creates word reminder", async () => {});
-  });
+  describe("deleteAllByUserId", () => {
+    it("deletes all of the user's word reminders", async () => {
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const wordReminder = await wordReminderQueries.create(wordReminder1);
 
-  describe("delete", () => {
-    it("deletes word reminder");
+      const deletedWordReminders = await wordReminderQueries.deleteAllByUserId(
+        sampleUser1.id
+      );
 
-    it("does nothing if the word reminder does not exist");
+      expect(deletedWordReminders).toEqual([wordReminder]);
+    });
   });
 
   describe("getById", () => {
-    it("gets the word reminder by ID");
-    it("returns undefined when the word reminder does not exist");
+    it("gets the word reminder by ID", async () => {
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await wordReminderQueries.create(wordReminder1);
+
+      const wordReminder = await wordReminderQueries.getById(wordReminderId1);
+
+      const createdAtTimestamp = new Date(wordReminder!.created_at).getTime();
+      const updatedAtTimestamp = new Date(wordReminder!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(wordReminder).toEqual({
+        id: Number(wordReminderId1),
+        user_id: Number(wordReminder1.user_id),
+        reminder: wordReminder1.reminder,
+        is_active: wordReminder1.is_active,
+        has_reminder_onload: wordReminder1.has_reminder_onload,
+        finish: wordReminder1.finish,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("returns undefined when the word reminder does not exist", async () => {
+      const wordReminder = await wordReminderQueries.getById("2");
+
+      expect(wordReminder).toBeUndefined();
+    });
   });
 
-  describe("getByUserId", () => {
-    it("gets the word reminder by user ID");
+  describe("update", () => {
+    it("updates word reminder", async () => {
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      await wordReminderQueries.create(wordReminder1);
 
-    it("returns an empty list of rows if the user has no word reminders");
+      const wordReminder = await wordReminderQueries.update({
+        id: wordReminderId1,
+        finish: new Date(),
+        reminder: "every 2 hours",
+        isActive: true,
+        hasReminderOnload: true,
+      });
+
+      const createdAtTimestamp = new Date(wordReminder!.created_at).getTime();
+      const updatedAtTimestamp = new Date(wordReminder!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(wordReminder).toEqual({
+        id: Number(wordReminderId1),
+        user_id: Number(wordReminder1.user_id),
+        finish: expect.any(Date),
+        reminder: "every 2 hours",
+        is_active: true,
+        has_reminder_onload: true,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("does nothing if the word reminder does not exist", async () => {
+      await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+
+      const wordReminder = await wordReminderQueries.update({
+        id: wordReminderId1,
+        finish: new Date(),
+        reminder: "every 2 hours",
+        isActive: true,
+        hasReminderOnload: true,
+      });
+
+      expect(wordReminder).toBeUndefined();
+    });
   });
-
-  describe("update", () => {});
 });
