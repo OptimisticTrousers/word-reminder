@@ -8,7 +8,7 @@ export interface Word {
   created_at: Date;
 }
 
-type Json = {
+export type Json = {
   phonetic?: string;
   phonetics: Phonetic[];
   meanings: Meaning[];
