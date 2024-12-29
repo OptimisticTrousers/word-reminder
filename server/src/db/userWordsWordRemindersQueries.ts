@@ -4,6 +4,9 @@ import { Queries } from "./queries";
 import { UserWord } from "./userWordQueries";
 import { Json, Word } from "./wordQueries";
 import { WordReminder } from "./wordReminderQueries";
+import { UserWord } from "./userWordQueries";
+import { Word } from "./wordQueries";
+import { WordReminder } from "./wordReminderQueries";
 
 interface UserWordsWordReminders {
   id: string;
@@ -30,7 +33,11 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
   async create({
     user_word_id,
     word_reminder_id,
+    user_word_id,
+    word_reminder_id,
   }: {
+    user_word_id: string;
+    word_reminder_id: string;
     user_word_id: string;
     word_reminder_id: string;
   }): Promise<UserWordsWordReminders> {
@@ -48,8 +55,29 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
       `
     INSERT INTO ${this.table}(user_word_id, word_reminder_id)
     VALUES ($1, $2)
+    INSERT INTO ${this.table}(user_word_id, word_reminder_id)
+    VALUES ($1, $2)
     RETURNING ${this.columns}
       `,
+      [user_word_id, word_reminder_id]
+    );
+
+    return rows[0];
+  }
+
+  private async get({
+    user_word_id,
+    word_reminder_id,
+  }: {
+    user_word_id: string;
+    word_reminder_id: string;
+  }): Promise<UserWordsWordReminders> {
+    const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
+      `
+    SELECT * FROM user_words_word_reminders
+    WHERE user_word_id = $1 AND word_reminder_id = $2
+      `,
+      [user_word_id, word_reminder_id]
       [user_word_id, word_reminder_id]
     );
 
@@ -75,13 +103,18 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
   }
 
   async deleteAllByUserId(user_id: string): Promise<UserWordsWordReminders[]> {
+  async deleteAllByUserId(user_id: string): Promise<UserWordsWordReminders[]> {
     const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
       `
     DELETE FROM ${this.table}
     USING user_words
     WHERE user_words.id = ${this.table}.user_word_id AND user_words.user_id = $1
     RETURNING ${this.table}.id, user_word_id, word_reminder_id;
+    USING user_words
+    WHERE user_words.id = ${this.table}.user_word_id AND user_words.user_id = $1
+    RETURNING ${this.table}.id, user_word_id, word_reminder_id;
       `,
+      [user_id]
       [user_id]
     );
 

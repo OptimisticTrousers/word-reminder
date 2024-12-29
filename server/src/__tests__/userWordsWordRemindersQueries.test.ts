@@ -2,6 +2,7 @@ import { UserQueries } from "../db/userQueries";
 import { UserWordQueries } from "../db/userWordQueries";
 import { UserWordsWordRemindersQueries } from "../db/userWordsWordRemindersQueries";
 import { WordReminderQueries } from "../db/wordReminderQueries";
+import { WordReminderQueries } from "../db/wordReminderQueries";
 import { WordQueries } from "../db/wordQueries";
 // Import db setup and teardown functionality
 import "../db/testPopulatedb";
@@ -11,6 +12,7 @@ describe("userWordsWordRemindersQueries", () => {
   const userWordQueries = new UserWordQueries();
   const wordQueries = new WordQueries();
   const wordReminderQueries = new WordReminderQueries();
+  const wordReminderQueries = new WordReminderQueries();
   const userWordsWordRemindersQueries = new UserWordsWordRemindersQueries();
 
   const sampleUser1 = {
@@ -19,6 +21,40 @@ describe("userWordsWordRemindersQueries", () => {
     password: "password",
   };
 
+  const wordReminder1 = {
+    user_id: sampleUser1.id,
+    finish: new Date(),
+    reminder: "every 2 hours",
+    is_active: true,
+    has_reminder_onload: true,
+  };
+
+  const milieuJson = [
+    {
+      word: "milieu",
+      meanings: [
+        {
+          partOfSpeech: "noun",
+          definitions: [{ definition: "A person's social environment." }],
+        },
+      ],
+      phonetics: [],
+    },
+  ];
+  const clemencyJson = [
+    {
+      word: "clemency",
+      meanings: [
+        {
+          partOfSpeech: "noun",
+          definitions: [{ definition: "Mercy; lenience." }],
+        },
+      ],
+      phonetics: [],
+    },
+  ];
+
+  const helloJson = [
   const wordReminder1 = {
     user_id: sampleUser1.id,
     finish: new Date(),
@@ -109,6 +145,125 @@ describe("userWordsWordRemindersQueries", () => {
 
   describe("create", () => {
     it("creates the junction table", async () => {
+      const clemencyWord = await wordQueries.create({ json: clemencyJson });
+      const helloWord = await wordQueries.create({ json: helloJson });
+      const milieuWord = await wordQueries.create({ json: milieuJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const clemencyUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: clemencyWord.id,
+        learned: false,
+      });
+      const helloUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: helloWord.id,
+        learned: false,
+      });
+      const milieuUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: milieuWord.id,
+        learned: false,
+      });
+      const wordReminder = await wordReminderQueries.create(wordReminder1);
+
+      const userWordsWordReminders1 =
+        await userWordsWordRemindersQueries.create({
+          user_word_id: clemencyUserWord.id,
+          word_reminder_id: wordReminder.id,
+        });
+      const userWordsWordReminders2 =
+        await userWordsWordRemindersQueries.create({
+          user_word_id: helloUserWord.id,
+          word_reminder_id: wordReminder.id,
+        });
+      const userWordsWordReminders3 =
+        await userWordsWordRemindersQueries.create({
+          user_word_id: milieuUserWord.id,
+          word_reminder_id: wordReminder.id,
+        });
+
+      expect(userWordsWordReminders1).toEqual({
+        id: 1,
+        user_word_id: clemencyUserWord.id,
+        word_reminder_id: wordReminder.id,
+      });
+      expect(userWordsWordReminders2).toEqual({
+        id: 2,
+        user_word_id: helloUserWord.id,
+        word_reminder_id: wordReminder.id,
+      });
+      expect(userWordsWordReminders3).toEqual({
+        id: 3,
+        user_word_id: milieuUserWord.id,
+        word_reminder_id: wordReminder.id,
+      });
+    });
+
+    it("returns the user words word reminders if the junction table was already created", async () => {
+      const helloWord = await wordQueries.create({ json: helloJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const userWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: helloWord.id,
+        learned: false,
+      });
+      const wordReminder = await wordReminderQueries.create(wordReminder1);
+      await userWordsWordRemindersQueries.create({
+        user_word_id: userWord.id,
+        word_reminder_id: wordReminder.id,
+      });
+
+      const newUserWordsWordReminders =
+        await userWordsWordRemindersQueries.create({
+          user_word_id: userWord.id,
+          word_reminder_id: wordReminder.id,
+        });
+
+      expect(newUserWordsWordReminders).toEqual({
+        id: 1,
+        user_word_id: userWord.id,
+        word_reminder_id: wordReminder.id,
+      });
+    });
+  });
+
+  describe("deleteAllByUserId", () => {
+    it("deletes all of the user's user words word reminders", async () => {
+      const word = await wordQueries.create({ json: helloJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const userWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: word.id,
+        learned: false,
+      });
+      const wordReminder = await wordReminderQueries.create(wordReminder1);
+      await userWordsWordRemindersQueries.create({
+        user_word_id: userWord.id,
+        word_reminder_id: wordReminder.id,
+      });
+
+      const deletedUserWordsWordReminders =
+        await userWordsWordRemindersQueries.deleteAllByUserId(user!.id);
+
+      expect(deletedUserWordsWordReminders).toEqual([
+        {
+          id: 1,
+          user_word_id: userWord.id,
+          word_reminder_id: wordReminder.id,
+        },
+      ]);
+    });
+
+    it("returns undefined if the user has no user words word reminders", async () => {
       const clemencyWord = await wordQueries.create({ json: clemencyJson });
       const helloWord = await wordQueries.create({ json: helloJson });
       const milieuWord = await wordQueries.create({ json: milieuJson });
