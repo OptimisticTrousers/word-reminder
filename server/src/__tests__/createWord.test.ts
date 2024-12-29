@@ -304,8 +304,8 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
       expect(createUserWordMock).toHaveBeenCalledWith({
-        userId,
-        wordId,
+        user_id: userId,
+        word_id: wordId,
         learned: false,
       });
     });
@@ -356,8 +356,8 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
       expect(createUserWordMock).toHaveBeenCalledWith({
-        userId,
-        wordId,
+        user_id: userId,
+        word_id: wordId,
         learned: false,
       });
     });
@@ -625,13 +625,13 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledWith({ json: response2 });
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
       expect(createUserWordMock).toHaveBeenCalledWith({
-        userId,
-        wordId: wordId1,
+        user_id: userId,
+        word_id: wordId1,
         learned: false,
       });
       expect(createUserWordMock).toHaveBeenCalledWith({
-        userId,
-        wordId: wordId2,
+        user_id: userId,
+        word_id: wordId2,
         learned: false,
       });
     });
@@ -683,13 +683,13 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledWith({ json: response2 });
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
       expect(createUserWordMock).toHaveBeenCalledWith({
-        userId,
-        wordId: wordId1,
+        user_id: userId,
+        word_id: wordId1,
         learned: false,
       });
       expect(createUserWordMock).toHaveBeenCalledWith({
-        userId,
-        wordId: wordId2,
+        user_id: userId,
+        word_id: wordId2,
         learned: false,
       });
     });
@@ -843,8 +843,8 @@ describe("create_word", () => {
       expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
       expect(createUserWordMock).toHaveBeenCalledWith({
-        userId,
-        wordId: wordId1,
+        user_id: userId,
+        word_id: wordId1,
         learned: false,
       });
     });

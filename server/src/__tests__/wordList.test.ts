@@ -1,4 +1,3 @@
-import asyncHandler from "express-async-handler";
 import express from "express";
 import request from "supertest";
 
@@ -32,13 +31,13 @@ describe("word_list", () => {
     })
     .mockName("getUserWordsByUserId");
 
-  beforeEach(() => {
-    getUserWordsByUserIdMock.mockClear();
-  });
-
   const app = express();
   app.use(express.json());
   app.get("/api/users/:userId/words", word_list);
+
+  beforeEach(() => {
+    getUserWordsByUserIdMock.mockClear();
+  });
 
   describe("no query", () => {
     it("calls the functions to get the user's words with none of the query options", async () => {
