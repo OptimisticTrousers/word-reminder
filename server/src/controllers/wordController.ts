@@ -186,61 +186,10 @@ export const delete_user_word = asyncHandler(async (req, res) => {
 // @query   column, direction, table, learned, limit, page, search
 // @access  Private
 export const word_list = [
-  query("column")
-    .optional()
-    .trim()
-    .escape()
-    .notEmpty()
-    .withMessage("'column' must be a non-empty string."),
-  query("direction")
-    .optional()
-    .trim()
-    .escape()
-    .isInt()
-    .withMessage("'direction' must be an integer."),
-  query("table")
-    .optional()
-    .trim()
-    .escape()
-    .notEmpty()
-    .withMessage("'table' must be a non-empty string."),
-  query().custom((_, { req }) => {
-    const query = req.query;
-    const column = query?.column;
-    const direction = query?.direction;
-    const table = query?.table;
-    const hasSortingParams = column || direction || table;
-    const allSortingParamsProvided = column && direction && table;
-
-    if (hasSortingParams && !allSortingParamsProvided) {
-      return Promise.reject(
-        "'column', 'direction', and 'table' must all be provided together for sorting."
-      );
-    }
-
-    return true;
-  }),
   query("learned")
     .optional()
     .isBoolean()
     .withMessage("'learned' must be a boolean."),
-  query("limit").optional().isInt().withMessage("'limit' must be an integer."),
-  query("page").optional().isInt().withMessage("'page' must be an integer."),
-  query().custom((_, { req }) => {
-    const query = req.query;
-    const page = query?.page;
-    const limit = query?.limit;
-    const hasPaginationParams = page || limit;
-    const allPaginationParamsProvided = page && limit;
-
-    if (hasPaginationParams && !allPaginationParamsProvided) {
-      return Promise.reject(
-        "'page' and 'limit' must both be provided for pagination."
-      );
-    }
-
-    return true;
-  }),
   query("search")
     .optional()
     .trim()
