@@ -138,8 +138,8 @@ describe("wordReminderQueries", () => {
         id: wordReminderId1,
         finish: new Date(),
         reminder: "every 2 hours",
-        isActive: true,
-        hasReminderOnload: true,
+        is_active: true,
+        has_reminder_onload: true,
       });
 
       const createdAtTimestamp = new Date(wordReminder!.created_at).getTime();
@@ -169,8 +169,8 @@ describe("wordReminderQueries", () => {
         id: wordReminderId1,
         finish: new Date(),
         reminder: "every 2 hours",
-        isActive: true,
-        hasReminderOnload: true,
+        is_active: true,
+        has_reminder_onload: true,
       });
 
       expect(wordReminder).toBeUndefined();

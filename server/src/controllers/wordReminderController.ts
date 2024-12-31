@@ -1,114 +1,78 @@
 import asyncHandler from "express-async-handler";
-import { body, query, validationResult } from "express-validator";
 
+import { UserWord, UserWordQueries } from "../db/userWordQueries";
 import {
   Result,
   UserWordsWordRemindersQueries,
 } from "../db/userWordsWordRemindersQueries";
 import { WordReminderQueries } from "../db/wordReminderQueries";
+import { errorValidationHandler } from "../middleware/errorValidationHandler";
+import { addMinutesToDate } from "../utils/date";
 
+const userWordQueries = new UserWordQueries();
 const userWordsWordRemindersQueries = new UserWordsWordRemindersQueries();
 const wordReminderQueries = new WordReminderQueries();
 
-// // @desc Create a new current words by duration
-// // @route POST /api/users/:userId/wordReminders
-// // @access Private
-// export const create_word_reminder = [
-//   body("from", "'From' date is required.").trim().isDate().isAfter(),
-//   body("to", "'To' date is required.")
-//     .trim()
-//     .isDate()
-//     .custom((to, { req }) => {
-//       return to > req.body.from;
-//     }),
-//   body("words", "'words' array is required.").optional().isArray(),
-//   body("options.isActive").optional().isBoolean(),
-//   query("options.hasReminderOnLoad").optional().isBoolean(),
-//   query("options.hasDuplicateWords").optional().isBoolean(),
-//   body("options.recurring.isRecurring").optional().isBoolean(),
-//   body("options.recurring.interval")
-//     .optional()
-//     .isString()
-//     .if(body("options.recurring.isRecurring").notEmpty()),
-//   body("options.reminder").optional().isString(),
-//   asyncHandler(async (req, res) => {
-//     const { userId } = req.params;
-//     const {
-//       from,
-//       to,
-//       words,
-//       wordsByDurationLength,
-//       options: {
-//         isActive,
-//         hasReminderOnLoad,
-//         hasDuplicateWords,
-//         recurring: { isRecurring, interval },
-//         reminder,
-//       },
-//     } = req.body;
+// @desc Create a new word reminder
+// @route POST /api/users/:userId/wordReminders
+// @access Private
+export const create_word_reminder = [
+  errorValidationHandler,
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { isActive, hasReminderOnload, reminder, auto } = req.body;
 
-//     const errors = validationResult(req);
+    const duration = req.body.duration;
+    const hasLearnedWords = req.body.hasLearnedWords;
+    const wordCount = req.body.wordCount;
+    const order = req.body.order;
 
-//     if (!errors.isEmpty()) {
-//       res.status(400).json(errors.array());
-//       return;
-//     }
+    if (auto) {
+      // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
+      const randomUserWords = await userWordQueries.getUserWords(userId, {
+        count: wordCount,
+        learned: hasLearnedWords,
+        order,
+      });
+      const wordReminder = await wordReminderQueries.create({
+        user_id: userId,
+        reminder,
+        is_active: isActive,
+        has_reminder_onload: hasReminderOnload,
+        finish: addMinutesToDate(duration),
+      });
+      randomUserWords.forEach(async (word: UserWord) => {
+        await userWordsWordRemindersQueries.create({
+          user_word_id: word.id,
+          word_reminder_id: wordReminder.id,
+        });
+      });
 
-//     if (!words) {
-//       // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
-//       createRandomWordsByDuration(
-//         userId,
-//         from,
-//         to,
-//         wordsByDurationLength,
-//         {
-//           isActive,
-//           hasReminderOnLoad,
-//           hasDuplicateWords,
-//           recurring: { isRecurring, interval },
-//           reminder,
-//         },
-//         (randomWordsLength) => {
-//           res.status(405).json({
-//             message: `Not enough unique words available. You need ${wordsByDurationLength} words, but only ${randomWordsLength} unique words are available.`,
-//           });
-//         },
-//         (wordsByDuration) => {
-//           res.status(200).json(wordsByDuration);
-//         },
-//         async (wordsByDurationId) => {
-//           // make sure to add the interval to the dates so that the 'from' and 'to' date changes are reflected
-//           const newFrom = from.setHours(from.getHours() + interval);
-//           const newTo = to.setHours(to.getHours() + interval);
-//           if (isRecurring) {
-//             agenda.every(interval, "create_agenda", {
-//               ...req.body,
-//               from: newFrom,
-//               to: newTo,
-//             });
-//           }
-//           agenda.schedule(to, "learned_words", { wordsByDurationId });
-//           await activateWordsByDuration(from, wordsByDurationId);
-//         }
-//       );
-//     }
-//     const wordsByDuration = new WordsByDuration({
-//       userId,
-//       from,
-//       to,
-//       words,
-//       options: {
-//         isActive,
-//         hasReminderOnLoad,
-//         hasDuplicateWords,
-//         recurring: { isRecurring, interval },
-//         reminder,
-//       },
-//     });
-//     await wordsByDuration.save();
-//     res.status(200).json(wordsByDuration);
-//   }),
-// ];
+      res.status(200).json({
+        wordReminder: { ...wordReminder, words: randomUserWords },
+      });
+      return;
+    }
+
+    const finish = req.body.finish;
+    const words = req.body.words;
+    const wordReminder = await wordReminderQueries.create({
+      user_id: userId,
+      reminder,
+      is_active: isActive,
+      has_reminder_onload: hasReminderOnload,
+      finish,
+    });
+    words.forEach(async (word: UserWord) => {
+      await userWordsWordRemindersQueries.create({
+        user_word_id: word.id,
+        word_reminder_id: wordReminder.id,
+      });
+    });
+
+    res.status(200).json({ wordReminder: { ...wordReminder, words } });
+  }),
+];
 
 // @desc    Delete all of the user's word reminders
 // @route   DELETE /api/users/:userId/wordReminders
@@ -172,67 +136,32 @@ export const word_reminder_list = [
   }),
 ];
 
-// // @desc Update a current words by duration
-// // @route PUT /api/users/:userId/wordsByDuration/:wordsByDurationId
-// // @access Private
-// export const update_word_reminder = [
-//   body("from", "'From' date is required.").trim().isDate().isAfter(),
-//   body("to", "'To' date is required.")
-//     .trim()
-//     .isDate()
-//     .custom((to, { req }) => {
-//       return to > req.body.from;
-//     }),
-//   body("words", "'words' array is required.").optional().isArray(),
-//   body("options.isActive").optional().isBoolean(),
-//   query("options.hasReminderOnLoad").optional().isBoolean(),
-//   query("options.hasDuplicateWords").optional().isBoolean(),
-//   body("options.recurring.isRecurring").optional().isBoolean(),
-//   body("options.recurring.interval")
-//     .optional()
-//     .isString()
-//     .if(body("options.recurring.isRecurring").notEmpty()),
-//   body("options.reminder").optional().isString(),
-//   asyncHandler(async (req, res) => {
-//     const {
-//       from,
-//       to,
-//       words,
-//       options: {
-//         isActive,
-//         hasReminderOnLoad,
-//         hasDuplicateWords,
-//         recurring: { isRecurring, interval },
-//         reminder,
-//       },
-//     } = req.body;
-//     const { wordsByDurationId } = req.params;
+// @desc Update a word reminder
+// @route PUT /api/users/:userId/wordReminders/:wordReminderId
+// @access Private
+export const update_word_reminder = [
+  errorValidationHandler,
+  asyncHandler(async (req, res) => {
+    const { wordReminderId } = req.params;
+    const { isActive, hasReminderOnload, reminder, finish, words } = req.body;
 
-//     const errors = validationResult(req);
+    const wordReminder = await wordReminderQueries.update({
+      id: wordReminderId,
+      reminder,
+      is_active: isActive,
+      has_reminder_onload: hasReminderOnload,
+      finish,
+    });
+    await userWordsWordRemindersQueries.deleteAllByWordReminderId(
+      wordReminderId
+    );
+    words.forEach(async (word: UserWord) => {
+      await userWordsWordRemindersQueries.create({
+        user_word_id: word.id,
+        word_reminder_id: wordReminderId,
+      });
+    });
 
-//     if (!errors.isEmpty()) {
-//       res.status(400).json(errors.array());
-//       return;
-//     }
-//     const updatedWordsByDuration = await WordsByDuration.findByIdAndUpdate(
-//       wordsByDurationId,
-//       {
-//         from,
-//         to,
-//         words,
-//         options: {
-//           isActive,
-//           hasReminderOnLoad,
-//           hasDuplicateWords,
-//           recurring: { isRecurring, interval },
-//           reminder,
-//         },
-//       },
-//       { new: true }
-//     ).exec();
-
-//     await activateWordsByDuration(from, wordsByDurationId);
-
-//     res.status(200).json(updatedWordsByDuration);
-//   }),
-// ];
+    res.status(200).json({ wordReminder: { ...wordReminder, words } });
+  }),
+];
