@@ -13,14 +13,14 @@ export const validateSortQuery = [
     .trim()
     .escape()
     .isInt()
-    .withMessage("'direction' must be an integer."),
+    .withMessage("'direction' must be a positive integer."),
   query("table")
     .optional()
     .trim()
     .escape()
     .notEmpty()
     .withMessage("'table' must be a non-empty string."),
-  query().custom((_, { req }) => {
+  query().custom((_value, { req }) => {
     const query = req.query;
     const column = query?.column;
     const direction = query?.direction;
