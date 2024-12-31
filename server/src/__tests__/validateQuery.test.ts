@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import express from "express";
 import request from "supertest";
 
+import { word_reminder_list } from "../controllers/wordReminderController";
 import { UserWordsWordRemindersQueries } from "../db/userWordsWordRemindersQueries";
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
 import { validatePageQuery } from "../middleware/validatePageQuery";
@@ -103,60 +104,62 @@ describe("validateQuery", () => {
     },
   ];
 
+  const wordReminders = [
+    {
+      id: "1",
+      user_id: sampleUser1.id,
+      reminder: wordReminder1.reminder,
+      is_active: wordReminder1.is_active,
+      has_reminder_onload: wordReminder1.has_reminder_onload,
+      finish: wordReminder1.finish,
+      words: [
+        {
+          learned: false,
+          details: clemencyJson,
+        },
+      ],
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: "2",
+      user_id: sampleUser1.id,
+      reminder: wordReminder1.reminder,
+      is_active: wordReminder1.is_active,
+      has_reminder_onload: wordReminder1.has_reminder_onload,
+      finish: wordReminder1.finish,
+      words: [
+        {
+          learned: false,
+          details: helloJson,
+        },
+      ],
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: "3",
+      user_id: sampleUser1.id,
+      reminder: wordReminder1.reminder,
+      is_active: wordReminder1.is_active,
+      has_reminder_onload: wordReminder1.has_reminder_onload,
+      finish: wordReminder1.finish,
+      words: [
+        {
+          learned: false,
+          details: milieuJson,
+        },
+      ],
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
+
   const getByUserIdMock = jest
     .spyOn(UserWordsWordRemindersQueries.prototype, "getByUserId")
     .mockImplementation(async () => {
       return {
-        wordReminders: [
-          {
-            id: "1",
-            user_id: sampleUser1.id,
-            reminder: wordReminder1.reminder,
-            is_active: wordReminder1.is_active,
-            has_reminder_onload: wordReminder1.has_reminder_onload,
-            finish: wordReminder1.finish,
-            words: [
-              {
-                learned: false,
-                details: clemencyJson,
-              },
-            ],
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-          {
-            id: "2",
-            user_id: sampleUser1.id,
-            reminder: wordReminder1.reminder,
-            is_active: wordReminder1.is_active,
-            has_reminder_onload: wordReminder1.has_reminder_onload,
-            finish: wordReminder1.finish,
-            words: [
-              {
-                learned: false,
-                details: helloJson,
-              },
-            ],
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-          {
-            id: "3",
-            user_id: sampleUser1.id,
-            reminder: wordReminder1.reminder,
-            is_active: wordReminder1.is_active,
-            has_reminder_onload: wordReminder1.has_reminder_onload,
-            finish: wordReminder1.finish,
-            words: [
-              {
-                learned: false,
-                details: milieuJson,
-              },
-            ],
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-        ],
+        wordReminders,
       };
     });
 
@@ -171,18 +174,18 @@ describe("validateQuery", () => {
       "/api/users/:userId/wordReminders",
       validatePageQuery,
       errorValidationHandler,
-      asyncHandler(async (req, res, next) => {
-        res.status(200).json({ message });
-      })
+      word_reminder_list
     );
 
     describe("page number and page limit query", () => {
-      it("calls the functions to get the user's worth with the page number and page limit query", async () => {
+      it("calls the functions to get the user's word reminders with the page number and page limit query", async () => {
         const page = 1;
         const limit = 6;
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?page=${page}&limit=${limit}`)
+          .get(
+            `/api/users/${sampleUser1.id}/wordReminders?page=${page}&limit=${limit}`
+          )
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).toHaveBeenCalledTimes(1);
@@ -195,11 +198,14 @@ describe("validateQuery", () => {
         expect(response.body).toEqual({
           wordReminders: [
             {
-              id: 1,
+              id: "1",
+              user_id: "1",
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
-              finish: wordReminder1.finish,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
               words: [
                 {
                   learned: false,
@@ -208,11 +214,14 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: 2,
+              id: "2",
+              user_id: "1",
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
-              finish: wordReminder1.finish,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
               words: [
                 {
                   learned: false,
@@ -221,11 +230,14 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: 3,
+              id: "3",
+              user_id: "1",
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
-              finish: wordReminder1.finish,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
               words: [
                 {
                   learned: false,
@@ -242,7 +254,7 @@ describe("validateQuery", () => {
 
         const response = await request(app)
           .get(
-            `/api/users/${sampleUser1.id}/words?page=${undefined}&limit=${limit}`
+            `/api/users/${sampleUser1.id}/wordReminders?page=${undefined}&limit=${limit}`
           )
           .set("Accept", "application/json");
 
@@ -267,7 +279,7 @@ describe("validateQuery", () => {
 
         const response = await request(app)
           .get(
-            `/api/users/${sampleUser1.id}/words?page=${page}&limit=${undefined}`
+            `/api/users/${sampleUser1.id}/wordReminders?page=${page}&limit=${undefined}`
           )
           .set("Accept", "application/json");
 
@@ -291,7 +303,7 @@ describe("validateQuery", () => {
         const limit = 6;
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?limit=${limit}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?limit=${limit}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -316,7 +328,7 @@ describe("validateQuery", () => {
         const page = 1;
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?page=${page}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?page=${page}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -346,13 +358,11 @@ describe("validateQuery", () => {
       "/api/users/:userId/wordReminders",
       validateSortQuery,
       errorValidationHandler,
-      asyncHandler(async (req, res, next) => {
-        res.status(200).json({ message });
-      })
+      word_reminder_list
     );
 
     describe("sort query", () => {
-      it("calls the functions to get the user's words with the sort query options", async () => {
+      it("calls the functions to get the user's words reminders with the sort query options", async () => {
         const params = new URLSearchParams({
           table: "word_reminders",
           column: "created_at",
@@ -366,7 +376,7 @@ describe("validateQuery", () => {
         expect(getByUserIdMock).toHaveBeenCalledTimes(1);
         expect(getByUserIdMock).toHaveBeenCalledWith(sampleUser1.id, {
           sort: {
-            table: "words_reminders",
+            table: "word_reminders",
             column: "created_at",
             direction: 1,
           },
@@ -376,11 +386,14 @@ describe("validateQuery", () => {
         expect(response.body).toEqual({
           wordReminders: [
             {
-              id: 1,
+              id: "1",
+              user_id: "1",
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
-              finish: wordReminder1.finish,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
               words: [
                 {
                   learned: false,
@@ -389,11 +402,14 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: 2,
+              id: "2",
+              user_id: "1",
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
-              finish: wordReminder1.finish,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
               words: [
                 {
                   learned: false,
@@ -402,11 +418,14 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: 3,
+              id: "3",
+              user_id: "1",
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
-              finish: wordReminder1.finish,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
               words: [
                 {
                   learned: false,
@@ -454,7 +473,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -480,7 +499,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -508,7 +527,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -535,7 +554,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -562,7 +581,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -591,7 +610,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -623,13 +642,13 @@ describe("validateQuery", () => {
 
       it("returns errors with status code 400 when the direction is not a number", async () => {
         const params = new URLSearchParams({
-          column: "word",
+          column: "created_at",
           direction: "true",
-          table: "words",
+          table: "word_reminders",
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -656,7 +675,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/words?${params}`)
+          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();

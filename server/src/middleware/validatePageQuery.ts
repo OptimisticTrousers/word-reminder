@@ -10,7 +10,7 @@ export const validatePageQuery = [
     .optional()
     .isInt({ gt: 0 })
     .withMessage("'page' must be a positive integer."),
-  query().custom((_, { req }) => {
+  query().custom((_value, { req }) => {
     const query = req.query;
     const page = query?.page;
     const limit = query?.limit;
