@@ -1,5 +1,5 @@
 import { UserQueries } from "../db/userQueries";
-import { UserWord, UserWordQueries } from "../db/userWordQueries";
+import { Order, UserWord, UserWordQueries } from "../db/userWordQueries";
 import { Word, WordQueries } from "../db/wordQueries";
 // Import db setup and teardown functionality
 import "../db/testPopulatedb";
@@ -944,6 +944,265 @@ describe("userWordQueries", () => {
       expect(result).toEqual({
         userWords: [],
       });
+    });
+  });
+
+  describe("getWords", () => {
+    const milieuJson = [
+      {
+        word: "milieu",
+        meanings: [
+          {
+            partOfSpeech: "noun",
+            definitions: [{ definition: "A person's social environment." }],
+          },
+        ],
+        phonetics: [],
+      },
+    ];
+    const clemencyJson = [
+      {
+        word: "clemency",
+        meanings: [
+          {
+            partOfSpeech: "noun",
+            definitions: [{ definition: "Mercy; lenience." }],
+          },
+        ],
+        phonetics: [],
+      },
+    ];
+
+    it("returns the oldest user words", async () => {
+      const clemencyWord = await wordQueries.create({ json: clemencyJson });
+      const helloWord = await wordQueries.create({ json });
+      const milieuWord = await wordQueries.create({ json: milieuJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const clemencyUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: clemencyWord.id,
+        learned: false,
+      });
+      const helloUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: helloWord.id,
+        learned: false,
+      });
+      const milieuUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: milieuWord.id,
+        learned: false,
+      });
+
+      const randomUserWords = await userWordQueries.getWords(user!.id, {
+        count: 7,
+        learned: false,
+        order: Order.Oldest,
+      });
+
+      const expectedUserWords = [
+        clemencyUserWord,
+        helloUserWord,
+        milieuUserWord,
+      ];
+      expect(randomUserWords).toEqual(expectedUserWords);
+    });
+
+    it("returns the most recent user words", async () => {
+      const clemencyWord = await wordQueries.create({ json: clemencyJson });
+      const helloWord = await wordQueries.create({ json });
+      const milieuWord = await wordQueries.create({ json: milieuJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const clemencyUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: clemencyWord.id,
+        learned: false,
+      });
+      const helloUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: helloWord.id,
+        learned: false,
+      });
+      const milieuUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: milieuWord.id,
+        learned: false,
+      });
+
+      const randomUserWords = await userWordQueries.getWords(user!.id, {
+        count: 7,
+        learned: false,
+        order: Order.Newest,
+      });
+
+      const expectedUserWords = [
+        milieuUserWord,
+        helloUserWord,
+        clemencyUserWord,
+      ];
+      expect(randomUserWords).toEqual(expectedUserWords);
+    });
+
+    it("returns x rows", async () => {
+      const clemencyWord = await wordQueries.create({ json: clemencyJson });
+      const helloWord = await wordQueries.create({ json });
+      const milieuWord = await wordQueries.create({ json: milieuJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const clemencyUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: clemencyWord.id,
+        learned: false,
+      });
+      const helloUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: helloWord.id,
+        learned: false,
+      });
+      const milieuUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: milieuWord.id,
+        learned: false,
+      });
+
+      const randomUserWords = await userWordQueries.getWords(user!.id, {
+        count: 2,
+        learned: false,
+        order: Order.Random,
+      });
+
+      const expectedUserWords = [
+        clemencyUserWord,
+        helloUserWord,
+        milieuUserWord,
+      ];
+      const validPermutations = [
+        [expectedUserWords[0], expectedUserWords[1]],
+        [expectedUserWords[1], expectedUserWords[0]],
+        [expectedUserWords[0], expectedUserWords[2]],
+        [expectedUserWords[2], expectedUserWords[0]],
+        [expectedUserWords[1], expectedUserWords[2]],
+        [expectedUserWords[2], expectedUserWords[1]],
+      ];
+      const randomUserWordsString = JSON.stringify(randomUserWords);
+      const matchesPermutation =
+        randomUserWordsString === JSON.stringify(validPermutations[0]) ||
+        randomUserWordsString === JSON.stringify(validPermutations[1]) ||
+        randomUserWordsString === JSON.stringify(validPermutations[2]) ||
+        randomUserWordsString === JSON.stringify(validPermutations[3]) ||
+        randomUserWordsString === JSON.stringify(validPermutations[4]) ||
+        randomUserWordsString === JSON.stringify(validPermutations[5]);
+      expect(matchesPermutation).toBe(true);
+    });
+
+    it("returns x rows when only x exist, but y where y > x is requested", async () => {
+      const clemencyWord = await wordQueries.create({ json: clemencyJson });
+      const helloWord = await wordQueries.create({ json });
+      const milieuWord = await wordQueries.create({ json: milieuJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const clemencyUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: clemencyWord.id,
+        learned: false,
+      });
+      const helloUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: helloWord.id,
+        learned: false,
+      });
+      const milieuUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: milieuWord.id,
+        learned: false,
+      });
+
+      const randomUserWords = await userWordQueries.getWords(user!.id, {
+        count: 7,
+        learned: false,
+        order: Order.Random,
+      });
+
+      const expectedUserWords = [
+        clemencyUserWord,
+        helloUserWord,
+        milieuUserWord,
+      ];
+      expect(randomUserWords).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(expectedUserWords[0]),
+          expect.objectContaining(expectedUserWords[1]),
+          expect.objectContaining(expectedUserWords[2]),
+        ])
+      );
+    });
+
+    it("returns no rows when none exist", async () => {
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+
+      const randomUserWords = await userWordQueries.getWords(user!.id, {
+        count: 7,
+        learned: false,
+        order: Order.Random,
+      });
+
+      expect(randomUserWords).toEqual([]);
+    });
+
+    it("returns learned user words", async () => {
+      const clemencyWord = await wordQueries.create({ json: clemencyJson });
+      const helloWord = await wordQueries.create({ json });
+      const milieuWord = await wordQueries.create({ json: milieuJson });
+      const user = await userQueries.create({
+        username: sampleUser1.username,
+        password: sampleUser1.password,
+      });
+      const clemencyUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: clemencyWord.id,
+        learned: true,
+      });
+      const helloUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: helloWord.id,
+        learned: false,
+      });
+      const milieuUserWord = await userWordQueries.create({
+        user_id: user!.id,
+        word_id: milieuWord.id,
+        learned: true,
+      });
+
+      const randomUserWords = await userWordQueries.getWords(user!.id, {
+        count: 2,
+        learned: true,
+        order: Order.Random,
+      });
+
+      const expectedUserWords = [
+        clemencyUserWord,
+        helloUserWord,
+        milieuUserWord,
+      ];
+      expect(randomUserWords).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(expectedUserWords[0]),
+          expect.objectContaining(expectedUserWords[2]),
+        ])
+      );
     });
   });
 });
