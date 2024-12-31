@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "NODE_ENV=development && nodemon src/server.ts",
     "test": "NODE_ENV=test && jest --watch --runInBand",
+    "coverage": "NODE_ENV=test && jest --runInBand --coverage",
     "seed": "ts-node src/db/populatedb"
   },
   "keywords": [],

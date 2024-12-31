@@ -404,6 +404,66 @@ describe("create_word", () => {
       expect(createWordMock).not.toHaveBeenCalled();
       expect(createUserWordMock).not.toHaveBeenCalled();
     });
+
+    it("creates a user word if the word already exists", async () => {
+      /* Mock implementation of the `getWordByWord` function:
+      - This mock simulates a scenario where the queried word does not exist in the database.
+
+      - Purpose: To test the behavior of the application when a word needs to be fetched from an external API and added to the database.
+
+      - Example Use Case: Ensures that the system correctly handles the creation of a new word if it doesn't already exist in the database. */
+      const getWordByWordMock = jest
+        .spyOn(WordQueries.prototype, "getByWord")
+        .mockImplementation(async () => {
+          return {
+            id: wordId,
+            created_at: new Date(),
+            updated_at: new Date(),
+            details: response1,
+          };
+        });
+      const httpGetMock = jest
+        .spyOn(Http.prototype, "get")
+        .mockImplementation(async () => {
+          return { json: response1, status: 200 };
+        });
+      const createWordMock = jest
+        .spyOn(WordQueries.prototype, "create")
+        .mockImplementation(async () => {
+          return { details: response1, id: wordId, created_at: new Date() };
+        });
+      const createUserWordMock = jest
+        .spyOn(UserWordQueries.prototype, "create")
+        .mockImplementation(async () => {
+          return userWord;
+        });
+
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .send({ word: response1[0].word });
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        word: {
+          details: response1,
+          id: wordId,
+          created_at: expect.any(String),
+          updated_at: expect.any(String),
+        },
+      });
+      expect(getWordByWordMock).toHaveBeenCalledTimes(1);
+      expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
+      expect(httpGetMock).not.toHaveBeenCalled();
+      expect(createWordMock).not.toHaveBeenCalled();
+      expect(createUserWordMock).toHaveBeenCalledTimes(1);
+      expect(createUserWordMock).toHaveBeenCalledWith({
+        user_id: userId,
+        word_id: wordId,
+        learned: false,
+      });
+    });
   });
 
   describe("csv word creation", () => {

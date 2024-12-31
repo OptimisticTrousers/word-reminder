@@ -169,7 +169,7 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     const { rows: totalRowsResult }: QueryResult<{ total: number }> =
       await this.pool.query(totalQuery, [user_id]);
     // calculate the length of the rows before applying a limit on it to see how many rows match the query
-    const totalRows = totalRowsResult[0]?.total || 0;
+    const totalRows = totalRowsResult[0].total;
 
     let result: Result = { wordReminders: rows };
 
