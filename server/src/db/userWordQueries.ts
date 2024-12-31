@@ -116,7 +116,7 @@ export class UserWordQueries extends Queries<UserWord> {
     return rows[0];
   }
 
-  async getWords(user_id: string, options: RandomOptions): Promise<UserWord[]> {
+  async getUserWords(user_id: string, options: RandomOptions): Promise<UserWord[]> {
     let orderClause = "";
     switch (options.order) {
       case Order.Oldest:

@@ -1,11 +1,6 @@
 import { QueryResult } from "pg";
 
 import { Queries } from "./queries";
-import { UserWord } from "./userWordQueries";
-import { Json, Word } from "./wordQueries";
-import { WordReminder } from "./wordReminderQueries";
-import { UserWord } from "./userWordQueries";
-import { Word } from "./wordQueries";
 import { WordReminder } from "./wordReminderQueries";
 
 interface UserWordsWordReminders {
@@ -33,11 +28,7 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
   async create({
     user_word_id,
     word_reminder_id,
-    user_word_id,
-    word_reminder_id,
   }: {
-    user_word_id: string;
-    word_reminder_id: string;
     user_word_id: string;
     word_reminder_id: string;
   }): Promise<UserWordsWordReminders> {
@@ -53,8 +44,6 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
 
     const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
       `
-    INSERT INTO ${this.table}(user_word_id, word_reminder_id)
-    VALUES ($1, $2)
     INSERT INTO ${this.table}(user_word_id, word_reminder_id)
     VALUES ($1, $2)
     RETURNING ${this.columns}
@@ -78,31 +67,11 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     WHERE user_word_id = $1 AND word_reminder_id = $2
       `,
       [user_word_id, word_reminder_id]
-      [user_word_id, word_reminder_id]
     );
 
     return rows[0];
   }
 
-  private async get({
-    user_word_id,
-    word_reminder_id,
-  }: {
-    user_word_id: string;
-    word_reminder_id: string;
-  }): Promise<UserWordsWordReminders> {
-    const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
-      `
-    SELECT * FROM user_words_word_reminders
-    WHERE user_word_id = $1 AND word_reminder_id = $2
-      `,
-      [user_word_id, word_reminder_id]
-    );
-
-    return rows[0];
-  }
-
-  async deleteAllByUserId(user_id: string): Promise<UserWordsWordReminders[]> {
   async deleteAllByUserId(user_id: string): Promise<UserWordsWordReminders[]> {
     const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
       `
@@ -110,34 +79,25 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     USING user_words
     WHERE user_words.id = ${this.table}.user_word_id AND user_words.user_id = $1
     RETURNING ${this.table}.id, user_word_id, word_reminder_id;
-    USING user_words
-    WHERE user_words.id = ${this.table}.user_word_id AND user_words.user_id = $1
-    RETURNING ${this.table}.id, user_word_id, word_reminder_id;
       `,
-      [user_id]
       [user_id]
     );
 
     return rows;
   }
 
-  // async autoCreate({userId, wordCount, hasLearnedWords, isActive, reminder, hasReminderOnload, duration}: {userId: string, wordCount: number, hasLearnedWords: boolean, isActive: boolean, reminder: string, hasReminderOnload: boolean, duration: string}): Promise<WordReminder> {
-
-  // }
-
   async deleteAllByWordReminderId(
     word_reminder_id: string
-  ): Promise<(UserWordsWordReminders & WordReminder)[]> {
-    const { rows }: QueryResult<UserWordsWordReminders & WordReminder> =
-      await this.pool.query(
-        `
+  ): Promise<UserWordsWordReminders[]> {
+    const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
+      `
     DELETE FROM ${this.table}
     USING word_reminders
     WHERE word_reminder_id = word_reminders.id AND word_reminder_id = $1
     RETURNING user_words_word_reminders.id, user_word_id, word_reminder_id;
       `,
-        [word_reminder_id]
-      );
+      [word_reminder_id]
+    );
 
     return rows;
   }
@@ -193,7 +153,7 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     }
 
     // Pagination
-    queryParts.push(`LIMIT $2 OFFSET $3`);
+    queryParts.push(`LIMIT $2 OFFSET $3;`);
 
     const query: string = queryParts.join(" ");
     const { rows }: QueryResult<WordReminder> = await this.pool.query(
