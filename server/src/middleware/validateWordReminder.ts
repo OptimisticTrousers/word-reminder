@@ -4,13 +4,6 @@ import { Order } from "../db/userWordQueries";
 import { errorValidationHandler } from "./errorValidationHandler";
 
 const validateOptions = [
-  body("auto")
-    .notEmpty({ ignore_whitespace: true })
-    .withMessage("'auto' must be specified.")
-    .bail()
-    .isBoolean()
-    .toBoolean()
-    .withMessage("'auto' must be a boolean."),
   errorValidationHandler, // stop here if 'random' is not provided
   body("hasReminderOnload")
     .notEmpty({ ignore_whitespace: true })
@@ -28,7 +21,11 @@ const validateOptions = [
     .withMessage("'isActive' must be a boolean."),
   body("reminder")
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'reminder' must be specified."),
+    .withMessage("'reminder' must be specified.")
+    .bail()
+    .isInt({ gt: 0 })
+    .toInt()
+    .withMessage("'reminder' must be a positive integer."),
 ];
 
 const validateManualWordReminder = [
@@ -59,7 +56,17 @@ const validateManualWordReminder = [
     .withMessage("'words' must be an array."),
 ];
 
-const validateAutoWordReminder = [
+export const validateAuto = [
+  body("auto")
+    .notEmpty({ ignore_whitespace: true })
+    .withMessage("'auto' must be specified.")
+    .bail()
+    .isBoolean()
+    .toBoolean()
+    .withMessage("'auto' must be a boolean."),
+];
+
+export const validateAutoWordReminder = [
   body("duration")
     .if((_value, { req }) => {
       return req.body.auto === true;
@@ -112,5 +119,4 @@ const validateAutoWordReminder = [
 export const validateWordReminder = [
   ...validateOptions,
   ...validateManualWordReminder,
-  ...validateAutoWordReminder,
 ];

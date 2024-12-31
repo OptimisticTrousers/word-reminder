@@ -3,7 +3,11 @@ import express from "express";
 import request from "supertest";
 
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
-import { validateWordReminder } from "../middleware/validateWordReminder";
+import {
+  validateAutoWordReminder,
+  validateAuto,
+  validateWordReminder,
+} from "../middleware/validateWordReminder";
 import { Order } from "../db/userWordQueries";
 
 describe("validateWordReminder", () => {
@@ -39,7 +43,9 @@ describe("validateWordReminder", () => {
   app.use(express.json());
   app.post(
     "/api/users/:userId/wordReminders",
+    validateAuto,
     validateWordReminder,
+    validateAutoWordReminder,
     errorValidationHandler,
     asyncHandler(async (req, res, next) => {
       res.status(200).json({ message });
@@ -54,7 +60,7 @@ describe("validateWordReminder", () => {
         words: [userWord1, userWord2, userWord3],
         isActive: false,
         hasReminderOnload: false,
-        reminder: "every hour",
+        reminder: 60, // 1 hour in minutes,
       };
 
       const response = await request(app)
@@ -83,7 +89,7 @@ describe("validateWordReminder", () => {
         words: [userWord1, userWord2, userWord3],
         isActive: false,
         hasReminderOnload: false,
-        reminder: "every hour",
+        reminder: 60, // 1 hour in minutes,
       };
 
       const response = await request(app)
@@ -115,7 +121,7 @@ describe("validateWordReminder", () => {
         words: [userWord1, userWord2, userWord3],
         isActive: undefined,
         hasReminderOnload: false,
-        reminder: "every hour",
+        reminder: 60, // 1 hour in minutes,
       };
 
       const response = await request(app)
@@ -144,7 +150,7 @@ describe("validateWordReminder", () => {
         words: [userWord1, userWord2, userWord3],
         isActive: "string",
         hasReminderOnload: false,
-        reminder: "every hour",
+        reminder: 60, // 1 hour in minutes,
       };
 
       const response = await request(app)
@@ -176,7 +182,7 @@ describe("validateWordReminder", () => {
         words: [userWord1, userWord2, userWord3],
         isActive: false,
         hasReminderOnload: undefined,
-        reminder: "every hour",
+        reminder: 60, // 1 hour in minutes,
       };
       const response = await request(app)
         .post("/api/users/:userId/wordReminders")
@@ -203,7 +209,7 @@ describe("validateWordReminder", () => {
         words: [userWord1, userWord2, userWord3],
         isActive: false,
         hasReminderOnload: "string",
-        reminder: "every hour",
+        reminder: 60, // 1 hour in minutes,
       };
 
       const response = await request(app)
@@ -256,6 +262,36 @@ describe("validateWordReminder", () => {
         ],
       });
     });
+
+    it("returns 400 status code when 'reminder' is not a positive integer", async () => {
+      const body = {
+        finish: new Date(),
+        auto: false,
+        words: [userWord1, userWord2, userWord3],
+        isActive: false,
+        hasReminderOnload: false,
+        reminder: -1,
+      };
+
+      const response = await request(app)
+        .post("/api/users/:userId/wordReminders")
+        .set("Accept", "application/json")
+        .send(body);
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "body",
+            msg: "'reminder' must be a positive integer.",
+            path: "reminder",
+            type: "field",
+            value: -1,
+          },
+        ],
+      });
+    });
   });
 
   describe("validateManualWordReminder", () => {
@@ -267,7 +303,7 @@ describe("validateWordReminder", () => {
           words: [userWord1, userWord2, userWord3],
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
         };
 
         const response = await request(app)
@@ -296,7 +332,7 @@ describe("validateWordReminder", () => {
           words: [userWord1, userWord2, userWord3],
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
         };
 
         const response = await request(app)
@@ -327,7 +363,7 @@ describe("validateWordReminder", () => {
           words: [userWord1, userWord2, userWord3],
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
         };
 
         const response = await request(app)
@@ -359,7 +395,7 @@ describe("validateWordReminder", () => {
           words: undefined,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
         };
 
         const response = await request(app)
@@ -388,7 +424,7 @@ describe("validateWordReminder", () => {
           words: "string",
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
         };
 
         const response = await request(app)
@@ -411,6 +447,28 @@ describe("validateWordReminder", () => {
         });
       });
     });
+
+    it("the next request handler is called", async () => {
+      const body = {
+        finish: new Date(),
+        auto: false,
+        words: [userWord1, userWord2, userWord3],
+        isActive: false,
+        hasReminderOnload: false,
+        reminder: 60, // 1 hour in minutes,
+      };
+
+      const response = await request(app)
+        .post("/api/users/:userId/wordReminders")
+        .set("Accept", "application/json")
+        .send(body);
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        message,
+      });
+    });
   });
 
   describe("validateAutoWordReminder", () => {
@@ -421,7 +479,7 @@ describe("validateWordReminder", () => {
           wordCount: undefined,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: 7 * 24 * 60, // 1 week in minutes
           hasLearnedWords: false,
           order: Order.Random,
@@ -452,7 +510,7 @@ describe("validateWordReminder", () => {
           wordCount: "string",
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: 7 * 24 * 60, // 1 week in minutes
           hasLearnedWords: false,
           order: Order.Random,
@@ -486,7 +544,7 @@ describe("validateWordReminder", () => {
           wordCount: 7,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: undefined,
           hasLearnedWords: false,
           order: Order.Random,
@@ -517,7 +575,7 @@ describe("validateWordReminder", () => {
           wordCount: 7,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: -1,
           hasLearnedWords: false,
           order: Order.Random,
@@ -551,7 +609,7 @@ describe("validateWordReminder", () => {
           wordCount: 7,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: 7 * 24 * 60, // 1 week in minutes
           hasLearnedWords: undefined,
           order: Order.Random,
@@ -582,7 +640,7 @@ describe("validateWordReminder", () => {
           wordCount: 7,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: 7 * 24 * 60, // 1 week in minutes
           hasLearnedWords: "string",
           order: Order.Random,
@@ -616,7 +674,7 @@ describe("validateWordReminder", () => {
           wordCount: 7,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: 7 * 24 * 60, // 1 week in minutes
           hasLearnedWords: true,
           order: undefined,
@@ -647,7 +705,7 @@ describe("validateWordReminder", () => {
           wordCount: 7,
           isActive: false,
           hasReminderOnload: false,
-          reminder: "every hour",
+          reminder: 60, // 1 hour in minutes,
           duration: 7 * 24 * 60, // 1 week in minutes
           hasLearnedWords: false,
           order: "string",
@@ -679,12 +737,14 @@ describe("validateWordReminder", () => {
 
   it("the next request handler is called", async () => {
     const body = {
-      finish: new Date(),
-      auto: false,
-      words: [userWord1, userWord2, userWord3],
+      auto: true,
+      wordCount: 7,
       isActive: false,
       hasReminderOnload: false,
-      reminder: "every hour",
+      reminder: 60, // 1 hour in minutes,
+      duration: 7 * 24 * 60, // 1 week in minutes
+      hasLearnedWords: false,
+      order: Order.Random,
     };
 
     const response = await request(app)
