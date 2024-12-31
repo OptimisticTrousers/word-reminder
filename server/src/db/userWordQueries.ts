@@ -19,9 +19,21 @@ export interface Result {
   next?: Page;
 }
 
+export enum Order {
+  Newest,
+  Oldest,
+  Random,
+}
+
 interface Page {
   page: number;
   limit: number;
+}
+
+interface RandomOptions {
+  count: number;
+  learned: boolean;
+  order: Order;
 }
 
 export class UserWordQueries extends Queries<UserWord> {
@@ -102,6 +114,37 @@ export class UserWordQueries extends Queries<UserWord> {
     );
 
     return rows[0];
+  }
+
+  async getWords(user_id: string, options: RandomOptions): Promise<UserWord[]> {
+    let orderClause = "";
+    switch (options.order) {
+      case Order.Oldest:
+        orderClause = "created_at ASC";
+        break;
+      case Order.Newest:
+        orderClause = "created_at DESC";
+        break;
+      case Order.Random:
+        orderClause = "RANDOM()";
+        break;
+      default:
+        orderClause = "RANDOM()";
+        break;
+    }
+
+    const { rows }: QueryResult<UserWord> = await this.pool.query(
+      `
+    SELECT ${this.columns}
+    FROM ${this.table}
+    WHERE user_id = $1 AND learned = $2
+    ORDER BY ${orderClause}
+    LIMIT $3;
+      `,
+      [user_id, options.learned, options.count]
+    );
+
+    return rows;
   }
 
   async delete({
