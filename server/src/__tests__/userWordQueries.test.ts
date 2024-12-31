@@ -947,7 +947,7 @@ describe("userWordQueries", () => {
     });
   });
 
-  describe("getWords", () => {
+  describe("getUserWords", () => {
     const milieuJson = [
       {
         word: "milieu",
@@ -997,7 +997,7 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getWords(user!.id, {
+      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
         count: 7,
         learned: false,
         order: Order.Oldest,
@@ -1035,7 +1035,7 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getWords(user!.id, {
+      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
         count: 7,
         learned: false,
         order: Order.Newest,
@@ -1073,7 +1073,7 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getWords(user!.id, {
+      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
         count: 2,
         learned: false,
         order: Order.Random,
@@ -1127,7 +1127,7 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getWords(user!.id, {
+      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
         count: 7,
         learned: false,
         order: Order.Random,
@@ -1153,7 +1153,7 @@ describe("userWordQueries", () => {
         password: sampleUser1.password,
       });
 
-      const randomUserWords = await userWordQueries.getWords(user!.id, {
+      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
         count: 7,
         learned: false,
         order: Order.Random,
@@ -1186,7 +1186,7 @@ describe("userWordQueries", () => {
         learned: true,
       });
 
-      const randomUserWords = await userWordQueries.getWords(user!.id, {
+      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
         count: 2,
         learned: true,
         order: Order.Random,
