@@ -116,7 +116,10 @@ export class UserWordQueries extends Queries<UserWord> {
     return rows[0];
   }
 
-  async getUserWords(user_id: string, options: RandomOptions): Promise<UserWord[]> {
+  async getUserWords(
+    user_id: string,
+    options: RandomOptions
+  ): Promise<UserWord[]> {
     let orderClause = "";
     switch (options.order) {
       case Order.Oldest:
@@ -126,9 +129,6 @@ export class UserWordQueries extends Queries<UserWord> {
         orderClause = "created_at DESC";
         break;
       case Order.Random:
-        orderClause = "RANDOM()";
-        break;
-      default:
         orderClause = "RANDOM()";
         break;
     }
