@@ -1,7 +1,7 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 
 // error handler
-const errorHandler: ErrorRequestHandler = (
+export const errorHandler: ErrorRequestHandler = (
   err: any,
   req: Request,
   res: Response,
@@ -16,5 +16,3 @@ const errorHandler: ErrorRequestHandler = (
     stack: err.stack,
   });
 };
-
-export default errorHandler;
