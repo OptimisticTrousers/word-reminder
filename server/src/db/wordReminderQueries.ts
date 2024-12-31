@@ -75,14 +75,14 @@ export class WordReminderQueries extends Queries<WordReminder> {
     id,
     finish,
     reminder,
-    isActive,
-    hasReminderOnload,
+    is_active,
+    has_reminder_onload,
   }: {
     id: string;
     finish: Date;
     reminder: string;
-    isActive: boolean;
-    hasReminderOnload: boolean;
+    is_active: boolean;
+    has_reminder_onload: boolean;
   }): Promise<WordReminder> {
     const { rows }: QueryResult<WordReminder> = await this.pool.query(
       `
@@ -91,7 +91,7 @@ export class WordReminderQueries extends Queries<WordReminder> {
     WHERE id = $5
     RETURNING ${this.columns}
       `,
-      [finish, reminder, isActive, hasReminderOnload, id]
+      [finish, reminder, is_active, has_reminder_onload, id]
     );
 
     return rows[0];
