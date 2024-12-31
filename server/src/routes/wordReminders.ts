@@ -8,13 +8,14 @@ import {
 } from "../controllers/wordReminderController";
 import { validatePageQuery } from "../middleware/validatePageQuery";
 import { validateSortQuery } from "../middleware/validateSortQuery";
+import { validateWordReminder } from "../middleware/validateWordReminder";
 
 const router = Router();
 
 router
   .route("/")
   .get(validatePageQuery, validateSortQuery, word_reminder_list)
-  .post(create_word_reminder)
+  .post(validateWordReminder, create_word_reminder)
   .delete(delete_word_reminders);
 
 router
