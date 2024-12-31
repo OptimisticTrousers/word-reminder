@@ -10,8 +10,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 
 import { variables } from "./config/variables";
 import { pool } from "./db/pool";
-import errorHandler from "./middleware/errorHandler";
-import notFoundHandler from "./middleware/notFoundHandler";
+import { errorHandler } from "./middleware/errorHandler";
 import routes from "./routes/index";
 
 const app: Express = express();
@@ -94,8 +93,6 @@ passport.deserializeUser(async (id: string, done) => {
 });
 
 app.use("/api", routes);
-
-app.use(notFoundHandler);
 
 app.use(errorHandler);
 

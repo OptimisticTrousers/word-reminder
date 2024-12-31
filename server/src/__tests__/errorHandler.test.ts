@@ -1,0 +1,52 @@
+import express, { Request, Response, NextFunction } from "express";
+import request from "supertest";
+import { errorHandler } from "../middleware/errorHandler";
+
+describe("errorHandler", () => {
+  const app = express();
+  app.use(express.json());
+
+  // Route to simulate a user error
+  app.get("/user-error", (req: Request, res: Response, next: NextFunction) => {
+    const error = new Error("User error occurred") as any;
+    error.status = 400;
+    next(error);
+  });
+
+  // Route to simulate a server error
+  app.get(
+    "/server-error",
+    (req: Request, res: Response, next: NextFunction) => {
+      next(new Error());
+    }
+  );
+
+  // Add the errorHandler middleware
+  app.use(errorHandler);
+
+  describe("User error", () => {
+    it("should handle user errors and return status 400", async () => {
+      const response = await request(app).get("/user-error");
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({
+        message: "User error occurred",
+        stack: expect.any(String),
+      });
+      expect(response.body.stack.includes("Error: User error occurred")).toBe(
+        true
+      );
+    });
+  });
+
+  describe("Server error", () => {
+    it("should handle server errors and return status 500", async () => {
+      const response = await request(app).get("/server-error");
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({
+        message: "Internal Server Error.",
+        stack: expect.any(String),
+      });
+      expect(response.body.stack.includes("Error:")).toBe(true);
+    });
+  });
+});
