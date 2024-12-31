@@ -131,15 +131,6 @@ describe("word_reminder_list", () => {
     },
   ];
 
-  const getByUserIdMock = jest
-    .spyOn(UserWordsWordRemindersQueries.prototype, "getByUserId")
-    .mockImplementation(async () => {
-      return {
-        userWords,
-        wordReminders: [wordReminder1],
-      };
-    });
-
   const app = express();
   app.use(express.json());
   app.get("/api/users/:userId/wordReminders", word_reminder_list);
@@ -150,6 +141,14 @@ describe("word_reminder_list", () => {
 
   describe("no query", () => {
     it("calls the functions to get the user's words with none of the query options", async () => {
+      const getByUserIdMock = jest
+        .spyOn(UserWordsWordRemindersQueries.prototype, "getByUserId")
+        .mockImplementation(async () => {
+          return {
+            wordReminders: [{ ...wordReminder1, words: userWords }],
+          };
+        });
+
       const response = await request(app)
         .get(`/api/users/${sampleUser1.id}/wordReminders`)
         .set("Accept", "application/json");
@@ -157,27 +156,31 @@ describe("word_reminder_list", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        userWords: [
+        wordReminders: [
           {
-            ...userWords[0],
-            created_at: userWords[0].created_at.toISOString(),
-            updated_at: userWords[0].updated_at.toISOString(),
-          },
-          {
-            ...userWords[1],
-            created_at: userWords[1].created_at.toISOString(),
-            updated_at: userWords[1].updated_at.toISOString(),
-          },
-          {
-            ...userWords[2],
-            created_at: userWords[2].created_at.toISOString(),
-            updated_at: userWords[2].updated_at.toISOString(),
+            ...wordReminder1,
+            finish: wordReminder1.finish.toISOString(),
+            created_at: wordReminder1.created_at.toISOString(),
+            updated_at: wordReminder1.updated_at.toISOString(),
+            words: [
+              {
+                ...userWords[0],
+                created_at: userWords[0].created_at.toISOString(),
+                updated_at: userWords[0].updated_at.toISOString(),
+              },
+              {
+                ...userWords[1],
+                created_at: userWords[1].created_at.toISOString(),
+                updated_at: userWords[1].updated_at.toISOString(),
+              },
+              {
+                ...userWords[2],
+                created_at: userWords[2].created_at.toISOString(),
+                updated_at: userWords[2].updated_at.toISOString(),
+              },
+            ],
           },
         ],
-        wordReminder: {
-          ...wordReminder1,
-          finish: wordReminder1.finish.toISOString(),
-        },
       });
       expect(getByUserIdMock).toHaveBeenCalledTimes(1);
       expect(getByUserIdMock).toHaveBeenCalledWith(sampleUser1.id, {});
@@ -186,39 +189,60 @@ describe("word_reminder_list", () => {
 
   describe("page number and page limit query", () => {
     it("calls the functions to get the user's worth with the page number and page limit query", async () => {
+      const getByUserIdMock = jest
+        .spyOn(UserWordsWordRemindersQueries.prototype, "getByUserId")
+        .mockImplementation(async () => {
+          return {
+            wordReminders: [
+              {
+                ...wordReminder1,
+                words: userWords,
+              },
+            ],
+            next: {
+              page: 2,
+              limit: 2,
+            },
+          };
+        });
+
       const page = 1;
       const limit = 2;
 
       const response = await request(app)
         .get(
-          `/api/users/${sampleUser1}/wordReminders?page=${page}&limit=${limit}`
+          `/api/users/${sampleUser1.id}/wordReminders?page=${page}&limit=${limit}`
         )
         .set("Accept", "application/json");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        userWords: [
+        wordReminders: [
           {
-            ...userWords[0],
-            created_at: userWords[0].created_at.toISOString(),
-            updated_at: userWords[0].updated_at.toISOString(),
-          },
-          {
-            ...userWords[1],
-            created_at: userWords[1].created_at.toISOString(),
-            updated_at: userWords[1].updated_at.toISOString(),
-          },
-          {
-            ...userWords[2],
-            created_at: userWords[2].created_at.toISOString(),
-            updated_at: userWords[2].updated_at.toISOString(),
+            ...wordReminder1,
+            finish: wordReminder1.finish.toISOString(),
+            created_at: wordReminder1.created_at.toISOString(),
+            updated_at: wordReminder1.updated_at.toISOString(),
+            words: [
+              {
+                ...userWords[0],
+                created_at: userWords[0].created_at.toISOString(),
+                updated_at: userWords[0].updated_at.toISOString(),
+              },
+              {
+                ...userWords[1],
+                created_at: userWords[1].created_at.toISOString(),
+                updated_at: userWords[1].updated_at.toISOString(),
+              },
+              {
+                ...userWords[2],
+                created_at: userWords[2].created_at.toISOString(),
+                updated_at: userWords[2].updated_at.toISOString(),
+              },
+            ],
           },
         ],
-        wordReminder: {
-          ...wordReminder1,
-          finish: wordReminder1.finish.toISOString(),
-        },
         next: {
           page: 2,
           limit: 2,
