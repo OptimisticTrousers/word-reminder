@@ -7,14 +7,14 @@ describe("userQueries", () => {
 
   const sampleUser1 = {
     id: "1",
-    username: "username",
+    email: "email@protonmail.com",
     password: "password",
   };
 
   describe("getById", () => {
     it("returns a correct user by ID", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -25,7 +25,7 @@ describe("userQueries", () => {
       const nowTimestamp = Date.now();
       expect(user).toEqual({
         id: 1,
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       });
@@ -40,21 +40,21 @@ describe("userQueries", () => {
     });
   });
 
-  describe("getByUsername", () => {
-    it("returns a correct user by username", async () => {
+  describe("getByEmail", () => {
+    it("returns a correct user by email", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
-      const user = await userQueries.getByUsername(sampleUser1.username);
+      const user = await userQueries.getByEmail(sampleUser1.email);
 
       const createdAtTimestamp = new Date(user!.created_at).getTime();
       const updatedAtTimestamp = new Date(user!.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(user).toEqual({
         id: 1,
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       });
@@ -62,8 +62,8 @@ describe("userQueries", () => {
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
 
-    it("returns undefined when the user with username does not exist", async () => {
-      const user = await userQueries.getByUsername(sampleUser1.username);
+    it("returns undefined when the user with email does not exist", async () => {
+      const user = await userQueries.getByEmail(sampleUser1.email);
 
       expect(user).toBeUndefined();
     });
@@ -72,7 +72,7 @@ describe("userQueries", () => {
   describe("deleteById", () => {
     it("deletes a user", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -84,7 +84,7 @@ describe("userQueries", () => {
 
     it("no error is returned when the user does not exist", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -97,7 +97,7 @@ describe("userQueries", () => {
   describe("create", () => {
     it("creates a user", async () => {
       const user = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -106,7 +106,7 @@ describe("userQueries", () => {
       const nowTimestamp = Date.now();
       expect(user).toEqual({
         id: 1,
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       });
@@ -116,16 +116,16 @@ describe("userQueries", () => {
 
     it("returns null when a user creates a user that already exists", async () => {
       const newUser = {
-        username: "username",
+        email: "email@protonmail.com",
         password: "password",
       };
 
       await userQueries.create({
-        username: newUser.username,
+        email: newUser.email,
         password: newUser.password,
       });
       const user = await userQueries.create({
-        username: newUser.username,
+        email: newUser.email,
         password: newUser.password,
       });
 

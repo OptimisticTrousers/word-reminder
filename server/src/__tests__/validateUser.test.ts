@@ -16,9 +16,9 @@ describe("validateUser", () => {
     })
   );
 
-  it("returns 400 status code when the username is not provided", async () => {
+  it("returns 400 status code when the email is not provided", async () => {
     const user = {
-      username: undefined,
+      email: undefined,
       password: "password",
     };
 
@@ -33,8 +33,8 @@ describe("validateUser", () => {
       errors: [
         {
           location: "body",
-          msg: "Username must be specified.",
-          path: "username",
+          msg: "'email' must be specified.",
+          path: "email",
           type: "field",
           value: "",
         },
@@ -42,9 +42,35 @@ describe("validateUser", () => {
     });
   });
 
+  it("returns 400 status code when the email is not a valid email", async () => {
+    const user = {
+      email: "email",
+      password: "password",
+    };
+
+    const response = await request(app)
+      .post("/api/users")
+      .set("Accept", "application/json")
+      .send(user);
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "'email' must be a valid email.",
+          path: "email",
+          type: "field",
+          value: "email",
+        },
+      ],
+    });
+  });
+
   it("returns 400 status code when the password is not provided", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: undefined,
     };
 
@@ -59,7 +85,7 @@ describe("validateUser", () => {
       errors: [
         {
           location: "body",
-          msg: "Password must be specified.",
+          msg: "'password' must be specified.",
           path: "password",
           type: "field",
           value: "",
@@ -68,10 +94,10 @@ describe("validateUser", () => {
     });
   });
 
-  it("returns 400 status code when the username is greater than 255 characters", async () => {
-    const username = new Array(256).fill("a").join("");
+  it("returns 400 status code when the email is greater than 255 characters", async () => {
+    const email = new Array(256).fill("a").join("");
     const user = {
-      username,
+      email,
       password: "password",
     };
 
@@ -86,8 +112,8 @@ describe("validateUser", () => {
       errors: [
         {
           location: "body",
-          msg: "Username cannot be greater than 255 characters.",
-          path: "username",
+          msg: "'email' cannot be greater than 255 characters.",
+          path: "email",
           type: "field",
           value:
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -99,7 +125,7 @@ describe("validateUser", () => {
   it("returns 400 status code when the password is greater than 72 characters", async () => {
     const password = new Array(73).fill("a").join("");
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password,
     };
 
@@ -114,7 +140,7 @@ describe("validateUser", () => {
       errors: [
         {
           location: "body",
-          msg: "Password cannot be greater than 72 characters.",
+          msg: "'password' cannot be greater than 72 characters.",
           path: "password",
           type: "field",
           value:
@@ -124,11 +150,11 @@ describe("validateUser", () => {
     });
   });
 
-  it("returns 400 status code when the username is greater than 255 characters and password is greater than 72 characters", async () => {
-    const username = new Array(256).fill("a").join("");
+  it("returns 400 status code when the email is greater than 255 characters and password is greater than 72 characters", async () => {
+    const email = new Array(256).fill("a").join("");
     const password = new Array(73).fill("a").join("");
     const user = {
-      username,
+      email,
       password,
     };
 
@@ -143,15 +169,15 @@ describe("validateUser", () => {
       errors: [
         {
           location: "body",
-          msg: "Username cannot be greater than 255 characters.",
-          path: "username",
+          msg: "'email' cannot be greater than 255 characters.",
+          path: "email",
           type: "field",
           value:
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         },
         {
           location: "body",
-          msg: "Password cannot be greater than 72 characters.",
+          msg: "'password' cannot be greater than 72 characters.",
           path: "password",
           type: "field",
           value:
@@ -163,7 +189,7 @@ describe("validateUser", () => {
 
   it("the next request handler is called", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     };
 

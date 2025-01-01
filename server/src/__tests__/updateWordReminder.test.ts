@@ -8,14 +8,14 @@ import { WordReminderQueries } from "../db/wordReminderQueries";
 describe("update_word_reminder", () => {
   const sampleUser1 = {
     id: "1",
-    username: "username",
+    email: "email@protonmail.com",
     password: "password",
   };
 
   const wordReminder1 = {
     id: "1",
     user_id: sampleUser1.id,
-    finish: new Date(),
+    finish: new Date(Date.now() + 1000), // make sure date comes after current date
     reminder: "every 2 hours",
     is_active: true,
     has_reminder_onload: true,
@@ -171,7 +171,7 @@ describe("update_word_reminder", () => {
 
   it("calls the functions to update the word reminder with the user words in it", async () => {
     const body = {
-      finish: new Date(),
+      finish: new Date(Date.now() + 1000), // make sure date comes after current date
       auto: false,
       words: [
         { ...userWord1, ...clemencyJson },

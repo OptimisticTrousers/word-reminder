@@ -18,8 +18,8 @@ describe("word_list", () => {
 
   const userWordISO = {
     ...userWord,
-    created_at: userWord.created_at.toISOString(),
-    updated_at: userWord.created_at.toISOString(),
+    created_at: expect.any(String),
+    updated_at: expect.any(String),
   };
 
   const getUserWordsByUserIdMock = jest

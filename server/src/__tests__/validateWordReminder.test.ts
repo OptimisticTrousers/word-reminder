@@ -56,7 +56,7 @@ describe("validateWordReminder", () => {
     it("returns 400 status code when 'auto' is not provided", async () => {
       const body = {
         auto: undefined,
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         words: [userWord1, userWord2, userWord3],
         isActive: false,
         hasReminderOnload: false,
@@ -85,7 +85,7 @@ describe("validateWordReminder", () => {
     it("returns 400 status code when 'auto' is a not a boolean", async () => {
       const body = {
         auto: "string",
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         words: [userWord1, userWord2, userWord3],
         isActive: false,
         hasReminderOnload: false,
@@ -116,7 +116,7 @@ describe("validateWordReminder", () => {
   describe("isActive", () => {
     it("returns 400 status code when 'isActive' is not provided", async () => {
       const body = {
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
         words: [userWord1, userWord2, userWord3],
         isActive: undefined,
@@ -145,7 +145,7 @@ describe("validateWordReminder", () => {
 
     it("returns 400 status code when 'isActive' is not a boolean", async () => {
       const body = {
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
         words: [userWord1, userWord2, userWord3],
         isActive: "string",
@@ -177,7 +177,7 @@ describe("validateWordReminder", () => {
   describe("hasReminderOnLoad", () => {
     it("returns 400 status code when 'hasReminderOnload' is not provided", async () => {
       const body = {
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
         words: [userWord1, userWord2, userWord3],
         isActive: false,
@@ -204,7 +204,7 @@ describe("validateWordReminder", () => {
 
     it("returns 400 status code when 'hasReminderOnload' is not a boolean", async () => {
       const body = {
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
         words: [userWord1, userWord2, userWord3],
         isActive: false,
@@ -236,7 +236,7 @@ describe("validateWordReminder", () => {
   describe("reminder", () => {
     it("returns 400 status code when 'reminder' is not provided", async () => {
       const body = {
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
         words: [userWord1, userWord2, userWord3],
         isActive: false,
@@ -265,7 +265,7 @@ describe("validateWordReminder", () => {
 
     it("returns 400 status code when 'reminder' is not a positive integer", async () => {
       const body = {
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
         words: [userWord1, userWord2, userWord3],
         isActive: false,
@@ -390,7 +390,7 @@ describe("validateWordReminder", () => {
     describe("words", () => {
       it("returns 400 status code when 'words' is not provided", async () => {
         const body = {
-          finish: new Date(),
+          finish: new Date(Date.now() + 1000), // make sure date comes after current date
           auto: false,
           words: undefined,
           isActive: false,
@@ -419,7 +419,7 @@ describe("validateWordReminder", () => {
 
       it("returns 400 status code when 'words' is not an array", async () => {
         const body = {
-          finish: new Date(),
+          finish: new Date(Date.now() + 1000), // make sure date comes after current date
           auto: false,
           words: "string",
           isActive: false,
@@ -450,7 +450,7 @@ describe("validateWordReminder", () => {
 
     it("the next request handler is called", async () => {
       const body = {
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
         words: [userWord1, userWord2, userWord3],
         isActive: false,

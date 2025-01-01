@@ -27,7 +27,10 @@ describe("isAuthenticated", () => {
 
   describe("Authenticated user", () => {
     it("should allow access and return 200 for an authenticated user", async () => {
-      const user = { username: "test_user", password: "test_password" };
+      const user = {
+        email: "test_user@protonmail.com",
+        password: "test_password",
+      };
       // Simulate register
       await request(app)
         .post("/api/users")

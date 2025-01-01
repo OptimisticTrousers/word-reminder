@@ -2,24 +2,31 @@ import { body } from "express-validator";
 
 import { errorValidationHandler } from "./errorValidationHandler";
 
-const usernameMax = 255;
+const emailMax = 255;
 const passwordMax = 72;
 
 export const validateUser = [
   // Validate and sanitize fields.
-  body("username")
+  body("email")
     .trim()
     .escape()
     .isLength({ min: 1 })
-    .withMessage("Username must be specified.")
-    .isLength({ max: usernameMax })
-    .withMessage(`Username cannot be greater than ${usernameMax} characters.`),
+    .withMessage("'email' must be specified.")
+    .bail()
+    .isLength({ max: emailMax })
+    .withMessage(`'email' cannot be greater than ${emailMax} characters.`)
+    .bail()
+    .isEmail()
+    .withMessage(`'email' must be a valid email.`),
   body("password")
     .trim()
     .escape()
     .isLength({ min: 1 })
-    .withMessage("Password must be specified.")
+    .withMessage("'password' must be specified.")
+    .bail()
     .isLength({ max: passwordMax })
-    .withMessage(`Password cannot be greater than ${passwordMax} characters.`),
+    .withMessage(
+      `'password' cannot be greater than ${passwordMax} characters.`
+    ),
   errorValidationHandler,
 ];
