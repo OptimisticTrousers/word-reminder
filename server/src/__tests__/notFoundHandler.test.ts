@@ -7,7 +7,6 @@ describe("notFoundHandler", () => {
   const app = express();
   app.use(express.json());
 
-  // Add the notFoundHandler to handle undefined routes
   app.use(notFoundHandler);
 
   // Add the errorHandler middleware to catch and respond to errors

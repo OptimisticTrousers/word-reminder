@@ -13,7 +13,7 @@ import { pool } from "./db/pool";
 import { errorHandler } from "./middleware/errorHandler";
 import routes from "./routes/index";
 
-const app: Express = express();
+export const app: Express = express();
 
 const pgSession: typeof PGStore = connectPgSimple(session);
 
@@ -98,5 +98,3 @@ passport.deserializeUser(async (id: string, done) => {
 app.use("/api", routes);
 
 app.use(errorHandler);
-
-export { app };

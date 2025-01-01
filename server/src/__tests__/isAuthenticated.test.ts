@@ -36,17 +36,16 @@ describe("isAuthenticated", () => {
         .post("/api/users")
         .send(user)
         .set("Accept", "application/json");
-      // Simulate login
       const loginResponse = await request(app)
         .post("/api/sessions")
         .send(user)
         .set("Accept", "application/json");
 
-      const cookies = loginResponse.headers["set-cookie"]; // Extract session cookies
+      const cookie = loginResponse.headers["set-cookie"];
 
       const response = await request(app)
         .get("/api/protected")
-        .set("Cookie", cookies)
+        .set("Cookie", cookie)
         .set("Accept", "application/json");
 
       expect(response.status).toBe(200);

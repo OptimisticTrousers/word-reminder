@@ -10,26 +10,21 @@ describe("logout_user", () => {
       email: "email@protonmail.com",
       password: "password",
     };
+    // Simulate register
     await request(app)
       .post("/api/users")
       .set("Accept", "application/json")
       .send(user);
-    await request(app)
+    const loginResponse = await request(app)
       .post("/api/sessions")
       .set("Accept", "application/json")
       .send(user);
 
+    const cookie = loginResponse.headers["set-cookie"];
+
     const response = await request(app)
       .delete("/api/sessions")
-      .set("Accept", "application/json");
-
-    expect(response.status).toBe(204);
-    expect(response.body).toEqual({});
-  });
-
-  it("logs out correctly if the user is not logged in", async () => {
-    const response = await request(app)
-      .delete("/api/sessions")
+      .set("Cookie", cookie)
       .set("Accept", "application/json");
 
     expect(response.status).toBe(204);

@@ -6,14 +6,12 @@ describe("errorHandler", () => {
   const app = express();
   app.use(express.json());
 
-  // Route to simulate a user error
   app.get("/user-error", (req: Request, res: Response, next: NextFunction) => {
     const error = new Error("User error occurred") as any;
     error.status = 400;
     next(error);
   });
 
-  // Route to simulate a server error
   app.get(
     "/server-error",
     (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +19,6 @@ describe("errorHandler", () => {
     }
   );
 
-  // Add the errorHandler middleware
   app.use(errorHandler);
 
   describe("User error", () => {
