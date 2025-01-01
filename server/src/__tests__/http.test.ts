@@ -361,7 +361,7 @@ describe("http", () => {
       it("has stringified body", async () => {
         const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
         const body = JSON.stringify({
-          username: "username",
+          email: "email@protonmail.com",
           password: "password",
         });
 
@@ -392,7 +392,7 @@ describe("http", () => {
       it("has FormData body", async () => {
         const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
         const formData = new FormData();
-        formData.append("username", "username");
+        formData.append("email", "email");
         formData.append("password", "password");
 
         const response = await http.post(
@@ -424,7 +424,7 @@ describe("http", () => {
       it("has stringified body", async () => {
         const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
         const body = JSON.stringify({
-          username: "username",
+          email: "email@protonmail.com",
           password: "password",
         });
 
@@ -455,7 +455,7 @@ describe("http", () => {
       it("has FormData body", async () => {
         const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
         const formData = new FormData();
-        formData.append("username", "username");
+        formData.append("email", "email");
         formData.append("password", "password");
 
         const response = await http.put(

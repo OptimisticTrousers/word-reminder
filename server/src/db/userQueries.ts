@@ -4,24 +4,24 @@ import { Queries } from "./queries";
 
 export interface User {
   id: string;
-  username: string;
+  email: string;
   created_at: Date;
   updated_at: Date;
 }
 
 export class UserQueries extends Queries<User> {
   constructor() {
-    super(["id", "username", "created_at", "updated_at"], "users");
+    super(["id", "email", "created_at", "updated_at"], "users");
   }
 
   async create({
-    username,
+    email,
     password,
   }: {
-    username: string;
+    email: string;
     password: string;
   }): Promise<User | null> {
-    const existingUser = await this.getByUsername(username);
+    const existingUser = await this.getByEmail(email);
 
     if (existingUser) {
       return null;
@@ -29,11 +29,11 @@ export class UserQueries extends Queries<User> {
 
     const { rows }: QueryResult<User> = await this.pool.query(
       `
-    INSERT INTO ${this.table}(username, password)
+    INSERT INTO ${this.table}(email, password)
     VALUES ($1, $2)
     RETURNING ${this.columns};
       `,
-      [username, password]
+      [email, password]
     );
 
     return rows[0];
@@ -53,14 +53,14 @@ export class UserQueries extends Queries<User> {
     return rows[0];
   }
 
-  async getByUsername(username: string): Promise<User | undefined> {
+  async getByEmail(email: string): Promise<User | undefined> {
     const { rows }: QueryResult<User> = await this.pool.query(
       `
     SELECT ${this.columns}
     FROM users
-    WHERE username = $1;
+    WHERE email= $1;
       `,
-      [username]
+      [email]
     );
 
     return rows[0];

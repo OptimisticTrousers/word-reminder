@@ -15,7 +15,7 @@ describe("current_user", () => {
 
   it("returns user when the user is logged in", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     };
     await request(app)

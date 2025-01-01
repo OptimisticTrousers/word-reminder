@@ -5,28 +5,28 @@ import { app } from "../app";
 import "../db/testPopulatedb";
 
 describe("login_user", () => {
-  it("returns 401 status code when the username is incorrect", async () => {
+  it("returns 401 status code when the email is incorrect", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     };
 
     const response = await request(app)
       .post("/api/sessions")
       .set("Accept", "application/json")
-      .send({ username: "wrong username", password: user.password });
+      .send({ email: "wrongemail@protonmail.com", password: user.password });
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(401);
     expect(response.body).toEqual({
       user: null,
-      message: "Incorrect username.",
+      message: "Incorrect email.",
     });
   });
 
   it("returns 401 status code when the password is incorrect", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     };
     await request(app)
@@ -37,7 +37,7 @@ describe("login_user", () => {
     const response = await request(app)
       .post("/api/sessions")
       .set("Accept", "application/json")
-      .send({ username: user.username, password: "wrong password" });
+      .send({ email: user.email, password: "wrong password" });
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(401);
@@ -49,7 +49,7 @@ describe("login_user", () => {
 
   it("returns user object after successful login", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     };
     await request(app)
@@ -64,7 +64,7 @@ describe("login_user", () => {
     expect(response.body).toEqual({
       user: {
         id: 1,
-        username: user.username,
+        email: user.email,
         created_at: expect.any(String),
         updated_at: expect.any(String),
       },

@@ -6,14 +6,14 @@ import { word_reminder_list } from "../controllers/wordReminderController";
 describe("word_reminder_list", () => {
   const sampleUser1 = {
     id: "1",
-    username: "username",
+    email: "email@protonmail.com",
     password: "password",
   };
 
   const wordReminder1 = {
     id: "1",
     user_id: sampleUser1.id,
-    finish: new Date(),
+    finish: new Date(Date.now() + 1000), // make sure date comes after current date
     reminder: "every 2 hours",
     is_active: true,
     has_reminder_onload: true,

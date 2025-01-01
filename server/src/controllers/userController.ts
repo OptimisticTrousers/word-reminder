@@ -132,7 +132,7 @@ export const signup_user =
     );
 
     const user: User | null = await userQueries.create({
-      username: req.body.username,
+      email: req.body.email,
       password: hashedPassword,
     });
 

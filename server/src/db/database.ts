@@ -28,7 +28,7 @@ export class Database {
 
       CREATE TABLE users (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        username VARCHAR ( 255 ) UNIQUE NOT NULL,
+        email VARCHAR ( 255 ) UNIQUE NOT NULL,
         password VARCHAR ( 72 ) NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

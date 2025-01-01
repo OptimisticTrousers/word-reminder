@@ -52,28 +52,31 @@ app.use(
 app.use(passport.session());
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
-    try {
-      const { rows } = await pool.query(
-        "SELECT * FROM users WHERE username = $1",
-        [username]
-      );
-      const user = rows[0];
-      if (!user) {
-        return done(null, false, { message: "Incorrect username." });
+  new LocalStrategy(
+    { usernameField: "email", passwordField: "password" },
+    async (email, password, done) => {
+      try {
+        const { rows } = await pool.query(
+          "SELECT * FROM users WHERE email = $1",
+          [email]
+        );
+        const user = rows[0];
+        if (!user) {
+          return done(null, false, { message: "Incorrect email." });
+        }
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+          // passwords match! log user in
+          delete user.password;
+          return done(null, user);
+        }
+        // passwords do not match!
+        return done(null, false, { message: "Incorrect password." });
+      } catch (error) {
+        done(error);
       }
-      const match = await bcrypt.compare(password, user.password);
-      if (match) {
-        // passwords match! log user in
-        delete user.password;
-        return done(null, user);
-      }
-      // passwords do not match!
-      return done(null, false, { message: "Incorrect password." });
-    } catch (error) {
-      done(error);
     }
-  })
+  )
 );
 
 passport.serializeUser((user, done) => {

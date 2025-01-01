@@ -12,7 +12,7 @@ describe("delete_word_reminders", () => {
 
   const sampleUser1 = {
     id: "1",
-    username: "username",
+    email: "email@protonmail.com",
     password: "password",
   };
 

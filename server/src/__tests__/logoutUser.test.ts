@@ -7,7 +7,7 @@ import "../db/testPopulatedb";
 describe("logout_user", () => {
   it("logs out correctly", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     };
     await request(app)

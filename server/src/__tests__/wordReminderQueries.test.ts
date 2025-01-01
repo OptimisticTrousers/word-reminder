@@ -9,14 +9,14 @@ describe("wordReminderQueries", () => {
 
   const sampleUser1 = {
     id: "1",
-    username: "username",
+    email: "email@protonmail.com",
     password: "password",
   };
 
   const wordReminderId1 = "1";
   const wordReminder1 = {
     user_id: sampleUser1.id,
-    finish: new Date(),
+    finish: new Date(Date.now() + 1000), // make sure date comes after current date
     reminder: "every 2 hours",
     is_active: true,
     has_reminder_onload: true,
@@ -26,7 +26,7 @@ describe("wordReminderQueries", () => {
   describe("create", () => {
     it("creates word reminder", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -53,7 +53,7 @@ describe("wordReminderQueries", () => {
   describe("deleteById", () => {
     it("deletes word reminder", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       await wordReminderQueries.create(wordReminder1);
@@ -66,7 +66,7 @@ describe("wordReminderQueries", () => {
 
     it("does nothing if the word reminder does not exist", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -79,7 +79,7 @@ describe("wordReminderQueries", () => {
   describe("deleteAllByUserId", () => {
     it("deletes all of the user's word reminders", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       const wordReminder = await wordReminderQueries.create(wordReminder1);
@@ -95,7 +95,7 @@ describe("wordReminderQueries", () => {
   describe("getById", () => {
     it("gets the word reminder by ID", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       await wordReminderQueries.create(wordReminder1);
@@ -129,14 +129,14 @@ describe("wordReminderQueries", () => {
   describe("update", () => {
     it("updates word reminder", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       await wordReminderQueries.create(wordReminder1);
 
       const wordReminder = await wordReminderQueries.update({
         id: wordReminderId1,
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         reminder: "every 2 hours",
         is_active: true,
         has_reminder_onload: true,
@@ -161,13 +161,13 @@ describe("wordReminderQueries", () => {
 
     it("does nothing if the word reminder does not exist", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
       const wordReminder = await wordReminderQueries.update({
         id: wordReminderId1,
-        finish: new Date(),
+        finish: new Date(Date.now() + 1000), // make sure date comes after current date
         reminder: "every 2 hours",
         is_active: true,
         has_reminder_onload: true,

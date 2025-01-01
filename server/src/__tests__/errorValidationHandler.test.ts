@@ -20,7 +20,7 @@ describe("errorValidationHandler", () => {
 
   it("returns 400 status code when there are validation errors", async () => {
     const user = {
-      username: undefined,
+      email: undefined,
       password: "password",
     };
 
@@ -38,7 +38,7 @@ describe("errorValidationHandler", () => {
 
   it("the next request handler is called", async () => {
     const user = {
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     };
 

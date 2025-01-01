@@ -15,13 +15,13 @@ describe("userWordsWordRemindersQueries", () => {
 
   const sampleUser1 = {
     id: "1",
-    username: "username",
+    email: "email@protonmail.com",
     password: "password",
   };
 
   const wordReminder1 = {
     user_id: sampleUser1.id,
-    finish: new Date(),
+    finish: new Date(Date.now() + 1000), // make sure date comes after current date
     reminder: "every 2 hours",
     is_active: true,
     has_reminder_onload: true,
@@ -113,7 +113,7 @@ describe("userWordsWordRemindersQueries", () => {
       const helloWord = await wordQueries.create({ json: helloJson });
       const milieuWord = await wordQueries.create({ json: milieuJson });
       const user = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       const clemencyUserWord = await userWordQueries.create({
@@ -169,7 +169,7 @@ describe("userWordsWordRemindersQueries", () => {
     it("returns the user words word reminders if the junction table was already created", async () => {
       const helloWord = await wordQueries.create({ json: helloJson });
       const user = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       const userWord = await userWordQueries.create({
@@ -201,7 +201,7 @@ describe("userWordsWordRemindersQueries", () => {
     it("deletes all of the user's user words word reminders", async () => {
       const word = await wordQueries.create({ json: helloJson });
       const user = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       const userWord = await userWordQueries.create({
@@ -229,7 +229,7 @@ describe("userWordsWordRemindersQueries", () => {
 
     it("returns undefined if the user has no user words word reminders", async () => {
       const newUser = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -246,7 +246,7 @@ describe("userWordsWordRemindersQueries", () => {
       const helloWord = await wordQueries.create({ json: helloJson });
       const milieuWord = await wordQueries.create({ json: milieuJson });
       const user = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       const clemencyUserWord = await userWordQueries.create({
@@ -295,7 +295,7 @@ describe("userWordsWordRemindersQueries", () => {
 
     it("returns undefined if the user's word reminder has no words", async () => {
       await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       const newWordReminder = await wordReminderQueries.create(wordReminder1);
@@ -315,7 +315,7 @@ describe("userWordsWordRemindersQueries", () => {
       const helloWord = await wordQueries.create({ json: helloJson });
       const milieuWord = await wordQueries.create({ json: milieuJson });
       const user = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
       const clemencyUserWord = await userWordQueries.create({
@@ -401,7 +401,7 @@ describe("userWordsWordRemindersQueries", () => {
 
     it("returns an empty list if the user has no word reminders", async () => {
       const user = await userQueries.create({
-        username: sampleUser1.username,
+        email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
@@ -418,7 +418,7 @@ describe("userWordsWordRemindersQueries", () => {
         const helloWord = await wordQueries.create({ json: helloJson });
         const milieuWord = await wordQueries.create({ json: milieuJson });
         const user = await userQueries.create({
-          username: sampleUser1.username,
+          email: sampleUser1.email,
           password: sampleUser1.password,
         });
         const clemencyUserWord = await userWordQueries.create({
@@ -512,7 +512,7 @@ describe("userWordsWordRemindersQueries", () => {
 
       it("returns an empty list of rows if the user has no word reminders", async () => {
         const newUser = await userQueries.create({
-          username: sampleUser1.username,
+          email: sampleUser1.email,
           password: sampleUser1.password,
         });
 
@@ -531,7 +531,7 @@ describe("userWordsWordRemindersQueries", () => {
           const helloWord = await wordQueries.create({ json: helloJson });
           const milieuWord = await wordQueries.create({ json: milieuJson });
           const user = await userQueries.create({
-            username: sampleUser1.username,
+            email: sampleUser1.email,
             password: sampleUser1.password,
           });
           const clemencyUserWord = await userWordQueries.create({
@@ -614,7 +614,7 @@ describe("userWordsWordRemindersQueries", () => {
           const helloWord = await wordQueries.create({ json: helloJson });
           const milieuWord = await wordQueries.create({ json: milieuJson });
           const user = await userQueries.create({
-            username: sampleUser1.username,
+            email: sampleUser1.email,
             password: sampleUser1.password,
           });
           const clemencyUserWord = await userWordQueries.create({
@@ -693,7 +693,7 @@ describe("userWordsWordRemindersQueries", () => {
           const helloWord = await wordQueries.create({ json: helloJson });
           const milieuWord = await wordQueries.create({ json: milieuJson });
           const user = await userQueries.create({
-            username: sampleUser1.username,
+            email: sampleUser1.email,
             password: sampleUser1.password,
           });
           const clemencyUserWord = await userWordQueries.create({
@@ -776,7 +776,7 @@ describe("userWordsWordRemindersQueries", () => {
         const helloWord = await wordQueries.create({ json: helloJson });
         const milieuWord = await wordQueries.create({ json: milieuJson });
         const user = await userQueries.create({
-          username: sampleUser1.username,
+          email: sampleUser1.email,
           password: sampleUser1.password,
         });
         const clemencyUserWord = await userWordQueries.create({
@@ -880,7 +880,7 @@ describe("userWordsWordRemindersQueries", () => {
         const helloWord = await wordQueries.create({ json: helloJson });
         const milieuWord = await wordQueries.create({ json: milieuJson });
         const user = await userQueries.create({
-          username: sampleUser1.username,
+          email: sampleUser1.email,
           password: sampleUser1.password,
         });
         const clemencyUserWord = await userWordQueries.create({
@@ -984,7 +984,7 @@ describe("userWordsWordRemindersQueries", () => {
         const helloWord = await wordQueries.create({ json: helloJson });
         const milieuWord = await wordQueries.create({ json: milieuJson });
         const user = await userQueries.create({
-          username: sampleUser1.username,
+          email: sampleUser1.email,
           password: sampleUser1.password,
         });
         const clemencyUserWord = await userWordQueries.create({
@@ -1088,7 +1088,7 @@ describe("userWordsWordRemindersQueries", () => {
         const helloWord = await wordQueries.create({ json: helloJson });
         const milieuWord = await wordQueries.create({ json: milieuJson });
         const user = await userQueries.create({
-          username: sampleUser1.username,
+          email: sampleUser1.email,
           password: sampleUser1.password,
         });
         const clemencyUserWord = await userWordQueries.create({
@@ -1195,7 +1195,7 @@ describe("userWordsWordRemindersQueries", () => {
   //     const milieuWord = await wordQueries.create({ json: milieuJson });
   //     const helloWord = await wordQueries.create({ json: helloJson });
   //     const newUser = await userQueries.create({
-  //       username: sampleUser1.username,
+  //       email: sampleUser1.email,
   //       password: sampleUser1.password,
   //     });
   //     await userWordQueries.create({

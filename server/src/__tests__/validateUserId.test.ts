@@ -48,7 +48,7 @@ describe("validateUserId", () => {
 
   it("calls the following request handler when the user exists and the user id is valid", async () => {
     const user = await userQueries.create({
-      username: "username",
+      email: "email@protonmail.com",
       password: "password",
     });
 
