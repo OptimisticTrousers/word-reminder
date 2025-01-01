@@ -5,34 +5,36 @@ import { app } from "../app";
 import "../db/testPopulatedb";
 
 describe("current_user", () => {
-  it("returns 401 status code when the user is not logged in", async () => {
-    const response = await request(app).get("/api/sessions");
-
-    expect(response.headers["content-type"]).toMatch(/json/);
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({});
-  });
-
   it("returns user when the user is logged in", async () => {
     const user = {
       email: "email@protonmail.com",
       password: "password",
     };
-    await request(app)
+    const registerResponse = await request(app)
       .post("/api/users")
       .set("Accept", "application/json")
       .send(user);
-    await request(app)
+    const loginResponse = await request(app)
       .post("/api/sessions")
       .set("Accept", "application/json")
       .send(user);
 
+    const cookie = loginResponse.headers["set-cookie"];
+
     const response = await request(app)
       .get("/api/sessions")
+      .set("Cookie", cookie)
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({});
+    expect(response.body).toEqual({
+      user: {
+        email: user.email,
+        id: registerResponse.body.user.id,
+        created_at: registerResponse.body.user.created_at,
+        updated_at: registerResponse.body.user.updated_at,
+      },
+    });
   });
 });

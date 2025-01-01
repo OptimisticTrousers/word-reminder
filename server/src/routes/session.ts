@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import { isAuthenticated } from "../middleware/isAuthenticated";
 import {
   current_user,
   login_user,
@@ -12,7 +13,7 @@ const router: Router = Router();
 router
   .route("/")
   .post(validateUser, login_user)
-  .get(current_user)
-  .delete(logout_user);
+  .get(isAuthenticated, current_user)
+  .delete(isAuthenticated, logout_user);
 
 export default router;

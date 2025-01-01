@@ -2,11 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import passport from "passport";
 
+import { User } from "../db/userQueries";
+
 // @desc    Get the current user (public details)
 // @route   GET /api/sessions
 // @access  Private
 export const current_user = asyncHandler(async (req, res): Promise<void> => {
-  res.status(200).json({ user: req.user });
+  const user = req.user as User & {password?: string};
+  delete user.password;
+  res.status(200).json({ user });
 });
 
 // @desc    Authenticate a user and return cookie
