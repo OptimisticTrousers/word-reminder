@@ -26,6 +26,7 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: sampleUser1.email,
+        confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       });
@@ -55,6 +56,7 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: sampleUser1.email,
+        confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       });
@@ -107,6 +109,7 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: sampleUser1.email,
+        confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       });
@@ -130,6 +133,210 @@ describe("userQueries", () => {
       });
 
       expect(user).toEqual(null);
+    });
+  });
+
+  describe("updateById", () => {
+    it("updates the user fields", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        confirmed: true,
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email: sampleUser1.email,
+        confirmed: true,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("updates the user fields with the 'confirmed', 'email', and 'password' field", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const email = "new@protonmail.com";
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        confirmed: true,
+        email,
+        password: "newpassword",
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email,
+        confirmed: true,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("updates the user fields with the 'confirmed' and 'email' field", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const email = "new@protonmail.com";
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        confirmed: true,
+        email,
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email,
+        confirmed: true,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("updates the user fields with the 'email' and 'password' field", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const email = "new@protonmail.com";
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        email,
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email,
+        confirmed: false,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("updates the user fields with the 'confirmed' and 'password' field", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        confirmed: true,
+        password: "newpassword",
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email: sampleUser1.email,
+        confirmed: true,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("updates the user fields with the 'confirmed' field", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        confirmed: true,
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email: sampleUser1.email,
+        confirmed: true,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("updates the user fields with the 'email' field", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const email = "new@protonmail.com";
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        email,
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email,
+        confirmed: false,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("updates the user fields with the 'password' field", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const updatedUser = await userQueries.updateById(sampleUser1.id, {
+        password: "newpassword",
+      });
+
+      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(updatedUser).toEqual({
+        id: 1,
+        email: sampleUser1.email,
+        confirmed: false,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
   });
 });

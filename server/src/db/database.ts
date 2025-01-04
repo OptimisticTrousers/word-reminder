@@ -30,6 +30,7 @@ export class Database {
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         email VARCHAR ( 255 ) UNIQUE NOT NULL,
         password VARCHAR ( 72 ) NOT NULL,
+        confirmed BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );

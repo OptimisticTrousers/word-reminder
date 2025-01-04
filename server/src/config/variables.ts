@@ -16,6 +16,12 @@ for (const variable of [
   "SALT",
   "SECRET",
   "SERVER_PORT",
+  "PROTON_SMTP_USER",
+  "PROTON_SMTP_TOKEN",
+  "PROTON_SMTP_SERVER",
+  "PROTON_SMTP_PORT",
+  "SERVER_URL",
+  "FRONTEND_VERIFICATION",
 ]) {
   if (!(variable in process.env)) {
     throw new Error(`${variable} is not defined in .env file.`);

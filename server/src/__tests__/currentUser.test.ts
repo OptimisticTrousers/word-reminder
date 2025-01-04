@@ -31,6 +31,7 @@ describe("current_user", () => {
     expect(response.body).toEqual({
       user: {
         email: user.email,
+        confirmed: false,
         id: registerResponse.body.user.id,
         created_at: registerResponse.body.user.created_at,
         updated_at: registerResponse.body.user.updated_at,

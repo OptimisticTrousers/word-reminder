@@ -5,6 +5,7 @@ import { delete_user, signup_user } from "../controllers/userController";
 import { isAuthenticated } from "../middleware/isAuthenticated";
 import { validateUser } from "../middleware/validateUser";
 import { validateUserId } from "../middleware/validateUserId";
+import emailRouter from "./emails";
 import wordReminderRouter from "./wordReminders";
 import wordRouter from "./words";
 
@@ -16,5 +17,6 @@ router
   .delete(isAuthenticated, validateUserId, delete_user, logout_user);
 router.use("/:userId/words", isAuthenticated, wordRouter);
 router.use("/:userId/wordReminders", isAuthenticated, wordReminderRouter);
+router.use("/:userId/emails", isAuthenticated, emailRouter);
 
 export default router;
