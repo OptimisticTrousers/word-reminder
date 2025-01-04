@@ -18,7 +18,7 @@ describe("create_subscription", () => {
     },
   };
 
-  const createSubscription = jest
+  const createSubscriptionMock = jest
     .spyOn(SubscriptionQueries.prototype, "create")
     .mockImplementation(jest.fn())
     .mockName("create");
@@ -36,8 +36,8 @@ describe("create_subscription", () => {
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ data: { success: true } });
-    expect(createSubscription).toHaveBeenCalledTimes(1);
-    expect(createSubscription).toHaveBeenCalledWith(subscription);
+    expect(createSubscriptionMock).toHaveBeenCalledTimes(1);
+    expect(createSubscriptionMock).toHaveBeenCalledWith(subscription);
   });
 
   it("returns 400 status code when the 'endpoint' key is not provided", async () => {
@@ -64,7 +64,7 @@ describe("create_subscription", () => {
         },
       ],
     });
-    expect(createSubscription).not.toHaveBeenCalled();
+    expect(createSubscriptionMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 status code when the 'auth' key is not provided", async () => {
@@ -91,7 +91,7 @@ describe("create_subscription", () => {
         },
       ],
     });
-    expect(createSubscription).not.toHaveBeenCalled();
+    expect(createSubscriptionMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 status code when the 'p256dh' key is not provided", async () => {
@@ -118,7 +118,7 @@ describe("create_subscription", () => {
         },
       ],
     });
-    expect(createSubscription).not.toHaveBeenCalled();
+    expect(createSubscriptionMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 status code when the 'endpoint' and 'auth' key are not provided", async () => {
@@ -151,7 +151,7 @@ describe("create_subscription", () => {
         },
       ],
     });
-    expect(createSubscription).not.toHaveBeenCalled();
+    expect(createSubscriptionMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 status code when the 'auth' and 'p256dh' keys are not provided", async () => {
@@ -182,7 +182,7 @@ describe("create_subscription", () => {
         },
       ],
     });
-    expect(createSubscription).not.toHaveBeenCalled();
+    expect(createSubscriptionMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 status code when the 'p256dh' and 'endpoint' key are not provided", async () => {
@@ -215,7 +215,7 @@ describe("create_subscription", () => {
         },
       ],
     });
-    expect(createSubscription).not.toHaveBeenCalled();
+    expect(createSubscriptionMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 status code when the 'endpoint', 'p256dh', and 'auth' are not provided", async () => {
@@ -251,6 +251,6 @@ describe("create_subscription", () => {
         },
       ],
     });
-    expect(createSubscription).not.toHaveBeenCalled();
+    expect(createSubscriptionMock).not.toHaveBeenCalled();
   });
 });

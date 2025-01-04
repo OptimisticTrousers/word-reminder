@@ -83,7 +83,7 @@ export class UserQueries extends Queries<User> {
   }
 
   async deleteById(id: string): Promise<User> {
-    const { rows } = await this.pool.query(
+    const { rows }: QueryResult<User> = await this.pool.query(
       `
     DELETE
     FROM ${this.table}
