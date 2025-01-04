@@ -7,6 +7,7 @@ import session from "express-session";
 import logger from "morgan";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import path from "path";
 
 import { variables } from "./config/variables";
 import { pool } from "./db/pool";
@@ -14,6 +15,10 @@ import { errorHandler } from "./middleware/errorHandler";
 import routes from "./routes/index";
 
 export const app: Express = express();
+
+// view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 const pgSession: typeof PGStore = connectPgSimple(session);
 
@@ -36,6 +41,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(logger("dev"));
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
