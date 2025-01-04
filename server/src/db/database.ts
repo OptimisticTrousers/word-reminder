@@ -73,6 +73,11 @@ export class Database {
         auth TEXT UNIQUE NOT NULL
       );
 
+      CREATE TABLE tokens (
+        token TEXT PRIMARY KEY ,
+        expires_at TIMESTAMP NOT NULL DEFAULT (NOW() + INTERVAL '30 minutes')
+      );
+
       CREATE OR REPLACE FUNCTION trigger_set_timestamp()
       RETURNS TRIGGER AS $$
       BEGIN
