@@ -339,4 +339,31 @@ describe("userQueries", () => {
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
   });
+
+  describe("get", () => {
+    it("returns the user by email and password", async () => {
+      await userQueries.create({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const user = await userQueries.get({
+        email: sampleUser1.email,
+        password: sampleUser1.password,
+      });
+
+      const createdAtTimestamp = new Date(user!.created_at).getTime();
+      const updatedAtTimestamp = new Date(user!.updated_at).getTime();
+      const nowTimestamp = Date.now();
+      expect(user).toEqual({
+        id: 1,
+        email: sampleUser1.email,
+        confirmed: false,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+      });
+      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+  });
 });

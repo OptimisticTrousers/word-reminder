@@ -64,6 +64,7 @@ describe("login_user", () => {
     expect(response.body).toEqual({
       user: {
         id: 1,
+        confirmed: false,
         email: user.email,
         created_at: expect.any(String),
         updated_at: expect.any(String),

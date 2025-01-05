@@ -1,5 +1,4 @@
 import request from "supertest";
-
 import { app } from "../app";
 // Import db setup and teardown functionality
 import "../db/testPopulatedb";

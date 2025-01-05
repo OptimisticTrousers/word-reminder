@@ -5,6 +5,15 @@ import request from "supertest";
 import { signup_user } from "../controllers/userController";
 import { UserQueries } from "../db/userQueries";
 import { variables } from "../config/variables";
+import { emailExists } from "../utils/emailExists";
+
+const { SALT } = variables;
+
+jest.mock("../utils/emailExists", () => ({
+  emailExists: jest.fn().mockImplementation(async () => {
+    return undefined;
+  }),
+}));
 
 describe("signup_user", () => {
   const app = express();
@@ -12,38 +21,45 @@ describe("signup_user", () => {
   app.post("/api/users", signup_user);
 
   it("creates user with hashed password and returns message after user signs up", async () => {
-    const user = {
+    const body = {
       email: "email@protonmail.com",
       password: "password",
+    };
+    const user = {
+      id: "1",
+      email: body.email,
+      confirmed: false,
+      created_at: new Date(),
+      updated_at: new Date(),
     };
     const hashSpy = jest.spyOn(bcrypt, "hash");
     const createUserMock = jest
       .spyOn(UserQueries.prototype, "create")
       .mockImplementation(async () => {
-        return {
-          id: "1",
-          email: user.email,
-          created_at: new Date(),
-          updated_at: new Date(),
-        };
+        return user;
       });
 
     const response = await request(app)
       .post("/api/users")
       .set("Accept", "application/json")
-      .send(user);
+      .send(body);
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      user: {
+        ...user,
+        created_at: user.created_at.toISOString(),
+        updated_at: user.updated_at.toISOString(),
+      },
+    });
+    expect(emailExists).toHaveBeenCalledTimes(1);
     expect(hashSpy).toHaveBeenCalledTimes(1);
-    expect(hashSpy).toHaveBeenCalledWith(user.password, Number(variables.SALT));
+    expect(hashSpy).toHaveBeenCalledWith(body.password, Number(SALT));
     expect(createUserMock).toHaveBeenCalledTimes(1);
     expect(createUserMock).toHaveBeenCalledWith({
-      email: user.email,
+      email: body.email,
       password: expect.any(String),
     });
-    expect(response.body.user.email).toBe(user.email);
-    expect(response.body.user.created_at).toEqual(expect.any(String));
-    expect(response.body.user.password).toBeUndefined();
   });
 });

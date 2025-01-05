@@ -12,10 +12,18 @@ describe("validateUserId", () => {
 
   const userQueries = new UserQueries();
 
+  const user = {
+    id: "1",
+  };
+
   const app = express();
   app.use(express.json());
   app.delete(
     "/api/users/:userId",
+    asyncHandler(async (req, res, next) => {
+      req.user = user;
+      next();
+    }),
     validateUserId,
     asyncHandler(async (req, res, next) => {
       res.status(200).json({ message });
@@ -34,9 +42,33 @@ describe("validateUserId", () => {
     });
   });
 
+  it("returns a 401 status code when the userId in req.params does not match the session user", async () => {
+    app.get(
+      "/api/users/:userId",
+      asyncHandler(async (req, res, next) => {
+        req.user = { id: "3" };
+        next();
+      }),
+      validateUserId,
+      asyncHandler(async (req, res, next) => {
+        res.status(200).json({ message });
+      })
+    );
+
+    const response = await request(app)
+      .get(`/api/users/${user.id}`)
+      .set("Accept", "application/json");
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      message: "Unauthorized.",
+    });
+  });
+
   it("returns a 404 status code with user not found message", async () => {
     const response = await request(app)
-      .delete("/api/users/1")
+      .delete(`/api/users/${user.id}`)
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);

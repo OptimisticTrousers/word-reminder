@@ -10,6 +10,13 @@ export const validateUserId = asyncHandler(
       return;
     }
 
+    const currentUser = req.user as User;
+
+    if (userId !== String(currentUser.id)) {
+      res.status(401).json({ message: "Unauthorized." });
+      return;
+    }
+
     const userQueries: UserQueries = new UserQueries();
     const user: User | undefined = await userQueries.getById(userId);
     if (!user) {

@@ -96,12 +96,31 @@ export class UserQueries extends Queries<User> {
     return rows[0];
   }
 
+  async get({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<User | undefined> {
+    const { rows }: QueryResult<User> = await this.pool.query(
+      `
+    SELECT ${this.columns}
+    FROM users
+    WHERE email = $1 AND password = $2;
+      `,
+      [email, password]
+    );
+
+    return rows[0];
+  }
+
   async getByEmail(email: string): Promise<User | undefined> {
     const { rows }: QueryResult<User> = await this.pool.query(
       `
     SELECT ${this.columns}
     FROM users
-    WHERE email= $1;
+    WHERE email = $1;
       `,
       [email]
     );

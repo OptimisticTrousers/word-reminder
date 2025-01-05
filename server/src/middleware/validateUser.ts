@@ -2,8 +2,8 @@ import { body } from "express-validator";
 
 import { errorValidationHandler } from "./errorValidationHandler";
 
-const emailMax = 255;
-const passwordMax = 72;
+export const emailMax = 255;
+export const passwordMax = 72;
 
 export const validateUser = [
   // Validate and sanitize fields.
