@@ -1,20 +1,19 @@
 import { Router } from "express";
 
 import {
-  delete_user_word,
   create_word,
+  delete_user_word,
   word_list,
-} from "../controllers/wordController";
-import { validatePageQuery } from "../middleware/validatePageQuery";
-import { validateSortQuery } from "../middleware/validateSortQuery";
-import { validateUserId } from "../middleware/validateUserId";
+} from "../controllers/word_controller";
+import { validatePageQuery } from "../middleware/validate_page_query";
+import { validateSortQuery } from "../middleware/validate_sort_query";
+import { validateUserId } from "../middleware/validate_user_id";
 
-const router = Router({ mergeParams: true });
+export const wordRouter = Router({ mergeParams: true });
 
-router
+wordRouter
   .route("/")
   .get(validateUserId, validatePageQuery, validateSortQuery, word_list)
   .post(validateUserId, create_word);
-router.delete("/:wordId", validateUserId, delete_user_word);
 
-export default router;
+wordRouter.delete("/:wordId", validateUserId, delete_user_word);

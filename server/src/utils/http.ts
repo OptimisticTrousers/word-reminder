@@ -1,10 +1,9 @@
-type RequestMethods = "GET" | "POST" | "PUT" | "DELETE";
-
 type Params = {
   [key: string]: unknown;
 };
 
-// TODO: Write tests for this Http Class
+type RequestMethods = "GET" | "POST" | "PUT" | "DELETE";
+
 export class Http {
   private async request(
     url: string,

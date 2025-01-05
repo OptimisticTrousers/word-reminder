@@ -1,18 +1,16 @@
 import { Router } from "express";
 
-import { isAuthenticated } from "../middleware/isAuthenticated";
 import {
   current_user,
   login_user,
   logout_user,
-} from "../controllers/sessionController";
+} from "../controllers/session_controller";
+import { isAuthenticated } from "../middleware/is_authenticated";
 
-const router: Router = Router();
+export const sessionRouter = Router();
 
-router
+sessionRouter
   .route("/")
   .post(login_user)
   .get(isAuthenticated, current_user)
   .delete(isAuthenticated, logout_user);
-
-export default router;

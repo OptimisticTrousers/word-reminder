@@ -3,33 +3,31 @@ import {
   create_word_reminder,
   delete_word_reminder,
   delete_word_reminders,
-  word_reminder_list,
   update_word_reminder,
-} from "../controllers/wordReminderController";
-import { validatePageQuery } from "../middleware/validatePageQuery";
-import { validateSortQuery } from "../middleware/validateSortQuery";
+  word_reminder_list,
+} from "../controllers/word_reminder_controller";
+import { validatePageQuery } from "../middleware/validate_page_query";
+import { validateSortQuery } from "../middleware/validate_sort_query";
 import {
   validateAuto,
   validateAutoWordReminder,
   validateWordReminder,
-} from "../middleware/validateWordReminder";
+} from "../middleware/validate_word_reminder";
 
-const router = Router();
+export const wordReminderRouter = Router();
 
-router
+wordReminderRouter
   .route("/")
   .get(validatePageQuery, validateSortQuery, word_reminder_list)
   .post(
     validateAuto,
-    validateWordReminder,
     validateAutoWordReminder,
+    validateWordReminder,
     create_word_reminder
   )
   .delete(delete_word_reminders);
 
-router
+wordReminderRouter
   .route("/:wordReminders")
   .put(validateWordReminder, update_word_reminder)
   .delete(delete_word_reminder);
-
-export default router;

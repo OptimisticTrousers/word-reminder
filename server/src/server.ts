@@ -1,6 +1,6 @@
 import { app } from "./app";
 import { variables } from "./config/variables";
-import { notFoundHandler } from "./middleware/notFoundHandler";
+import { notFoundHandler } from "./middleware/not_found_handler";
 import { scheduler } from "./utils/scheduler";
 
 const port = Number(variables.SERVER_PORT) || 5000;

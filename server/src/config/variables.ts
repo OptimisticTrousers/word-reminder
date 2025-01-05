@@ -16,6 +16,8 @@ for (const variable of [
   "SALT",
   "SECRET",
   "SERVER_PORT",
+  "VAPID_PUBLIC_KEY",
+  "VAPID_PRIVATE_KEY",
   "PROTON_SMTP_USER",
   "PROTON_SMTP_TOKEN",
   "PROTON_SMTP_SERVER",

@@ -1,9 +1,7 @@
 import { Router } from "express";
 
-import { create_subscription } from "../controllers/subscriptionController";
+import { create_subscription } from "../controllers/subscription_controller";
 
-const router: Router = Router();
+export const subscriptionRouter = Router();
 
-router.route("/").post(create_subscription);
-
-export default router;
+subscriptionRouter.route("/").post(create_subscription);

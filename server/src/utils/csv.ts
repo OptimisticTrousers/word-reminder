@@ -3,17 +3,6 @@ import { Readable } from "stream";
 import { finished } from "stream/promises";
 
 export class Csv {
-  private removeDuplicates(record: string[]): string[] {
-    const set = new Set<string>();
-    for (let i = 0; i < record.length; i++) {
-      const word: string = record[i];
-      if (word !== "") {
-        set.add(word);
-      }
-    }
-    return Array.from(set);
-  }
-
   // Read and process the CSV file
   async read(buffer: Buffer): Promise<{
     records: string[][];
@@ -49,5 +38,16 @@ export class Csv {
     }
 
     return { records, error: null, count };
+  }
+
+  private removeDuplicates(record: string[]): string[] {
+    const set = new Set<string>();
+    for (let i = 0; i < record.length; i++) {
+      const word: string = record[i];
+      if (word !== "") {
+        set.add(word);
+      }
+    }
+    return Array.from(set);
   }
 }

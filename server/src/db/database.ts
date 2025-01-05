@@ -9,6 +9,20 @@ export class Database {
     });
   }
 
+  async clear() {
+    const SQL = `
+      DROP SCHEMA public CASCADE;
+      CREATE SCHEMA public;
+      GRANT ALL ON SCHEMA public TO postgres;
+      GRANT ALL ON SCHEMA public TO public;
+      COMMENT ON SCHEMA public IS 'standard public schema';
+    `;
+
+    // console.log("Resetting database...");
+    await this.client.query(SQL);
+    // console.log("Successfully reset database.");
+  }
+
   async initializeConnection() {
     await this.client.connect();
   }
@@ -105,20 +119,6 @@ export class Database {
 
     // console.log("Seeding...");
     await this.client.query(SQL);
-  }
-
-  async clear() {
-    const SQL = `
-      DROP SCHEMA public CASCADE;
-      CREATE SCHEMA public;
-      GRANT ALL ON SCHEMA public TO postgres;
-      GRANT ALL ON SCHEMA public TO public;
-      COMMENT ON SCHEMA public IS 'standard public schema';
-    `;
-
-    // console.log("Resetting database...");
-    await this.client.query(SQL);
-    // console.log("Successfully reset database.");
   }
 
   async stopConnection() {

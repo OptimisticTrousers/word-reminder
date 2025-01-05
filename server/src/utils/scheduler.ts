@@ -14,10 +14,6 @@ export class Scheduler {
     this.boss.on("error", console.error);
   }
 
-  async start(): Promise<void> {
-    await this.boss.start();
-  }
-
   async createQueue(name: string): Promise<void> {
     await this.boss.createQueue(name);
   }
@@ -32,15 +28,19 @@ export class Scheduler {
     return id;
   }
 
+  async start(): Promise<void> {
+    await this.boss.start();
+  }
+
+  async stop(options: StopOptions) {
+    await this.boss.stop(options);
+  }
+
   async work<T>(
     name: string,
     handler: (jobs: Job<T>[]) => Promise<void>
   ): Promise<void> {
     await this.boss.work(name, handler);
-  }
-
-  async stop(options: StopOptions) {
-    await this.boss.stop(options);
   }
 }
 
