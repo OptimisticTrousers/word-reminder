@@ -6,13 +6,12 @@ import {
   login_user,
   logout_user,
 } from "../controllers/sessionController";
-import { validateUser } from "../middleware/validateUser";
 
 const router: Router = Router();
 
 router
   .route("/")
-  .post(validateUser, login_user)
+  .post(login_user)
   .get(isAuthenticated, current_user)
   .delete(isAuthenticated, logout_user);
 

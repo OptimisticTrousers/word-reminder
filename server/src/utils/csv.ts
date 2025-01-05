@@ -32,21 +32,21 @@ export class Csv {
 
     let count = 0;
 
-    parser
-      .on("readable", () => {
-        let record: string[];
-        while ((record = parser.read()) !== null) {
-          // Work with each record
-          const trimmedRecord: string[] = this.removeDuplicates(record);
-          count += trimmedRecord.length;
-          records.push(trimmedRecord);
-        }
-      })
-      .on("error", (error: Error) => {
-        return { records, error, count };
-      });
+    parser.on("readable", () => {
+      let record: string[];
+      while ((record = parser.read()) !== null) {
+        // Work with each record
+        const trimmedRecord: string[] = this.removeDuplicates(record);
+        count += trimmedRecord.length;
+        records.push(trimmedRecord);
+      }
+    });
 
-    await finished(parser);
+    try {
+      await finished(parser);
+    } catch (error) {
+      return { records, error, count };
+    }
 
     return { records, error: null, count };
   }

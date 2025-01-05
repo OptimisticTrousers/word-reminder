@@ -75,5 +75,21 @@ describe("csv", () => {
       expect(error).toBeNull();
       expect(count).toBe(4);
     });
+
+    it("returns the records, error, and count when the 'error' event is triggered", async () => {
+      const csv = new Csv();
+      // Simulate malformed CSV data with non-closed double quote
+      const malformedCsvBuffer = Buffer.from(
+        '"name","age"\n"John",25\n"InvalidRecord'
+      );
+
+      const { records, error, count } = await csv.read(malformedCsvBuffer);
+
+      expect((error as Error & { message: string }).message).toEqual(
+        "Quote Not Closed: the parsing is finished with an opening quote at line 3"
+      );
+      expect(records).toEqual([]);
+      expect(count).toBe(0);
+    });
   });
 });

@@ -366,4 +366,122 @@ describe("update_user", () => {
     });
     expect(emailExists).toHaveBeenCalledTimes(1);
   });
+
+  it("returns 400 status code when the email is not a valid email", async () => {
+    const body = {
+      email: "email",
+      oldPassword: "password",
+    };
+
+    const response = await request(app)
+      .put(`/api/users/${user.id}`)
+      .set("Accept", "application/json")
+      .send(body);
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "'email' must be a valid email.",
+          path: "email",
+          type: "field",
+          value: "email",
+        },
+      ],
+    });
+  });
+
+  it("returns 400 status code when the email is greater than 255 characters", async () => {
+    const email = new Array(256).fill("a").join("") + "@protonmail.com";
+    const body = {
+      email,
+      oldPassword: "password",
+    };
+
+    const response = await request(app)
+      .put(`/api/users/${user.id}`)
+      .set("Accept", "application/json")
+      .send(body);
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "'email' cannot be greater than 255 characters.",
+          path: "email",
+          type: "field",
+          value: email,
+        },
+      ],
+    });
+  });
+
+  it("returns 400 status code when 'newPassword' is greater than 72 characters", async () => {
+    const password = new Array(73).fill("a").join("");
+    const body = {
+      email: user.email,
+      newPassword: password,
+      oldPassword: "password",
+      newPasswordConfirmation: password,
+    };
+
+    const response = await request(app)
+      .put(`/api/users/${user.id}`)
+      .set("Accept", "application/json")
+      .send(body);
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "'newPassword' cannot be greater than 72 characters.",
+          path: "newPassword",
+          type: "field",
+          value: password,
+        },
+        {
+          location: "body",
+          msg: "'newPasswordConfirmation' cannot be greater than 72 characters.",
+          path: "newPasswordConfirmation",
+          type: "field",
+          value: password,
+        },
+      ],
+    });
+  });
+
+  it("returns 400 status code when 'newPasswordConfirmation' is greater than 72 characters", async () => {
+    const password = new Array(73).fill("a").join("");
+    const body = {
+      email: user.email,
+      newPassword: "password",
+      oldPassword: "password",
+      newPasswordConfirmation: password,
+    };
+
+    const response = await request(app)
+      .put(`/api/users/${user.id}`)
+      .set("Accept", "application/json")
+      .send(body);
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      errors: [
+        {
+          location: "body",
+          msg: "'newPasswordConfirmation' cannot be greater than 72 characters.",
+          path: "newPasswordConfirmation",
+          type: "field",
+          value: password,
+        },
+      ],
+    });
+  });
 });

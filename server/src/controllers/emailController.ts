@@ -13,13 +13,8 @@ import { Email } from "../utils/email";
 import { scheduler } from "../utils/scheduler";
 import { UserQueries } from "../db/userQueries";
 
-const {
-  NODE_ENV,
-  SERVER_URL,
-  SERVER_PORT,
-  FRONTEND_URL,
-  FRONTEND_VERIFICATION,
-} = variables;
+const { SERVER_URL, SERVER_PORT, FRONTEND_URL, FRONTEND_VERIFICATION } =
+  variables;
 
 const tokenQueries = new TokenQueries();
 
@@ -54,10 +49,7 @@ export const send_email = [
       "utf-8"
     );
     const token = await tokenQueries.create();
-    const url =
-      NODE_ENV === "development"
-        ? `localhost:${SERVER_PORT}/api/users/${userId}/emails/${token.token}`
-        : SERVER_URL;
+    const url = `${SERVER_URL}:${SERVER_PORT}/api/users/${userId}/emails/${token.token}`;
     const html = ejs.render(emailTemplate, { url });
     const info: SentMessageInfo = await email.sendMail({
       to: req.body.email,

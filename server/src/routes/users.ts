@@ -7,7 +7,6 @@ import {
   update_user,
 } from "../controllers/userController";
 import { isAuthenticated } from "../middleware/isAuthenticated";
-import { validateUser } from "../middleware/validateUser";
 import { validateUserId } from "../middleware/validateUserId";
 import emailRouter from "./emails";
 import wordReminderRouter from "./wordReminders";
@@ -15,7 +14,7 @@ import wordRouter from "./words";
 
 const router: Router = Router();
 
-router.route("/").post(validateUser, signup_user);
+router.route("/").post(signup_user);
 router.route("/:userId").put(update_user);
 router
   .route("/:userId")

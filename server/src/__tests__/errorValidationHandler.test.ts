@@ -3,7 +3,7 @@ import express from "express";
 import request from "supertest";
 
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
-import { validateUser } from "../middleware/validateUser";
+import { body } from "express-validator";
 
 describe("errorValidationHandler", () => {
   const message = "Success!";
@@ -11,7 +11,7 @@ describe("errorValidationHandler", () => {
   app.use(express.json());
   app.post(
     "/api/users",
-    validateUser,
+    body("test").notEmpty(),
     errorValidationHandler,
     asyncHandler(async (req, res, next) => {
       res.status(200).json({ message });
@@ -20,8 +20,7 @@ describe("errorValidationHandler", () => {
 
   it("returns 400 status code when there are validation errors", async () => {
     const user = {
-      email: undefined,
-      password: "password",
+      test: undefined,
     };
 
     const response = await request(app)
@@ -38,8 +37,7 @@ describe("errorValidationHandler", () => {
 
   it("the next request handler is called", async () => {
     const user = {
-      email: "email@protonmail.com",
-      password: "password",
+      test: "test",
     };
 
     const response = await request(app)

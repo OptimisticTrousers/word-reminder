@@ -46,25 +46,22 @@ export class UserQueries extends Queries<User> {
       confirmed,
       email,
       password,
-    }: { confirmed?: boolean; email?: string; password?: string }
+    }:
+      | { confirmed: boolean; email?: undefined; password?: undefined }
+      | { confirmed?: undefined; email: string; password?: undefined }
+      | { confirmed?: undefined; email?: undefined; password: string }
   ): Promise<User> {
-    if (!confirmed && !email && !password) {
-      throw new Error("At least one field must be provided");
-    }
-    const setClauses = [];
+    let setClause = "";
     const values = [];
-    let placeholderIndex = 1;
 
     if (confirmed) {
-      setClauses.push(`confirmed = $${placeholderIndex++}`);
+      setClause = "confirmed = $1";
       values.push(confirmed);
-    }
-    if (email) {
-      setClauses.push(`email = $${placeholderIndex++}`);
+    } else if (email) {
+      setClause = "email = $1";
       values.push(email);
-    }
-    if (password) {
-      setClauses.push(`password = $${placeholderIndex++}`);
+    } else if (password) {
+      setClause = "password = $1";
       values.push(password);
     }
     values.push(id);
@@ -72,8 +69,8 @@ export class UserQueries extends Queries<User> {
     const { rows }: QueryResult<User> = await this.pool.query(
       `
     UPDATE ${this.table}
-    SET ${setClauses.join(", ")}
-    WHERE id = $${placeholderIndex}
+    SET ${setClause}
+    WHERE id = $2
     RETURNING ${this.columns};
       `,
       values
@@ -128,3 +125,6 @@ export class UserQueries extends Queries<User> {
     return rows[0];
   }
 }
+
+export const emailMax = 255;
+export const passwordMax = 72;

@@ -23,16 +23,34 @@ PgBossMock.mockImplementation(() => ({
 }));
 
 describe("Scheduler", () => {
+  const originalEnv = variables.NODE_ENV;
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
+  afterAll(() => {
+    // Restore the original NODE_ENV after all tests
+    variables.NODE_ENV = originalEnv;
+  });
+
   describe("constructor", () => {
-    it("calls the function to call constructor and on error handler", () => {
+    it("uses TEST_DATABASE_URL when NODE_ENV is 'test'", () => {
+      variables.NODE_ENV = "test";
       new Scheduler();
 
       expect(PgBossMock).toHaveBeenCalledTimes(1);
       expect(PgBossMock).toHaveBeenCalledWith(variables.TEST_DATABASE_URL);
+      expect(mockOn).toHaveBeenCalledTimes(1);
+      expect(mockOn).toHaveBeenCalledWith("error", console.error);
+    });
+
+    it("uses TEST_DATABASE_URL when NODE_ENV is not 'test'", () => {
+      variables.NODE_ENV = "production";
+      new Scheduler();
+
+      expect(PgBossMock).toHaveBeenCalledTimes(1);
+      expect(PgBossMock).toHaveBeenCalledWith(variables.DATABASE_URL);
       expect(mockOn).toHaveBeenCalledTimes(1);
       expect(mockOn).toHaveBeenCalledWith("error", console.error);
     });

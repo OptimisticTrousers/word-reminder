@@ -3,10 +3,9 @@ import asyncHandler from "express-async-handler";
 import { body } from "express-validator";
 
 import { variables } from "../config/variables";
-import { User, UserQueries } from "../db/userQueries";
+import { emailMax, passwordMax, User, UserQueries } from "../db/userQueries";
 import { UserWordQueries } from "../db/userWordQueries";
 import { errorValidationHandler } from "../middleware/errorValidationHandler";
-import { emailMax, passwordMax } from "../middleware/validateUser";
 import { emailExists } from "../utils/emailExists";
 
 const userQueries = new UserQueries();
@@ -42,18 +41,18 @@ export const update_user = [
     .bail()
     .isEmail()
     .withMessage(`'email' must be a valid email.`)
+    .bail()
     .custom(emailExists),
   body("oldPassword")
     .escape()
     .isLength({ min: 1 })
-    .withMessage("'oldPassword' must be specified.")
-    .bail()
-    .isLength({ max: passwordMax })
-    .withMessage(
-      `'oldPassword' cannot be greater than ${passwordMax} characters.`
-    ),
+    .withMessage("'oldPassword' must be specified."),
   body("newPassword")
     .optional()
+    .isLength({ max: passwordMax })
+    .withMessage(
+      `'newPassword' cannot be greater than ${passwordMax} characters.`
+    )
     .custom((value, { req }) => {
       if (value && !req.body.newPasswordConfirmation) {
         const error: Error & { status?: number } = new Error(
@@ -68,6 +67,11 @@ export const update_user = [
     .escape(),
   body("newPasswordConfirmation")
     .optional()
+    .isLength({ max: passwordMax })
+    .withMessage(
+      `'newPasswordConfirmation' cannot be greater than ${passwordMax} characters.`
+    )
+    .bail()
     .custom((value, { req }) => {
       if (value && !req.body.newPassword) {
         const error: Error & { status?: number } = new Error(
@@ -139,7 +143,18 @@ export const signup_user = [
     .bail()
     .isEmail()
     .withMessage(`'email' must be a valid email.`)
+    .bail()
     .custom(emailExists),
+  body("password")
+    .trim()
+    .escape()
+    .isLength({ min: 1 })
+    .withMessage("'password' must be specified.")
+    .bail()
+    .isLength({ max: passwordMax })
+    .withMessage(
+      `'password' cannot be greater than ${passwordMax} characters.`
+    ),
   errorValidationHandler,
   // Process request after validation and sanitization.
   asyncHandler(async (req, res): Promise<void> => {

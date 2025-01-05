@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import connectPgSimple, { PGStore } from "connect-pg-simple";
-import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Express } from "express";
 import session from "express-session";
@@ -26,8 +25,6 @@ const sessionStore: PGStore = new pgSession({
   pool,
   tableName: "session",
 });
-
-app.use(cookieParser());
 
 app.use(
   cors({
@@ -97,8 +94,8 @@ passport.deserializeUser(async (id: string, done) => {
     ]);
     const user = rows[0];
     done(null, user);
-  } catch (err) {
-    done(err);
+  } catch (error) {
+    done(error);
   }
 });
 
