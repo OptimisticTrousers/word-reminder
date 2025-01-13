@@ -2,7 +2,7 @@ import express from "express";
 import request from "supertest";
 
 import { delete_word_reminder } from "../controllers/word_reminder_controller";
-import { UserWordsWordRemindersQueries } from "../db/user_words_word_reminders";
+import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 
 describe("delete_word_reminder", () => {
   const app = express();
@@ -63,7 +63,7 @@ describe("delete_word_reminder", () => {
   ];
 
   const deleteAllByWordReminderIdMock = jest
-    .spyOn(UserWordsWordRemindersQueries.prototype, "deleteAllByWordReminderId")
+    .spyOn(userWordsWordRemindersQueries, "deleteAllByWordReminderId")
     .mockImplementation(async () => {
       return deletedUserWordsWordReminders;
     });

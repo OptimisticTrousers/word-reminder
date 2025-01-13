@@ -3,8 +3,8 @@ import request from "supertest";
 
 import { variables } from "../config/variables";
 import { verify_email } from "../controllers/email_controller";
-import { TokenQueries } from "../db/token_queries";
-import { UserQueries } from "../db/user_queries";
+import { tokenQueries } from "../db/token_queries";
+import { userQueries } from "../db/user_queries";
 
 const { FRONTEND_VERIFICATION, FRONTEND_URL } = variables;
 
@@ -23,12 +23,12 @@ describe("verifyEmail", () => {
       expires_at: new Date(),
     };
     const mockVerify = jest
-      .spyOn(TokenQueries.prototype, "verify")
+      .spyOn(tokenQueries, "verify")
       .mockResolvedValue(false)
       .mockName("verify");
 
     const mockDeleteAll = jest
-      .spyOn(TokenQueries.prototype, "deleteAll")
+      .spyOn(tokenQueries, "deleteAll")
       .mockResolvedValue([invalidToken])
       .mockName("deleteAll");
     const userId = "1";
@@ -53,7 +53,7 @@ describe("verifyEmail", () => {
       expires_at: new Date(),
     };
     const mockVerify = jest
-      .spyOn(TokenQueries.prototype, "verify")
+      .spyOn(tokenQueries, "verify")
       .mockResolvedValue(true)
       .mockName("verify");
 
@@ -65,11 +65,11 @@ describe("verifyEmail", () => {
       updated_at: new Date(),
     };
     const mockGetById = jest
-      .spyOn(UserQueries.prototype, "getById")
+      .spyOn(userQueries, "getById")
       .mockResolvedValue(user)
       .mockName("updateById");
     const mockUpdateById = jest
-      .spyOn(UserQueries.prototype, "updateById")
+      .spyOn(userQueries, "updateById")
       .mockImplementation(jest.fn())
       .mockName("updateById");
 
@@ -97,7 +97,7 @@ describe("verifyEmail", () => {
       expires_at: new Date(),
     };
     const mockVerify = jest
-      .spyOn(TokenQueries.prototype, "verify")
+      .spyOn(tokenQueries, "verify")
       .mockResolvedValue(true)
       .mockName("verify");
 
@@ -109,11 +109,11 @@ describe("verifyEmail", () => {
       updated_at: new Date(),
     };
     const mockGetById = jest
-      .spyOn(UserQueries.prototype, "getById")
+      .spyOn(userQueries, "getById")
       .mockResolvedValue(user)
       .mockName("updateById");
     const mockDeleteAll = jest
-      .spyOn(TokenQueries.prototype, "deleteAll")
+      .spyOn(tokenQueries, "deleteAll")
       .mockResolvedValue([validToken])
       .mockName("deleteAll");
     const response = await request(app).post(

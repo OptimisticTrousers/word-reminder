@@ -1,6 +1,4 @@
-import { QueryResult } from "pg";
-
-import { Queries } from "./queries";
+import { createQueries } from "./queries";
 
 interface SubscriptionParams {
   endpoint: string;
@@ -11,48 +9,50 @@ interface SubscriptionParams {
 }
 
 export interface Subscription extends SubscriptionParams {
-  id: number;
+  id: string;
 }
 
-export class SubscriptionQueries extends Queries<Subscription> {
-  constructor() {
-    super(["*"], "subscriptions");
-  }
+export const subscriptionQueries = (function () {
+  const { columns, db, table } = createQueries(["*"], "subscriptions");
 
-  async create(subscription: SubscriptionParams): Promise<Subscription> {
-    const { rows }: QueryResult<Subscription> = await this.pool.query(
+  const create = async (
+    subscription: SubscriptionParams
+  ): Promise<Subscription> => {
+    const { rows } = await db.query(
       `
-    INSERT INTO ${this.table}(endpoint, p256dh, auth)
+    INSERT INTO ${table}(endpoint, p256dh, auth)
     VALUES ($1, $2, $3)
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [subscription.endpoint, subscription.keys.p256dh, subscription.keys.auth]
     );
 
     return rows[0];
-  }
+  };
 
-  async deleteById(id: number): Promise<Subscription> {
-    const { rows } = await this.pool.query(
+  const deleteById = async (id: string): Promise<Subscription> => {
+    const { rows } = await db.query(
       `
     DELETE
-    FROM ${this.table}
+    FROM ${table}
     WHERE id = $1
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [id]
     );
 
     return rows[0];
-  }
+  };
 
-  async get(): Promise<Subscription[]> {
-    const { rows } = await this.pool.query(
+  const get = async (): Promise<Subscription[]> => {
+    const { rows } = await db.query(
       `
-    SELECT ${this.columns} FROM ${this.table};
+    SELECT ${columns} FROM ${table};
       `
     );
 
     return rows;
-  }
-}
+  };
+
+  return { create, deleteById, get };
+})();

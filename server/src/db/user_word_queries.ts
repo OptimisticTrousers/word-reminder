@@ -1,8 +1,6 @@
 import { QueryResult } from "pg";
 
-import { Queries } from "./queries";
-import { UserQueries } from "./user_queries";
-import { WordQueries } from "./word_queries";
+import { createQueries } from "./queries";
 
 interface Page {
   page: number;
@@ -36,17 +34,11 @@ export interface UserWord {
   updated_at: Date;
 }
 
-export class UserWordQueries extends Queries<UserWord> {
-  userQueries: UserQueries;
-  wordQueries: WordQueries;
+export const userWordQueries = (function () {
+  const queries = createQueries<UserWord>(["*"], "user_words");
+  const { columns, db, getById, table } = queries;
 
-  constructor() {
-    super(["*"], "user_words");
-    this.userQueries = new UserQueries();
-    this.wordQueries = new WordQueries();
-  }
-
-  async create({
+  const create = async ({
     user_id,
     word_id,
     learned,
@@ -54,69 +46,69 @@ export class UserWordQueries extends Queries<UserWord> {
     user_id: string;
     word_id: string;
     learned: boolean;
-  }): Promise<UserWord> {
-    const existingUserWord = await this.get({ user_id, word_id });
+  }): Promise<UserWord> => {
+    const existingUserWord = await get({ user_id, word_id });
 
     if (existingUserWord) {
       return existingUserWord;
     }
 
-    const { rows }: QueryResult<UserWord> = await this.pool.query(
+    const { rows }: QueryResult<UserWord> = await db.query(
       `
-    INSERT INTO ${this.table}(user_id, word_id, learned)
+    INSERT INTO ${table}(user_id, word_id, learned)
     VALUES ($1, $2, $3)
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [user_id, word_id, learned]
     );
 
     return rows[0];
-  }
+  };
 
-  async delete({
+  const remove = async ({
     user_id,
     word_id,
   }: {
     user_id: string;
     word_id: string;
-  }): Promise<UserWord> {
-    const { rows }: QueryResult<UserWord> = await this.pool.query(
+  }): Promise<UserWord> => {
+    const { rows }: QueryResult<UserWord> = await db.query(
       `
-    DELETE FROM ${this.table}
+    DELETE FROM ${table}
     WHERE user_id = $1
     AND word_id = $2
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [user_id, word_id]
     );
 
     return rows[0];
-  }
+  };
 
-  async deleteAllByUserId(user_id: string): Promise<UserWord[]> {
-    const { rows }: QueryResult<UserWord> = await this.pool.query(
+  const deleteAllByUserId = async (user_id: string): Promise<UserWord[]> => {
+    const { rows }: QueryResult<UserWord> = await db.query(
       `
-    DELETE FROM ${this.table}
+    DELETE FROM ${table}
     WHERE user_id = $1
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [user_id]
     );
 
     return rows;
-  }
+  };
 
-  async get({
+  const get = async ({
     user_id,
     word_id,
   }: {
     user_id: string;
     word_id: string;
-  }): Promise<UserWord | undefined> {
-    const { rows }: QueryResult<UserWord> = await this.pool.query(
+  }): Promise<UserWord | undefined> => {
+    const { rows }: QueryResult<UserWord> = await db.query(
       `
-    SELECT ${this.columns} 
-    FROM ${this.table}
+    SELECT ${columns} 
+    FROM ${table}
     WHERE user_id = $1
     AND word_id = $2;
       `,
@@ -124,12 +116,12 @@ export class UserWordQueries extends Queries<UserWord> {
     );
 
     return rows[0];
-  }
+  };
 
-  async getUserWords(
+  const getUserWords = async (
     user_id: string,
     options: RandomOptions
-  ): Promise<UserWord[]> {
+  ): Promise<UserWord[]> => {
     let orderClause = "";
     switch (options.order) {
       case Order.Oldest:
@@ -143,10 +135,10 @@ export class UserWordQueries extends Queries<UserWord> {
         break;
     }
 
-    const { rows }: QueryResult<UserWord> = await this.pool.query(
+    const { rows }: QueryResult<UserWord> = await db.query(
       `
-    SELECT ${this.columns}
-    FROM ${this.table}
+    SELECT ${columns}
+    FROM ${table}
     WHERE user_id = $1 AND learned = $2
     ORDER BY ${orderClause}
     LIMIT $3;
@@ -155,9 +147,9 @@ export class UserWordQueries extends Queries<UserWord> {
     );
 
     return rows;
-  }
+  };
 
-  async getByUserId(
+  const getByUserId = async (
     user_id: string,
     options: {
       learned?: boolean;
@@ -167,15 +159,15 @@ export class UserWordQueries extends Queries<UserWord> {
       page?: number;
       limit?: number;
     } = {}
-  ): Promise<Result> {
+  ): Promise<Result> => {
     const queryParts = [
       `
-    SELECT words.*, ${this.table}.*
-    FROM ${this.table}
+    SELECT words.*, ${table}.*
+    FROM ${table}
       `,
       `
     JOIN words
-    ON ${this.table}.word_id = words.id
+    ON ${table}.word_id = words.id
       `,
       `
     WHERE user_id = $1
@@ -185,7 +177,7 @@ export class UserWordQueries extends Queries<UserWord> {
     let paramIndex = 1;
 
     if (typeof options.learned === "boolean") {
-      queryParts.push(`AND ${this.table}.learned = $${++paramIndex}`);
+      queryParts.push(`AND ${table}.learned = $${++paramIndex}`);
       queryParams.push(options.learned);
     }
 
@@ -215,7 +207,7 @@ export class UserWordQueries extends Queries<UserWord> {
     const limit: number = options.limit || 8;
     const startIndex = (page - 1) * limit;
 
-    const { rows: preLimitRows }: QueryResult<UserWord> = await this.pool.query(
+    const { rows: preLimitRows }: QueryResult<UserWord> = await db.query(
       queryParts.join(" "),
       queryParams
     );
@@ -226,7 +218,7 @@ export class UserWordQueries extends Queries<UserWord> {
       queryParams.push(options.limit, startIndex);
     }
 
-    const { rows }: QueryResult<UserWord> = await this.pool.query(
+    const { rows }: QueryResult<UserWord> = await db.query(
       queryParts.join(" "),
       queryParams
     );
@@ -249,9 +241,9 @@ export class UserWordQueries extends Queries<UserWord> {
     }
 
     return result;
-  }
+  };
 
-  async setLearned({
+  const setLearned = async ({
     user_id,
     word_id,
     learned,
@@ -259,18 +251,29 @@ export class UserWordQueries extends Queries<UserWord> {
     user_id: string;
     word_id: string;
     learned: boolean;
-  }): Promise<UserWord> {
-    const { rows }: QueryResult<UserWord> = await this.pool.query(
+  }): Promise<UserWord> => {
+    const { rows }: QueryResult<UserWord> = await db.query(
       `
-    UPDATE ${this.table}
+    UPDATE ${table}
     SET learned = $1
     WHERE user_id = $2
     AND word_id = $3
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [learned, user_id, word_id]
     );
 
     return rows[0];
-  }
-}
+  };
+
+  return {
+    create,
+    delete: remove,
+    deleteAllByUserId,
+    get,
+    getById: getById.bind(queries),
+    getUserWords,
+    getByUserId,
+    setLearned,
+  };
+})();

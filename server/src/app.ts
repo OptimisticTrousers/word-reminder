@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import connectPgSimple, { PGStore } from "connect-pg-simple";
 import cors from "cors";
 import express, { Express } from "express";
 import session from "express-session";
@@ -9,7 +8,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import path from "path";
 
 import { variables } from "./config/variables";
-import { pool } from "./db/pool";
+import { db, sessionStore } from "./db";
 import { errorHandler } from "./middleware/error_handler";
 import { router } from "./routes/index";
 
@@ -18,13 +17,6 @@ export const app: Express = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-
-const pgSession: typeof PGStore = connectPgSimple(session);
-
-const sessionStore: PGStore = new pgSession({
-  pool,
-  tableName: "session",
-});
 
 app.use(
   cors({
@@ -60,7 +52,7 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     async (email, password, done) => {
       try {
-        const { rows } = await pool.query(
+        const { rows } = await db.query(
           "SELECT * FROM users WHERE email = $1",
           [email]
         );
@@ -89,9 +81,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [
-      id,
-    ]);
+    const { rows } = await db.query("SELECT * FROM users WHERE id = $1", [id]);
     const user = rows[0];
     done(null, user);
   } catch (error) {

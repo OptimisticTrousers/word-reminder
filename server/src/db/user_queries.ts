@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
 
-import { Queries } from "./queries";
+import { createQueries } from "./queries";
 
 export interface User {
   id: string;
@@ -10,60 +10,62 @@ export interface User {
   updated_at: Date;
 }
 
-export class UserQueries extends Queries<User> {
-  constructor() {
-    super(["id", "email", "confirmed", "created_at", "updated_at"], "users");
-  }
+export const userQueries = (function () {
+  const queries = createQueries<User>(
+    ["id", "email", "confirmed", "created_at", "updated_at"],
+    "users"
+  );
+  const { columns, db, getById, table } = queries;
 
-  async create({
+  const create = async ({
     email,
     password,
   }: {
     email: string;
     password: string;
-  }): Promise<User | null> {
-    const existingUser = await this.getByEmail(email);
+  }): Promise<User | null> => {
+    const existingUser = await getByEmail(email);
 
     if (existingUser) {
       return null;
     }
 
-    const { rows }: QueryResult<User> = await this.pool.query(
+    const { rows }: QueryResult<User> = await db.query(
       `
-    INSERT INTO ${this.table}(email, password)
+    INSERT INTO ${table}(email, password)
     VALUES ($1, $2)
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [email, password]
     );
 
     return rows[0];
-  }
+  };
 
-  async deleteById(id: string): Promise<User> {
-    const { rows }: QueryResult<User> = await this.pool.query(
+  const deleteById = async (id: string): Promise<User> => {
+    const { rows }: QueryResult<User> = await db.query(
       `
     DELETE
-    FROM ${this.table}
+    FROM ${table}
     WHERE id = $1
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [id]
     );
 
     return rows[0];
-  }
+  };
 
-  async get({
+  const get = async ({
     email,
     password,
   }: {
     email: string;
     password: string;
-  }): Promise<User | undefined> {
-    const { rows }: QueryResult<User> = await this.pool.query(
+  }): Promise<User | undefined> => {
+    const { rows }: QueryResult<User> = await db.query(
       `
-    SELECT ${this.columns}
+    SELECT ${columns}
     FROM users
     WHERE email = $1 AND password = $2;
       `,
@@ -71,12 +73,12 @@ export class UserQueries extends Queries<User> {
     );
 
     return rows[0];
-  }
+  };
 
-  async getByEmail(email: string): Promise<User | undefined> {
-    const { rows }: QueryResult<User> = await this.pool.query(
+  const getByEmail = async (email: string): Promise<User | undefined> => {
+    const { rows }: QueryResult<User> = await db.query(
       `
-    SELECT ${this.columns}
+    SELECT ${columns}
     FROM users
     WHERE email = $1;
       `,
@@ -84,9 +86,9 @@ export class UserQueries extends Queries<User> {
     );
 
     return rows[0];
-  }
+  };
 
-  async updateById(
+  const updateById = async (
     id: string,
     {
       confirmed,
@@ -96,7 +98,7 @@ export class UserQueries extends Queries<User> {
       | { confirmed: boolean; email?: undefined; password?: undefined }
       | { confirmed?: undefined; email: string; password?: undefined }
       | { confirmed?: undefined; email?: undefined; password: string }
-  ): Promise<User> {
+  ): Promise<User> => {
     let setClause = "";
     const values = [];
 
@@ -112,19 +114,28 @@ export class UserQueries extends Queries<User> {
     }
     values.push(id);
 
-    const { rows }: QueryResult<User> = await this.pool.query(
+    const { rows }: QueryResult<User> = await db.query(
       `
-    UPDATE ${this.table}
+    UPDATE ${table}
     SET ${setClause}
     WHERE id = $2
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       values
     );
 
     return rows[0];
-  }
-}
+  };
+
+  return {
+    create,
+    deleteById,
+    get,
+    getById: getById.bind(queries),
+    getByEmail,
+    updateById,
+  };
+})();
 
 export const EMAIL_MAX = 255;
 export const PASSWORD_MAX = 72;

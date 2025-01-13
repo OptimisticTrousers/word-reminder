@@ -1,18 +1,12 @@
-import { UserQueries } from "../db/user_queries";
-import { UserWordsWordRemindersQueries } from "../db/user_words_word_reminders";
-import { UserWordQueries } from "../db/user_word_queries";
-import { WordReminderQueries } from "../db/word_reminder_queries";
-import { WordQueries } from "../db/word_queries";
+import { userQueries } from "../db/user_queries";
+import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
+import { userWordQueries } from "../db/user_word_queries";
+import { wordReminderQueries } from "../db/word_reminder_queries";
+import { wordQueries } from "../db/word_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("userWordsWordRemindersQueries", () => {
-  const userQueries = new UserQueries();
-  const userWordQueries = new UserWordQueries();
-  const wordQueries = new WordQueries();
-  const wordReminderQueries = new WordReminderQueries();
-  const userWordsWordRemindersQueries = new UserWordsWordRemindersQueries();
-
   const sampleUser1 = {
     id: "1",
     email: "email@protonmail.com",

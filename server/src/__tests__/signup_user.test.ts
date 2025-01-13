@@ -3,7 +3,7 @@ import express from "express";
 import request from "supertest";
 
 import { signup_user } from "../controllers/user_controller";
-import { UserQueries } from "../db/user_queries";
+import { userQueries } from "../db/user_queries";
 import { variables } from "../config/variables";
 import { emailExists } from "../utils/email_exists";
 
@@ -34,7 +34,7 @@ describe("signup_user", () => {
     };
     const hashSpy = jest.spyOn(bcrypt, "hash");
     const createUserMock = jest
-      .spyOn(UserQueries.prototype, "create")
+      .spyOn(userQueries, "create")
       .mockImplementation(async () => {
         return user;
       });

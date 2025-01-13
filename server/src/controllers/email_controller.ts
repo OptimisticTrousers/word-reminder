@@ -7,16 +7,14 @@ import path from "path";
 import { Job } from "pg-boss";
 
 import { variables } from "../config/variables";
-import { Token, TokenQueries } from "../db/token_queries";
-import { UserQueries } from "../db/user_queries";
+import { Token, tokenQueries } from "../db/token_queries";
+import { userQueries } from "../db/user_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-import { Email } from "../utils/email";
+import { email } from "../utils/email";
 import { scheduler } from "../utils/scheduler";
 
 const { FRONTEND_VERIFICATION, FRONTEND_URL, SERVER_URL, SERVER_PORT } =
   variables;
-
-const tokenQueries = new TokenQueries();
 
 export const send_email = [
   body("email")
@@ -43,7 +41,6 @@ export const send_email = [
     const template = req.body.template;
     const subject = req.body.subject;
 
-    const email = new Email();
     const emailTemplate = await readFile(
       path.join(__dirname, "..", "views", `${template}.ejs`),
       "utf-8"
@@ -84,7 +81,6 @@ export const verify_email = asyncHandler(async (req, res) => {
     return;
   }
 
-  const userQueries = new UserQueries();
   const user = await userQueries.getById(userId);
   if (user!.confirmed === false) {
     await userQueries.updateById(userId, { confirmed: true });

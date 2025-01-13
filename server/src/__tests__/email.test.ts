@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 
 import { variables } from "../config/variables";
-import { Email } from "../utils/email";
 
 const {
   PROTON_SMTP_USER,
@@ -22,8 +21,9 @@ describe("email", () => {
   });
 
   it("calls the functions to create a transport in the constructor", async () => {
-    new Email();
-
+    await jest.isolateModulesAsync(async () => {
+      await import("../utils/email");
+    });
     expect(createTransporterMock).toHaveBeenCalledTimes(1);
     expect(createTransporterMock).toHaveBeenCalledWith({
       host: PROTON_SMTP_SERVER,
@@ -37,14 +37,14 @@ describe("email", () => {
   });
 
   it("calls the functions to send an email", async () => {
-    const email = new Email();
+    const { email } = await import("../utils/email");
     const emailData = {
       userId: "1",
       to: "bob@protonmail.com",
       subject: "Hello there",
       html: "<p>Hello world!</p>",
     };
-    email.sendMail(emailData);
+    await email.sendMail(emailData);
 
     expect(sendMailMock).toHaveBeenCalledTimes(1);
     expect(sendMailMock).toHaveBeenCalledWith({

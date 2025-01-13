@@ -1,20 +1,18 @@
-import { Pool, QueryResult } from "pg";
+import { Db, db } from "./index";
 
-import { pool } from "./pool";
+interface Queries<T> {
+  columns: string;
+  table: string;
+  db: Db;
+  getById: (id: string) => Promise<T | undefined>;
+}
 
-export class Queries<T> {
-  protected columns: string;
-  protected table: string;
-  protected pool: Pool;
-
-  constructor(columns: string[], table: string) {
-    this.columns = columns.join(", ");
-    this.table = table;
-    this.pool = pool;
-  }
-
-  async getById(id: string): Promise<T | undefined> {
-    const { rows }: QueryResult = await this.pool.query(
+const queriesProto = {
+  columns: "",
+  table: "",
+  db,
+  async getById<T>(this: Queries<T>, id: string): Promise<T | undefined> {
+    const { rows } = await this.db.query(
       `
     SELECT ${this.columns}
     FROM ${this.table}
@@ -24,5 +22,15 @@ export class Queries<T> {
     );
 
     return rows[0];
-  }
-}
+  },
+};
+
+export const createQueries = <T>(
+  columns: string[],
+  table: string
+): Queries<T> => {
+  return Object.assign(Object.create(queriesProto), {
+    columns: columns.join(", "),
+    table,
+  });
+};

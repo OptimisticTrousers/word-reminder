@@ -1,10 +1,8 @@
-import { UserQueries } from "../db/user_queries";
+import { userQueries } from "../db/user_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("userQueries", () => {
-  const userQueries = new UserQueries();
-
   const sampleUser1 = {
     id: "1",
     email: "email@protonmail.com",

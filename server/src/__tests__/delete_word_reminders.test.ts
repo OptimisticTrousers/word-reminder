@@ -2,8 +2,8 @@ import express from "express";
 import request from "supertest";
 
 import { delete_word_reminders } from "../controllers/word_reminder_controller";
-import { UserWordsWordRemindersQueries } from "../db/user_words_word_reminders";
-import { WordReminderQueries } from "../db/word_reminder_queries";
+import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
+import { wordReminderQueries } from "../db/word_reminder_queries";
 
 describe("delete_word_reminders", () => {
   const app = express();
@@ -53,12 +53,12 @@ describe("delete_word_reminders", () => {
   ];
 
   const deleteAllByUserIdUserWordsWordRemindersMock = jest
-    .spyOn(UserWordsWordRemindersQueries.prototype, "deleteAllByUserId")
+    .spyOn(userWordsWordRemindersQueries, "deleteAllByUserId")
     .mockImplementation(async () => {
       return userWordsWordReminders;
     });
   const deleteAllByUserIdWordRemindersMock = jest
-    .spyOn(WordReminderQueries.prototype, "deleteAllByUserId")
+    .spyOn(wordReminderQueries, "deleteAllByUserId")
     .mockImplementation(async () => {
       return wordReminders;
     });

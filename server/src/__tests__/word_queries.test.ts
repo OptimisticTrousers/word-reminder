@@ -1,10 +1,8 @@
-import { WordQueries } from "../db/word_queries";
+import { wordQueries } from "../db/word_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("wordQueries", () => {
-  const wordQueries = new WordQueries();
-
   const json = [
     {
       word: "hello",

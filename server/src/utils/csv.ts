@@ -2,13 +2,15 @@ import { parse, Parser } from "csv-parse";
 import { Readable } from "stream";
 import { finished } from "stream/promises";
 
-export class Csv {
+export const csv = (function () {
   // Read and process the CSV file
-  async read(buffer: Buffer): Promise<{
+  const read = async (
+    buffer: Buffer
+  ): Promise<{
     records: string[][];
     error: unknown;
     count: number;
-  }> {
+  }> => {
     const records: string[][] = [];
     const parser: Parser = Readable.from(buffer).pipe(
       parse({
@@ -25,7 +27,7 @@ export class Csv {
       let record: string[];
       while ((record = parser.read()) !== null) {
         // Work with each record
-        const trimmedRecord: string[] = this.removeDuplicates(record);
+        const trimmedRecord: string[] = removeDuplicates(record);
         count += trimmedRecord.length;
         records.push(trimmedRecord);
       }
@@ -38,9 +40,9 @@ export class Csv {
     }
 
     return { records, error: null, count };
-  }
+  };
 
-  private removeDuplicates(record: string[]): string[] {
+  const removeDuplicates = (record: string[]): string[] => {
     const set = new Set<string>();
     for (let i = 0; i < record.length; i++) {
       const word: string = record[i];
@@ -49,5 +51,7 @@ export class Csv {
       }
     }
     return Array.from(set);
-  }
-}
+  };
+
+  return { read, removeDuplicates };
+})();

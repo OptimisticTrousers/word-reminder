@@ -2,10 +2,10 @@ import express from "express";
 import request from "supertest";
 
 import { create_word } from "../controllers/word_controller";
-import { UserWordQueries } from "../db/user_word_queries";
-import { WordQueries } from "../db/word_queries";
-import { Csv } from "../utils/csv";
-import { Http } from "../utils/http";
+import { userWordQueries } from "../db/user_word_queries";
+import { wordQueries } from "../db/word_queries";
+import { csv } from "../utils/csv";
+import { http } from "../utils/http";
 
 describe("create_word", () => {
   const app = express();
@@ -260,22 +260,22 @@ describe("create_word", () => {
 
       - Example Use Case: Ensures that the system correctly handles the creation of a new word if it doesn't already exist in the database. */
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementation(async () => {
           return { json: response1, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "create")
+        .spyOn(wordQueries, "create")
         .mockImplementation(async () => {
           return { details: response1, id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "create")
+        .spyOn(userWordQueries, "create")
         .mockImplementation(async () => {
           return userWord;
         });
@@ -312,22 +312,22 @@ describe("create_word", () => {
 
     it("creates the word if it is all uppercase", async () => {
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementation(async () => {
           return { json: response1, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "create")
+        .spyOn(wordQueries, "create")
         .mockImplementation(async () => {
           return { details: response1, id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "create")
+        .spyOn(userWordQueries, "create")
         .mockImplementation(async () => {
           return userWord;
         });
@@ -367,22 +367,22 @@ describe("create_word", () => {
       const message =
         "Sorry pal, we couldn't find definitions for the word you were looking for.";
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementation(async () => {
           return { json: { message }, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "create")
+        .spyOn(wordQueries, "create")
         .mockImplementation(async () => {
           return { details: response1, id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "create")
+        .spyOn(userWordQueries, "create")
         .mockImplementation(async () => {
           return userWord;
         });
@@ -413,7 +413,7 @@ describe("create_word", () => {
 
       - Example Use Case: Ensures that the system correctly handles the creation of a new word if it doesn't already exist in the database. */
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementation(async () => {
           return {
             id: wordId,
@@ -423,17 +423,17 @@ describe("create_word", () => {
           };
         });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementation(async () => {
           return { json: response1, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "create")
+        .spyOn(wordQueries, "create")
         .mockImplementation(async () => {
           return { details: response1, id: wordId, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "create")
+        .spyOn(userWordQueries, "create")
         .mockImplementation(async () => {
           return userWord;
         });
@@ -633,12 +633,12 @@ describe("create_word", () => {
 
     it("creates words and user words", async () => {
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementationOnce(async () => {
           return { json: response1, status: 200 };
         });
@@ -646,7 +646,7 @@ describe("create_word", () => {
         return { json: response2, status: 200 };
       });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "create")
+        .spyOn(wordQueries, "create")
         .mockImplementationOnce(async () => {
           return { details: response1, id: wordId1, created_at: new Date() };
         });
@@ -654,7 +654,7 @@ describe("create_word", () => {
         return { details: response2, id: wordId2, created_at: new Date() };
       });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "create")
+        .spyOn(userWordQueries, "create")
         .mockImplementationOnce(async () => {
           return userWord1;
         });
@@ -698,7 +698,7 @@ describe("create_word", () => {
 
     it("creates user words even when any of words in the csv file already exist in the database", async () => {
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementationOnce(async () => {
           return { details: response1, id: wordId1, created_at: new Date() };
         });
@@ -706,17 +706,17 @@ describe("create_word", () => {
         return undefined;
       });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementationOnce(async () => {
           return { json: response2, status: 200 };
         });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "create")
+        .spyOn(wordQueries, "create")
         .mockImplementationOnce(async () => {
           return { details: response2, id: wordId2, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "create")
+        .spyOn(userWordQueries, "create")
         .mockImplementationOnce(async () => {
           return userWord1;
         });
@@ -755,13 +755,10 @@ describe("create_word", () => {
     });
 
     it("creates no words and user words when the csv file is empty", async () => {
-      const getWordByWordMock = jest.spyOn(WordQueries.prototype, "getByWord");
-      const httpGetMock = jest.spyOn(Http.prototype, "get");
-      const createWordMock = jest.spyOn(WordQueries.prototype, "create");
-      const createUserWordMock = jest.spyOn(
-        UserWordQueries.prototype,
-        "create"
-      );
+      const getWordByWordMock = jest.spyOn(wordQueries, "getByWord");
+      const httpGetMock = jest.spyOn(http, "get");
+      const createWordMock = jest.spyOn(wordQueries, "create");
+      const createUserWordMock = jest.spyOn(userWordQueries, "create");
 
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
@@ -856,12 +853,12 @@ describe("create_word", () => {
       ];
       const word2 = "not a valid word";
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementationOnce(async () => {
           return { json: response1, status: 200 };
         });
@@ -869,12 +866,12 @@ describe("create_word", () => {
         return { json: { message: "Invalid word." }, status: 400 };
       });
       const createWordMock = jest
-        .spyOn(WordQueries.prototype, "create")
+        .spyOn(wordQueries, "create")
         .mockImplementationOnce(async () => {
           return { details: response1, id: wordId1, created_at: new Date() };
         });
       const createUserWordMock = jest
-        .spyOn(UserWordQueries.prototype, "create")
+        .spyOn(userWordQueries, "create")
         .mockImplementationOnce(async () => {
           return userWord1;
         });
@@ -912,20 +909,17 @@ describe("create_word", () => {
     it("creates no words when no valid words in the csv file exist", async () => {
       const phrases = ["a man", "a plan", "a canal"];
       const getWordByWordMock = jest
-        .spyOn(WordQueries.prototype, "getByWord")
+        .spyOn(wordQueries, "getByWord")
         .mockImplementation(async () => {
           return undefined;
         });
       const httpGetMock = jest
-        .spyOn(Http.prototype, "get")
+        .spyOn(http, "get")
         .mockImplementation(async () => {
           return { json: { message: "Invalid word." }, status: 400 };
         });
-      const createWordMock = jest.spyOn(WordQueries.prototype, "create");
-      const createUserWordMock = jest.spyOn(
-        UserWordQueries.prototype,
-        "create"
-      );
+      const createWordMock = jest.spyOn(wordQueries, "create");
+      const createUserWordMock = jest.spyOn(userWordQueries, "create");
 
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
@@ -956,15 +950,12 @@ describe("create_word", () => {
     });
 
     it("sends an error message when the CSV parser returns an error", async () => {
-      const getWordByWordMock = jest.spyOn(WordQueries.prototype, "getByWord");
-      const httpGetMock = jest.spyOn(Http.prototype, "get");
-      const createWordMock = jest.spyOn(WordQueries.prototype, "create");
-      const createUserWordMock = jest.spyOn(
-        UserWordQueries.prototype,
-        "create"
-      );
+      const getWordByWordMock = jest.spyOn(wordQueries, "getByWord");
+      const httpGetMock = jest.spyOn(http, "get");
+      const createWordMock = jest.spyOn(wordQueries, "create");
+      const createUserWordMock = jest.spyOn(userWordQueries, "create");
       const message = "CSV file was parsed incorrectly.";
-      jest.spyOn(Csv.prototype, "read").mockImplementationOnce(async () => {
+      jest.spyOn(csv, "read").mockImplementationOnce(async () => {
         return {
           records: [],
           count: 0,

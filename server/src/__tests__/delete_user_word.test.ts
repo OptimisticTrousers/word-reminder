@@ -2,7 +2,7 @@ import express from "express";
 import request from "supertest";
 
 import { delete_user_word } from "../controllers/word_controller";
-import { UserWordQueries } from "../db/user_word_queries";
+import { userWordQueries } from "../db/user_word_queries";
 
 describe("delete_user_word", () => {
   const app = express();
@@ -23,7 +23,7 @@ describe("delete_user_word", () => {
       updated_at,
     };
     const deleteUserWordMock = jest
-      .spyOn(UserWordQueries.prototype, "delete")
+      .spyOn(userWordQueries, "delete")
       .mockImplementation(async () => {
         return userWord;
       });

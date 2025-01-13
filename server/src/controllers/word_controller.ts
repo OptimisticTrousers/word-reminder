@@ -2,16 +2,12 @@ import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 
 import { upload } from "../config/multer";
-import { Result, UserWord, UserWordQueries } from "../db/user_word_queries";
-import { Word, WordQueries } from "../db/word_queries";
+import { Result, UserWord, userWordQueries } from "../db/user_word_queries";
+import { Word, wordQueries } from "../db/word_queries";
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-import { Csv } from "../utils/csv";
-import { Http } from "../utils/http";
-
-const http = new Http();
-const userWordQueries = new UserWordQueries();
-const wordQueries = new WordQueries();
+import { csv } from "../utils/csv";
+import { http } from "../utils/http";
 
 // @desc Add new word and user word
 // @route POST /api/users/:userId/words
@@ -40,7 +36,6 @@ export const create_word = [
       next();
       return;
     }
-    const csv = new Csv();
     const {
       records,
       error,

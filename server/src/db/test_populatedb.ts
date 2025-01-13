@@ -1,19 +1,23 @@
+import { Client } from "pg";
+import { createPopulateDb, db } from "./";
 import { variables } from "../config/variables";
-import { Database } from "./database";
-import { pool } from "./pool";
 import { scheduler } from "../utils/scheduler";
 
-const database = new Database(variables.TEST_DATABASE_URL);
+const { TEST_DATABASE_URL } = variables;
+
+const populateDb = createPopulateDb(
+  new Client({ connectionString: TEST_DATABASE_URL })
+);
 
 // Standard database setup and teardown. Do not clear between each test, as state is often required to persist between tests
 beforeAll(async () => {
-  await database.initializeConnection();
+  await populateDb.initializeConnection();
   await scheduler.start();
 });
 
 beforeEach(async () => {
-  await database.clear();
-  await database.populate();
+  await populateDb.clear();
+  await populateDb.populate();
 });
 
 afterAll(async () => {
@@ -23,6 +27,6 @@ afterAll(async () => {
     timeout: 25000,
     wait: true,
   });
-  await database.stopConnection();
-  await pool.end();
+  await populateDb.stopConnection(); // stops client connections
+  await db.stopConnection(); // stops pool connection in app for integration tests
 });

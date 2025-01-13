@@ -1,10 +1,8 @@
 import asyncHandler from "express-async-handler";
 import { body } from "express-validator";
 
-import { SubscriptionQueries } from "../db/subscription_queries";
+import { subscriptionQueries } from "../db/subscription_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-
-const subscriptionQueries = new SubscriptionQueries();
 
 // @desc Create new subscription
 // @route POST /api/subscriptions

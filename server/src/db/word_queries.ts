@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
 
-import { Queries } from "./queries";
+import { createQueries } from "./queries";
 
 interface Phonetic {
   text?: string;
@@ -42,35 +42,34 @@ export interface Word {
   created_at: Date;
 }
 
-export class WordQueries extends Queries<Word> {
-  constructor() {
-    super(["*"], "words");
-  }
+export const wordQueries = (function () {
+  const queries = createQueries<Word>(["*"], "words");
+  const { columns, db, getById, table } = queries;
 
-  async create({ json }: { json: Json }): Promise<Word> {
-    const existingWord = await this.getByWord(json[0].word);
+  const create = async ({ json }: { json: Json }): Promise<Word> => {
+    const existingWord = await getByWord(json[0].word);
 
     if (existingWord) {
       return existingWord;
     }
 
-    const { rows }: QueryResult<Word> = await this.pool.query(
+    const { rows }: QueryResult<Word> = await db.query(
       `
-    INSERT INTO ${this.table}(details)
+    INSERT INTO ${table}(details)
     VALUES ($1)
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [JSON.stringify(json)]
     );
 
     return rows[0];
-  }
+  };
 
-  async getByWord(word: string): Promise<Word | undefined> {
-    const { rows }: QueryResult<Word> = await this.pool.query(
+  const getByWord = async (word: string): Promise<Word | undefined> => {
+    const { rows }: QueryResult<Word> = await db.query(
       `
-    SELECT ${this.columns}
-    FROM ${this.table}
+    SELECT ${columns}
+    FROM ${table}
     WHERE
       EXISTS (
         SELECT 1
@@ -82,5 +81,7 @@ export class WordQueries extends Queries<Word> {
     );
 
     return rows[0];
-  }
-}
+  };
+
+  return { create, getById: getById.bind(queries), getByWord };
+})();

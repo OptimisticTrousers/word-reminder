@@ -1,4 +1,4 @@
-import { UserQueries } from "../db/user_queries";
+import { userQueries } from "../db/user_queries";
 import { emailExists } from "../utils/email_exists";
 
 describe("emailExists", () => {
@@ -17,7 +17,7 @@ describe("emailExists", () => {
 
   it("throws an error when the email is already in use", async () => {
     const mockGetByEmail = jest
-      .spyOn(UserQueries.prototype, "getByEmail")
+      .spyOn(userQueries, "getByEmail")
       .mockResolvedValue(user)
       .mockName("getByName");
     await expect(emailExists(user.email)).rejects.toThrow(
@@ -29,7 +29,7 @@ describe("emailExists", () => {
 
   it("returns true when the email is not already in use", async () => {
     const mockGetByEmail = jest
-      .spyOn(UserQueries.prototype, "getByEmail")
+      .spyOn(userQueries, "getByEmail")
       .mockResolvedValue(undefined)
       .mockName("getByName");
     const exists = await emailExists(user.email);

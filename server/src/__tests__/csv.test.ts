@@ -1,11 +1,9 @@
 import fs from "fs";
 import path from "path";
 
-import { Csv } from "../utils/csv";
+import { csv } from "../utils/csv";
 
 describe("csv", () => {
-  const csv = new Csv();
-
   describe("read", () => {
     it("returns the list of values when the words are in a column", async () => {
       const fileBuffer = fs.readFileSync(
@@ -77,7 +75,6 @@ describe("csv", () => {
     });
 
     it("returns the records, error, and count when the 'error' event is triggered", async () => {
-      const csv = new Csv();
       // Simulate malformed CSV data with non-closed double quote
       const malformedCsvBuffer = Buffer.from(
         '"name","age"\n"John",25\n"InvalidRecord'

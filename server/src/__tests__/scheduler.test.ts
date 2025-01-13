@@ -1,9 +1,8 @@
 import PgBoss from "pg-boss";
 
 import { variables } from "../config/variables";
-import { Scheduler } from "../utils/scheduler";
 
-jest.mock("pg-boss");
+const { DATABASE_URL, NODE_ENV, TEST_DATABASE_URL } = variables;
 
 const mockStart = jest.fn();
 const mockCreateQueue = jest.fn();
@@ -12,18 +11,21 @@ const mockWork = jest.fn();
 const mockOn = jest.fn();
 const mockStop = jest.fn();
 
-const PgBossMock = PgBoss as unknown as jest.Mock;
-PgBossMock.mockImplementation(() => ({
-  start: mockStart,
-  createQueue: mockCreateQueue,
-  sendAfter: mockSendAfter,
-  work: mockWork,
-  on: mockOn,
-  stop: mockStop,
-}));
+jest.mock("pg-boss", () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      start: mockStart,
+      createQueue: mockCreateQueue,
+      sendAfter: mockSendAfter,
+      work: mockWork,
+      on: mockOn,
+      stop: mockStop,
+    };
+  });
+});
 
 describe("Scheduler", () => {
-  const originalEnv = variables.NODE_ENV;
+  const originalEnv = NODE_ENV;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -35,41 +37,33 @@ describe("Scheduler", () => {
   });
 
   describe("constructor", () => {
-    it("uses TEST_DATABASE_URL when NODE_ENV is 'test'", () => {
-      variables.NODE_ENV = "test";
-      new Scheduler();
-
-      expect(PgBossMock).toHaveBeenCalledTimes(1);
-      expect(PgBossMock).toHaveBeenCalledWith(variables.TEST_DATABASE_URL);
+    it("uses DATABASE_URL when NODE_ENV is not 'test'", async () => {
+      process.env.NODE_ENV = "production";
+      await jest.isolateModulesAsync(async () => {
+        await import("../utils/scheduler");
+      });
+      expect(PgBoss).toHaveBeenCalledTimes(1);
+      expect(PgBoss).toHaveBeenCalledWith(DATABASE_URL);
       expect(mockOn).toHaveBeenCalledTimes(1);
       expect(mockOn).toHaveBeenCalledWith("error", console.error);
     });
 
-    it("uses TEST_DATABASE_URL when NODE_ENV is not 'test'", () => {
-      variables.NODE_ENV = "production";
-      new Scheduler();
-
-      expect(PgBossMock).toHaveBeenCalledTimes(1);
-      expect(PgBossMock).toHaveBeenCalledWith(variables.DATABASE_URL);
+    it("uses TEST_DATABASE_URL when NODE_ENV is 'test'", async () => {
+      process.env.NODE_ENV = "test";
+      await jest.isolateModulesAsync(async () => {
+        await import("../utils/scheduler");
+      });
+      expect(PgBoss).toHaveBeenCalledTimes(1);
+      expect(PgBoss).toHaveBeenCalledWith(TEST_DATABASE_URL);
       expect(mockOn).toHaveBeenCalledTimes(1);
       expect(mockOn).toHaveBeenCalledWith("error", console.error);
-    });
-  });
-
-  describe("start", () => {
-    it("calls the function to start", async () => {
-      const boss = new Scheduler();
-      await boss.start();
-
-      expect(mockStart).toHaveBeenCalledTimes(1);
-      expect(mockStart).toHaveBeenCalledWith();
     });
   });
 
   describe("createQueue", () => {
     it("calls the functions to create a queue", async () => {
       const queueName = "queue";
-      const scheduler = new Scheduler();
+      const { scheduler } = await import("../utils/scheduler");
       await scheduler.createQueue(queueName);
 
       expect(mockCreateQueue).toHaveBeenCalledTimes(1);
@@ -79,9 +73,9 @@ describe("Scheduler", () => {
 
   describe("sendAfter", () => {
     it("calls the functions to add a job to a queue at a specific date", async () => {
-      const scheduler = new Scheduler();
       const date = new Date();
       const queueName = "test-queue";
+      const { scheduler } = await import("../utils/scheduler");
       await scheduler.createQueue("test-queue");
       await scheduler.sendAfter(queueName, { arg1: "value" }, date);
 
@@ -95,21 +89,17 @@ describe("Scheduler", () => {
     });
   });
 
-  describe("work", () => {
-    it("calls the function to run jobs in a queue", async () => {
-      const scheduler = new Scheduler();
-      const handler = jest.fn();
-
-      await scheduler.work("test-queue", handler);
-
-      expect(mockWork).toHaveBeenCalledTimes(1);
-      expect(mockWork).toHaveBeenCalledWith("test-queue", handler);
+  describe("start", () => {
+    it("calls the function to start", async () => {
+      const { scheduler } = await import("../utils/scheduler");
+      await scheduler.start();
+      expect(mockStart).toHaveBeenCalledTimes(1);
+      expect(mockStart).toHaveBeenCalledWith();
     });
   });
 
   describe("stop", () => {
     it("calls the function to run jobs in a queue", async () => {
-      const scheduler = new Scheduler();
       const options = {
         close: true,
         graceful: false,
@@ -117,10 +107,23 @@ describe("Scheduler", () => {
         wait: false,
       };
 
+      const { scheduler } = await import("../utils/scheduler");
       await scheduler.stop(options);
 
       expect(mockStop).toHaveBeenCalledTimes(1);
       expect(mockStop).toHaveBeenCalledWith(options);
+    });
+  });
+
+  describe("work", () => {
+    it("calls the function to run jobs in a queue", async () => {
+      const handler = jest.fn();
+
+      const { scheduler } = await import("../utils/scheduler");
+      await scheduler.work("test-queue", handler);
+
+      expect(mockWork).toHaveBeenCalledTimes(1);
+      expect(mockWork).toHaveBeenCalledWith("test-queue", handler);
     });
   });
 });

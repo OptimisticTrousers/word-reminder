@@ -1,15 +1,44 @@
-import { Client } from "pg";
+import connectPgSimple, { PGStore } from "connect-pg-simple";
+import session from "express-session";
+import { Client, Pool, QueryResult } from "pg";
 
-export class Database {
-  client: Client;
+import { variables } from "../config/variables";
 
-  constructor(connectionString: string) {
-    this.client = new Client({
-      connectionString,
-    });
-  }
+const { DATABASE_URL, TEST_DATABASE_URL, NODE_ENV } = variables;
 
-  async clear() {
+export interface Db {
+  stopConnection: () => Promise<void>;
+  query: (text: string, values?: unknown[]) => Promise<QueryResult<any>>;
+}
+
+const pool = new Pool({
+  connectionString: NODE_ENV === "test" ? TEST_DATABASE_URL : DATABASE_URL,
+});
+
+const pgSession: typeof PGStore = connectPgSimple(session);
+
+export const sessionStore: PGStore = new pgSession({
+  pool,
+  tableName: "session",
+});
+
+export const db: Db = (function (pool: Pool) {
+  const query = async (
+    text: string,
+    values?: unknown[]
+  ): Promise<QueryResult<any>> => {
+    return pool.query(text, values);
+  };
+
+  const stopConnection = async (): Promise<void> => {
+    await pool.end();
+  };
+
+  return { query, stopConnection };
+})(pool);
+
+export const createPopulateDb = function (client: Client) {
+  const clear = async () => {
     const SQL = `
       DROP SCHEMA public CASCADE;
       CREATE SCHEMA public;
@@ -18,16 +47,14 @@ export class Database {
       COMMENT ON SCHEMA public IS 'standard public schema';
     `;
 
-    // console.log("Resetting database...");
-    await this.client.query(SQL);
-    // console.log("Successfully reset database.");
-  }
+    await client.query(SQL);
+  };
 
-  async initializeConnection() {
-    await this.client.connect();
-  }
+  const initializeConnection = async () => {
+    await client.connect();
+  };
 
-  async populate() {
+  const populate = async () => {
     const SQL = `
       CREATE TABLE "session" (
         "sid" varchar NOT NULL COLLATE "default",
@@ -117,12 +144,12 @@ export class Database {
       EXECUTE PROCEDURE trigger_set_timestamp();
     `;
 
-    // console.log("Seeding...");
-    await this.client.query(SQL);
-  }
+    await client.query(SQL);
+  };
 
-  async stopConnection() {
-    // console.log("Stopping database connection.");
-    await this.client.end();
-  }
-}
+  const stopConnection = async () => {
+    await client.end();
+  };
+
+  return { clear, initializeConnection, populate, stopConnection };
+};

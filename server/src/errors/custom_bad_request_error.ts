@@ -4,7 +4,7 @@ export class CustomBadRequestError extends Error {
   constructor(message: string) {
     super(message);
     this.status = 400;
-    // So the error is neat when stringified. NotFoundError: message instead of Error: message
+    // So the error is neat when stringified. BadRequestError: message instead of Error: message
     this.name = "BadRequestError";
   }
 }

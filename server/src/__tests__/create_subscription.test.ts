@@ -2,7 +2,7 @@ import express from "express";
 import request from "supertest";
 
 import { create_subscription } from "../controllers/subscription_controller";
-import { SubscriptionQueries } from "../db/subscription_queries";
+import { subscriptionQueries } from "../db/subscription_queries";
 
 describe("create_subscription", () => {
   const app = express();
@@ -19,7 +19,7 @@ describe("create_subscription", () => {
   };
 
   const createSubscriptionMock = jest
-    .spyOn(SubscriptionQueries.prototype, "create")
+    .spyOn(subscriptionQueries, "create")
     .mockImplementation(jest.fn())
     .mockName("create");
 

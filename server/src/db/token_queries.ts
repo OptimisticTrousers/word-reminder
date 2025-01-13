@@ -1,60 +1,59 @@
 import crypto from "crypto";
 import { QueryResult } from "pg";
 
-import { Queries } from "./queries";
+import { createQueries } from "./queries";
 
 export interface Token {
   token: string;
   expires_at: Date;
 }
 
-export class TokenQueries extends Queries<Token> {
-  constructor() {
-    super(["*"], "tokens");
-  }
+export const tokenQueries = (function () {
+  const { columns, db, table } = createQueries(["*"], "tokens");
 
-  async create() {
+  const create = async () => {
     const token = crypto.randomBytes(16).toString("hex");
-    const { rows }: QueryResult<Token> = await this.pool.query(
+    const { rows }: QueryResult<Token> = await db.query(
       `
-    INSERT INTO ${this.table}(token)
+    INSERT INTO ${table}(token)
     VALUES ($1)
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [token]
     );
 
     return rows[0];
-  }
+  };
 
-  async deleteAll(tokens: string[]): Promise<Token[]> {
-    const { rows }: QueryResult<Token> = await this.pool.query(
+  const deleteAll = async (tokens: string[]): Promise<Token[]> => {
+    const { rows }: QueryResult<Token> = await db.query(
       `
     DELETE
-    FROM ${this.table}
+    FROM ${table}
     WHERE token = ANY($1)
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [tokens]
     );
 
     return rows;
-  }
+  };
 
-  async verify(token: string) {
-    const { rows }: QueryResult<{ token_exists: boolean }> =
-      await this.pool.query(
-        `
+  const verify = async (token: string) => {
+    const { rows }: QueryResult<{ token_exists: boolean }> = await db.query(
+      `
     SELECT EXISTS (
       SELECT 1
       FROM tokens
       WHERE token = $1
     ) AS token_exists;
       `,
-        [token]
-      );
+      [token]
+    );
 
     const tokenExists = rows[0].token_exists;
     return tokenExists;
-  }
-}
+  };
+
+  return { create, deleteAll, verify };
+})();

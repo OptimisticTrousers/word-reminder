@@ -1,12 +1,9 @@
-import { UserQueries } from "../db/user_queries";
-import { WordReminderQueries } from "../db/word_reminder_queries";
+import { userQueries } from "../db/user_queries";
+import { wordReminderQueries } from "../db/word_reminder_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("wordReminderQueries", () => {
-  const userQueries = new UserQueries();
-  const wordReminderQueries = new WordReminderQueries();
-
   const sampleUser1 = {
     id: "1",
     email: "email@protonmail.com",

@@ -1,10 +1,8 @@
-import { TokenQueries } from "../db/token_queries";
+import { tokenQueries } from "../db/token_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("tokenQueries", () => {
-  const tokenQueries = new TokenQueries();
-
   describe("create", () => {
     it("creates a token and saves it in the database", async () => {
       const token = await tokenQueries.create();

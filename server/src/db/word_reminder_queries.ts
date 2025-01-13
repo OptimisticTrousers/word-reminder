@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
 
-import { Queries } from "./queries";
+import { createQueries } from "./queries";
 
 export interface WordReminder extends WordReminderParams {
   id: string;
@@ -20,17 +20,18 @@ interface WordReminderParams {
   // Defines how often a reminder notification is sent to the user which will include all of the words in this word reminder.
 }
 
-export class WordReminderQueries extends Queries<WordReminder> {
-  constructor() {
-    super(["*"], "word_reminders");
-  }
+export const wordReminderQueries = (function () {
+  const queries = createQueries<WordReminder>(["*"], "word_reminders");
+  const { columns, db, getById, table } = queries;
 
-  async create(wordReminder: WordReminderParams): Promise<WordReminder> {
-    const { rows }: QueryResult<WordReminder> = await this.pool.query(
+  const create = async (
+    wordReminder: WordReminderParams
+  ): Promise<WordReminder> => {
+    const { rows }: QueryResult<WordReminder> = await db.query(
       `
-     INSERT INTO ${this.table}(user_id, reminder, is_active, has_reminder_onload, finish) 
+     INSERT INTO ${table}(user_id, reminder, is_active, has_reminder_onload, finish) 
      VALUES ($1, $2, $3, $4, $5)
-     RETURNING ${this.columns}
+     RETURNING ${columns}
       `,
       [
         wordReminder.user_id,
@@ -42,36 +43,36 @@ export class WordReminderQueries extends Queries<WordReminder> {
     );
 
     return rows[0];
-  }
+  };
 
-  async deleteAllByUserId(userId: string): Promise<WordReminder[]> {
-    const { rows }: QueryResult<WordReminder> = await this.pool.query(
+  const deleteAllByUserId = async (userId: string): Promise<WordReminder[]> => {
+    const { rows }: QueryResult<WordReminder> = await db.query(
       `
-    DELETE FROM ${this.table}
+    DELETE FROM ${table}
     WHERE user_id = $1
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [userId]
     );
 
     return rows;
-  }
+  };
 
-  async deleteById(id: string): Promise<WordReminder> {
-    const { rows } = await this.pool.query(
+  const deleteById = async (id: string): Promise<WordReminder> => {
+    const { rows } = await db.query(
       `
     DELETE 
-    FROM ${this.table}
+    FROM ${table}
     WHERE id = $1
-    RETURNING ${this.columns};
+    RETURNING ${columns};
       `,
       [id]
     );
 
     return rows[0];
-  }
+  };
 
-  async update({
+  const update = async ({
     id,
     finish,
     reminder,
@@ -83,17 +84,25 @@ export class WordReminderQueries extends Queries<WordReminder> {
     reminder: string;
     is_active: boolean;
     has_reminder_onload: boolean;
-  }): Promise<WordReminder> {
-    const { rows }: QueryResult<WordReminder> = await this.pool.query(
+  }): Promise<WordReminder> => {
+    const { rows }: QueryResult<WordReminder> = await db.query(
       `
-    UPDATE ${this.table}
+    UPDATE ${table}
     SET finish = $1, reminder = $2, is_active = $3, has_reminder_onload = $4
     WHERE id = $5
-    RETURNING ${this.columns}
+    RETURNING ${columns}
       `,
       [finish, reminder, is_active, has_reminder_onload, id]
     );
 
     return rows[0];
-  }
-}
+  };
+
+  return {
+    create,
+    deleteAllByUserId,
+    deleteById,
+    getById: getById.bind(queries),
+    update,
+  };
+})();

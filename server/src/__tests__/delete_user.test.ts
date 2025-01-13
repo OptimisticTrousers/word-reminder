@@ -3,8 +3,8 @@ import asyncHandler from "express-async-handler";
 import request from "supertest";
 
 import { delete_user } from "../controllers/user_controller";
-import { UserQueries } from "../db/user_queries";
-import { UserWordQueries } from "../db/user_word_queries";
+import { userQueries } from "../db/user_queries";
+import { userWordQueries } from "../db/user_word_queries";
 
 describe("delete_user", () => {
   const message = "Success!";
@@ -20,11 +20,11 @@ describe("delete_user", () => {
 
   it("calls the methods to delete the user and the user's user words", async () => {
     const deleteUserByIdMock = jest
-      .spyOn(UserQueries.prototype, "deleteById")
+      .spyOn(userQueries, "deleteById")
       .mockImplementation(jest.fn())
       .mockName("deleteById");
     const deleteAllUserWordsMock = jest
-      .spyOn(UserWordQueries.prototype, "deleteAllByUserId")
+      .spyOn(userWordQueries, "deleteAllByUserId")
       .mockImplementation(jest.fn())
       .mockName("deleteAll");
     const userId = "1";

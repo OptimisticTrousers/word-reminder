@@ -2,15 +2,13 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import request from "supertest";
 
-import { WordQueries } from "../db/word_queries";
+import { wordQueries } from "../db/word_queries";
 import { validateWordId } from "../middleware/validate_word_id";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("validateWordId", () => {
   const message = "message";
-
-  const wordQueries = new WordQueries();
 
   const app = express();
   app.use(express.json());

@@ -1,18 +1,24 @@
-// Importing file that populates mock data for the database
+import { Client } from "pg";
+
+import { createPopulateDb } from "./";
 import { variables } from "../config/variables";
-import { Database } from "./database";
 
 const { DATABASE_URL } = variables;
 
 // Deleting all of the documents in each collection in the database for the real Mongo database
 (async () => {
   try {
-    const database = new Database(DATABASE_URL);
+    const database = createPopulateDb(
+      new Client({ connectionString: DATABASE_URL })
+    );
     await database.initializeConnection();
-    await database.clear();
     console.log("Resetting database...");
+    await database.clear();
+    console.log("Successfully reset database.");
+    console.log("Seeding...");
     await database.populate();
     console.log("Successfully populated database.");
+    console.log("Stopping database connection.");
     await database.stopConnection();
   } catch (err) {
     const SPLIT_DATABASE_URL: string[] = DATABASE_URL.split("/");

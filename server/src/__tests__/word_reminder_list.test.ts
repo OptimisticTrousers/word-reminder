@@ -2,7 +2,7 @@ import express from "express";
 import request from "supertest";
 
 import { word_reminder_list } from "../controllers/word_reminder_controller";
-import { UserWordsWordRemindersQueries } from "../db/user_words_word_reminders";
+import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 
 describe("word_reminder_list", () => {
   const sampleUser1 = {
@@ -143,7 +143,7 @@ describe("word_reminder_list", () => {
   describe("no query", () => {
     it("calls the functions to get the user's words with none of the query options", async () => {
       const getByUserIdMock = jest
-        .spyOn(UserWordsWordRemindersQueries.prototype, "getByUserId")
+        .spyOn(userWordsWordRemindersQueries, "getByUserId")
         .mockImplementation(async () => {
           return {
             wordReminders: [{ ...wordReminder1, words: userWords }],
@@ -191,7 +191,7 @@ describe("word_reminder_list", () => {
   describe("page number and page limit query", () => {
     it("calls the functions to get the user's worth with the page number and page limit query", async () => {
       const getByUserIdMock = jest
-        .spyOn(UserWordsWordRemindersQueries.prototype, "getByUserId")
+        .spyOn(userWordsWordRemindersQueries, "getByUserId")
         .mockImplementation(async () => {
           return {
             wordReminders: [

@@ -2,16 +2,12 @@ import asyncHandler from "express-async-handler";
 
 import {
   Result,
-  UserWordsWordRemindersQueries,
-} from "../db/user_words_word_reminders";
-import { UserWord, UserWordQueries } from "../db/user_word_queries";
-import { WordReminderQueries } from "../db/word_reminder_queries";
+  userWordsWordRemindersQueries,
+} from "../db/user_words_word_reminders_queries";
+import { UserWord, userWordQueries } from "../db/user_word_queries";
+import { wordReminderQueries } from "../db/word_reminder_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { addMinutesToDate } from "../utils/date";
-
-const userWordsWordRemindersQueries = new UserWordsWordRemindersQueries();
-const userWordQueries = new UserWordQueries();
-const wordReminderQueries = new WordReminderQueries();
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders

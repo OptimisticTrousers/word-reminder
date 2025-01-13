@@ -2,15 +2,13 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import request from "supertest";
 
-import { UserQueries } from "../db/user_queries";
+import { userQueries } from "../db/user_queries";
 import { validateUserId } from "../middleware/validate_user_id";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("validateUserId", () => {
   const message = "message";
-
-  const userQueries = new UserQueries();
 
   const user = {
     id: "1",

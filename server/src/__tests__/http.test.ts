@@ -1,4 +1,4 @@
-import { Http } from "../utils/http";
+import { http } from "../utils/http";
 
 describe("http", () => {
   const json = [
@@ -230,8 +230,6 @@ describe("http", () => {
         Promise.resolve({ json: () => Promise.resolve(json), status: 200 })
       ) as jest.Mock
     );
-
-  const http = new Http();
 
   beforeEach(() => {
     fetchMock.mockClear();

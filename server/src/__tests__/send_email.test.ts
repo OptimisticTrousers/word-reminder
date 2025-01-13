@@ -1,11 +1,17 @@
+import ejs from "ejs";
 import express from "express";
+import path from "path";
+import { readFile } from "node:fs/promises";
 import request from "supertest";
 import { Job } from "pg-boss";
 
+import { variables } from "../config/variables";
 import { send_email } from "../controllers/email_controller";
-import { TokenQueries } from "../db/token_queries";
-import { Email } from "../utils/email";
-import { Scheduler } from "../utils/scheduler";
+import { tokenQueries } from "../db/token_queries";
+import { email } from "../utils/email";
+import { scheduler } from "../utils/scheduler";
+
+const { SERVER_PORT, SERVER_URL } = variables;
 
 describe("send_email", () => {
   const app = express();
@@ -23,31 +29,31 @@ describe("send_email", () => {
   };
 
   const mockSend = jest
-    .spyOn(Email.prototype, "sendMail")
+    .spyOn(email, "sendMail")
     .mockResolvedValue(info)
     .mockName("sendMail");
 
   const mockCreate = jest
-    .spyOn(TokenQueries.prototype, "create")
+    .spyOn(tokenQueries, "create")
     .mockResolvedValue(token)
     .mockName("create");
 
   const mockSendAfter = jest
-    .spyOn(Scheduler.prototype, "sendAfter")
+    .spyOn(scheduler, "sendAfter")
     .mockImplementation(jest.fn())
     .mockName("create");
 
   let capturedCallback = async function (jobs: Job<unknown>[]) {};
 
   const mockWork = jest
-    .spyOn(Scheduler.prototype, "work")
+    .spyOn(scheduler, "work")
     .mockImplementation(async (queueName, callback) => {
       capturedCallback = callback; // Capture the callback
     })
     .mockName("work");
 
   const mockDeleteAll = jest
-    .spyOn(TokenQueries.prototype, "deleteAll")
+    .spyOn(tokenQueries, "deleteAll")
     .mockImplementation(jest.fn())
     .mockName("deleteAll");
 
@@ -187,6 +193,10 @@ describe("send_email", () => {
       };
       const userId = "1";
       const queueName = `queue-${userId}`;
+      const emailTemplate = await readFile(
+        path.join(__dirname, "..", "views", `${body.template}.ejs`),
+        "utf-8"
+      );
 
       const response = await request(app)
         .post(`/api/users/${userId}/emails`)
@@ -201,7 +211,9 @@ describe("send_email", () => {
       expect(mockCreate).toHaveBeenCalledWith();
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenCalledWith({
-        html: expect.any(String),
+        html: ejs.render(emailTemplate, {
+          url: `${SERVER_URL}:${SERVER_PORT}/api/users/${userId}/emails/${token.token}`,
+        }),
         subject: body.subject,
         to: body.email,
       });
@@ -225,6 +237,10 @@ describe("send_email", () => {
       };
       const userId = "1";
       const queueName = `queue-${userId}`;
+      const emailTemplate = await readFile(
+        path.join(__dirname, "..", "views", `${body.template}.ejs`),
+        "utf-8"
+      );
 
       const response = await request(app)
         .post(`/api/users/${userId}/emails`)
@@ -239,7 +255,9 @@ describe("send_email", () => {
       expect(mockCreate).toHaveBeenCalledWith();
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenCalledWith({
-        html: expect.any(String),
+        html: ejs.render(emailTemplate, {
+          url: `${SERVER_URL}:${SERVER_PORT}/api/users/${userId}/emails/${token.token}`,
+        }),
         subject: body.subject,
         to: body.email,
       });
@@ -263,6 +281,10 @@ describe("send_email", () => {
       };
       const userId = "1";
       const queueName = `queue-${userId}`;
+      const emailTemplate = await readFile(
+        path.join(__dirname, "..", "views", `${body.template}.ejs`),
+        "utf-8"
+      );
 
       const response = await request(app)
         .post(`/api/users/${userId}/emails`)
@@ -277,7 +299,9 @@ describe("send_email", () => {
       expect(mockCreate).toHaveBeenCalledWith();
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenCalledWith({
-        html: expect.any(String),
+        html: ejs.render(emailTemplate, {
+          url: `${SERVER_URL}:${SERVER_PORT}/api/users/${userId}/emails/${token.token}`,
+        }),
         subject: body.subject,
         to: body.email,
       });

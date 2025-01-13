@@ -4,13 +4,13 @@ type Params = {
 
 type RequestMethods = "GET" | "POST" | "PUT" | "DELETE";
 
-export class Http {
-  private async request(
+export const http = (function () {
+  const request = async (
     url: string,
     params: Params,
     method: RequestMethods,
     options: RequestInit
-  ): Promise<{ json: any; status: number }> {
+  ): Promise<{ json: any; status: number }> => {
     const queryString: string = Object.entries(params)
       .map((param) => {
         return `${param[0]}=${param[1]}`;
@@ -30,21 +30,39 @@ export class Http {
     const json: any = await response.json();
 
     return { json, status: response.status };
-  }
+  };
 
-  async get(url: string, params: Params = {}, options: RequestInit = {}) {
-    return this.request(url, params, "GET", options);
-  }
+  const get = async (
+    url: string,
+    params: Params = {},
+    options: RequestInit = {}
+  ) => {
+    return request(url, params, "GET", options);
+  };
 
-  async post(url: string, params: Params = {}, options: RequestInit = {}) {
-    return this.request(url, params, "POST", options);
-  }
+  const post = async (
+    url: string,
+    params: Params = {},
+    options: RequestInit = {}
+  ) => {
+    return request(url, params, "POST", options);
+  };
 
-  async put(url: string, params: Params = {}, options: RequestInit = {}) {
-    return this.request(url, params, "PUT", options);
-  }
+  const put = async (
+    url: string,
+    params: Params = {},
+    options: RequestInit = {}
+  ) => {
+    return request(url, params, "PUT", options);
+  };
 
-  async remove(url: string, params: Params = {}, options: RequestInit = {}) {
-    return this.request(url, params, "DELETE", options);
-  }
-}
+  const remove = async (
+    url: string,
+    params: Params = {},
+    options: RequestInit = {}
+  ) => {
+    return request(url, params, "DELETE", options);
+  };
+
+  return { get, post, put, remove };
+})();

@@ -1,14 +1,10 @@
-import { UserQueries } from "../db/user_queries";
-import { Order, UserWord, UserWordQueries } from "../db/user_word_queries";
-import { Word, WordQueries } from "../db/word_queries";
+import { userQueries } from "../db/user_queries";
+import { Order, UserWord, userWordQueries } from "../db/user_word_queries";
+import { Word, wordQueries } from "../db/word_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("userWordQueries", () => {
-  const userQueries = new UserQueries();
-  const userWordQueries = new UserWordQueries();
-  const wordQueries = new WordQueries();
-
   const sampleUser1 = {
     id: "1",
     email: "email@protonmail.com",

@@ -4,7 +4,7 @@ import request from "supertest";
 
 import { variables } from "../config/variables";
 import { update_user } from "../controllers/user_controller";
-import { UserQueries } from "../db/user_queries";
+import { userQueries } from "../db/user_queries";
 import { emailExists } from "../utils/email_exists";
 
 const { SALT } = variables;
@@ -33,7 +33,7 @@ describe("update_user", () => {
   it("returns 400 status code when the oldPassword is incorrect", async () => {
     const hashSpy = jest.spyOn(bcrypt, "hash");
     const mockUserQueriesGet = jest
-      .spyOn(UserQueries.prototype, "get")
+      .spyOn(userQueries, "get")
       .mockResolvedValue(undefined)
       .mockName("get");
 
@@ -67,7 +67,7 @@ describe("update_user", () => {
   it("calls the functions to update password", async () => {
     const hashSpy = jest.spyOn(bcrypt, "hash");
     const mockUserQueriesGet = jest
-      .spyOn(UserQueries.prototype, "get")
+      .spyOn(userQueries, "get")
       .mockResolvedValue(user)
       .mockName("get");
 
@@ -79,7 +79,7 @@ describe("update_user", () => {
     };
 
     const mockUpdateById = jest
-      .spyOn(UserQueries.prototype, "updateById")
+      .spyOn(userQueries, "updateById")
       .mockResolvedValue(user)
       .mockName("updateById");
 
@@ -115,7 +115,7 @@ describe("update_user", () => {
   it("calls the functions to update email", async () => {
     const hashSpy = jest.spyOn(bcrypt, "hash");
     const mockUserQueriesGet = jest
-      .spyOn(UserQueries.prototype, "get")
+      .spyOn(userQueries, "get")
       .mockResolvedValue(user)
       .mockName("get");
     const body = {
@@ -123,7 +123,7 @@ describe("update_user", () => {
       oldPassword: "password1",
     };
     const mockUpdateById = jest
-      .spyOn(UserQueries.prototype, "updateById")
+      .spyOn(userQueries, "updateById")
       .mockResolvedValue({ ...user, email: body.email })
       .mockName("updateById");
 

@@ -2,9 +2,9 @@ import express from "express";
 import request from "supertest";
 
 import { create_word_reminder } from "../controllers/word_reminder_controller";
-import { UserWordsWordRemindersQueries } from "../db/user_words_word_reminders";
-import { UserWordQueries } from "../db/user_word_queries";
-import { WordReminderQueries } from "../db/word_reminder_queries";
+import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
+import { userWordQueries } from "../db/user_word_queries";
+import { wordReminderQueries } from "../db/word_reminder_queries";
 
 describe("create_word_reminder", () => {
   const sampleUser1 = {
@@ -142,7 +142,7 @@ describe("create_word_reminder", () => {
   };
 
   const getUserWordsMock = jest
-    .spyOn(UserWordQueries.prototype, "getUserWords")
+    .spyOn(userWordQueries, "getUserWords")
     .mockImplementation(async () => {
       return [
         { ...userWord1, ...clemencyJson },
@@ -152,13 +152,13 @@ describe("create_word_reminder", () => {
     });
 
   const wordReminderCreateMock = jest
-    .spyOn(WordReminderQueries.prototype, "create")
+    .spyOn(wordReminderQueries, "create")
     .mockImplementation(async () => {
       return wordReminder1;
     });
 
   const userWordsWordRemindersMock = jest
-    .spyOn(UserWordsWordRemindersQueries.prototype, "create")
+    .spyOn(userWordsWordRemindersQueries, "create")
     .mockImplementation(async () => {
       return userWordsWordReminders1;
     });

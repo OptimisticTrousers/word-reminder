@@ -1,7 +1,7 @@
 import { QueryResult } from "pg";
 
-import { Queries } from "./queries";
 import { WordReminder } from "./word_reminder_queries";
+import { createQueries } from "./queries";
 
 interface Page {
   page: number;
@@ -20,60 +20,62 @@ export interface Result {
   next?: Page;
 }
 
-export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminders> {
-  constructor() {
-    super(["*"], "user_words_word_reminders");
-  }
+export const userWordsWordRemindersQueries = (function () {
+  const { columns, db, table } = createQueries(
+    ["*"],
+    "user_words_word_reminders"
+  );
 
-  async create({
+  const create = async ({
     user_word_id,
     word_reminder_id,
   }: {
     user_word_id: string;
     word_reminder_id: string;
-  }): Promise<UserWordsWordReminders> {
-    const existingUserWordsWordReminders: UserWordsWordReminders =
-      await this.get({
-        user_word_id,
-        word_reminder_id,
-      });
+  }): Promise<UserWordsWordReminders> => {
+    const existingUserWordsWordReminders: UserWordsWordReminders = await get({
+      user_word_id,
+      word_reminder_id,
+    });
 
     if (existingUserWordsWordReminders) {
       return existingUserWordsWordReminders;
     }
 
-    const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
+    const { rows }: QueryResult<UserWordsWordReminders> = await db.query(
       `
-    INSERT INTO ${this.table}(user_word_id, word_reminder_id)
+    INSERT INTO ${table}(user_word_id, word_reminder_id)
     VALUES ($1, $2)
-    RETURNING ${this.columns}
+    RETURNING ${columns}
       `,
       [user_word_id, word_reminder_id]
     );
 
     return rows[0];
-  }
+  };
 
-  async deleteAllByUserId(user_id: string): Promise<UserWordsWordReminders[]> {
-    const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
+  const deleteAllByUserId = async (
+    user_id: string
+  ): Promise<UserWordsWordReminders[]> => {
+    const { rows }: QueryResult<UserWordsWordReminders> = await db.query(
       `
-    DELETE FROM ${this.table}
+    DELETE FROM ${table}
     USING user_words
-    WHERE user_words.id = ${this.table}.user_word_id AND user_words.user_id = $1
-    RETURNING ${this.table}.id, user_word_id, word_reminder_id;
+    WHERE user_words.id = ${table}.user_word_id AND user_words.user_id = $1
+    RETURNING ${table}.id, user_word_id, word_reminder_id;
       `,
       [user_id]
     );
 
     return rows;
-  }
+  };
 
-  async deleteAllByWordReminderId(
+  const deleteAllByWordReminderId = async (
     word_reminder_id: string
-  ): Promise<UserWordsWordReminders[]> {
-    const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
+  ): Promise<UserWordsWordReminders[]> => {
+    const { rows }: QueryResult<UserWordsWordReminders> = await db.query(
       `
-    DELETE FROM ${this.table}
+    DELETE FROM ${table}
     USING word_reminders
     WHERE word_reminder_id = word_reminders.id AND word_reminder_id = $1
     RETURNING user_words_word_reminders.id, user_word_id, word_reminder_id;
@@ -82,16 +84,16 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     );
 
     return rows;
-  }
+  };
 
-  private async get({
+  const get = async ({
     user_word_id,
     word_reminder_id,
   }: {
     user_word_id: string;
     word_reminder_id: string;
-  }): Promise<UserWordsWordReminders> {
-    const { rows }: QueryResult<UserWordsWordReminders> = await this.pool.query(
+  }): Promise<UserWordsWordReminders> => {
+    const { rows }: QueryResult<UserWordsWordReminders> = await db.query(
       `
     SELECT * FROM user_words_word_reminders
     WHERE user_word_id = $1 AND word_reminder_id = $2
@@ -100,9 +102,9 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     );
 
     return rows[0];
-  }
+  };
 
-  async getByUserId(
+  const getByUserId = async (
     user_id: string,
     options: {
       page?: number;
@@ -110,7 +112,7 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
       // direction refers to whether the column should be sorted in ascending (1) or descending (-1) order
       sort?: { table: string; direction: number; column: string };
     } = {}
-  ): Promise<Result> {
+  ): Promise<Result> => {
     const page: number = options.page || 1;
     const limit: number = options.limit || 8;
     const startIndex = (page - 1) * limit;
@@ -128,13 +130,13 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
               'details', words.details
             )
            ) AS words
-    FROM ${this.table}
+    FROM ${table}
     JOIN user_words 
-    ON user_words.id = ${this.table}.user_word_id
+    ON user_words.id = ${table}.user_word_id
     JOIN words
     ON words.id = user_words.word_id
     JOIN word_reminders
-    ON word_reminders.id = ${this.table}.word_reminder_id
+    ON word_reminders.id = ${table}.word_reminder_id
       `,
       `
     WHERE word_reminders.user_id = $1
@@ -156,7 +158,7 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     queryParts.push(`LIMIT $2 OFFSET $3;`);
 
     const query: string = queryParts.join(" ");
-    const { rows }: QueryResult<WordReminder> = await this.pool.query(
+    const { rows }: QueryResult<WordReminder> = await db.query(
       query,
       queryParams
     );
@@ -167,7 +169,7 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
       WHERE user_id = $1;
     `;
     const { rows: totalRowsResult }: QueryResult<{ total: number }> =
-      await this.pool.query(totalQuery, [user_id]);
+      await db.query(totalQuery, [user_id]);
     // calculate the length of the rows before applying a limit on it to see how many rows match the query
     const totalRows = totalRowsResult[0].total;
 
@@ -189,5 +191,7 @@ export class UserWordsWordRemindersQueries extends Queries<UserWordsWordReminder
     }
 
     return result;
-  }
-}
+  };
+
+  return { create, deleteAllByUserId, deleteAllByWordReminderId, getByUserId };
+})();

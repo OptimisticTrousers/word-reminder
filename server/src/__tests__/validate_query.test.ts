@@ -1,15 +1,13 @@
-import asyncHandler from "express-async-handler";
 import express from "express";
 import request from "supertest";
 
 import { word_reminder_list } from "../controllers/word_reminder_controller";
-import { UserWordsWordRemindersQueries } from "../db/user_words_word_reminders";
+import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { validatePageQuery } from "../middleware/validate_page_query";
 import { validateSortQuery } from "../middleware/validate_sort_query";
 
 describe("validateQuery", () => {
-  const message = "Success!";
   const sampleUser1 = {
     id: "1",
     email: "email@protonmail.com",
@@ -156,7 +154,7 @@ describe("validateQuery", () => {
   ];
 
   const getByUserIdMock = jest
-    .spyOn(UserWordsWordRemindersQueries.prototype, "getByUserId")
+    .spyOn(userWordsWordRemindersQueries, "getByUserId")
     .mockImplementation(async () => {
       return {
         wordReminders,

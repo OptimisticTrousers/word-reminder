@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 
-import { User, UserQueries } from "../db/user_queries";
+import { User, userQueries } from "../db/user_queries";
 
 export const validateUserId = asyncHandler(
   async (req, res, next): Promise<void> => {
@@ -17,7 +17,6 @@ export const validateUserId = asyncHandler(
       return;
     }
 
-    const userQueries: UserQueries = new UserQueries();
     const user: User | undefined = await userQueries.getById(userId);
     if (!user) {
       res.status(404).json({ message: "User not found." });

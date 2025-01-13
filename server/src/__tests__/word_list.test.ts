@@ -2,7 +2,7 @@ import express from "express";
 import request from "supertest";
 
 import { word_list } from "../controllers/word_controller";
-import { UserWordQueries } from "../db/user_word_queries";
+import { userWordQueries } from "../db/user_word_queries";
 
 describe("word_list", () => {
   const userId = "1";
@@ -23,7 +23,7 @@ describe("word_list", () => {
   };
 
   const getUserWordsByUserIdMock = jest
-    .spyOn(UserWordQueries.prototype, "getByUserId")
+    .spyOn(userWordQueries, "getByUserId")
     .mockImplementation(async () => {
       return {
         userWords: [userWord],

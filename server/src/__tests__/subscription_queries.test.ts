@@ -1,10 +1,8 @@
-import { SubscriptionQueries } from "../db/subscription_queries";
+import { subscriptionQueries } from "../db/subscription_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
 describe("subscriptionQueries", () => {
-  const subscriptionQueries = new SubscriptionQueries();
-
   const subscriptionId1 = 1;
 
   const subscription1 = {
@@ -40,7 +38,7 @@ describe("subscriptionQueries", () => {
     });
 
     it("no error is returned when the subscription does not exist", async () => {
-      await subscriptionQueries.deleteById(subscriptionId1);
+      await subscriptionQueries.deleteById(String(subscriptionId1));
 
       const subscriptions = await subscriptionQueries.get();
       expect(subscriptions).toEqual([]);

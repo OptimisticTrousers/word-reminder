@@ -3,14 +3,11 @@ import asyncHandler from "express-async-handler";
 import { body } from "express-validator";
 
 import { variables } from "../config/variables";
-import { EMAIL_MAX, PASSWORD_MAX, User, UserQueries } from "../db/user_queries";
-import { UserWordQueries } from "../db/user_word_queries";
+import { EMAIL_MAX, PASSWORD_MAX, User, userQueries } from "../db/user_queries";
+import { userWordQueries } from "../db/user_word_queries";
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { emailExists } from "../utils/email_exists";
-
-const userQueries = new UserQueries();
-const userWordQueries = new UserWordQueries();
 
 const { SALT } = variables;
 
