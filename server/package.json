@@ -7,10 +7,11 @@
     "node": "22.11.0"
   },
   "scripts": {
-    "dev": "NODE_ENV=development && nodemon src/server.ts",
-    "test": "NODE_ENV=test && jest --watch --runInBand",
-    "coverage": "NODE_ENV=test && jest --runInBand --coverage",
-    "seed": "ts-node src/db/populatedb"
+    "coverage": "jest --runInBand --coverage",
+    "dev": "nodemon src/server.ts",
+    "seed": "ts-node src/db/populatedb",
+    "start": "node src/app.ts",
+    "test": "jest --watch --runInBand"
   },
   "keywords": [],
   "author": "Tony Isern",
