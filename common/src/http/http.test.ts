@@ -510,16 +510,15 @@ describe("http", () => {
   describe("no options and params", () => {
     it("calls the get method with no options and params", async () => {
       const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
-      const params = new URLSearchParams({ partOfSpeech: "noun" });
 
       const response = await http.get({
         url,
-        params,
+        params: { partOfSpeech: "noun" },
       });
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith(
-        new URL(`${url}?${params.toString()}`),
+        new URL(`${url}?partOfSpeech=noun`),
         {
           method: "GET",
           headers: {
@@ -535,20 +534,22 @@ describe("http", () => {
 
     it("calls the post method with no options and params", async () => {
       const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
-      const params = new URLSearchParams({ partOfSpeech: "noun" });
 
       const response = await http.post({
         url,
-        params,
+        params: { partOfSpeech: "noun" },
       });
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(`${url}?${params}`), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      expect(fetchMock).toHaveBeenCalledWith(
+        new URL(`${url}?partOfSpeech=noun`),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       expect(response).toEqual({
         json,
         status: 200,
@@ -557,20 +558,22 @@ describe("http", () => {
 
     it("calls the put method with no options and params", async () => {
       const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
-      const params = new URLSearchParams({ partOfSpeech: "noun" });
 
       const response = await http.put({
         url,
-        params,
+        params: { partOfSpeech: "noun" },
       });
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(`${url}?${params}`), {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      expect(fetchMock).toHaveBeenCalledWith(
+        new URL(`${url}?partOfSpeech=noun`),
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       expect(response).toEqual({
         json,
         status: 200,
@@ -579,16 +582,15 @@ describe("http", () => {
 
     it("calls the remove method with no options and params", async () => {
       const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
-      const params = new URLSearchParams({ partOfSpeech: "noun" });
 
       const response = await http.remove({
         url,
-        params,
+        params: { partOfSpeech: "noun" },
       });
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith(
-        new URL(`${url}?${params.toString()}`),
+        new URL(`${url}?partOfSpeech=noun`),
         {
           method: "DELETE",
           headers: {
@@ -606,24 +608,26 @@ describe("http", () => {
   describe("options and params", () => {
     it("calls the get method", async () => {
       const url = "https://api.dictionaryapi.dev/api/v2/entries/en/word";
-      const params = new URLSearchParams({ partOfSpeech: "noun" });
 
       const response = await http.get({
         url,
-        params,
+        params: { partOfSpeech: "noun" },
         options: {
           credentials: "include",
         },
       });
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(`${url}?${params}`), {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      expect(fetchMock).toHaveBeenCalledWith(
+        new URL(`${url}?partOfSpeech=noun`),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
       expect(response).toEqual({
         json,
         status: 200,
@@ -639,7 +643,7 @@ describe("http", () => {
 
         const response = await http.post({
           url,
-          params: new URLSearchParams({ partOfSpeech: "noun" }),
+          params: { partOfSpeech: "noun" },
           options: {
             credentials: "include",
             body,
@@ -671,7 +675,7 @@ describe("http", () => {
 
         const response = await http.post({
           url,
-          params: new URLSearchParams({ partOfSpeech: "noun" }),
+          params: { partOfSpeech: "noun" },
           options: {
             credentials: "include",
             body: formData,
@@ -706,7 +710,7 @@ describe("http", () => {
 
         const response = await http.put({
           url,
-          params: new URLSearchParams({ partOfSpeech: "noun" }),
+          params: { partOfSpeech: "noun" },
           options: {
             credentials: "include",
             body,
@@ -738,7 +742,7 @@ describe("http", () => {
 
         const response = await http.put({
           url,
-          params: new URLSearchParams({ partOfSpeech: "noun" }),
+          params: { partOfSpeech: "noun" },
           options: {
             credentials: "include",
             body: formData,
@@ -769,7 +773,7 @@ describe("http", () => {
 
       const response = await http.remove({
         url,
-        params: new URLSearchParams({ partOfSpeech: "noun" }),
+        params: { partOfSpeech: "noun" },
         options: {
           credentials: "include",
         },

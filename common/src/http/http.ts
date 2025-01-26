@@ -1,13 +1,22 @@
+type Params = {
+  [key: string]: unknown;
+};
+
 type RequestMethods = "GET" | "POST" | "PUT" | "DELETE";
 
 export const http = (function () {
   const request = async (
     url: string,
-    params: URLSearchParams,
+    params: Params,
     options: RequestInit,
     method: RequestMethods
   ): Promise<{ json: any; status: number }> => {
-    const input = new URL(`${url}${params && `?${params.toString()}`}`);
+    const queryString: string = Object.entries(params)
+      .map((param) => {
+        return `${param[0]}=${param[1]}`;
+      })
+      .join("&");
+    const input = new URL(`${url}${queryString && `?${queryString}`}`);
 
     const response: Response = await fetch(input, {
       method,
@@ -24,11 +33,11 @@ export const http = (function () {
 
   const get = ({
     url,
-    params = new URLSearchParams(),
+    params = {},
     options = {},
   }: {
     url: string;
-    params?: URLSearchParams;
+    params?: Params;
     options?: RequestInit;
   }) => {
     return request(url, params, options, "GET");
@@ -36,11 +45,11 @@ export const http = (function () {
 
   const post = ({
     url,
-    params = new URLSearchParams(),
+    params = {},
     options = {},
   }: {
     url: string;
-    params?: URLSearchParams;
+    params?: Params;
     options?: RequestInit;
   }) => {
     return request(url, params, options, "POST");
@@ -48,11 +57,11 @@ export const http = (function () {
 
   const put = ({
     url,
-    params = new URLSearchParams(),
+    params = {},
     options = {},
   }: {
     url: string;
-    params?: URLSearchParams;
+    params?: Params;
     options?: RequestInit;
   }) => {
     return request(url, params, options, "PUT");
@@ -60,11 +69,11 @@ export const http = (function () {
 
   const remove = ({
     url,
-    params = new URLSearchParams(),
+    params = {},
     options = {},
   }: {
     url: string;
-    params?: URLSearchParams;
+    params?: Params;
     options?: RequestInit;
   }) => {
     return request(url, params, options, "DELETE");
