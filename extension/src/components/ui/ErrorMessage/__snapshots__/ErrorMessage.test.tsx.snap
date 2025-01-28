@@ -1,3 +1,45 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ErrorMessage component > renders message 1`] = `[Function]`;
+exports[`ErrorMessage component > renders message 1`] = `
+<DocumentFragment>
+  <p
+    class="_message_414cc6"
+  >
+    <svg
+      class="lucide lucide-circle-alert _message_icon_414cc6"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+      />
+      <line
+        x1="12"
+        x2="12"
+        y1="8"
+        y2="12"
+      />
+      <line
+        x1="12"
+        x2="12.01"
+        y1="16"
+        y2="16"
+      />
+    </svg>
+    <span
+      class="_message_text_414cc6"
+    >
+      Error Message.
+    </span>
+  </p>
+</DocumentFragment>
+`;

@@ -10,6 +10,6 @@ describe("Loading component", () => {
     const image = screen.getByAltText("loading");
 
     expect(image).toHaveAttribute("src", loadingImage);
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

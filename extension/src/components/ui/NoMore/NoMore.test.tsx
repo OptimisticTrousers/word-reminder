@@ -17,7 +17,7 @@ describe("NoMore component", () => {
     );
     expect(title).toBeInTheDocument();
     expect(message).toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders title and description in lower case when name is uppercase", async () => {
@@ -34,6 +34,6 @@ describe("NoMore component", () => {
     );
     expect(title).toBeInTheDocument();
     expect(message).toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

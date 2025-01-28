@@ -1,3 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`App component > renders main element 1`] = `[Function]`;
+exports[`App component > renders main element 1`] = `
+<DocumentFragment>
+  <main
+    class="_main_2f9351 _main--dark_2f9351"
+  />
+</DocumentFragment>
+`;

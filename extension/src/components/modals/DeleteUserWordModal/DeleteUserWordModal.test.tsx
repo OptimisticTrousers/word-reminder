@@ -50,7 +50,7 @@ describe("DeleteUserWordReminderModal component", () => {
 
     const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   it("calls the functions to delete a word", async () => {

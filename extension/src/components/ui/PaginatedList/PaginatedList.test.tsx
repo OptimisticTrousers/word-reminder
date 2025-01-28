@@ -90,7 +90,7 @@ describe("PaginatedList component", () => {
       expect(error).not.toBeInTheDocument();
       expect(previousLink).not.toBeInTheDocument();
       expect(nextLink).not.toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
 
     it("renders that there are no things in the list when it is empty", () => {
@@ -131,7 +131,7 @@ describe("PaginatedList component", () => {
       expect(error).not.toBeInTheDocument();
       expect(previousLink).not.toBeInTheDocument();
       expect(nextLink).not.toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
   });
 
@@ -174,7 +174,7 @@ describe("PaginatedList component", () => {
       expect(error).not.toBeInTheDocument();
       expect(previousLink).not.toBeInTheDocument();
       expect(nextLink).not.toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
   });
 
@@ -217,7 +217,7 @@ describe("PaginatedList component", () => {
       expect(error).toBeInTheDocument();
       expect(previousLink).not.toBeInTheDocument();
       expect(nextLink).not.toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
   });
 
@@ -260,7 +260,7 @@ describe("PaginatedList component", () => {
       expect(error).not.toBeInTheDocument();
       expect(previousLink).toBeInTheDocument();
       expect(nextLink).toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
 
     it("renders the previous pagination link when there is a previous page but not a next page", async () => {
@@ -301,7 +301,7 @@ describe("PaginatedList component", () => {
       expect(error).not.toBeInTheDocument();
       expect(previousLink).toBeInTheDocument();
       expect(nextLink).not.toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
 
     it("renders the next pagination link when there is a next page but not a previous page", async () => {
@@ -342,7 +342,7 @@ describe("PaginatedList component", () => {
       expect(error).not.toBeInTheDocument();
       expect(previousLink).not.toBeInTheDocument();
       expect(nextLink).toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
 
     it("renders no pagination links when there is no previous or next page", async () => {
@@ -383,7 +383,7 @@ describe("PaginatedList component", () => {
       expect(error).not.toBeInTheDocument();
       expect(previousLink).not.toBeInTheDocument();
       expect(nextLink).not.toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
   });
 });

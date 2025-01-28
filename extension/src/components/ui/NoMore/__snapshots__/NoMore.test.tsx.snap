@@ -1,5 +1,39 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`NoMore component > renders title and description 1`] = `[Function]`;
+exports[`NoMore component > renders title and description 1`] = `
+<DocumentFragment>
+  <div
+    class="_container_afc42b"
+  >
+    <p
+      class="_container__title_afc42b"
+    >
+      No more words
+    </p>
+    <p
+      class="_container__description_afc42b"
+    >
+      Add more words to see more words in your collection.
+    </p>
+  </div>
+</DocumentFragment>
+`;
 
-exports[`NoMore component > renders title and description in lower case when name is uppercase 1`] = `[Function]`;
+exports[`NoMore component > renders title and description in lower case when name is uppercase 1`] = `
+<DocumentFragment>
+  <div
+    class="_container_afc42b"
+  >
+    <p
+      class="_container__title_afc42b"
+    >
+      No more words
+    </p>
+    <p
+      class="_container__description_afc42b"
+    >
+      Add more words to see more words in your collection.
+    </p>
+  </div>
+</DocumentFragment>
+`;

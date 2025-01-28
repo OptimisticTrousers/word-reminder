@@ -1061,6 +1061,6 @@ describe("Words component", () => {
   it("renders two forms that have fields for creating a text word, importing a csv file of words, searching words, sorting words, and filtering words", async () => {
     const { asFragment } = setup();
 
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

@@ -21,7 +21,7 @@ describe("ModalContainer", () => {
 
     const notification = screen.getByRole("dialog", { name: props.title });
     expect(notification).toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
     expect(mockUseDisableScroll).toHaveBeenCalledTimes(1);
     expect(mockUseDisableScroll).toHaveBeenCalledWith();
   });

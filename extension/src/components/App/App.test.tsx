@@ -6,6 +6,6 @@ describe("App component", () => {
   it("renders main element", () => {
     const { asFragment } = render(<App />);
 
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

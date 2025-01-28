@@ -1,3 +1,15 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Loading component > renders image 1`] = `[Function]`;
+exports[`Loading component > renders image 1`] = `
+<DocumentFragment>
+  <div
+    class="_loading_881b1a"
+  >
+    <img
+      alt="loading"
+      class="_loading__image_881b1a"
+      src="/src/assets/images/loading.gif"
+    />
+  </div>
+</DocumentFragment>
+`;

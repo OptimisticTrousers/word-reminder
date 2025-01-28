@@ -158,7 +158,7 @@ describe("Router component", () => {
       expect(signupButton).not.toBeInTheDocument();
       expect(wordsHeader).not.toBeInTheDocument();
       expect(wordRemindersHeader).not.toBeInTheDocument();
-      expect(asFragment).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
 
     describe("when the user is logged in", () => {
@@ -191,7 +191,7 @@ describe("Router component", () => {
         expect(signupButton).not.toBeInTheDocument();
         expect(wordsHeader).toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
 
       it("renders word reminders page", () => {
@@ -223,7 +223,7 @@ describe("Router component", () => {
         expect(signupButton).not.toBeInTheDocument();
         expect(wordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).toBeInTheDocument();
-        expect(asFragment).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
 
       it("renders settings page", () => {
@@ -255,7 +255,7 @@ describe("Router component", () => {
         expect(signupButton).not.toBeInTheDocument();
         expect(wordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
 
       it("redirects to words page when user navigates to non-protected routes", async () => {
@@ -287,7 +287,7 @@ describe("Router component", () => {
         expect(signupButton).not.toBeInTheDocument();
         expect(wordsHeader).toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
     });
 
@@ -321,7 +321,7 @@ describe("Router component", () => {
         expect(signupButton).not.toBeInTheDocument();
         expect(wordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
 
       it("renders signup page", async () => {
@@ -353,7 +353,7 @@ describe("Router component", () => {
         expect(signupButton).toBeInTheDocument();
         expect(wordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
 
       it("redirects to login page when user navigates to protected routes", async () => {
@@ -385,7 +385,7 @@ describe("Router component", () => {
         expect(signupButton).not.toBeInTheDocument();
         expect(wordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment).toMatchSnapshot();
+        expect(asFragment()).toMatchSnapshot();
       });
     });
   });
@@ -419,7 +419,7 @@ describe("Router component", () => {
     expect(signupButton).not.toBeInTheDocument();
     expect(wordsHeader).not.toBeInTheDocument();
     expect(wordRemindersHeader).not.toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders loading page", async () => {
@@ -456,6 +456,6 @@ describe("Router component", () => {
     expect(signupButton).not.toBeInTheDocument();
     expect(wordsHeader).not.toBeInTheDocument();
     expect(wordRemindersHeader).not.toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 });

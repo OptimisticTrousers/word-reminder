@@ -35,7 +35,7 @@ describe("Notification component", () => {
     expect(mockDismissNotification).toHaveBeenCalledTimes(1);
     expect(mockDismissNotification).toHaveBeenCalledWith();
     expect(message).toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
     expect(notification.getAttribute("class")).toContain(
       `notification--${NOTIFICATION_ACTIONS.SUCCESS}`
     );
@@ -68,7 +68,7 @@ describe("Notification component", () => {
     expect(mockDismissNotification).toHaveBeenCalledTimes(1);
     expect(mockDismissNotification).toHaveBeenCalledWith();
     expect(message).toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
     expect(notification.getAttribute("class")).toContain(
       `notification--${NOTIFICATION_ACTIONS.ERROR}`
     );

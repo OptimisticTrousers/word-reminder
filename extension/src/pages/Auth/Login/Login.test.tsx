@@ -82,7 +82,7 @@ describe("Login component", () => {
     expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
     expect(words).toBeInTheDocument();
     expect(notification).toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   it("shows correct link to creating an account", async () => {

@@ -90,7 +90,7 @@ describe("Signup component", () => {
     expect(mockUserServiceSignup).toHaveBeenCalledWith(testUser);
     expect(words).toBeInTheDocument();
     expect(notification).toBeInTheDocument();
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   it("shows correct link to log into account", async () => {

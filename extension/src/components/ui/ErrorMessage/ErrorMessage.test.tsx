@@ -8,7 +8,7 @@ describe("ErrorMessage component", () => {
     const { asFragment } = render(<ErrorMessage {...props} />);
 
     const message = screen.getByText(props.message);
-    expect(asFragment).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
     expect(message).toBeInTheDocument();
   });
 });

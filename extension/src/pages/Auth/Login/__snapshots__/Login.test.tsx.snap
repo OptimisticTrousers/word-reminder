@@ -1,3 +1,90 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Login component > calls the functions to login, show notification, and redirect user 1`] = `[Function]`;
+exports[`Login component > calls the functions to login, show notification, and redirect user 1`] = `
+<DocumentFragment>
+  <div
+    aria-labelledby="notification-message"
+    class="_notification_120862 _notification--success_120862"
+    role="dialog"
+  >
+    <div
+      class="_notification__flex_120862"
+    >
+      <div
+        class="_notification__item_120862"
+      >
+        <svg
+          class="lucide lucide-circle-check _notification__icon_120862 _notification__icon--circle_120862"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+          <path
+            d="m9 12 2 2 4-4"
+          />
+        </svg>
+      </div>
+      <div
+        class="_notification__box_120862"
+      >
+        <span
+          class="_notification__message_120862"
+          id="notification-message"
+        >
+          You have successfully logged in, bob@gmail.com.
+        </span>
+      </div>
+      <div
+        class="_notification__controls_120862"
+      >
+        <div
+          class="_notification__control_120862"
+        >
+          <button
+            class="_notification_button_120862"
+          >
+            <span
+              class="_notification__text_120862"
+            >
+              Dismiss
+            </span>
+            <svg
+              class="lucide lucide-x _notification__icon_120862"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18 6 6 18"
+              />
+              <path
+                d="m6 6 12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button>
+    Current URL: /words
+  </button>
+</DocumentFragment>
+`;
