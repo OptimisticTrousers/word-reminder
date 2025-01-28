@@ -1,3 +1,4 @@
+import { User } from "common";
 import { Navigate } from "react-router-dom";
 
 import { App } from "../components/App";
@@ -7,15 +8,15 @@ import { Settings } from "../pages/Settings";
 import { WordReminders } from "../pages/WordReminders";
 import { Words } from "../pages/Words";
 
-export function routes(isLoggedIn: boolean) {
+export function routes(user: User | undefined) {
   return [
     {
       path: "/",
-      element: <App />,
+      element: <App user={user} />,
       children: [
         {
           path: "/",
-          element: isLoggedIn && <Navigate to="/app/words" />,
+          element: user && <Navigate to="/app/words" />,
           children: [
             {
               path: "login",
@@ -29,7 +30,7 @@ export function routes(isLoggedIn: boolean) {
         },
         {
           path: "/app",
-          element: !isLoggedIn && <Navigate to="/login" />,
+          element: !user && <Navigate to="/login" />,
           children: [
             { path: "words", element: <Words /> },
             { path: "wordReminders", element: <WordReminders /> },

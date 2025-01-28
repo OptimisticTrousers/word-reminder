@@ -8,11 +8,7 @@ import { sessionService } from "../services/session_service";
 vi.mock("../components/ui", function () {
   return {
     Loading: function () {
-      return (
-        <p id="loading" aria-labelledby="loading">
-          Loading...
-        </p>
-      );
+      return <p>Loading...</p>;
     },
   };
 });
@@ -20,11 +16,7 @@ vi.mock("../components/ui", function () {
 vi.mock("../pages/Error500", function () {
   return {
     Error500: function ({ message }: { message: string }) {
-      return (
-        <p id="message" aria-labelledby="message">
-          {message}
-        </p>
-      );
+      return <p>{message}</p>;
     },
   };
 });
@@ -112,7 +104,13 @@ describe("Router component", () => {
   const loadingMessage = "Loading...";
 
   function setup({ initialRoute }: { initialRoute: string }) {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
 
     return {
       ...render(
@@ -139,8 +137,8 @@ describe("Router component", () => {
         });
 
       const { asFragment } = setup({ initialRoute: "/" });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+      const error = screen.queryByText(errorMessage);
+      const loading = screen.queryByText(loadingMessage);
       const loginButton = screen.queryByRole("button", { name: "Login" });
       const main = screen.getByRole("main");
       const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -172,10 +170,8 @@ describe("Router component", () => {
           });
 
         const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByRole("paragraph", { name: errorMessage });
-        const loading = screen.queryByRole("paragraph", {
-          name: loadingMessage,
-        });
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
         const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -206,10 +202,8 @@ describe("Router component", () => {
           });
 
         const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByRole("paragraph", { name: errorMessage });
-        const loading = screen.queryByRole("paragraph", {
-          name: loadingMessage,
-        });
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
         const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -240,10 +234,8 @@ describe("Router component", () => {
           });
 
         const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByRole("paragraph", { name: errorMessage });
-        const loading = screen.queryByRole("paragraph", {
-          name: loadingMessage,
-        });
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
         const main = screen.queryByRole("main");
         const settingsButton = screen.getByRole("button", { name: "Update" });
@@ -274,10 +266,8 @@ describe("Router component", () => {
           });
 
         const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByRole("paragraph", { name: errorMessage });
-        const loading = screen.queryByRole("paragraph", {
-          name: loadingMessage,
-        });
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
         const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -310,10 +300,8 @@ describe("Router component", () => {
           });
 
         const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByRole("paragraph", { name: errorMessage });
-        const loading = screen.queryByRole("paragraph", {
-          name: loadingMessage,
-        });
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.getByRole("button", { name: "Login" });
         const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -344,10 +332,8 @@ describe("Router component", () => {
           });
 
         const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByRole("paragraph", { name: errorMessage });
-        const loading = screen.queryByRole("paragraph", {
-          name: loadingMessage,
-        });
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
         const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -378,10 +364,8 @@ describe("Router component", () => {
           });
 
         const { asFragment } = setup({ initialRoute: "/app" });
-        const error = screen.queryByRole("paragraph", { name: errorMessage });
-        const loading = screen.queryByRole("paragraph", {
-          name: loadingMessage,
-        });
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.getByRole("button", { name: "Login" });
         const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -414,8 +398,8 @@ describe("Router component", () => {
       });
 
     const { asFragment } = setup({ initialRoute: "/" });
-    const error = screen.getByRole("paragraph", { name: errorMessage });
-    const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+    const error = screen.getByText(errorMessage);
+    const loading = screen.queryByText(loadingMessage);
     const loginButton = screen.queryByRole("button", { name: "Login" });
     const main = screen.queryByRole("main");
     const settingsButton = screen.queryByRole("button", { name: "Update" });
@@ -451,8 +435,8 @@ describe("Router component", () => {
       });
 
     const { asFragment } = setup({ initialRoute: "/" });
-    const error = screen.queryByRole("paragraph", { name: errorMessage });
-    const loading = screen.getByRole("paragraph", { name: loadingMessage });
+    const error = screen.queryByText(errorMessage);
+    const loading = screen.getByText(loadingMessage);
     const loginButton = screen.queryByRole("button", { name: "Login" });
     const main = screen.queryByRole("main");
     const settingsButton = screen.queryByRole("button", { name: "Update" });
