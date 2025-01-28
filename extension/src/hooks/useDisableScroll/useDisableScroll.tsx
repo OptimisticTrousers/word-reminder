@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const useDisableScroll = () => {
+export const useDisableScroll = () => {
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
     return () => {
@@ -8,5 +8,3 @@ const useDisableScroll = () => {
     };
   }, []);
 };
-
-export default useDisableScroll;
