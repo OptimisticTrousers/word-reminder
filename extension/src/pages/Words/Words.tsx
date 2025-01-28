@@ -1,402 +1,308 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { User, UserWord as IUserWord, Word as IWord } from "common";
+import { Download, Import } from "lucide-react";
+import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 import CSSModules from "react-css-modules";
-import { useForm } from "react-hook-form";
-import { FaSort } from "react-icons/fa";
-import { HiFilter } from "react-icons/hi";
-import { TfiImport } from "react-icons/tfi";
-import { toast } from "react-toastify";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import * as z from "zod";
-import { ErrorMessage, NoMore, UserWord } from "../../components";
-import { IUserWord } from "../../context/AuthContext";
-import useAuth from "../../hooks/useAuth";
-import useHttp from "../../hooks/useHttp";
-import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
-import useMenuCloseEvents from "../../hooks/useMenuCloseEvents";
-import useUserWords from "../../hooks/useUserWords";
-import { Navigation } from "../../layouts";
+import { useOutletContext, useSearchParams } from "react-router-dom";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+
+import { PaginatedList } from "../../components/ui/PaginatedList";
+import { UserWord } from "../../components/words/UserWord";
+import {
+  NOTIFICATION_ACTIONS,
+  NotificationContext,
+} from "../../context/Notification";
+import { useNotificationError } from "../../hooks/useNotificationError";
+import { wordService } from "../../services/word_service/word_service";
+import { ErrorResponse } from "../../types";
+import { download } from "../../utils/download";
 import styles from "./Words.module.css";
 
-const MAX_FILE_SIZE = 500000;
-const ACCEPTED_FILE_TYPES = [".csv", "text/csv"];
-
-const userWordSchema = z
-  .object({
-    word: z.string().optional(),
-    csv: z
-      .any()
-      .optional()
-      .refine(
-        (files) =>
-          !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
-        "Max file size is 5 MB."
-      )
-      .refine(
-        (files) =>
-          !files ||
-          files.length === 0 ||
-          ACCEPTED_FILE_TYPES.includes(files[0].type),
-        "Only .csv files are accepted."
-      ),
-  })
-  .refine(
-    (data) => data.word || (data.csv && data.csv.length > 0),
-    "Either 'word' or 'csv' must be provided."
-  );
-
-const querySchema = z.object({
-  search: z.string({
-    invalid_type_error: "Search must be a string",
-  }),
-  learned: z.boolean({
-    invalid_type_error: "Learned must be a boolean",
-  }),
-  sort: z.string({
-    invalid_type_error: "Sort must be a string",
-  }),
-});
-
-type UserWordSchema = z.infer<typeof userWordSchema>;
-type QuerySchema = z.infer<typeof querySchema>;
-
-const Words = CSSModules(
-  () => {
-    const [isSortOpen, setIsSortOpen] = useState(false);
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-    const handleFilter = () => {
-      setIsFilterOpen((prevValue) => !prevValue);
-    };
-
-    const handleSort = () => {
-      setIsSortOpen((prevValue) => !prevValue);
-    };
-
-    const closeSortDropdown = () => {
-      setIsSortOpen(false);
-    };
-
-    const closeFilterDropdown = () => {
-      setIsFilterOpen(false);
-    };
-
-    const sortDropdownId = "SortDropdown";
-    const sortButtonId = "SortBtnDropdown";
-
-    const filterDropdownId = "FilterDropdown";
-    const filterButtonId = "FilterBtnDropdown";
-
-    useKeyboardNavigation(sortDropdownId);
-    useMenuCloseEvents(sortDropdownId, sortButtonId, closeSortDropdown);
-
-    useKeyboardNavigation(filterDropdownId);
-    useMenuCloseEvents(filterDropdownId, filterButtonId, closeFilterDropdown);
-
-    const {
-      register: userWordRegister,
-      handleSubmit: userWordHandleSubmit,
-      formState: { errors: userWordErrors },
-    } = useForm<UserWordSchema>({
-      resolver: zodResolver(userWordSchema),
+export const Words = CSSModules(
+  function () {
+    const { showNotification } = useContext(NotificationContext);
+    const { showNotificationError } = useNotificationError();
+    const { user }: { user: User } = useOutletContext();
+    const userId = user.id;
+    const [file, setFile] = useState<File | null>(null);
+    const [searchParams, setSearchParams] = useSearchParams({
+      page: "1",
+      limit: PAGINATION_LIMIT,
+      search: "",
+      learned: "",
+      column: "",
+      direction: "",
     });
-
-    const {
-      register: queryRegister,
-      watch,
-      formState: { errors: queryErrors },
-    } = useForm<QuerySchema>({
-      resolver: zodResolver(querySchema),
-    });
-
-    const {
-      state: { user },
-    } = useAuth();
-
-    const { learned, sort, search } = watch();
     const queryClient = useQueryClient();
+    const searchParamsObject = Object.fromEntries(searchParams);
 
-    const { post } = useHttp();
-
-    const { userWords, userWordsStatus, userWordsError } = useUserWords({
-      learned,
-      sort,
-      search,
+    const { data, error, isLoading, isSuccess } = useQuery({
+      queryKey: ["words", searchParamsObject],
+      placeholderData: keepPreviousData,
+      queryFn: () => {
+        return wordService.getWordList(userId, searchParamsObject);
+      },
+      staleTime: STALE_TIME,
     });
 
-    const userId = user!._id;
-    const { status: createdUserWordStatus, mutate: createdUserWordMutate } =
-      useMutation({
-        mutationFn: (data: UserWordSchema) => {
-          return post(
-            `${import.meta.env.VITE_API_DOMAIN}/users/${userId}/words`,
-            data
+    const json = data?.json;
+
+    const { isPending, mutate } = useMutation({
+      onMutate: (data) => {
+        return { formData: data.formData };
+      },
+      mutationFn: wordService.createWord,
+      onSuccess: (_response, _variables, context) => {
+        const formData = context.formData;
+        const word = formData.get("word") as string;
+        if (file && file.size > 0) {
+          showNotification(
+            NOTIFICATION_ACTIONS.SUCCESS,
+            WORD_NOTIFICATION_MSGS.addWords()
           );
-        },
-        onSettled: (data) => {
-          const username = user!.username;
-          if (data.message) {
-            toast.error(data.message);
-          } else if (data.status) {
-            toast.error(
-              `An unknown ${data.status} error occured while creating a new word.`
-            );
-          } else {
-            if (data.valid && data.invalid) {
-              toast.success(
-                `You have successfully created ${data.valid.length} new word(s), but ${data.invalid} words were not inserted, ${username}!`
-              );
-            } else {
-              toast.success(
-                `You have successfully created a new word, ${username}!`
-              );
-            }
-            queryClient.invalidateQueries({
-              queryKey: [userId, "words", { learned, search, sort }],
-            });
-          }
-        },
+        } else if (word.length > 0) {
+          showNotification(
+            NOTIFICATION_ACTIONS.SUCCESS,
+            WORD_NOTIFICATION_MSGS.addWord()
+          );
+        }
+        queryClient.invalidateQueries({
+          queryKey: ["words", searchParamsObject],
+          exact: true,
+        });
+      },
+      onError: (response: ErrorResponse) => {
+        showNotificationError(response);
+      },
+    });
+
+    const disabled = isPending;
+
+    async function handleExport(event: MouseEvent<HTMLInputElement>) {
+      event.preventDefault();
+      const { json } = await wordService.getWordList(
+        userId,
+        Object.fromEntries(
+          new URLSearchParams({
+            page: "1",
+            limit: data?.json.totalRows,
+            search: "",
+            learned: "",
+            column: "",
+            direction: "",
+          })
+        )
+      );
+      const words = json.userWords.map(
+        (userWord: IUserWord & { word: string }) => {
+          return userWord.word;
+        }
+      );
+      download({
+        data: words.join(","),
+        fileName: "words.csv",
+        fileType: "text/csv",
       });
+    }
 
-    const onSubmit = (data: UserWordSchema) => {
-      createdUserWordMutate(data);
-    };
+    function handleAdd(formData: FormData) {
+      const word = formData.get("word") as string;
+      formData.append("userId", userId);
+      if (!file && word.length === 0) {
+        showNotification(
+          NOTIFICATION_ACTIONS.ERROR,
+          WORD_NOTIFICATION_MSGS.missingWordInput()
+        );
+        return;
+      } else if (file && file.size > MAX_FILE_SIZE) {
+        showNotification(
+          NOTIFICATION_ACTIONS.ERROR,
+          WORD_NOTIFICATION_MSGS.fileSize()
+        );
+        return;
+      }
+      mutate({ userId, formData });
+    }
 
-    const disabled = createdUserWordStatus === "pending";
+    function handleFile(event: ChangeEvent<HTMLInputElement>) {
+      setFile(event.target.files![0]);
+    }
+
+    function handleQuery(formData: FormData) {
+      const newSearchParams = new URLSearchParams({
+        search: formData.get("search") as string,
+        learned: formData.get("learned") as string,
+        ...(formData.get("created_at") !== "" && {
+          column: "created_at",
+        }),
+        direction: formData.get("created_at") as string,
+      });
+      const combined = new URLSearchParams([
+        ...searchParams,
+        ...newSearchParams,
+      ]);
+      setSearchParams(combined);
+    }
 
     return (
-      <div styleName="words">
+      <section styleName="words">
         <div styleName="words__top">
-          <Navigation />
           <div styleName="words__container">
-            <form
-              styleName="words__form"
-              onSubmit={userWordHandleSubmit(onSubmit)}
-            >
+            <form styleName="words__form" action={handleAdd}>
               <div styleName="words__control">
-                <label htmlFor="csv" styleName="words__label">
+                <label styleName="words__label">
+                  Word
                   <input
-                    styleName="words__button words__button--import"
-                    {...userWordRegister("csv")}
-                    type="file"
+                    name="word"
+                    type="text"
+                    placeholder="Add a new word to your dictionary..."
+                    styleName="words__input words__input--add"
+                    maxLength={MAX_WORD_LENGTH}
                     disabled={disabled}
                   />
-                  <TfiImport styleName="words__icon" />
-                  Import Words
                 </label>
-                {userWordErrors.csv?.message && (
-                  <ErrorMessage
-                    message={userWordErrors.csv.message.toString()}
-                  />
-                )}
               </div>
               <div styleName="words__control">
-                <input
-                  {...userWordRegister("word")}
-                  type="search"
-                  placeholder="Add word..."
-                  styleName="words__input words__input--add"
-                />
-                {userWordErrors.word?.message && (
-                  <ErrorMessage message={userWordErrors.word.message} />
-                )}
+                <label styleName="words__label">
+                  Import Words
+                  <Import styleName="word__icon" />
+                  <input
+                    styleName="words__button words__button--import"
+                    type="file"
+                    accept="text/csv"
+                    name="csv"
+                    disabled={disabled}
+                    onChange={handleFile}
+                  />
+                </label>
               </div>
               <button
                 styleName="words__button words__button--add"
                 type="submit"
                 disabled={disabled}
               >
-                ADD
+                Add
               </button>
             </form>
-            <div styleName="words__container">
-              <div styleName="words__inputs">
-                <input
-                  {...queryRegister("search")}
-                  placeholder="Search for words in your collection..."
-                  styleName="words__input words__input--search"
-                />
-                <div styleName="words__buttons">
-                  <button
-                    styleName="words__button words__button--sort"
-                    onClick={handleSort}
-                    aria-controls={sortDropdownId}
-                    aria-haspopup="true"
-                    aria-expanded={isSortOpen}
-                    aria-label="Open sort options menu"
-                    id={sortButtonId}
-                  >
-                    <FaSort styleName="words__icon words__icon--sort" />
-                    Sort
-                  </button>
-                  <button
-                    styleName="words__button words__button--filter"
-                    onClick={handleFilter}
-                    aria-controls={filterDropdownId}
-                    aria-haspopup="true"
-                    aria-expanded={isFilterOpen}
-                    aria-label="Open filter options menu"
-                    id={filterButtonId}
-                  >
-                    <HiFilter styleName="words__icon words__icon--filter" />
-                    Filter
-                  </button>
-                </div>
+            <form styleName="words__form" action={handleQuery}>
+              <div styleName="words__control">
+                <label styleName="words__label">
+                  Export Words
+                  <Download styleName="word__icon" />
+                  <input
+                    styleName="words__button words__button--import"
+                    type="button"
+                    disabled={disabled}
+                    onClick={handleExport}
+                  />
+                </label>
               </div>
-            </div>
+              <div styleName="words__control">
+                <label styleName="words__label">
+                  Search
+                  <input
+                    placeholder="Search for words in your dictionary..."
+                    styleName="words__input words__input--search"
+                    type="search"
+                    name="search"
+                    disabled={disabled}
+                  />
+                </label>
+              </div>
+              <div styleName="words__control">
+                <label styleName="words__label">
+                  Sort by:
+                  <select
+                    styleName="words__select"
+                    disabled={disabled}
+                    name="created_at"
+                  >
+                    <option styleName="words__option" value="">
+                      Featured
+                    </option>
+                    <option styleName="words__option" value="1">
+                      Newest
+                    </option>
+                    <option styleName="words__option" value="-1">
+                      Oldest
+                    </option>
+                  </select>
+                </label>
+              </div>
+              <div styleName="words__control">
+                <label styleName="words__label">
+                  Filter by:
+                  <select
+                    styleName="words__select"
+                    disabled={disabled}
+                    name="learned"
+                  >
+                    <option styleName="words__option" value="">
+                      Any
+                    </option>
+                    <option styleName="words__option" value="true">
+                      Learned
+                    </option>
+                    <option styleName="words__option" value="false">
+                      Unlearned
+                    </option>
+                  </select>
+                </label>
+              </div>
+              <button
+                styleName="words__button words__button--add"
+                type="submit"
+                disabled={disabled}
+              >
+                Filter
+              </button>
+            </form>
           </div>
-          <ul
-            styleName={`words__options ${isSortOpen && "words__options--active"}
-         words__options--sort`}
-            role="menu"
-            aria-label="Sort options"
-            id={sortDropdownId}
-          >
-            <li role="none" styleName="words__triangle"></li>
-            <li role="none" styleName="words__error">
-              {queryErrors.sort?.message && (
-                <ErrorMessage message={queryErrors.sort.message} />
-              )}
-            </li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("sort")}
-                id="bestMatch"
-                type="radio"
-                value=""
-                styleName="words__radio"
-              />
-              <label styleName="words__label" htmlFor="bestMatch">
-                Best Match
-              </label>
-            </li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("sort")}
-                id="a-z"
-                type="radio"
-                value="a-z"
-                styleName="words__radio"
-              />
-              <label styleName="words__label" htmlFor="a-z">
-                Sort by A-Z
-              </label>
-            </li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("sort")}
-                id="z-a"
-                type="radio"
-                value="z-a"
-                styleName="words__radio"
-              />
-              <label styleName="words__label" htmlFor="z-a">
-                Sort by Z-A
-              </label>
-            </li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("sort")}
-                id="newest"
-                type="radio"
-                value="newest"
-                styleName="words__radio"
-              />
-              <label styleName="words__label" htmlFor="newest">
-                Newest
-              </label>
-            </li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("sort")}
-                id="oldest"
-                value="oldest"
-                type="radio"
-                styleName="words__radio"
-              />
-              <label styleName="words__label" htmlFor="oldest">
-                Oldest
-              </label>
-            </li>
-          </ul>
-          <ul
-            styleName={`words__options words__options--${
-              isFilterOpen && "active"
-            } words__options--filter`}
-            role="menu"
-            aria-label="Filter options"
-            id={filterDropdownId}
-          >
-            <li role="none" styleName="words__error">
-              {queryErrors.learned?.message && (
-                <ErrorMessage message={queryErrors.learned.message} />
-              )}
-            </li>
-            <li role="none" styleName="words__triangle"></li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("learned")}
-                id="any"
-                type="radio"
-                styleName="words__radio"
-                value=""
-              />
-              <label styleName="words__label" htmlFor="any">
-                Any
-              </label>
-            </li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("learned")}
-                type="radio"
-                styleName="words__radio"
-                id="learned"
-                value="true"
-              />
-              <label styleName="words__label" htmlFor="learned">
-                Learned
-              </label>
-            </li>
-            <li styleName="words__option" role="menuitem">
-              <input
-                {...queryRegister("learned")}
-                type="radio"
-                styleName="words__radio"
-                id="unlearned"
-                value="false"
-              />
-              <label styleName="words__label" htmlFor="unlearned">
-                Unlearned
-              </label>
-            </li>
-          </ul>
         </div>
-        <div styleName="words__list">
-          {userWordsStatus === "success" &&
-            userWords &&
-            userWords.map((userWord: IUserWord) => {
-              return <UserWord key={userWord._id} {...userWord} />;
-            })}
-          {userWordsStatus === "success" && !userWords && (
-            <NoMore
-              title={"No more words"}
-              description={
-                "Add more words to see more words in your collection"
-              }
-            />
-          )}
-          {userWordsStatus === "error" && userWordsError && (
-            <ErrorMessage message={userWordsError.message} />
-          )}
-        </div>
-      </div>
+        <PaginatedList
+          name="Words"
+          totalRows={json && json.totalRows}
+          list={
+            json &&
+            json.userWords.map(function (userWord: IUserWord & IWord) {
+              return <UserWord key={userWord.id} {...userWord} />;
+            })
+          }
+          isLoading={isLoading}
+          isSuccess={isSuccess}
+          error={error}
+          previous={json && json.previous}
+          next={json && json.next}
+        />
+      </section>
     );
   },
   styles,
   {
     allowMultiple: true,
-    handleNotFoundStyleName: "ignore",
+    handleNotFoundStyleName: "log",
   }
 );
 
-export default Words;
+const MAX_FILE_SIZE = 1000 * 1024; // 1 MB
+const MAX_WORD_LENGTH = 45;
+const PAGINATION_LIMIT = "10";
+const STALE_TIME = 30000; // 30 seconds in milliseconds
+const WORD_NOTIFICATION_MSGS = {
+  addWord: () => {
+    return "You have successfully added a word to your dictionary.";
+  },
+  addWords: () => {
+    return "You have successfully multiple words to your dictionary.";
+  },
+  fileSize: () => {
+    return "File is too big. Max size is 1 MB.";
+  },
+  missingWordInput: () => {
+    return "Please type a word or upload a CSV file of words.";
+  },
+};
