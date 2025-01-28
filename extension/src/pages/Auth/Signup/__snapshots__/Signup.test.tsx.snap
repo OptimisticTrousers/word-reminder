@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Signup component > calls the functions to signup, login, show notification, redirect user 1`] = `[Function]`;
