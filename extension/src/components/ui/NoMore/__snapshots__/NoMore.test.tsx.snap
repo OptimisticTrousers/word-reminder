@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NoMore component > renders title and description 1`] = `[Function]`;
+
+exports[`NoMore component > renders title and description in lower case when name is uppercase 1`] = `[Function]`;

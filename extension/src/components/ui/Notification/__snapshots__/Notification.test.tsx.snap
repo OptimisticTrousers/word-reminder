@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Notification component > renders notification with error class 1`] = `[Function]`;
+
+exports[`Notification component > renders notification with success class 1`] = `[Function]`;
