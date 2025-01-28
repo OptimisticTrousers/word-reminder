@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DeleteUserWordReminderModal component > renders the form with alert and message 1`] = `[Function]`;
