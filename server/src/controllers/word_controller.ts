@@ -1,3 +1,4 @@
+import { WORD_MAX } from "common";
 import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 
@@ -19,6 +20,9 @@ export const create_word = [
     .trim()
     .escape()
     .toLowerCase()
+    .isLength({ max: WORD_MAX })
+    .withMessage(`'word' cannot be greater than ${WORD_MAX} characters.`)
+    .bail()
     .custom((value: string, { req }): Promise<string> | boolean => {
       if ((!value || value.length === 0) && !req.file) {
         // neither word nor csv has been provided

@@ -1,14 +1,7 @@
 import { QueryResult } from "pg";
+import { User } from "common";
 
 import { createQueries } from "./queries";
-
-export interface User {
-  id: string;
-  email: string;
-  confirmed: boolean;
-  created_at: Date;
-  updated_at: Date;
-}
 
 export const userQueries = (function () {
   const queries = createQueries<User>(

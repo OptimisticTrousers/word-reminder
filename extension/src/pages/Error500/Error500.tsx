@@ -1,4 +1,3 @@
-import { FC } from "react";
 import CSSModules from "react-css-modules";
 import { Link } from "react-router-dom";
 import styles from "./Error500.module.css";
@@ -7,8 +6,8 @@ interface Props {
   message: string;
 }
 
-const Error500: FC<Props> = CSSModules(
-  ({ message }) => {
+export const Error500 = CSSModules(
+  function ({ message }: Props) {
     return (
       <div styleName="error">
         <div styleName="error__container">

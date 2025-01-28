@@ -2,46 +2,6 @@ import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
 
-interface Phonetic {
-  text?: string;
-  audio?: string;
-  sourceUrl?: string;
-  license?: License;
-}
-
-interface Meaning {
-  partOfSpeech: string;
-  definitions: Definition[];
-}
-
-interface Definition {
-  definition: string;
-  example?: string;
-  synonyms?: string[];
-  antonyms?: string[];
-}
-
-interface License {
-  name: string;
-  url: string;
-}
-
-export type Json = {
-  phonetic?: string;
-  phonetics: Phonetic[];
-  meanings: Meaning[];
-  word: string;
-  origin?: string;
-  license?: License;
-  sourceUrls?: string[];
-}[];
-
-export interface Word {
-  id: string;
-  details: Json;
-  created_at: Date;
-}
-
 export const wordQueries = (function () {
   const queries = createQueries<Word>(["*"], "words");
   const { columns, db, getById, table } = queries;

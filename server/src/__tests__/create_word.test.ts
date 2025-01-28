@@ -6,6 +6,7 @@ import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
 import { csv } from "../utils/csv";
 import { http } from "../utils/http";
+import { WORD_MAX } from "common";
 
 describe("create_word", () => {
   const app = express();
@@ -359,6 +360,29 @@ describe("create_word", () => {
         user_id: userId,
         word_id: wordId,
         learned: false,
+      });
+    });
+
+    it(`does not create a word when the provided word is greater than ${WORD_MAX} characters`, async () => {
+      const word = new Array(WORD_MAX + 1).fill("a").join("");
+
+      const response = await request(app)
+        .post(`/api/users/${userId}/words`)
+        .set("Accept", "application/json")
+        .send({ word });
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({
+        errors: [
+          {
+            location: "body",
+            msg: "'word' cannot be greater than 45 characters.",
+            path: "word",
+            type: "field",
+            value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          },
+        ],
       });
     });
 

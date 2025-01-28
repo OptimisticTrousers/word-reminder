@@ -1,43 +1,37 @@
-import React, { ReactNode, ErrorInfo } from "react";
+import { Component, ErrorInfo, ReactNode } from "react";
+
 import "./ErrorBoundary.css";
 
-interface ErrorBoundaryProps {
+interface Props {
   children: ReactNode;
 }
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  errorMsg: string;
-}
+export class ErrorBoundary extends Component<Props> {
+  state = {
+    hasError: false,
+    errorMsg: "",
+  };
 
-class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
-  constructor(props: ErrorBoundaryProps) {
+  constructor(props: Props) {
     super(props);
-    this.state = {
-      hasError: false,
-      errorMsg: "",
-    };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error) {
     console.error(error);
     return { hasError: true, errorMsg: "" };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorMsg: error.message });
     console.error(error);
     console.error(errorInfo);
   }
 
-  handleClick = () => {
+  handleClick() {
     window.location.reload();
-  };
+  }
 
-  render(): React.ReactNode {
+  render() {
     if (this.state.hasError) {
       return (
         <div className="boundary">
@@ -53,5 +47,3 @@ class ErrorBoundary extends React.Component<
     return this.props.children;
   }
 }
-
-export default ErrorBoundary;

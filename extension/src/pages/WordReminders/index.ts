@@ -1,0 +1,1 @@
+export { WordReminders } from "./WordReminders";

@@ -1,6 +1,7 @@
+import path from "path";
 import { config } from "dotenv";
 
-config();
+config({ path: path.resolve(__dirname, "..", "..", ".env.local") });
 
 interface Variables {
   [key: string]: string;

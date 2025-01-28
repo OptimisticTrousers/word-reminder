@@ -25,15 +25,6 @@ export interface Result {
   next?: Page;
 }
 
-export interface UserWord {
-  id: string;
-  word_id: string;
-  user_id: string;
-  learned: boolean;
-  created_at: Date;
-  updated_at: Date;
-}
-
 export const userWordQueries = (function () {
   const queries = createQueries<UserWord>(["*"], "user_words");
   const { columns, db, getById, table } = queries;

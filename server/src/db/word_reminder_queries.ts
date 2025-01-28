@@ -1,24 +1,7 @@
+import { WordReminder, WordReminderParams } from "common";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
-
-export interface WordReminder extends WordReminderParams {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
-interface WordReminderParams {
-  user_id: string;
-  finish: Date;
-  // End date and time when the reminder is no longer active.
-  has_reminder_onload: boolean;
-  // Determines if the reminder should be shown immediately upon loading the application or feature. One notification will be shown if at least one notification was emitted after the last time the user signed onto the application.
-  is_active: boolean;
-  // Specifies if the reminder is active
-  reminder: string;
-  // Defines how often a reminder notification is sent to the user which will include all of the words in this word reminder.
-}
 
 export const wordReminderQueries = (function () {
   const queries = createQueries<WordReminder>(["*"], "word_reminders");

@@ -1,12 +1,6 @@
-import { createQueries } from "./queries";
+import { SubscriptionParams } from "common";
 
-interface SubscriptionParams {
-  endpoint: string;
-  keys: {
-    p256dh: string;
-    auth: string;
-  };
-}
+import { createQueries } from "./queries";
 
 export interface Subscription extends SubscriptionParams {
   id: string;
