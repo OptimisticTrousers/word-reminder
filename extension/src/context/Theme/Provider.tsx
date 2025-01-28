@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { ReactNode } from "react";
 
 import { Theme, ThemeContext } from "./Context";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -9,14 +9,24 @@ interface Props {
 
 export interface ThemeContext {
   theme: Theme;
-  setTheme: Dispatch<SetStateAction<Theme>>;
+  toggleTheme: () => void;
 }
 
 export function ThemeProvider({ children }: Props) {
   const [theme, setTheme] = useLocalStorage("theme", Theme.Dark);
 
+  function toggleTheme() {
+    setTheme((prevTheme: string) => {
+      if (prevTheme === "light") {
+        return "dark";
+      } else if (prevTheme === "dark") {
+        return "light";
+      }
+    });
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
