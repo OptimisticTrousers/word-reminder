@@ -1,0 +1,1 @@
+export { UserWord } from "./UserWord";
