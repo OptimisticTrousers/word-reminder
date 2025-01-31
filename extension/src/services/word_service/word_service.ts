@@ -3,10 +3,17 @@ import { service, Params } from "../service";
 export const wordService = (function (service) {
   const { get, post, remove, VITE_API_DOMAIN } = service;
 
-  function getWordList(userId: string | undefined, params: Params) {
+  function getWordList(userId: string, params: Params) {
     return get({
       url: `${VITE_API_DOMAIN}/users/${userId}/words`,
       params,
+      options: { credentials: "include" },
+    });
+  }
+
+  function getUserWord(userId: string, wordId: string) {
+    return get({
+      url: `${VITE_API_DOMAIN}/users/${userId}/words/${wordId}`,
       options: { credentials: "include" },
     });
   }
@@ -15,7 +22,7 @@ export const wordService = (function (service) {
     userId,
     formData,
   }: {
-    userId: string | undefined;
+    userId: string;
     formData: FormData;
   }) {
     return post({
@@ -40,5 +47,5 @@ export const wordService = (function (service) {
     });
   }
 
-  return { getWordList, createWord, deleteUserWord };
+  return { getWordList, getUserWord, createWord, deleteUserWord };
 })(service);

@@ -64,7 +64,7 @@ exports[`DeleteUserWordReminderModal component > renders the form with alert and
         <p
           class="_modal__alert_5625f4"
         >
-          Are you sure you want to delete your words by duration?
+          Are you sure you want to delete your user word?
         </p>
         <p
           class="_modal__message_5625f4"

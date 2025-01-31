@@ -50,11 +50,23 @@ describe("DeleteUserWordReminderModal component", () => {
 
     const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
+    const alert = screen.getByText(
+      "Are you sure you want to delete your user word?"
+    );
+    const message = screen.getByText("You can't undo this action.");
+
+    expect(alert).toBeInTheDocument();
+    expect(message).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("calls the functions to delete a word", async () => {
     const queryClient = new QueryClient();
+    const mockToggleModal = vi.fn();
+    const props = {
+      toggleModal: mockToggleModal,
+      wordId: "1",
+    };
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -75,11 +87,6 @@ describe("DeleteUserWordReminderModal component", () => {
         ],
       },
     ]);
-    const mockToggleModal = vi.fn();
-    const props = {
-      toggleModal: mockToggleModal,
-      wordId: "1",
-    };
     const status = 200;
     const mockDeleteUserWord = vi
       .spyOn(wordService, "deleteUserWord")
@@ -97,10 +104,17 @@ describe("DeleteUserWordReminderModal component", () => {
       userId: testUser.id,
       wordId: props.wordId,
     });
+    expect(mockToggleModal).toHaveBeenCalledTimes(1);
+    expect(mockToggleModal).toHaveBeenCalledWith();
   });
 
   it("calls the functions to show a notification error", async () => {
     const queryClient = new QueryClient();
+    const mockToggleModal = vi.fn();
+    const props = {
+      toggleModal: mockToggleModal,
+      wordId: "1",
+    };
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -121,11 +135,6 @@ describe("DeleteUserWordReminderModal component", () => {
         ],
       },
     ]);
-    const mockToggleModal = vi.fn();
-    const props = {
-      toggleModal: mockToggleModal,
-      wordId: "1",
-    };
     const status = 200;
     const message = "Error Message.";
     const mockDeleteUserWord = vi
@@ -153,10 +162,17 @@ describe("DeleteUserWordReminderModal component", () => {
       json: { message },
       status,
     });
+    expect(mockToggleModal).toHaveBeenCalledTimes(1);
+    expect(mockToggleModal).toHaveBeenCalledWith();
   });
 
   it("disables the delete button when the mutation is loading", async () => {
     const queryClient = new QueryClient();
+    const mockToggleModal = vi.fn();
+    const props = {
+      toggleModal: mockToggleModal,
+      wordId: "1",
+    };
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -177,11 +193,6 @@ describe("DeleteUserWordReminderModal component", () => {
         ],
       },
     ]);
-    const mockToggleModal = vi.fn();
-    const props = {
-      toggleModal: mockToggleModal,
-      wordId: "1",
-    };
     const status = 200;
     const delay = 500;
     const mockDeleteUserWord = vi

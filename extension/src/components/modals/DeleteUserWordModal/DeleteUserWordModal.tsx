@@ -34,6 +34,9 @@ export const DeleteUserWordModal = CSSModules(
       onError: (response: ErrorResponse) => {
         showNotificationError(response);
       },
+      onSettled: () => {
+        toggleModal();
+      },
     });
     const { user }: { user: User } = useOutletContext();
     const userId = user.id;
@@ -50,7 +53,7 @@ export const DeleteUserWordModal = CSSModules(
       <ModalContainer title="Delete User Word" toggleModal={toggleModal}>
         <form styleName="modal" action={handleDelete}>
           <p styleName="modal__alert">
-            Are you sure you want to delete your words by duration?
+            Are you sure you want to delete your user word?
           </p>
           <p styleName="modal__message">You can't undo this action.</p>
           <div styleName="modal__buttons">
