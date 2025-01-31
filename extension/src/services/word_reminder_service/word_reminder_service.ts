@@ -63,7 +63,13 @@ export const wordReminderService = (function (service) {
     });
   }
 
-  function deleteWordReminder(userId: string, wordReminderId: string) {
+  function deleteWordReminder({
+    userId,
+    wordReminderId,
+  }: {
+    userId: string;
+    wordReminderId: string;
+  }) {
     return remove({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminderId}`,
       options: { credentials: "include" },

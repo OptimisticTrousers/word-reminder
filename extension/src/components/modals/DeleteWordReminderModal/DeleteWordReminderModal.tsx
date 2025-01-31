@@ -1,55 +1,74 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from "react";
+import { User } from "common";
+import { useContext } from "react";
 import CSSModules from "react-css-modules";
-import ModalContainer from "../ModalContainer";
-import styles from "./DeleteWordsByDuration.module.css";
+import { useOutletContext } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import useHttp from "../../../hooks/useHttp";
+
+import {
+  NOTIFICATION_ACTIONS,
+  NotificationContext,
+} from "../../../context/Notification";
+import { useNotificationError } from "../../../hooks/useNotificationError";
+import { ModalContainer } from "../ModalContainer";
+import { wordReminderService } from "../../../services/word_reminder_service";
+import { ErrorResponse } from "../../../types";
+import styles from "./DeleteWordReminderModal.module.css";
 
 interface Props {
   toggleModal: () => void;
-  wordsByDurationId: string;
+  wordReminderId: string;
 }
 
-const DeleteWordsByDurationModal: FC<Props> = CSSModules(
-  ({ toggleModal, wordsByDurationId }) => {
-    const { remove } = useHttp();
-
-    const { data, isLoading, error, mutate }: any = useMutation({
-      mutationFn: (wordsByDurationId) => {
-        return remove(
-          `${
-            import.meta.env.VITE_API_DOMAIN
-          }/users/665164760636f4834e053388/wordsByDurations/${wordsByDurationId}`
+export const DeleteWordReminderModal = CSSModules(
+  function ({ toggleModal, wordReminderId }: Props) {
+    const { user }: { user: User } = useOutletContext();
+    const userId = user.id;
+    const { showNotification } = useContext(NotificationContext);
+    const { showNotificationError } = useNotificationError();
+    const { isPending, mutate } = useMutation({
+      mutationFn: wordReminderService.deleteWordReminder,
+      onSuccess: () => {
+        showNotification(
+          NOTIFICATION_ACTIONS.SUCCESS,
+          WORD_REMINDER_NOTIFICATION_MSGS.deleteWordReminder()
         );
+      },
+      onError: (response: ErrorResponse) => {
+        showNotificationError(response);
+      },
+      onSettled: () => {
+        toggleModal();
       },
     });
 
-    const handleDelete = (event: any) => {
-      event.preventDefault();
-      mutate(wordsByDurationId);
+    function handleCancel() {
       toggleModal();
+    }
+
+    const handleDelete = () => {
+      mutate({ userId, wordReminderId });
     };
 
     return (
-      <ModalContainer title="Delete Post" toggleModal={toggleModal}>
-        <form styleName="modal" onSubmit={handleDelete}>
+      <ModalContainer title="Delete Word Reminder" toggleModal={toggleModal}>
+        <form styleName="modal" action={handleDelete}>
           <p styleName="modal__alert">
-            Are you sure you want to delete your words by duration, bob jones?
+            Are you sure you want to delete this word reminder?
           </p>
           <p styleName="modal__message">You can't undo this action.</p>
           <div styleName="modal__buttons">
             <button
               styleName="modal__button modal__button--cancel"
-              onClick={toggleModal}
+              onClick={handleCancel}
             >
               Cancel
             </button>
             <button
               styleName="modal__button modal__button--delete"
               type="submit"
+              disabled={isPending}
             >
-              {isLoading ? "Deleting..." : "Delete"}
+              Delete
             </button>
           </div>
         </form>
@@ -57,7 +76,11 @@ const DeleteWordsByDurationModal: FC<Props> = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
+  { allowMultiple: true, handleNotFoundStyleName: "log" }
 );
 
-export default DeleteWordsByDurationModal;
+const WORD_REMINDER_NOTIFICATION_MSGS = {
+  deleteWordReminder: () => {
+    return "You have successfully deleted a word reminder!";
+  },
+};

@@ -1,9 +1,7 @@
-import { http } from "common";
-
 import { service } from "../service";
 import { wordReminderService } from "./word_reminder_service";
 
-vi.mock("common");
+vi.mock("../service");
 
 const { VITE_API_DOMAIN } = service;
 
@@ -43,13 +41,13 @@ describe("wordReminderService", () => {
   };
 
   describe("getWordReminderList", () => {
-    it("calls the functions at the correct API endpoint with query params", async () => {
+    it("gets using the correct API endpoint with query params", async () => {
       const params = new URLSearchParams({
         column: "created_at",
         direction: "-1",
       });
       const paramsObject = Object.fromEntries(params);
-      const mockHttpGet = vi.spyOn(http, "get").mockImplementation(async () => {
+      const mockGet = vi.spyOn(service, "get").mockImplementation(async () => {
         return {
           json: { wordReminders: [wordReminder1, wordReminder2] },
           status,
@@ -61,8 +59,8 @@ describe("wordReminderService", () => {
         paramsObject
       );
 
-      expect(mockHttpGet).toHaveBeenCalledTimes(1);
-      expect(mockHttpGet).toHaveBeenCalledWith({
+      expect(mockGet).toHaveBeenCalledTimes(1);
+      expect(mockGet).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
         params: paramsObject,
         options: { credentials: "include" },
@@ -76,9 +74,9 @@ describe("wordReminderService", () => {
 
   describe("createWordReminder", () => {
     describe("autoCreateWordReminder", () => {
-      it("calls the functions at the correct API endpoint with body", async () => {
-        const mockHttpPost = vi
-          .spyOn(http, "post")
+      it("creates using the correct API endpoint with auto word reminder body", async () => {
+        const mockPost = vi
+          .spyOn(service, "post")
           .mockImplementation(async () => {
             return { json: { wordReminder: wordReminder1 }, status };
           });
@@ -89,8 +87,8 @@ describe("wordReminderService", () => {
           wordReminder1
         );
 
-        expect(mockHttpPost).toHaveBeenCalledTimes(1);
-        expect(mockHttpPost).toHaveBeenCalledWith({
+        expect(mockPost).toHaveBeenCalledTimes(1);
+        expect(mockPost).toHaveBeenCalledWith({
           url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
           options: {
             body: JSON.stringify(wordReminder1),
@@ -105,9 +103,9 @@ describe("wordReminderService", () => {
     });
 
     describe("manualCreateWordReminder", () => {
-      it("calls the functions at the correct API endpoint with body", async () => {
-        const mockHttpPost = vi
-          .spyOn(http, "post")
+      it("creates using the correct API endpoint with manual word reminder body", async () => {
+        const mockPost = vi
+          .spyOn(service, "post")
           .mockImplementation(async () => {
             return { json: { wordReminder: wordReminder2 }, status };
           });
@@ -118,8 +116,8 @@ describe("wordReminderService", () => {
           wordReminder2
         );
 
-        expect(mockHttpPost).toHaveBeenCalledTimes(1);
-        expect(mockHttpPost).toHaveBeenCalledWith({
+        expect(mockPost).toHaveBeenCalledTimes(1);
+        expect(mockPost).toHaveBeenCalledWith({
           url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId2}`,
           options: {
             body: JSON.stringify(wordReminder2),
@@ -135,9 +133,9 @@ describe("wordReminderService", () => {
   });
 
   describe("deleteWordReminders", () => {
-    it("calls the functions at the correct API endpoint", async () => {
-      const mockHttpRemove = vi
-        .spyOn(http, "remove")
+    it("deletes using the correct API endpoint", async () => {
+      const mockRemove = vi
+        .spyOn(service, "remove")
         .mockImplementation(async () => {
           return {
             json: { wordReminders: [wordReminder1, wordReminder2] },
@@ -149,8 +147,8 @@ describe("wordReminderService", () => {
         sampleUser1.id
       );
 
-      expect(mockHttpRemove).toHaveBeenCalledTimes(1);
-      expect(mockHttpRemove).toHaveBeenCalledWith({
+      expect(mockRemove).toHaveBeenCalledTimes(1);
+      expect(mockRemove).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
         options: { credentials: "include" },
       });
@@ -162,8 +160,8 @@ describe("wordReminderService", () => {
   });
 
   describe("updateWordReminder", () => {
-    it("calls the functions at the correct API endpoint with body", async () => {
-      const mockHttpPut = vi.spyOn(http, "put").mockImplementation(async () => {
+    it("updates from the correct API endpoint with word reminder body", async () => {
+      const mockPut = vi.spyOn(service, "put").mockImplementation(async () => {
         return { json: { wordReminder: wordReminder1 }, status };
       });
 
@@ -173,8 +171,8 @@ describe("wordReminderService", () => {
         wordReminder1
       );
 
-      expect(mockHttpPut).toHaveBeenCalledTimes(1);
-      expect(mockHttpPut).toHaveBeenCalledWith({
+      expect(mockPut).toHaveBeenCalledTimes(1);
+      expect(mockPut).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
         options: {
           body: JSON.stringify(wordReminder1),
@@ -189,20 +187,20 @@ describe("wordReminderService", () => {
   });
 
   describe("deleteWordReminder", () => {
-    it("calls the functions at the correct API endpoint", async () => {
-      const mockHttpRemove = vi
-        .spyOn(http, "remove")
+    it("deletes the functions at the correct API endpoint", async () => {
+      const mockRemove = vi
+        .spyOn(service, "remove")
         .mockImplementation(async () => {
           return { json: { wordReminder: wordReminder1 }, status };
         });
 
-      const response = await wordReminderService.deleteWordReminder(
-        sampleUser1.id,
-        wordReminderId1
-      );
+      const response = await wordReminderService.deleteWordReminder({
+        userId: sampleUser1.id,
+        wordReminderId: wordReminderId1,
+      });
 
-      expect(mockHttpRemove).toHaveBeenCalledTimes(1);
-      expect(mockHttpRemove).toHaveBeenCalledWith({
+      expect(mockRemove).toHaveBeenCalledTimes(1);
+      expect(mockRemove).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
         options: { credentials: "include" },
       });
