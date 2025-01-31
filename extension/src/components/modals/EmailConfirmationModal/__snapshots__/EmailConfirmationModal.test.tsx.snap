@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmailConfirmationModal > type email code modal > shows form 1`] = `
+<DocumentFragment>
+  <div>
+    <h2>
+      Confirm your email
+    </h2>
+    <button
+      aria-label="Close modal"
+    >
+      X
+    </button>
+    <div>
+      <form
+        action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
+        class="_modal_516802"
+      >
+        <p
+          class="_modal__message_516802"
+        >
+          Please enter the confirmation code that was sent to 
+          <span
+            class="_modal__bold_516802"
+          >
+            bob@email.com
+          </span>
+           within 5 minutes.
+        </p>
+        <label
+          class="_modal__label_516802"
+        >
+          Code
+          <input
+            class="_modal__input_516802"
+            maxlength="16"
+            name="code"
+            required=""
+            type="text"
+          />
+        </label>
+        <div
+          class="_modal__buttons_516802"
+        >
+          <button
+            class="_modal__button_516802 _modal__button--cancel_516802"
+          >
+            Cancel
+          </button>
+          <button
+            class="_modal__button_516802 _modal__button--confirm_516802"
+            type="submit"
+          >
+            Enter Code
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,9 +1,9 @@
-import { http, Templates, Subject } from "common";
+import { Templates, Subject } from "common";
 
 import { service } from "../service";
 import { emailService } from "./email_service";
 
-vi.mock("common");
+vi.mock("../service");
 
 const { VITE_API_DOMAIN } = service;
 
@@ -19,8 +19,8 @@ describe("emailService", () => {
           "Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email",
       };
       const status = 200;
-      const mockHttpPost = vi
-        .spyOn(http, "post")
+      const mockPost = vi
+        .spyOn(service, "post")
         .mockImplementation(async () => {
           return {
             json: { info },
@@ -35,12 +35,42 @@ describe("emailService", () => {
 
       const response = await emailService.sendEmail(body);
 
-      expect(mockHttpPost).toHaveBeenCalledTimes(1);
-      expect(mockHttpPost).toHaveBeenCalledWith({
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/emails`,
         options: { body: JSON.stringify(body), credentials: "include" },
       });
       expect(response).toEqual({ json: { info }, status });
+    });
+  });
+
+  describe("verifyEmailCode", async () => {
+    it("calls the functions at the correct API endpoint with body", async () => {
+      const message = "Code has been verified";
+      const status = 200;
+      const mockPost = vi
+        .spyOn(service, "post")
+        .mockImplementation(async () => {
+          return {
+            json: { message },
+            status,
+          };
+        });
+      const body = {
+        code: "sometoken",
+      };
+
+      const response = await emailService.verifyEmailCode(body);
+
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith({
+        url: `${VITE_API_DOMAIN}/emails`,
+        options: { body: JSON.stringify(body), credentials: "include" },
+      });
+      expect(response).toEqual({
+        json: { message },
+        status,
+      });
     });
   });
 });
