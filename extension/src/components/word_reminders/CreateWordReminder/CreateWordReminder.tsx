@@ -3,36 +3,39 @@ import { useContext, useState } from "react";
 import CSSModules from "react-css-modules";
 
 import { ThemeContext } from "../../../context/Theme";
-import CreateWordsByDurationModal from "../../modals/CreateWordReminderModal/CreateWordReminderModal";
-import styles from "./CreateWordsByDuration.module.css";
+import { CreateWordReminderModal } from "../../modals/CreateWordReminderModal/CreateWordReminderModal";
+import styles from "./CreateWordReminder.module.css";
 
 export const CreateWordReminder = CSSModules(
   function () {
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const { theme } = useContext(ThemeContext);
 
     const toggleModal = () => {
-      setIsCreateModalOpen((prevValue) => !prevValue);
+      setIsModalVisible((prevValue) => !prevValue);
     };
 
     return (
       <>
-        {isCreateModalOpen && (
-          <CreateWordsByDurationModal toggleModal={toggleModal} />
+        {isModalVisible && (
+          <CreateWordReminderModal toggleModal={toggleModal} />
         )}
         <button
           styleName={`create create--${theme}`}
           onClick={toggleModal}
           aria-haspopup="dialog"
+          aria-labelledby="title"
         >
           <div styleName="create__container">
             <CirclePlus styleName="create__icon" />
             <div styleName="create__text">
-              <h3 styleName="create__title">Create a Words By Duration</h3>
+              <h2 styleName="create__title" id="title">
+                Create Word Reminder
+              </h2>
               <p styleName="create__description">
-                What&apos;s on your mind, bob jones? Create a words by duration
-                or randomly generate one!
+                Create a word reminder to remember words you come across in your
+                readings.
               </p>
             </div>
           </div>
@@ -41,5 +44,5 @@ export const CreateWordReminder = CSSModules(
     );
   },
   styles,
-  { allowMultiple: false, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "log" }
 );
