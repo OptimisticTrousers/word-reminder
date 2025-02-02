@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Error500 component > renders message, error status, and link to the home page 1`] = `
+<DocumentFragment>
+  <div
+    class="_error_f26a4e"
+  >
+    <div
+      class="_error__container_f26a4e"
+    >
+      <img
+        alt=""
+        class="_error__image_f26a4e"
+        src="/src/assets/images/robot.png"
+      />
+      <h2
+        class="_error__number_f26a4e"
+      >
+        500
+      </h2>
+      <hr
+        class="_error__break_f26a4e"
+      />
+      <p
+        class="_error__message_f26a4e"
+      >
+        Internal Server Error: Oops. Try again later.
+      </p>
+      <a
+        class="_error__link_f26a4e"
+        data-discover="true"
+        href="/"
+      >
+        Go back to the home page.
+      </a>
+    </div>
+  </div>
+</DocumentFragment>
+`;
