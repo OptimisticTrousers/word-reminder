@@ -1,0 +1,1 @@
+export { CondensedWord } from "./CondensedWord";

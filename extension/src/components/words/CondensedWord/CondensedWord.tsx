@@ -2,51 +2,16 @@
 import CSSModules from "react-css-modules";
 import styles from "./Word.module.css";
 import { Play } from "lucide-react";
-interface Props {
-  learned: boolean;
-  userId: string;
-  word: {
-    _id: string;
-    word: string;
-    origin: string;
-    phonetic: string;
-    audio: string;
-    meanings: [
-      {
-        partOfSpeech: string;
-        definitions: [
-          {
-            definition: string;
-            example: string;
-            synonyms: string[];
-            antonyms: string[];
-          }
-        ];
-      }
-    ];
-  };
-}
+import { UserWord as IUserWord, Word as IWord } from "common";
 
-export const Word = CSSModules(
-  function ({ word: { word, meanings, origin, phonetic, audio } }: Props) {
-    // const { handlePlay } = useTextToSpeech(word);
-
-    // const handleAudio = () => {
-    //   if (!audio) {
-    //     handlePlay();
-    //   } else {
-    //     const newAudio = new Audio(audio);
-    //     newAudio.play();
-    //   }
-    // };
-
-    console.log(audio);
+export const CondensedWord= CSSModules(
+  function ({details}: IUserWord & IWord) {
 
     return (
       <div styleName="word">
         <div styleName="word__top">
           <div styleName="word__title">
-            <h2 styleName="word__text">{word}</h2>
+            <h2 styleName="word__text">{details}</h2>
             <p styleName="word__phonetic">{phonetic}</p>
           </div>
           <button styleName="word__button">

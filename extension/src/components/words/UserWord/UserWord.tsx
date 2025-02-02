@@ -1,76 +1,77 @@
-import { UserWord as IUserWord, Word as IWord, User } from "common";
+import { UserWord as IUserWord, Word as IWord } from "common";
 import { Info, Trash } from "lucide-react";
+import { useState } from "react";
 import CSSModules from "react-css-modules";
-import { useContext, useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 
-import { useNotificationError } from "../../../hooks/useNotificationError";
-import { Word } from "../Word";
+import { DeleteUserWordModal } from "../../modals/DeleteUserWordModal";
+import { Word } from "../CondensedWord";
 import styles from "./UserWord.module.css";
-import { wordService } from "../../../services/word_service";
-import { useOutletContext } from "react-router-dom";
-import { ErrorResponse } from "../../../types";
-import {
-  NOTIFICATION_ACTIONS,
-  NotificationContext,
-} from "../../../context/Notification";
 
 export const UserWord = CSSModules(
   function (props: IUserWord & IWord) {
-    const { user }: { user: User } = useOutletContext();
-    const { showNotification } = useContext(NotificationContext);
-    const userId = user.id;
-    const wordId = props.word_id;
-    const accordion = useRef<HTMLDivElement | null>(null);
-    const { showNotificationError } = useNotificationError();
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleAccordion = () => {
+    const toggleAccordion = () => {
       setIsAccordionOpen((prevValue) => !prevValue);
-      if (accordion.current) {
-        accordion.current.style.maxHeight =
-          accordion.current?.style.maxHeight === "0px"
-            ? `${accordion.current?.scrollHeight}px`
-            : `0px`;
-      }
     };
 
-    console.log(props);
-
-
-    const handleDelete = () => {
-      // mutate();
-    };
+    function toggleModal() {
+      setIsModalOpen((prevIsModalOpen) => !prevIsModalOpen);
+    }
 
     return (
-      <div styleName="user-word">
-        <article styleName="user-word__word word">
-          {/* <p styleName="word__name">{props.word.word}</p> */}
-          <div styleName="word__divider"></div>
-          <div styleName="word__buttons">
-            <button
-              styleName="word__button word__button--info"
-              onClick={handleAccordion}
+      <>
+        <div styleName="user-word">
+          <article styleName="user-word__word word">
+            <p styleName="word__name">{props.details[0].word}</p>
+            <div styleName="word__divider"></div>
+            <div styleName="word__buttons">
+              <h3 styleName="word__heading">
+                <button
+                  id="accordion-button"
+                  type="button"
+                  styleName="word__button word__button--info"
+                  onClick={toggleAccordion}
+                  aria-expanded={isAccordionOpen}
+                  aria-label="More word details"
+                  aria-controls="accordion"
+                >
+                  <Info styleName="word__icon" />
+                </button>
+              </h3>
+              <h3 styleName="word__heading">
+                <button
+                  styleName="word__delete word__button--delete"
+                  onClick={toggleModal}
+                  aria-haspopup={true}
+                  aria-label="Open delete user word modal"
+                >
+                  <Trash styleName="word__icon" />
+                </button>
+              </h3>
+            </div>
+          </article>
+          {isAccordionOpen && (
+            <div
+              id="accordion"
+              styleName={`user-word__panel ${
+                isAccordionOpen && "user-word__panel--active"
+              }`}
+              role="region"
+              aria-labelledby="accordion-button"
             >
-              <Info styleName="word__icon" />
-            </button>
-            <button
-              styleName="word__delete word__button--delete"
-              onClick={handleDelete}
-            >
-              <Trash styleName="word__icon" />
-            </button>
-          </div>
-        </article>
-        <div
-          ref={accordion}
-          styleName={`user-word__panel ${
-            isAccordionOpen && "user-word__panel--active"
-          }`}
-        >
-          {/* <Word {...props} /> */}
+              <Word {...props} />
+            </div>
+          )}
         </div>
-      </div>
+        {isModalOpen && (
+          <DeleteUserWordModal
+            toggleModal={toggleModal}
+            wordId={props.word_id}
+          />
+        )}
+      </>
     );
   },
   styles,

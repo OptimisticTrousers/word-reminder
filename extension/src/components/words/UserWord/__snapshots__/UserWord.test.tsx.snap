@@ -1,0 +1,137 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UserWord component > it opens the accordion 1`] = `
+<DocumentFragment>
+  <div
+    class="_user-word_a41cd7"
+  >
+    <article
+      class="_user-word__word_a41cd7 _word_a41cd7"
+    >
+      <p
+        class="_word__name_a41cd7"
+      >
+        exemplary
+      </p>
+      <div
+        class="_word__divider_a41cd7"
+      />
+      <div
+        class="_word__buttons_a41cd7"
+      >
+        <h3
+          class="_word__heading_a41cd7"
+        >
+          <button
+            aria-controls="accordion"
+            aria-expanded="true"
+            aria-label="More word details"
+            class="_word__button_a41cd7 _word__button--info_a41cd7"
+            id="accordion-button"
+            type="button"
+          >
+            <svg
+              class="lucide lucide-info _word__icon_a41cd7"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <path
+                d="M12 16v-4"
+              />
+              <path
+                d="M12 8h.01"
+              />
+            </svg>
+          </button>
+        </h3>
+        <h3
+          class="_word__heading_a41cd7"
+        >
+          <button
+            aria-haspopup="true"
+            aria-label="Open delete user word modal"
+            class="_word__delete_a41cd7 _word__button--delete_a41cd7"
+          >
+            <svg
+              class="lucide lucide-trash _word__icon_a41cd7"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 6h18"
+              />
+              <path
+                d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+              />
+              <path
+                d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+              />
+            </svg>
+          </button>
+        </h3>
+      </div>
+    </article>
+    <div
+      aria-labelledby="accordion-button"
+      class="_user-word__panel_a41cd7 _user-word__panel--active_a41cd7"
+      id="accordion"
+      role="region"
+    >
+      <div
+        data-testid="id"
+      >
+        1
+      </div>
+      <div
+        data-testid="word_id"
+      >
+        1
+      </div>
+      <div
+        data-testid="user_id"
+      >
+        1
+      </div>
+      <div
+        data-testid="learned"
+      >
+        false
+      </div>
+      <div
+        data-testid="updated_at"
+      >
+        "1995-12-17T08:24:00.000Z"
+      </div>
+      <div
+        data-testid="created_at"
+      >
+        "1995-12-17T08:24:00.000Z"
+      </div>
+      <div
+        data-testid="details"
+      >
+        [{"word":"exemplary","phonetics":[],"meanings":[]}]
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
