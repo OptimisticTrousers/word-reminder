@@ -1,51 +1,44 @@
 import CSSModules from "react-css-modules";
-import styles from "./Navigation.module.css";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-const Navigation = CSSModules(
-  () => {
-    const location = useLocation();
+import styles from "./Navigation.module.css";
+
+export const Navigation = CSSModules(
+  function () {
+    const { pathname } = useLocation();
 
     let isWordsActive = false;
-    let isWordsByDurationsActive = false;
+    let isWordRemindersActive = false;
 
-    const subdirectory = location.pathname.slice(
-      location.pathname.lastIndexOf("/"),
-      location.pathname.length
-    );
-    if (subdirectory === "") {
+    if (pathname === "/words") {
       isWordsActive = true;
-    } else if (subdirectory === "/wordsByDurations") {
-      isWordsByDurationsActive = true;
+    } else if (pathname === "/wordReminders") {
+      isWordRemindersActive = true;
     }
+
     return (
-      <div styleName="navigation">
-        <NavLink
-          style={({ isActive }) => {
-            return {
-              color: isActive ? "red" : "inherit",
-            };
-          }}
+      <nav styleName="navigation">
+        <Link
           to="/words"
-          styleName={`navigation__link--tab ${
-            isWordsActive && "words__button--tab--active"
+          styleName={`navigation__link ${
+            isWordsActive && "navigation__link--active"
           }`}
+          aria-current={isWordsActive && "page"}
         >
           Words
-        </NavLink>
-        <NavLink
-          to="/wordsByDurations"
-          styleName={`navigation__link navigation__link--tab ${
-            isWordsByDurationsActive && "navigation__link--tab--active"
+        </Link>
+        <Link
+          to="/wordReminders"
+          styleName={`navigation__link ${
+            isWordRemindersActive && "navigation__link--active"
           }`}
+          aria-current={isWordRemindersActive && "page"}
         >
-          Words By Duration
-        </NavLink>
-      </div>
+          Word Reminders
+        </Link>
+      </nav>
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
+  { allowMultiple: true, handleNotFoundStyleName: "log" }
 );
-
-export default Navigation;

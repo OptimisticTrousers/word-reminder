@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Navigation component > renders two links to words and word reminders pages respectively 1`] = `
+<DocumentFragment>
+  <nav
+    class="_navigation_511cb9"
+  >
+    <a
+      aria-current="false"
+      class="_navigation__link_511cb9 _false_511cb9"
+      data-discover="true"
+      href="/words"
+    >
+      Words
+    </a>
+    <a
+      aria-current="false"
+      class="_navigation__link_511cb9 _false_511cb9"
+      data-discover="true"
+      href="/wordReminders"
+    >
+      Word Reminders
+    </a>
+  </nav>
+</DocumentFragment>
+`;
