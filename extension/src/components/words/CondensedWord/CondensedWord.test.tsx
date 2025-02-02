@@ -1,7 +1,11 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-  const json = [
+import { CondensedWord } from "./CondensedWord";
+
+describe("CondensedWord", () => {
+  const details = [
     {
-      id: "1",
       word: "word",
       phonetic: "/wɜːd/",
       phonetics: [
@@ -13,11 +17,6 @@
           text: "/wɝd/",
           audio:
             "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
-          sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=1197728",
-          license: {
-            name: "BY-SA 3.0",
-            url: "https://creativecommons.org/licenses/by-sa/3.0",
-          },
         },
       ],
       meanings: [
@@ -25,94 +24,18 @@
           partOfSpeech: "noun",
           definitions: [
             {
-              definition:
-                "The smallest unit of language that has a particular meaning and can be expressed by itself; the smallest discrete, meaningful unit of language. (contrast morpheme.)",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
-              definition: "Something like such a unit of language:",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
-              definition:
-                "The fact or act of speaking, as opposed to taking action. .",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
-              definition:
-                "Something that someone said; a comment, utterance; speech.",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
-              definition:
-                "A watchword or rallying cry, a verbal signal (even when consisting of multiple words).",
-              synonyms: [],
-              antonyms: [],
-              example: "mum's the word",
-            },
-            {
-              definition: "A proverb or motto.",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
               definition: "News; tidings (used without an article).",
-              synonyms: [],
-              antonyms: [],
               example: "Have you had any word from John yet?",
             },
             {
               definition:
                 "An order; a request or instruction; an expression of will.",
-              synonyms: [],
-              antonyms: [],
+              synonyms: ["promise"],
+              antonyms: ["false promise"],
               example: "Don't fire till I give the word",
             },
-            {
-              definition: "A promise; an oath or guarantee.",
-              synonyms: ["promise"],
-              antonyms: [],
-              example: "I give you my word that I will be there on time.",
-            },
-            {
-              definition: "A brief discussion or conversation.",
-              synonyms: [],
-              antonyms: [],
-              example: "Can I have a word with you?",
-            },
-            {
-              definition: "(in the plural) See words.",
-              synonyms: [],
-              antonyms: [],
-              example:
-                "There had been words between him and the secretary about the outcome of the meeting.",
-            },
-            {
-              definition:
-                "(sometimes Word) Communication from God; the message of the Christian gospel; the Bible, Scripture.",
-              synonyms: ["Bible", "word of God"],
-              antonyms: [],
-              example:
-                "Her parents had lived in Botswana, spreading the word among the tribespeople.",
-            },
-            {
-              definition: "(sometimes Word) Logos, Christ.",
-              synonyms: ["God", "Logos"],
-              antonyms: [],
-            },
           ],
-          synonyms: [
-            "Bible",
-            "word of God",
-            "God",
-            "Logos",
-            "promise",
-            "vocable",
-          ],
+          synonyms: ["Bible", "Logos", "vocable"],
           antonyms: [],
         },
         {
@@ -121,61 +44,23 @@
             {
               definition:
                 "To say or write (something) using particular words; to phrase (something).",
-              synonyms: ["express", "phrase", "put into words", "state"],
-              antonyms: [],
               example: "I’m not sure how to word this letter to the council.",
             },
             {
               definition: "To flatter with words, to cajole.",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
-              definition: "To ply or overpower with words.",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
-              definition: "To conjure with a word.",
-              synonyms: [],
-              antonyms: [],
-            },
-            {
-              definition: "To speak, to use words; to converse, to discourse.",
-              synonyms: [],
-              antonyms: [],
             },
           ],
-          synonyms: ["express", "phrase", "put into words", "state"],
-          antonyms: [],
         },
         {
           partOfSpeech: "interjection",
           definitions: [
             {
               definition:
-                'Truth, indeed, that is the truth! The shortened form of the statement "My word is my bond."',
-              synonyms: [],
-              antonyms: [],
-              example:
-                '"Yo, that movie was epic!" / "Word?" ("You speak the truth?") / "Word." ("I speak the truth.")',
-            },
-            {
-              definition:
                 "(stereotypically) An abbreviated form of word up; a statement of the acknowledgment of fact with a hint of nonchalant approval.",
-              synonyms: [],
-              antonyms: [],
             },
           ],
-          synonyms: [],
-          antonyms: [],
         },
       ],
-      license: {
-        name: "CC BY-SA 3.0",
-        url: "https://creativecommons.org/licenses/by-sa/3.0",
-      },
-      sourceUrls: ["https://en.wiktionary.org/wiki/word"],
     },
     {
       word: "word",
@@ -202,22 +87,150 @@
           definitions: [
             {
               definition: "(except in set phrases) To be, become, betide.",
-              synonyms: [],
-              antonyms: [],
               example: "Well worth thee, me friend.",
             },
           ],
-          synonyms: [],
-          antonyms: [],
         },
-      ],
-      license: {
-        name: "CC BY-SA 3.0",
-        url: "https://creativecommons.org/licenses/by-sa/3.0",
-      },
-      sourceUrls: [
-        "https://en.wiktionary.org/wiki/word",
-        "https://en.wiktionary.org/wiki/worth",
       ],
     },
   ];
+
+  it("renders meanings with part of speech, definitions, examples only", async () => {
+    const { asFragment } = render(<CondensedWord details={details} />);
+
+    const phonetic = screen.getAllByText("/wɜːd/");
+    const nounPartOfSpeech = screen.getByText("noun");
+    const definition1 = screen.getByText(
+      "News; tidings (used without an article)."
+    );
+    const example1 = screen.getByText("Have you had any word from John yet?");
+    const definition2 = screen.getByText(
+      "An order; a request or instruction; an expression of will."
+    );
+    const example2 = screen.getByText("Don't fire till I give the word");
+    const verbPartOfSpeech = screen.getAllByText("verb");
+    const definition3 = screen.getByText(
+      "To say or write (something) using particular words; to phrase (something)."
+    );
+    const example3 = screen.getByText(
+      "I’m not sure how to word this letter to the council."
+    );
+    const definition4 = screen.getByText("To flatter with words, to cajole.");
+    const interjectionPartOfSpeech = screen.getByText("interjection");
+    const definition5 = screen.getByText(
+      "(stereotypically) An abbreviated form of word up; a statement of the acknowledgment of fact with a hint of nonchalant approval."
+    );
+    const definition6 = screen.getByText(
+      "(except in set phrases) To be, become, betide."
+    );
+    const word = screen.queryByRole("heading", { name: "word" });
+    const link = screen.queryByRole("link");
+    const example4 = screen.queryByText("Well worth thee, me friend.");
+    const synonym1 = screen.queryByText("promise");
+    const synonym2 = screen.queryByText("Bible");
+    const synonym3 = screen.queryByText("Logos");
+    const synonym4 = screen.queryByText("vocable");
+    const antonym1 = screen.queryByText("false promise");
+
+    expect(word).not.toBeInTheDocument();
+    expect(link).not.toBeInTheDocument();
+    expect(synonym1).not.toBeInTheDocument();
+    expect(synonym2).not.toBeInTheDocument();
+    expect(synonym3).not.toBeInTheDocument();
+    expect(synonym4).not.toBeInTheDocument();
+    expect(antonym1).not.toBeInTheDocument();
+    expect(phonetic).toHaveLength(4);
+    expect(nounPartOfSpeech).toBeInTheDocument();
+    expect(definition1).toBeInTheDocument();
+    expect(example1).toBeInTheDocument();
+    expect(definition2).toBeInTheDocument();
+    expect(example2).toBeInTheDocument();
+    expect(verbPartOfSpeech).toHaveLength(2);
+    expect(definition3).toBeInTheDocument();
+    expect(example3).toBeInTheDocument();
+    expect(definition4).toBeInTheDocument();
+    expect(interjectionPartOfSpeech).toBeInTheDocument();
+    expect(definition5).toBeInTheDocument();
+    expect(definition6).toBeInTheDocument();
+    expect(example4).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("plays audio to pronounce word when available", async () => {
+    const details = [
+      {
+        word: "word",
+        phonetic: "/wɜːd/",
+        phonetics: [
+          {
+            text: "/wɜːd/",
+            audio: "",
+          },
+          {
+            text: "/wɝd/",
+            audio:
+              "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+          },
+        ],
+        meanings: [
+          {
+            partOfSpeech: "noun",
+            definitions: [
+              {
+                definition: "News; tidings (used without an article).",
+                example: "Have you had any word from John yet?",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        word: "word",
+        phonetic: "/wɜːd/",
+        phonetics: [
+          {
+            text: "/wɜːd/",
+            audio: "",
+          },
+          {
+            text: "/wɝd/",
+            audio:
+              "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+          },
+        ],
+        meanings: [
+          {
+            partOfSpeech: "verb",
+            definitions: [
+              {
+                definition: "(except in set phrases) To be, become, betide.",
+                example: "Well worth thee, me friend.",
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    const mockPlay = vi.fn();
+    const mockCtor = vi.fn();
+    globalThis.Audio = mockCtor.mockImplementation(() => {
+      return {
+        play: mockPlay,
+      };
+    });
+    const user = userEvent.setup();
+
+    render(<CondensedWord details={details} />);
+    const audioButton = screen.getAllByRole("button", {
+      name: "Pronounce word",
+    })[0];
+    await user.click(audioButton);
+
+    expect(mockCtor).toHaveBeenCalledTimes(1);
+    expect(mockCtor).toHaveBeenCalledWith(
+      "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3"
+    );
+    expect(mockPlay).toHaveBeenCalledTimes(1);
+    expect(mockPlay).toHaveBeenCalledWith();
+  });
+});
