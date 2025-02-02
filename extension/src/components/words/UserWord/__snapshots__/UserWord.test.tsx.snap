@@ -88,6 +88,12 @@ exports[`UserWord component > it opens the accordion 1`] = `
             </svg>
           </button>
         </h3>
+        <a
+          data-discover="true"
+          href="/userWords/1"
+        >
+          More Word Details
+        </a>
       </div>
     </article>
     <div
@@ -96,36 +102,6 @@ exports[`UserWord component > it opens the accordion 1`] = `
       id="accordion"
       role="region"
     >
-      <div
-        data-testid="id"
-      >
-        1
-      </div>
-      <div
-        data-testid="word_id"
-      >
-        1
-      </div>
-      <div
-        data-testid="user_id"
-      >
-        1
-      </div>
-      <div
-        data-testid="learned"
-      >
-        false
-      </div>
-      <div
-        data-testid="updated_at"
-      >
-        "1995-12-17T08:24:00.000Z"
-      </div>
-      <div
-        data-testid="created_at"
-      >
-        "1995-12-17T08:24:00.000Z"
-      </div>
       <div
         data-testid="details"
       >

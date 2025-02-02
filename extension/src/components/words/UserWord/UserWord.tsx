@@ -2,9 +2,10 @@ import { UserWord as IUserWord, Word as IWord } from "common";
 import { Info, Trash } from "lucide-react";
 import { useState } from "react";
 import CSSModules from "react-css-modules";
+import { Link } from "react-router-dom";
 
 import { DeleteUserWordModal } from "../../modals/DeleteUserWordModal";
-import { Word } from "../CondensedWord";
+import { CondensedWord } from "../CondensedWord";
 import styles from "./UserWord.module.css";
 
 export const UserWord = CSSModules(
@@ -50,6 +51,7 @@ export const UserWord = CSSModules(
                   <Trash styleName="word__icon" />
                 </button>
               </h3>
+              <Link to={`/userWords/${props.id}`}>More Word Details</Link>
             </div>
           </article>
           {isAccordionOpen && (
@@ -61,7 +63,7 @@ export const UserWord = CSSModules(
               role="region"
               aria-labelledby="accordion-button"
             >
-              <Word {...props} />
+              <CondensedWord {...props} />
             </div>
           )}
         </div>
