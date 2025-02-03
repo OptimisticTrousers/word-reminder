@@ -1,4 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component, ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 import "./ErrorBoundary.css";
 
@@ -6,40 +7,32 @@ interface Props {
   children: ReactNode;
 }
 
-export class ErrorBoundary extends Component<Props> {
-  state = {
-    hasError: false,
-    errorMsg: "",
-  };
+interface State {
+  error: Error | null;
+}
 
+export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      error: null,
+    };
   }
 
   static getDerivedStateFromError(error: Error) {
-    console.error(error);
-    return { hasError: true, errorMsg: "" };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ errorMsg: error.message });
-    console.error(error);
-    console.error(errorInfo);
-  }
-
-  handleClick() {
-    window.location.reload();
+    return { error };
   }
 
   render() {
-    if (this.state.hasError) {
+    if (this.state.error) {
       return (
         <div className="boundary">
           <div className="boundary__container">
-            <h1 className="boundary__title">An error occurred</h1>
-            <button className="boundary__button" onClick={this.handleClick}>
-              Reload
-            </button>
+            <h2 className="boundary__title">An error occurred.</h2>
+            <p styleName="boundary__message">{this.state.error.message}</p>
+            <Link to="/" className="boundary__link">
+              Go back to the home page.
+            </Link>
           </div>
         </div>
       );

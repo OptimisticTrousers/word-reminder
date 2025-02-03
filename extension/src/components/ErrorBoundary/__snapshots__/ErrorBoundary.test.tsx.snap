@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ErrorBoundary component > renders title, message, and link 1`] = `
+<DocumentFragment>
+  <div
+    class="boundary"
+  >
+    <div
+      class="boundary__container"
+    >
+      <h2
+        class="boundary__title"
+      >
+        An error occurred.
+      </h2>
+      <p
+        stylename="boundary__message"
+      >
+        Oops. Error!
+      </p>
+      <a
+        class="boundary__link"
+        data-discover="true"
+        href="/"
+      >
+        Go back to the home page.
+      </a>
+    </div>
+  </div>
+</DocumentFragment>
+`;
