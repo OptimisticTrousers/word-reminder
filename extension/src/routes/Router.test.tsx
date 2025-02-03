@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Router } from "./Router";
 import { sessionService } from "../services/session_service";
 
-vi.mock("../components/ui", function () {
+vi.mock("../components/ui/Loading", function () {
   return {
     Loading: function () {
       return <p>Loading...</p>;
@@ -57,14 +57,26 @@ vi.mock("../pages/Signup", function () {
   };
 });
 
-vi.mock("../pages/Words", function () {
+vi.mock("../pages/UserWords", function () {
   return {
-    Words: function () {
+    UserWords: function () {
       return (
         <>
-          <h2>Words</h2>
+          <h2>UserWords</h2>
           <ul></ul>
         </>
+      );
+    },
+  };
+});
+
+vi.mock("../pages/UserWord", function () {
+  return {
+    UserWord: function () {
+      return (
+        <div>
+          <h2>UserWord</h2>
+        </div>
       );
     },
   };
@@ -75,7 +87,7 @@ vi.mock("../pages/WordReminders", function () {
     WordReminders: function () {
       return (
         <>
-          <h2>Word Reminders</h2>
+          <h2>WordReminders</h2>
           <ul></ul>
         </>
       );
@@ -83,7 +95,7 @@ vi.mock("../pages/WordReminders", function () {
   };
 });
 
-vi.mock("../pages/settings", function () {
+vi.mock("../pages/Settings", function () {
   return {
     Settings: function () {
       return (
@@ -96,10 +108,6 @@ vi.mock("../pages/settings", function () {
 });
 
 describe("Router component", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   const errorMessage = "Server Error.";
   const loadingMessage = "Loading...";
 
@@ -128,166 +136,194 @@ describe("Router component", () => {
   };
   const status = 200;
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe("returns routing", () => {
-    it("renders App", () => {
-      const mockSessionServiceGetCurrentUser = vi
-        .spyOn(sessionService, "getCurrentUser")
-        .mockImplementation(async () => {
-          return { json: { user }, status };
-        });
-
-      const { asFragment } = setup({ initialRoute: "/" });
-      const error = screen.queryByText(errorMessage);
-      const loading = screen.queryByText(loadingMessage);
-      const loginButton = screen.queryByRole("button", { name: "Login" });
-      const main = screen.getByRole("main");
-      const settingsButton = screen.queryByRole("button", { name: "Update" });
-      const signupButton = screen.queryByRole("button", { name: "Signup" });
-      const wordsHeader = screen.queryByRole("heading", { name: "Words" });
-      const wordRemindersHeader = screen.queryByRole("heading", {
-        name: "Word Reminders",
-      });
-
-      expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
-      expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-      expect(error).not.toBeInTheDocument();
-      expect(loading).not.toBeInTheDocument();
-      expect(loginButton).not.toBeInTheDocument();
-      expect(main).toBeInTheDocument();
-      expect(settingsButton).not.toBeInTheDocument();
-      expect(signupButton).not.toBeInTheDocument();
-      expect(wordsHeader).not.toBeInTheDocument();
-      expect(wordRemindersHeader).not.toBeInTheDocument();
-      expect(asFragment()).toMatchSnapshot();
-    });
-
     describe("when the user is logged in", () => {
-      it("renders words page", () => {
+      it("renders user word page", async () => {
+        const userWordId = 1;
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
           .mockImplementation(async () => {
             return { json: { user }, status };
           });
 
-        const { asFragment } = setup({ initialRoute: "/login" });
+        setup({ initialRoute: `/userWords/${userWordId}` });
+        const userWordHeader = await screen.findByRole("heading", {
+          name: "UserWord",
+        });
+        const appMain = screen.getByRole("main");
         const error = screen.queryByText(errorMessage);
+        const userWordsHeader = screen.queryByRole("heading", {
+          name: "UserWords",
+        });
         const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
-        const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
         const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordsHeader = screen.getByRole("heading", { name: "Words" });
         const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "Word Reminders",
+          name: "WordReminders",
         });
 
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(userWordHeader).toBeInTheDocument();
+        expect(appMain).toBeInTheDocument();
         expect(error).not.toBeInTheDocument();
         expect(loading).not.toBeInTheDocument();
         expect(loginButton).not.toBeInTheDocument();
-        expect(main).not.toBeInTheDocument();
         expect(settingsButton).not.toBeInTheDocument();
         expect(signupButton).not.toBeInTheDocument();
-        expect(wordsHeader).toBeInTheDocument();
+        expect(userWordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment()).toMatchSnapshot();
       });
 
-      it("renders word reminders page", () => {
+      it("renders user words page", async () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
           .mockImplementation(async () => {
             return { json: { user }, status };
           });
 
-        const { asFragment } = setup({ initialRoute: "/login" });
+        setup({ initialRoute: "/userWords" });
+        const userWordsHeader = await screen.findByRole("heading", {
+          name: "UserWords",
+        });
+        const appMain = screen.getByRole("main");
         const error = screen.queryByText(errorMessage);
         const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
-        const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
         const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordsHeader = screen.queryByRole("heading", { name: "Words" });
-        const wordRemindersHeader = screen.getByRole("heading", {
-          name: "Word Reminders",
+        const wordRemindersHeader = screen.queryByRole("heading", {
+          name: "WordReminders",
+        });
+        const userWordHeader = screen.queryByRole("heading", {
+          name: "UserWord",
         });
 
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(userWordsHeader).toBeInTheDocument();
+        expect(appMain).toBeInTheDocument();
+        expect(userWordHeader).not.toBeInTheDocument();
         expect(error).not.toBeInTheDocument();
         expect(loading).not.toBeInTheDocument();
         expect(loginButton).not.toBeInTheDocument();
-        expect(main).not.toBeInTheDocument();
         expect(settingsButton).not.toBeInTheDocument();
         expect(signupButton).not.toBeInTheDocument();
-        expect(wordsHeader).not.toBeInTheDocument();
+        expect(wordRemindersHeader).not.toBeInTheDocument();
+      });
+
+      it("renders word reminders page", async () => {
+        const mockSessionServiceGetCurrentUser = vi
+          .spyOn(sessionService, "getCurrentUser")
+          .mockImplementation(async () => {
+            return { json: { user }, status };
+          });
+
+        setup({ initialRoute: "/wordReminders" });
+        const wordRemindersHeader = await screen.findByRole("heading", {
+          name: "WordReminders",
+        });
+        const appMain = screen.getByRole("main");
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
+        const loginButton = screen.queryByRole("button", { name: "Login" });
+        const settingsButton = screen.queryByRole("button", { name: "Update" });
+        const signupButton = screen.queryByRole("button", { name: "Signup" });
+        const userWordsHeader = screen.queryByRole("heading", {
+          name: "UserWords",
+        });
+
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
         expect(wordRemindersHeader).toBeInTheDocument();
-        expect(asFragment()).toMatchSnapshot();
-      });
-
-      it("renders settings page", () => {
-        const mockSessionServiceGetCurrentUser = vi
-          .spyOn(sessionService, "getCurrentUser")
-          .mockImplementation(async () => {
-            return { json: { user }, status };
-          });
-
-        const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const main = screen.queryByRole("main");
-        const settingsButton = screen.getByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordsHeader = screen.queryByRole("heading", { name: "Words" });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "Word Reminders",
-        });
-
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(appMain).toBeInTheDocument();
         expect(error).not.toBeInTheDocument();
         expect(loading).not.toBeInTheDocument();
         expect(loginButton).not.toBeInTheDocument();
-        expect(main).not.toBeInTheDocument();
-        expect(settingsButton).toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(wordsHeader).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment()).toMatchSnapshot();
-      });
-
-      it("redirects to words page when user navigates to non-protected routes", async () => {
-        const mockSessionServiceGetCurrentUser = vi
-          .spyOn(sessionService, "getCurrentUser")
-          .mockImplementation(async () => {
-            return { json: { user }, status };
-          });
-
-        const { asFragment } = setup({ initialRoute: "/login" });
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const main = screen.queryByRole("main");
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordsHeader = screen.getByRole("heading", { name: "Words" });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "Word Reminders",
-        });
-
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(loginButton).not.toBeInTheDocument();
-        expect(main).not.toBeInTheDocument();
         expect(settingsButton).not.toBeInTheDocument();
         expect(signupButton).not.toBeInTheDocument();
-        expect(wordsHeader).toBeInTheDocument();
+        expect(userWordsHeader).not.toBeInTheDocument();
+      });
+
+      it("renders settings page", async () => {
+        const mockSessionServiceGetCurrentUser = vi
+          .spyOn(sessionService, "getCurrentUser")
+          .mockImplementation(async () => {
+            return { json: { user }, status };
+          });
+
+        setup({ initialRoute: "/settings" });
+        const settingsButton = await screen.findByRole("button", {
+          name: "Update",
+        });
+        const appMain = screen.getByRole("main");
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
+        const loginButton = screen.queryByRole("button", { name: "Login" });
+        const signupButton = screen.queryByRole("button", { name: "Signup" });
+        const userWordsHeader = screen.queryByRole("heading", {
+          name: "UserWords",
+        });
+        const userWordHeader = screen.queryByRole("heading", {
+          name: "UserWord",
+        });
+        const wordRemindersHeader = screen.queryByRole("heading", {
+          name: "WordReminders",
+        });
+
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(settingsButton).toBeInTheDocument();
+        expect(appMain).toBeInTheDocument();
+        expect(userWordHeader).not.toBeInTheDocument();
+        expect(error).not.toBeInTheDocument();
+        expect(loading).not.toBeInTheDocument();
+        expect(loginButton).not.toBeInTheDocument();
+        expect(signupButton).not.toBeInTheDocument();
+        expect(userWordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment()).toMatchSnapshot();
+      });
+
+      it("redirects to user words page when user navigates to non-protected routes", async () => {
+        const mockSessionServiceGetCurrentUser = vi
+          .spyOn(sessionService, "getCurrentUser")
+          .mockImplementation(async () => {
+            return { json: { user }, status };
+          });
+
+        setup({ initialRoute: "/login" });
+        const userWordsHeader = await screen.findByRole("heading", {
+          name: "UserWords",
+        });
+        const appMain = screen.getByRole("main");
+        const error = screen.queryByText(errorMessage);
+        const loading = screen.queryByText(loadingMessage);
+        const loginButton = screen.queryByRole("button", { name: "Login" });
+        const settingsButton = screen.queryByRole("button", { name: "Update" });
+        const signupButton = screen.queryByRole("button", { name: "Signup" });
+        const wordRemindersHeader = screen.queryByRole("heading", {
+          name: "WordReminders",
+        });
+        const userWordHeader = screen.queryByRole("heading", {
+          name: "UserWord",
+        });
+
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(userWordsHeader).toBeInTheDocument();
+        expect(appMain).toBeInTheDocument();
+        expect(error).not.toBeInTheDocument();
+        expect(userWordHeader).not.toBeInTheDocument();
+        expect(loading).not.toBeInTheDocument();
+        expect(loginButton).not.toBeInTheDocument();
+        expect(settingsButton).not.toBeInTheDocument();
+        expect(signupButton).not.toBeInTheDocument();
+        expect(wordRemindersHeader).not.toBeInTheDocument();
       });
     });
 
@@ -296,96 +332,117 @@ describe("Router component", () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
           .mockImplementation(async () => {
-            return { json: { user }, status };
+            return { json: { user: null }, status };
           });
 
-        const { asFragment } = setup({ initialRoute: "/login" });
+        setup({ initialRoute: "/login" });
+        const loginButton = await screen.findByRole("button", {
+          name: "Login",
+        });
+        const appMain = screen.getByRole("main");
         const error = screen.queryByText(errorMessage);
         const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.getByRole("button", { name: "Login" });
-        const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
         const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordsHeader = screen.queryByRole("heading", { name: "Words" });
+        const userWordsHeader = screen.queryByRole("heading", {
+          name: "UserWords",
+        });
+        const userWordHeader = screen.queryByRole("heading", {
+          name: "UserWord",
+        });
         const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "Word Reminders",
+          name: "WordReminders",
         });
 
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
         expect(loginButton).toBeInTheDocument();
-        expect(main).not.toBeInTheDocument();
+        expect(appMain).toBeInTheDocument();
+        expect(error).not.toBeInTheDocument();
+        expect(userWordHeader).not.toBeInTheDocument();
+        expect(loading).not.toBeInTheDocument();
         expect(settingsButton).not.toBeInTheDocument();
         expect(signupButton).not.toBeInTheDocument();
-        expect(wordsHeader).not.toBeInTheDocument();
+        expect(userWordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment()).toMatchSnapshot();
       });
 
       it("renders signup page", async () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
           .mockImplementation(async () => {
-            return { json: { user }, status };
+            return { json: { user: null }, status };
           });
 
-        const { asFragment } = setup({ initialRoute: "/login" });
+        setup({ initialRoute: "/signup" });
+        const signupButton = await screen.findByRole("button", {
+          name: "Signup",
+        });
+        const appMain = screen.getByRole("main");
         const error = screen.queryByText(errorMessage);
         const loading = screen.queryByText(loadingMessage);
         const loginButton = screen.queryByRole("button", { name: "Login" });
-        const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.getByRole("button", { name: "Signup" });
-        const wordsHeader = screen.queryByRole("heading", { name: "Words" });
+        const userWordsHeader = screen.queryByRole("heading", {
+          name: "UserWords",
+        });
+        const userWordHeader = screen.queryByRole("heading", {
+          name: "UserWord",
+        });
         const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "Word Reminders",
+          name: "WordReminders",
         });
 
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(signupButton).toBeInTheDocument();
+        expect(appMain).toBeInTheDocument();
+        expect(userWordHeader).not.toBeInTheDocument();
         expect(error).not.toBeInTheDocument();
         expect(loading).not.toBeInTheDocument();
         expect(loginButton).not.toBeInTheDocument();
-        expect(main).not.toBeInTheDocument();
         expect(settingsButton).not.toBeInTheDocument();
-        expect(signupButton).toBeInTheDocument();
-        expect(wordsHeader).not.toBeInTheDocument();
+        expect(userWordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment()).toMatchSnapshot();
       });
 
       it("redirects to login page when user navigates to protected routes", async () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
           .mockImplementation(async () => {
-            return { json: { user }, status };
+            return { json: { user: null }, status };
           });
 
-        const { asFragment } = setup({ initialRoute: "/app" });
+        setup({ initialRoute: "/userWords" });
+        const loginButton = await screen.findByRole("button", {
+          name: "Login",
+        });
+        const appMain = screen.getByRole("main");
         const error = screen.queryByText(errorMessage);
         const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.getByRole("button", { name: "Login" });
-        const main = screen.queryByRole("main");
         const settingsButton = screen.queryByRole("button", { name: "Update" });
         const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordsHeader = screen.queryByRole("heading", { name: "Words" });
+        const userWordsHeader = screen.queryByRole("heading", {
+          name: "UserWords",
+        });
+        const userWordHeader = screen.queryByRole("heading", {
+          name: "UserWord",
+        });
         const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "Word Reminders",
+          name: "WordReminders",
         });
 
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(loginButton).toBeInTheDocument();
+        expect(appMain).toBeInTheDocument();
+        expect(userWordHeader).not.toBeInTheDocument();
         expect(error).not.toBeInTheDocument();
         expect(loading).not.toBeInTheDocument();
-        expect(loginButton).toBeInTheDocument();
-        expect(main).not.toBeInTheDocument();
         expect(settingsButton).not.toBeInTheDocument();
         expect(signupButton).not.toBeInTheDocument();
-        expect(wordsHeader).not.toBeInTheDocument();
+        expect(userWordsHeader).not.toBeInTheDocument();
         expect(wordRemindersHeader).not.toBeInTheDocument();
-        expect(asFragment()).toMatchSnapshot();
       });
     });
   });
@@ -394,32 +451,35 @@ describe("Router component", () => {
     const mockSessionServiceGetCurrentUser = vi
       .spyOn(sessionService, "getCurrentUser")
       .mockImplementation(async () => {
-        return { json: { message: errorMessage }, status: 400 };
+        return Promise.reject({ json: { message: errorMessage }, status: 400 });
       });
 
-    const { asFragment } = setup({ initialRoute: "/" });
-    const error = screen.getByText(errorMessage);
+    setup({ initialRoute: "/" });
+    const error = await screen.findByText(errorMessage);
+    const appMain = screen.queryByRole("main");
     const loading = screen.queryByText(loadingMessage);
     const loginButton = screen.queryByRole("button", { name: "Login" });
-    const main = screen.queryByRole("main");
     const settingsButton = screen.queryByRole("button", { name: "Update" });
     const signupButton = screen.queryByRole("button", { name: "Signup" });
-    const wordsHeader = screen.queryByRole("heading", { name: "Words" });
+    const userWordsHeader = screen.queryByRole("heading", {
+      name: "UserWords",
+    });
+    const userWordHeader = screen.queryByRole("heading", { name: "UserWord" });
     const wordRemindersHeader = screen.queryByRole("heading", {
-      name: "Word Reminders",
+      name: "WordReminders",
     });
 
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
     expect(error).toBeInTheDocument();
+    expect(appMain).not.toBeInTheDocument();
+    expect(userWordHeader).not.toBeInTheDocument();
     expect(loading).not.toBeInTheDocument();
     expect(loginButton).not.toBeInTheDocument();
-    expect(main).not.toBeInTheDocument();
     expect(settingsButton).not.toBeInTheDocument();
     expect(signupButton).not.toBeInTheDocument();
-    expect(wordsHeader).not.toBeInTheDocument();
+    expect(userWordsHeader).not.toBeInTheDocument();
     expect(wordRemindersHeader).not.toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
   });
 
   it("renders loading page", async () => {
@@ -434,28 +494,31 @@ describe("Router component", () => {
         });
       });
 
-    const { asFragment } = setup({ initialRoute: "/" });
-    const error = screen.queryByText(errorMessage);
+    setup({ initialRoute: "/" });
     const loading = screen.getByText(loadingMessage);
+    const appMain = screen.queryByRole("main");
+    const error = screen.queryByText(errorMessage);
     const loginButton = screen.queryByRole("button", { name: "Login" });
-    const main = screen.queryByRole("main");
     const settingsButton = screen.queryByRole("button", { name: "Update" });
     const signupButton = screen.queryByRole("button", { name: "Signup" });
-    const wordsHeader = screen.queryByRole("heading", { name: "Words" });
-    const wordRemindersHeader = screen.queryByRole("heading", {
-      name: "Word Reminders",
+    const userWordsHeader = screen.queryByRole("heading", {
+      name: "UserWords",
     });
+    const wordRemindersHeader = screen.queryByRole("heading", {
+      name: "WordReminders",
+    });
+    const userWordHeader = screen.queryByRole("heading", { name: "UserWord" });
 
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-    expect(error).not.toBeInTheDocument();
     expect(loading).toBeInTheDocument();
+    expect(appMain).not.toBeInTheDocument();
+    expect(error).not.toBeInTheDocument();
+    expect(userWordHeader).not.toBeInTheDocument();
     expect(loginButton).not.toBeInTheDocument();
-    expect(main).not.toBeInTheDocument();
     expect(settingsButton).not.toBeInTheDocument();
     expect(signupButton).not.toBeInTheDocument();
-    expect(wordsHeader).not.toBeInTheDocument();
+    expect(userWordsHeader).not.toBeInTheDocument();
     expect(wordRemindersHeader).not.toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
   });
 });

@@ -5,11 +5,14 @@ import { Loading } from "../components/ui/Loading";
 import { Error500 } from "../pages/Error500";
 import { sessionService } from "../services/session_service";
 import { routes } from "./routes";
+import { ErrorResponse } from "../types";
 
 export function Router() {
   const { data, error, isError, isLoading } = useQuery({
     queryKey: ["sessions"],
-    queryFn: sessionService.getCurrentUser,
+    queryFn: () => {
+      return sessionService.getCurrentUser();
+    },
   });
 
   const routing = useRoutes(routes(data?.json.user));
@@ -19,7 +22,9 @@ export function Router() {
   }
 
   if (isError) {
-    return <Error500 message={error.message} />;
+    return (
+      <Error500 message={(error as unknown as ErrorResponse).json.message} />
+    );
   }
 
   return routing;

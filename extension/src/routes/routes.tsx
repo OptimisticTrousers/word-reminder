@@ -5,8 +5,9 @@ import { App } from "../components/App";
 import { Login } from "../pages/Auth/Login";
 import { Signup } from "../pages/Auth/Signup";
 import { Settings } from "../pages/Settings";
+import { UserWord } from "../pages/UserWord";
+import { UserWords } from "../pages/UserWords";
 import { WordReminders } from "../pages/WordReminders";
-import { Words } from "../pages/Words";
 
 export function routes(user: User | undefined) {
   return [
@@ -16,7 +17,7 @@ export function routes(user: User | undefined) {
       children: [
         {
           path: "/",
-          element: user && <Navigate to="/app/words" />,
+          element: user && <Navigate to="/userWords" />,
           children: [
             {
               path: "login",
@@ -29,10 +30,11 @@ export function routes(user: User | undefined) {
           ],
         },
         {
-          path: "/app",
+          path: "/",
           element: !user && <Navigate to="/login" />,
           children: [
-            { path: "words", element: <Words /> },
+            { path: "userWords", element: <UserWords /> },
+            { path: "userWords/:userWordId", element: <UserWord /> },
             { path: "wordReminders", element: <WordReminders /> },
             { path: "settings", element: <Settings /> },
           ],
