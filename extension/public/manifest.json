@@ -5,6 +5,9 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["scripting"],
-  "host_permissions": ["http://*/*", "https://*/*"]
+  "permissions": ["scripting", "contextMenus"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "icons": {
+    "16": "favicon/favicon.ico"
+  }
 }
