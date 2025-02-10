@@ -1,16 +1,18 @@
-interface Phonetic {
+export interface Phonetic {
   text?: string;
   audio?: string;
   sourceUrl?: string;
   license?: License;
 }
 
-interface Meaning {
+export interface Meaning {
   partOfSpeech: string;
   definitions: Definition[];
+  synonyms?: string[];
+  antonyms?: string[];
 }
 
-interface Definition {
+export interface Definition {
   definition: string;
   example?: string;
   synonyms?: string[];
@@ -22,7 +24,7 @@ interface License {
   url: string;
 }
 
-export type Json = {
+export interface Detail {
   phonetic?: string;
   phonetics: Phonetic[];
   meanings: Meaning[];
@@ -30,15 +32,28 @@ export type Json = {
   origin?: string;
   license?: License;
   sourceUrls?: string[];
-}[];
+}
+
+export enum Order {
+  Newest = "newest",
+  Oldest = "oldest",
+  Random = "random",
+}
 
 export interface Word {
   id: string;
-  details: Json;
+  details: Detail[];
+  images?: Image[];
   created_at: Date;
+}
+
+export interface Image {
+  src: string;
+  caption: string;
 }
 export interface User {
   id: string;
+  auto: boolean;
   email: string;
   confirmed: boolean;
   created_at: Date;
@@ -64,23 +79,18 @@ export interface SubscriptionParams {
 
 export enum Templates {
   EMAIL_VERIFICATION = "email_verification",
-  CHANGE_EMAIL_VERIFICATION = "change_email_verification",
-  CHANGE_PASSWORD_VERIFICATION = "change_password_verification",
+  CHANGE_VERIFICATION = "change_verification",
 }
 
 export enum Subject {
   EMAIL_VERIFICATION = "Verify Your Email",
-  CHANGE_EMAIL_VERIFICATION = "Change Email",
-  CHANGE_PASSWORD_VERIFICATION = "Change Password",
+  CHANGE_VERIFICATION = "Change Account Details",
 }
 
-export interface WordReminder extends WordReminderParams {
+export interface WordReminder {
   id: string;
   created_at: Date;
   updated_at: Date;
-}
-
-export interface WordReminderParams {
   user_id: string;
   finish: Date;
   // End date and time when the reminder is no longer active.
@@ -90,4 +100,24 @@ export interface WordReminderParams {
   // Specifies if the reminder is active
   reminder: string;
   // Defines how often a reminder notification is sent to the user which will include all of the words in this word reminder.
+}
+
+interface WordReminderParams {
+  auto: boolean;
+  has_reminder_onload: boolean;
+  is_active: boolean;
+  reminder: string;
+}
+
+export interface ManualWordReminderParams extends WordReminderParams {
+  finish: Date;
+  user_words: string[];
+}
+
+export interface AutoWordReminderParams extends WordReminderParams {
+  create_now: boolean;
+  duration: string;
+  word_count: number;
+  has_learned_words: boolean;
+  order: Order;
 }

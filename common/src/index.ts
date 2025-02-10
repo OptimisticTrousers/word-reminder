@@ -1,13 +1,24 @@
 export { http } from "./http";
 export {
-  Json,
+  Definition,
+  Detail,
+  Meaning,
+  Phonetic,
   Subject,
+  Image,
   SubscriptionParams,
   Templates,
   User,
+  Order,
   UserWord,
   Word,
   WordReminder,
-  WordReminderParams,
+  AutoWordReminderParams,
+  ManualWordReminderParams,
 } from "./types";
-export { EMAIL_MAX, PASSWORD_MAX, WORD_MAX } from "./constants";
+export {
+  TOKEN_MAX_BYTES,
+  EMAIL_MAX,
+  PASSWORD_MAX,
+  WORD_MAX,
+} from "./constants";
