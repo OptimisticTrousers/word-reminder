@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AutoCreateWordReminder component > auto > renders toggled button 1`] = `[Function]`;
+
+exports[`AutoCreateWordReminder component > auto > renders untoggled button 1`] = `[Function]`;
