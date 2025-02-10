@@ -21,6 +21,7 @@ import { wordService } from "../../services/word_service/word_service";
 import { ErrorResponse } from "../../types";
 import { download } from "../../utils/download";
 import styles from "./UserWords.module.css";
+import { SortSelect } from "../../components/ui/SortSelect";
 
 export const UserWords = CSSModules(
   function () {
@@ -213,26 +214,7 @@ export const UserWords = CSSModules(
                   />
                 </label>
               </div>
-              <div styleName="words__control">
-                <label styleName="words__label">
-                  Sort by:
-                  <select
-                    styleName="words__select"
-                    disabled={disabled}
-                    name="created_at"
-                  >
-                    <option styleName="words__option" value="">
-                      Featured
-                    </option>
-                    <option styleName="words__option" value="1">
-                      Newest
-                    </option>
-                    <option styleName="words__option" value="-1">
-                      Oldest
-                    </option>
-                  </select>
-                </label>
-              </div>
+              <SortSelect disabled={disabled} required={false} />
               <div styleName="words__control">
                 <label styleName="words__label">
                   Filter by:

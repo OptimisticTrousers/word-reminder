@@ -133,30 +133,30 @@ exports[`UserWords component > renders two forms that have fields for creating a
             </label>
           </div>
           <div
-            class="_words__control_727679"
+            class="_sort_7b9046"
           >
             <label
-              class="_words__label_727679"
+              class="_sort__label_7b9046"
             >
               Sort by:
               <select
-                class="_words__select_727679"
+                class="_sort__select_7b9046"
                 name="created_at"
               >
                 <option
-                  class="_words__option_727679"
+                  class="_sort__option_7b9046"
                   value=""
                 >
                   Featured
                 </option>
                 <option
-                  class="_words__option_727679"
+                  class="_sort__option_7b9046"
                   value="1"
                 >
                   Newest
                 </option>
                 <option
-                  class="_words__option_727679"
+                  class="_sort__option_7b9046"
                   value="-1"
                 >
                   Oldest
@@ -206,48 +206,9 @@ exports[`UserWords component > renders two forms that have fields for creating a
       </div>
     </div>
     <div
-      data-testid="name"
+      data-testid="paginated-list"
     >
-      Words
-    </div>
-    <div
-      data-testid="totalRows"
-    >
-      1
-    </div>
-    <div
-      data-testid="list"
-    >
-      <div
-        data-testid="props"
-      >
-        {"id":"1","word":"word"}
-      </div>
-    </div>
-    <div
-      data-testid="isLoading"
-    >
-      false
-    </div>
-    <div
-      data-testid="isSuccess"
-    >
-      true
-    </div>
-    <div
-      data-testid="error"
-    >
-      null
-    </div>
-    <div
-      data-testid="previous"
-    >
-      {"page":1,"limit":"10"}
-    </div>
-    <div
-      data-testid="next"
-    >
-      {"page":3,"limit":"10"}
+      [object Object]
     </div>
   </section>
 </DocumentFragment>

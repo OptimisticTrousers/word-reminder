@@ -10,25 +10,9 @@ import { NotificationProvider } from "../../context/Notification";
 import { wordService } from "../../services/word_service/word_service";
 import { UserWords } from "./UserWords";
 import * as utils from "../../utils/download";
+import { UserWord } from "../../components/words/UserWord";
 
-vi.mock("../../components/ui/PaginatedList", function () {
-  return {
-    PaginatedList: function (props: Props) {
-      return (
-        <>
-          <div data-testid="name">{props.name}</div>
-          <div data-testid="totalRows">{props.totalRows}</div>
-          <div data-testid="list">{props.list}</div>
-          <div data-testid="isLoading">{props.isLoading.toString()}</div>
-          <div data-testid="isSuccess">{props.isSuccess.toString()}</div>
-          <div data-testid="error">{JSON.stringify(props.error)}</div>
-          <div data-testid="previous">{JSON.stringify(props.previous)}</div>
-          <div data-testid="next">{JSON.stringify(props.next)}</div>
-        </>
-      );
-    },
-  };
-});
+vi.mock("../../components/ui/PaginatedList/PaginatedList");
 
 vi.mock("../../components/words/UserWord", function () {
   return {
@@ -93,11 +77,77 @@ describe("UserWords component", () => {
     };
   }
 
+  const PAGINATION_LIMIT = "10";
+
   const testUser = {
     id: "1",
   };
 
-  const PAGINATION_LIMIT = "10";
+  const word1 = {
+    id: "1",
+    details: [
+      {
+        word: "hello",
+        phonetics: [
+          {
+            text: "hɛˈləʊ",
+          },
+        ],
+        meanings: [
+          {
+            partOfSpeech: "exclamation",
+            definitions: [
+              {
+                definition:
+                  "used as a greeting or to begin a phone conversation.",
+                example: "hello there, Katie!",
+                synonyms: [],
+                antonyms: [],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    created_at: new Date(),
+  };
+
+  const word2 = {
+    id: "2",
+    details: [
+      {
+        word: "clemency",
+        meanings: [
+          {
+            partOfSpeech: "noun",
+            definitions: [{ definition: "Mercy; lenience." }],
+          },
+        ],
+        phonetics: [],
+      },
+    ],
+    created_at: new Date(),
+  };
+
+  const userWord1 = {
+    id: "1",
+    user_id: testUser.id,
+    word_id: word1.id,
+    details: word1.details,
+    learned: false,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  const userWord2 = {
+    id: "2",
+    user_id: testUser.id,
+    word_id: word2.id,
+    details: word2.details,
+    learned: false,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -128,24 +178,19 @@ describe("UserWords component", () => {
 
         setup();
 
-        await waitFor(() => {
-          const name = screen.getByTestId("name");
-          const list = screen.getByTestId("list");
-          const totalRows = screen.getByTestId("totalRows");
-          const isLoading = screen.getByTestId("isLoading");
-          const isSuccess = screen.getByTestId("isSuccess");
-          const error = screen.getByTestId("error");
-          const previous = screen.getByTestId("previous");
-          const next = screen.getByTestId("next");
-          expect(name).toHaveTextContent("Words");
-          expect(list).toBeEmptyDOMElement();
-          expect(totalRows).toBeEmptyDOMElement();
-          expect(isLoading).toHaveTextContent("false");
-          expect(isSuccess).toHaveTextContent("false");
-          expect(error).toHaveTextContent(JSON.stringify({ message }));
-          expect(previous).toHaveTextContent("");
-          expect(next).toHaveTextContent("");
-        });
+        const paginatedListProps = {
+          name: "User Words",
+          totalRows: undefined,
+          list: [],
+          isLoading: false,
+          isSuccess: false,
+          error: new Error(message),
+          previous: { page: 1, limit: PAGINATION_LIMIT },
+          next: { page: 3, limit: PAGINATION_LIMIT },
+        };
+        const paginatedList = await screen.findByTestId("paginated-list");
+        expect(paginatedList).toBeInTheDocument();
+        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
       });
 
       it("loading response", async () => {
@@ -172,24 +217,19 @@ describe("UserWords component", () => {
 
         setup();
 
-        await waitFor(() => {
-          const name = screen.getByTestId("name");
-          const list = screen.getByTestId("list");
-          const totalRows = screen.getByTestId("totalRows");
-          const isLoading = screen.getByTestId("isLoading");
-          const isSuccess = screen.getByTestId("isSuccess");
-          const error = screen.getByTestId("error");
-          const previous = screen.getByTestId("previous");
-          const next = screen.getByTestId("next");
-          expect(name).toHaveTextContent("Words");
-          expect(list).toBeEmptyDOMElement();
-          expect(totalRows).toBeEmptyDOMElement();
-          expect(isLoading).toHaveTextContent("true");
-          expect(isSuccess).toHaveTextContent("false");
-          expect(error).toHaveTextContent(JSON.stringify(null));
-          expect(previous).toHaveTextContent("");
-          expect(next).toHaveTextContent("");
-        });
+        const paginatedListProps = {
+          name: "User Words",
+          totalRows: 0,
+          list: [],
+          isLoading: true,
+          isSuccess: false,
+          error: null,
+          previous: { page: 1, limit: PAGINATION_LIMIT },
+          next: { page: 3, limit: PAGINATION_LIMIT },
+        };
+        const paginatedList = await screen.findByTestId("paginated-list");
+        expect(paginatedList).toBeInTheDocument();
+        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
       });
 
       it("success response", async () => {
@@ -211,28 +251,19 @@ describe("UserWords component", () => {
 
         setup();
 
-        await waitFor(() => {
-          const name = screen.getByTestId("name");
-          const list = screen.getByTestId("list");
-          const totalRows = screen.getByTestId("totalRows");
-          const isLoading = screen.getByTestId("isLoading");
-          const isSuccess = screen.getByTestId("isSuccess");
-          const error = screen.getByTestId("error");
-          const previous = screen.getByTestId("previous");
-          const next = screen.getByTestId("next");
-          expect(name).toHaveTextContent("Words");
-          expect(list).not.toBeEmptyDOMElement();
-          expect(totalRows).toHaveTextContent("1");
-          expect(isLoading).toHaveTextContent("false");
-          expect(isSuccess).toHaveTextContent("true");
-          expect(error).toHaveTextContent(JSON.stringify(null));
-          expect(previous).toHaveTextContent(
-            JSON.stringify({ page: 1, limit: PAGINATION_LIMIT })
-          );
-          expect(next).toHaveTextContent(
-            JSON.stringify({ page: 3, limit: PAGINATION_LIMIT })
-          );
-        });
+        const paginatedListProps = {
+          name: "User Words",
+          totalRows: 2,
+          list: [<UserWord {...userWord1} />, <UserWord {...userWord2} />],
+          isLoading: false,
+          isSuccess: true,
+          error: null,
+          previous: { page: 1, limit: PAGINATION_LIMIT },
+          next: { page: 3, limit: PAGINATION_LIMIT },
+        };
+        const paginatedList = await screen.findByTestId("paginated-list");
+        expect(paginatedList).toBeInTheDocument();
+        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
       });
     });
 
@@ -499,6 +530,39 @@ describe("UserWords component", () => {
           userId: testUser.id,
           formData,
         });
+        expect(notification).toBeInTheDocument();
+      });
+
+      it("shows notification that the file size is too big", async () => {
+        const status = 200;
+        const mockWordServiceCreateWord = vi
+          .spyOn(wordService, "createWord")
+          .mockImplementation(async () => {
+            return { json: { word: json[0] }, status };
+          });
+        const mockInvalidateQueries = vi.spyOn(
+          queryClient,
+          "invalidateQueries"
+        );
+        const file = new File([new ArrayBuffer(1024000 + 1)], "words.csv", {
+          type: "text/csv",
+        });
+        const { user } = setup();
+
+        const importWordsInput = screen.getByLabelText("Import Words", {
+          selector: "input",
+        });
+        await user.upload(importWordsInput, file);
+        const addButton = screen.getByRole("button", {
+          name: "Add",
+        });
+        await user.click(addButton);
+
+        const notification = screen.getByRole("dialog", {
+          name: "File is too big. Max size is 1 MB.",
+        });
+        expect(mockInvalidateQueries).not.toHaveBeenCalled();
+        expect(mockWordServiceCreateWord).not.toHaveBeenCalled();
         expect(notification).toBeInTheDocument();
       });
 
