@@ -4,19 +4,16 @@ import { UserWord } from "./UserWord";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Props } from "../../components/ui/ImageCarousel/ImageCarousel";
 
-vi.mock("../../components/ui/Loading", () => {
-  return {
-    Loading: function () {
-      return <div data-testid="loading">Loading...</div>;
-    },
-  };
-});
+vi.mock("../../components/ui/Loading/Loading");
 
-vi.mock("../Error500", () => {
+vi.mock("../Error500/Error500");
+
+vi.mock("../../components/ui/ImageCarousel", () => {
   return {
-    Error500: function ({ message }: { message: string }) {
-      return <div data-testid="error">{message}</div>;
+    ImageCarousel: function (props: Props) {
+      return <div data-testid="image-carousel">{String(props)}</div>;
     },
   };
 });
@@ -40,7 +37,7 @@ describe("UserWord component", () => {
         },
         children: [
           {
-            path: "words/:wordId",
+            path: "/words/:wordId",
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
@@ -68,7 +65,10 @@ describe("UserWord component", () => {
       userWord: {
         created_at,
         learned: true,
-        images: [{ src: "/image1" }, { src: "/image2" }],
+        images: [
+          { src: "/image1", caption: "Image 1" },
+          { src: "/image2", caption: "Image 2" },
+        ],
         details: [
           {
             word: "word",
@@ -161,7 +161,7 @@ describe("UserWord component", () => {
       name: "Word License",
     });
     const wordSourceUrl = screen.getByRole("link", { name: "Word Source" });
-    const [image1, image2] = screen.getAllByRole("presentation");
+    const imageCarousel = screen.getByTestId("image-carousel");
     const pronounciationButton = screen.getByRole("button", {
       name: "Pronounce word",
     });
@@ -187,10 +187,7 @@ describe("UserWord component", () => {
     expect(wordLicenseName).toBeInTheDocument();
     expect(wordLicenseUrl).toBeInTheDocument();
     expect(wordSourceUrl).toBeInTheDocument();
-    expect(image1.getAttribute("src")).toBe("/image1");
-    expect(image2.getAttribute("src")).toBe("/image2");
-    expect(image1.getAttribute("alt")).toBe("");
-    expect(image2.getAttribute("alt")).toBe("");
+    expect(imageCarousel).toBeInTheDocument();
     expect(pronounciationButton).toBeInTheDocument();
     expect(loading).not.toBeInTheDocument();
     expect(error).not.toBeInTheDocument();
@@ -854,7 +851,7 @@ describe("UserWord component", () => {
 
     setup();
 
-    const error = await screen.findByTestId("error");
+    const error = await screen.findByTestId("error-500");
     expect(error).toHaveTextContent(message);
   });
 });

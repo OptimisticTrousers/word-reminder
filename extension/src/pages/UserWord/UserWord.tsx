@@ -6,7 +6,6 @@ import {
   User,
   UserWord as IUserWord,
   Word as IWord,
-  Image,
 } from "common";
 import { Play } from "lucide-react";
 import CSSModules from "react-css-modules";
@@ -17,6 +16,7 @@ import { Loading } from "../../components/ui/Loading";
 import { Error500 } from "../Error500";
 import { wordService } from "../../services/word_service";
 import styles from "./UserWord.module.css";
+import { ImageCarousel } from "../../components/ui/ImageCarousel";
 
 export const UserWord = CSSModules(
   function () {
@@ -47,7 +47,7 @@ export const UserWord = CSSModules(
     const json = data?.json;
     const userWord: (IUserWord & IWord) | undefined = json?.userWord;
     const details = userWord?.details;
-    const images = userWord?.images;
+    const images = userWord?.images ?? [];
 
     return (
       details && (
@@ -63,13 +63,15 @@ export const UserWord = CSSModules(
               {userWord.created_at.toLocaleString()}
             </p>
           }
-          {images &&
-            images.map((image: Image) => {
-              return <img src={image.src} alt="" role="presentation" />;
-            })}
-          {details.map((detail: Detail) => {
+          {
+            <ImageCarousel
+              images={images}
+              hasAutoScroll={images.length > 0 ? true : false}
+            />
+          }
+          {details.map((detail: Detail, index: number) => {
             return (
-              <>
+              <div key={index} styleName="word_content">
                 <div styleName="word__top">
                   <div styleName="word__title">
                     {detail.phonetic && (
@@ -77,47 +79,49 @@ export const UserWord = CSSModules(
                     )}
                     <ul styleName="word__phonetics">
                       {detail.phonetics &&
-                        detail.phonetics.map((phonetic: Phonetic) => {
-                          return (
-                            <li styleName="word__phonetic">
-                              {phonetic.text && (
-                                <p styleName="word__text">{phonetic.text}</p>
-                              )}
-                              {phonetic.audio && (
-                                <button
-                                  styleName="word__button"
-                                  onClick={() => handleAudio(phonetic.audio!)}
-                                >
-                                  <span styleName="word__text">
-                                    Pronounce word
-                                  </span>
-                                  <Play styleName="word__icon" />
-                                </button>
-                              )}
-                              {phonetic.sourceUrl && (
-                                <Link
-                                  to={phonetic.sourceUrl}
-                                  styleName="word__link"
-                                >
-                                  Phonetic Source
-                                </Link>
-                              )}
-                              {phonetic.license && (
-                                <div styleName="word__license">
-                                  <p styleName="word__name">
-                                    {phonetic.license.name}
-                                  </p>
-                                  <Link
-                                    to={phonetic.license.url}
-                                    styleName="word__url"
+                        detail.phonetics.map(
+                          (phonetic: Phonetic, index: number) => {
+                            return (
+                              <li key={index} styleName="word__phonetic">
+                                {phonetic.text && (
+                                  <p styleName="word__text">{phonetic.text}</p>
+                                )}
+                                {phonetic.audio && (
+                                  <button
+                                    styleName="word__button"
+                                    onClick={() => handleAudio(phonetic.audio!)}
                                   >
-                                    Phonetic License
+                                    <span styleName="word__text">
+                                      Pronounce word
+                                    </span>
+                                    <Play styleName="word__icon" />
+                                  </button>
+                                )}
+                                {phonetic.sourceUrl && (
+                                  <Link
+                                    to={phonetic.sourceUrl}
+                                    styleName="word__link"
+                                  >
+                                    Phonetic Source
                                   </Link>
-                                </div>
-                              )}
-                            </li>
-                          );
-                        })}
+                                )}
+                                {phonetic.license && (
+                                  <div styleName="word__license">
+                                    <p styleName="word__name">
+                                      {phonetic.license.name}
+                                    </p>
+                                    <Link
+                                      to={phonetic.license.url}
+                                      styleName="word__url"
+                                    >
+                                      Phonetic License
+                                    </Link>
+                                  </div>
+                                )}
+                              </li>
+                            );
+                          }
+                        )}
                     </ul>
                   </div>
                 </div>
@@ -221,12 +225,8 @@ export const UserWord = CSSModules(
                           detail.sourceUrls.map(
                             (sourceUrl: string, index: number) => {
                               return (
-                                <li styleName="word__item">
-                                  <Link
-                                    to={sourceUrl}
-                                    styleName="word__link"
-                                    key={index}
-                                  >
+                                <li key={index} styleName="word__item">
+                                  <Link to={sourceUrl} styleName="word__link">
                                     Word Source
                                   </Link>
                                 </li>
@@ -237,7 +237,7 @@ export const UserWord = CSSModules(
                     </div>
                   ))}
                 </div>
-              </>
+              </div>
             );
           })}
         </div>
