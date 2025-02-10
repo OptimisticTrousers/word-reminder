@@ -13,9 +13,10 @@ import { ModalContainer } from "../ModalContainer";
 import { ErrorResponse } from "../../../types";
 import { wordService } from "../../../services/word_service";
 import styles from "./DeleteUserWordModal.module.css";
+import { ToggleModal } from "../types";
 
 interface Props {
-  toggleModal: () => void;
+  toggleModal: ToggleModal;
   wordId: string;
 }
 

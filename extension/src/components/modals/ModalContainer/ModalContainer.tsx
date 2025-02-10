@@ -4,11 +4,12 @@ import CSSModules from "react-css-modules";
 
 import { useDisableScroll } from "../../../hooks/useDisableScroll";
 import styles from "./ModalContainer.module.css";
+import { ToggleModal } from "../types";
 
 export interface Props {
   children: ReactNode;
   title: string;
-  toggleModal: () => void;
+  toggleModal: ToggleModal;
 }
 
 export const ModalContainer = CSSModules(

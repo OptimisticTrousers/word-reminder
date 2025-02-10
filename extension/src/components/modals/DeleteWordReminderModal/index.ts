@@ -1,1 +1,1 @@
-export { default } from "./DeleteWordReminderModal";
+export { DeleteWordReminderModal } from "./DeleteWordReminderModal";

@@ -13,9 +13,10 @@ import { ModalContainer } from "../ModalContainer";
 import { wordReminderService } from "../../../services/word_reminder_service";
 import { ErrorResponse } from "../../../types";
 import styles from "./DeleteWordReminderModal.module.css";
+import { ToggleModal } from "../types";
 
 interface Props {
-  toggleModal: () => void;
+  toggleModal: ToggleModal;
   wordReminderId: string;
 }
 
