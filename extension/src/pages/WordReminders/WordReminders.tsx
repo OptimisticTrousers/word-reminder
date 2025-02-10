@@ -1,11 +1,15 @@
-import { User, WordReminder as IWordReminder } from "common";
+import { User, WordReminder as IWordReminder, UserWord, Word } from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
+import { CreateWordReminder } from "../../components/word_reminders/CreateWordReminder";
 import { PaginatedList } from "../../components/ui/PaginatedList";
+import { SortSelect } from "../../components/ui/SortSelect";
+import { WordReminder } from "../../components/word_reminders/WordReminder";
 import { wordReminderService } from "../../services/word_reminder_service/word_reminder_service";
-import styles from "./WordsByDurations.module.css";
+import styles from "./WordReminders.module.css";
+import { AutoCreateWordReminder } from "../../components/word_reminders/AutoCreateWordReminder";
 
 export const WordReminders = CSSModules(
   function () {
@@ -48,39 +52,29 @@ export const WordReminders = CSSModules(
 
     return (
       <div styleName="words-reminder">
-        <CreateWordReminder />
+        <AutoCreateWordReminder searchParams={searchParams} />
+        <CreateWordReminder searchParams={searchParams} />
         <form styleName="word-reminder__form" action={handleQuery}>
-          <div styleName="word-reminder__control">
-            <label styleName="word-reminder__label">
-              Sort by:
-              <select
-                styleName="word-reminder__select"
-                name="created_at"
-                required={true}
-              >
-                <option styleName="word-reminder__option" value="">
-                  Featured
-                </option>
-                <option styleName="word-reminder__option" value="1">
-                  Newest
-                </option>
-                <option styleName="word-reminder__option" value="-1">
-                  Oldest
-                </option>
-              </select>
-            </label>
-          </div>
+          <SortSelect disabled={false} required={true} />
           <button styleName="word-reminder__button" type="submit">
             Filter
           </button>
         </form>
         <PaginatedList
-          name="Words"
+          name="Word Reminders"
           totalRows={json && json.totalRows}
           list={
             json &&
-            json.wordReminders.map(function (wordReminder: IWordReminder) {
-              return <WordReminder key={wordReminder.id} {...wordReminder} />;
+            json.wordReminders.map(function (
+              wordReminder: IWordReminder & { user_words: (UserWord & Word)[] }
+            ) {
+              return (
+                <WordReminder
+                  key={wordReminder.id}
+                  searchParams={searchParams}
+                  wordReminder={wordReminder}
+                />
+              );
             })
           }
           isLoading={isLoading}

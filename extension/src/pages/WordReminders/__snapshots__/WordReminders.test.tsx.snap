@@ -1,0 +1,65 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WordReminders component > renders the form that allows user to filter the word reminders and paginated list 1`] = `
+<DocumentFragment>
+  <div
+    class="_words-reminder_928901"
+  >
+    <div
+      data-testid="auto-create-word-reminder"
+    />
+    <div
+      data-testid="create-word-reminder"
+    />
+    <form
+      action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
+      class="_word-reminder__form_928901"
+    >
+      <div
+        class="_sort_7b9046"
+      >
+        <label
+          class="_sort__label_7b9046"
+        >
+          Sort by:
+          <select
+            class="_sort__select_7b9046"
+            name="created_at"
+            required=""
+          >
+            <option
+              class="_sort__option_7b9046"
+              value=""
+            >
+              Featured
+            </option>
+            <option
+              class="_sort__option_7b9046"
+              value="1"
+            >
+              Newest
+            </option>
+            <option
+              class="_sort__option_7b9046"
+              value="-1"
+            >
+              Oldest
+            </option>
+          </select>
+        </label>
+      </div>
+      <button
+        class="_word-reminder__button_928901"
+        type="submit"
+      >
+        Filter
+      </button>
+    </form>
+    <div
+      data-testid="paginated-list"
+    >
+      [object Object]
+    </div>
+  </div>
+</DocumentFragment>
+`;
