@@ -1,0 +1,242 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PaginatedList component > pagination > renders no pagination links when there is no previous or next page 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      3
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    >
+      <li />
+      <li />
+      <li />
+    </ul>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`PaginatedList component > pagination > renders pagination links when there is a previous and a next page 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      3
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    >
+      <li />
+      <li />
+      <li />
+    </ul>
+    <a
+      class="_paginated__link_78cfc4"
+      data-discover="true"
+      href="/words?limit=3&page=1"
+    >
+      Previous
+    </a>
+    <a
+      class="_paginated__link_78cfc4"
+      data-discover="true"
+      href="/words?limit=3&page=1"
+    >
+      Next
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`PaginatedList component > pagination > renders the next pagination link when there is a next page but not a previous page 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      3
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    >
+      <li />
+      <li />
+      <li />
+    </ul>
+    <a
+      class="_paginated__link_78cfc4"
+      data-discover="true"
+      href="/words?limit=3&page=1"
+    >
+      Next
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`PaginatedList component > pagination > renders the previous pagination link when there is a previous page but not a next page 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      3
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    >
+      <li />
+      <li />
+      <li />
+    </ul>
+    <a
+      class="_paginated__link_78cfc4"
+      data-discover="true"
+      href="/words?limit=3&page=1"
+    >
+      Previous
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`PaginatedList component > when it is loading > renders that it is loading 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      0
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    />
+    <div
+      data-testid="loading"
+    >
+      Loading...
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`PaginatedList component > when it is successful > renders list 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      3
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    >
+      <li />
+      <li />
+      <li />
+    </ul>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`PaginatedList component > when it is successful > renders that there are no things in the list when it is empty 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      0
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    >
+      <p
+        aria-labelledby="name"
+        id="name"
+      >
+        words
+      </p>
+    </ul>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`PaginatedList component > when there is an error > renders error message 1`] = `
+<DocumentFragment>
+  <div
+    class="_paginated_78cfc4"
+  >
+    <h2
+      class="_paginated__heading_78cfc4"
+    >
+      Words
+    </h2>
+    <p
+      class="_paginated__count_78cfc4"
+    >
+      0
+    </p>
+    <ul
+      class="_paginated__list_78cfc4"
+    />
+    <div
+      data-testid="error-message"
+    >
+      Error message
+    </div>
+  </div>
+</DocumentFragment>
+`;

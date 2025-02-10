@@ -3,29 +3,9 @@ import { render, screen } from "@testing-library/react";
 
 import { PaginatedList } from "./PaginatedList";
 
-vi.mock("../ErrorMessage", function () {
-  return {
-    ErrorMessage: function ({ message }: { message: string }) {
-      return (
-        <p id="message" aria-labelledby="message">
-          {message}
-        </p>
-      );
-    },
-  };
-});
+vi.mock("../ErrorMessage/ErrorMessage");
 
-vi.mock("../Loading", function () {
-  return {
-    Loading: function () {
-      return (
-        <p id="loading" aria-labelledby="loading">
-          Loading...
-        </p>
-      );
-    },
-  };
-});
+vi.mock("../Loading/Loading");
 
 vi.mock("../NoMore", function () {
   return {
@@ -46,7 +26,6 @@ describe("PaginatedList component", () => {
 
   const name = "words";
   const errorMessage = "Error message";
-  const loadingMessage = "Loading...";
 
   describe("when it is successful", () => {
     const props = {
@@ -77,10 +56,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.queryByRole("paragraph", {
         name,
       });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", {
-        name: loadingMessage,
-      });
+      const error = screen.queryByTestId("error-message");
+      const loading = screen.queryByTestId("loading");
       const previousLink = screen.queryByRole("link", { name: "Previous" });
       const nextLink = screen.queryByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();
@@ -120,8 +97,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.getByRole("paragraph", {
         name,
       });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+      const error = screen.queryByTestId("error-message");
+      const loading = screen.queryByTestId("loading");
       const previousLink = screen.queryByRole("link", { name: "Previous" });
       const nextLink = screen.queryByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();
@@ -163,8 +140,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.queryByRole("paragraph", {
         name,
       });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.getByRole("paragraph", { name: loadingMessage });
+      const error = screen.queryByTestId("error-message");
+      const loading = screen.getByTestId("loading");
       const previousLink = screen.queryByRole("link", { name: "Previous" });
       const nextLink = screen.queryByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();
@@ -206,8 +183,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.queryByRole("paragraph", {
         name,
       });
-      const error = screen.getByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+      const error = screen.getByTestId("error-message");
+      const loading = screen.queryByTestId("loading");
       const previousLink = screen.queryByRole("link", { name: "Previous" });
       const nextLink = screen.queryByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();
@@ -249,8 +226,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.queryByRole("paragraph", {
         name,
       });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+      const error = screen.queryByTestId("error-message");
+      const loading = screen.queryByTestId("loading");
       const previousLink = screen.getByRole("link", { name: "Previous" });
       const nextLink = screen.getByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();
@@ -290,8 +267,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.queryByRole("paragraph", {
         name,
       });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+      const error = screen.queryByTestId("error-message");
+      const loading = screen.queryByTestId("loading");
       const previousLink = screen.getByRole("link", { name: "Previous" });
       const nextLink = screen.queryByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();
@@ -331,8 +308,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.queryByRole("paragraph", {
         name,
       });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+      const error = screen.queryByTestId("error-message");
+      const loading = screen.queryByTestId("loading");
       const previousLink = screen.queryByRole("link", { name: "Previous" });
       const nextLink = screen.getByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();
@@ -372,8 +349,8 @@ describe("PaginatedList component", () => {
       const emptyList = screen.queryByRole("paragraph", {
         name,
       });
-      const error = screen.queryByRole("paragraph", { name: errorMessage });
-      const loading = screen.queryByRole("paragraph", { name: loadingMessage });
+      const error = screen.queryByTestId("error-message");
+      const loading = screen.queryByTestId("loading");
       const previousLink = screen.queryByRole("link", { name: "Previous" });
       const nextLink = screen.queryByRole("link", { name: "Next" });
       expect(heading).toBeInTheDocument();

@@ -36,7 +36,9 @@ export const PaginatedList = CSSModules(
   }: Props) {
     return (
       <div styleName="paginated">
-        <h2 styleName="paginated__heading">{name}</h2>
+        <h2 styleName="paginated__heading">
+          {name[0].toUpperCase() + name.slice(1)}
+        </h2>
         <p styleName="paginated__count">{totalRows}</p>
         <ul styleName="paginated__list">
           {isSuccess && list.length === 0 ? <NoMore name={name} /> : list}
@@ -46,7 +48,7 @@ export const PaginatedList = CSSModules(
         {previous && (
           <Link
             styleName="paginated__link"
-            to={`/app/words?limit=${previous.limit}&page=${previous.page}`}
+            to={`/words?limit=${previous.limit}&page=${previous.page}`}
           >
             Previous
           </Link>
@@ -54,7 +56,7 @@ export const PaginatedList = CSSModules(
         {next && (
           <Link
             styleName="paginated__link"
-            to={`/app/words?limit=${next.limit}&page=${next.page}`}
+            to={`/words?limit=${next.limit}&page=${next.page}`}
           >
             Next
           </Link>
