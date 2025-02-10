@@ -10,7 +10,9 @@ import { NotificationProvider } from "../../context/Notification";
 import { wordService } from "../../services/word_service/word_service";
 import { UserWords } from "./UserWords";
 import * as utils from "../../utils/download";
+import * as hooks from "../../hooks/useContextMenu";
 import { UserWord } from "../../components/words/UserWord";
+import { RefObject, useEffect } from "react";
 
 vi.mock("../../components/ui/PaginatedList/PaginatedList");
 
@@ -151,298 +153,27 @@ describe("UserWords component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return {
-        json: {
-          userWords: json,
-          totalRows: 1,
-          previous: {
-            page: 1,
-            limit: PAGINATION_LIMIT,
-          },
-          next: { page: 3, limit: PAGINATION_LIMIT },
-        },
-        status: 200,
-      };
-    });
-  });
-
-  describe("query words", () => {
-    describe("paginated list", () => {
-      it("error response", async () => {
-        const message = "Bad Request.";
-        const status = 400;
-        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-          return Promise.reject({ json: { message }, status });
-        });
-
-        setup();
-
-        const paginatedListProps = {
-          name: "User Words",
-          totalRows: undefined,
-          list: [],
-          isLoading: false,
-          isSuccess: false,
-          error: new Error(message),
-          previous: { page: 1, limit: PAGINATION_LIMIT },
-          next: { page: 3, limit: PAGINATION_LIMIT },
-        };
-        const paginatedList = await screen.findByTestId("paginated-list");
-        expect(paginatedList).toBeInTheDocument();
-        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
-      });
-
-      it("loading response", async () => {
-        const status = 200;
-        const delay = 500;
-        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-          return new Promise((resolve) => {
-            setTimeout(() => {
-              resolve({
-                json: {
-                  userWords: json,
-                  totalRows: 1,
-                  previous: {
-                    page: 1,
-                    limit: PAGINATION_LIMIT,
-                  },
-                  next: { page: 3, limit: PAGINATION_LIMIT },
-                },
-                status,
-              });
-            }, delay);
-          });
-        });
-
-        setup();
-
-        const paginatedListProps = {
-          name: "User Words",
-          totalRows: 0,
-          list: [],
-          isLoading: true,
-          isSuccess: false,
-          error: null,
-          previous: { page: 1, limit: PAGINATION_LIMIT },
-          next: { page: 3, limit: PAGINATION_LIMIT },
-        };
-        const paginatedList = await screen.findByTestId("paginated-list");
-        expect(paginatedList).toBeInTheDocument();
-        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
-      });
-
-      it("success response", async () => {
-        const status = 200;
-        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-          return {
-            json: {
-              userWords: json,
-              totalRows: 1,
-              previous: {
-                page: 1,
-                limit: PAGINATION_LIMIT,
-              },
-              next: { page: 3, limit: PAGINATION_LIMIT },
-            },
-            status,
-          };
-        });
-
-        setup();
-
-        const paginatedListProps = {
-          name: "User Words",
-          totalRows: 2,
-          list: [<UserWord {...userWord1} />, <UserWord {...userWord2} />],
-          isLoading: false,
-          isSuccess: true,
-          error: null,
-          previous: { page: 1, limit: PAGINATION_LIMIT },
-          next: { page: 3, limit: PAGINATION_LIMIT },
-        };
-        const paginatedList = await screen.findByTestId("paginated-list");
-        expect(paginatedList).toBeInTheDocument();
-        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
-      });
-    });
-
-    describe("searching", () => {
-      it("calls the functions to make a search query", async () => {
-        const { user } = setup();
-        const status = 200;
-        const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
-          .mockImplementation(async () => {
-            return { json: { userWords: json, totalRows: 1 }, status };
-          });
-
-        const searchInput = screen.getByLabelText("Search", {
-          selector: "input",
-        });
-        const search = "word";
-        await user.type(searchInput, search);
-        const filterButton = screen.getByRole("button", { name: "Filter" });
-        await user.click(filterButton);
-
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search,
-          learned: "",
-          column: "",
-          direction: "",
-        });
-      });
-    });
-
-    describe("sorting", () => {
-      it("does not call the functions to filter by featured because it is the default option", async () => {
-        const { user } = setup();
-        const status = 200;
-        const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
-          .mockImplementation(async () => {
-            return { json: { userWords: json, totalRows: 1 }, status };
-          });
-
-        const sortSelect = screen.getByRole("combobox", { name: "Sort by:" });
-        await user.selectOptions(sortSelect, ["Featured"]);
-        const filterButton = screen.getByRole("button", { name: "Filter" });
-        await user.click(filterButton);
-
-        expect(mockWordServiceGetUserWords).not.toHaveBeenCalled();
-      });
-
-      it("calls the functions to sort by newest based on 'created_at' field", async () => {
-        const { user } = setup();
-        const status = 200;
-        const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
-          .mockImplementation(async () => {
-            return { json: { userWords: json, totalRows: 1 }, status };
-          });
-
-        const sortSelect = screen.getByRole("combobox", { name: "Sort by:" });
-        await user.selectOptions(sortSelect, ["Newest"]);
-        const filterButton = screen.getByRole("button", { name: "Filter" });
-        await user.click(filterButton);
-
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "",
-          column: "created_at",
-          direction: "1",
-        });
-      });
-
-      it("calls the functions to sort by oldest based on 'created_at' field", async () => {
-        const { user } = setup();
-        const status = 200;
-        const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
-          .mockImplementation(async () => {
-            return { json: { userWords: json, totalRows: 1 }, status };
-          });
-
-        const sortSelect = screen.getByRole("combobox", { name: "Sort by:" });
-        await user.selectOptions(sortSelect, ["Oldest"]);
-        const filterButton = screen.getByRole("button", { name: "Filter" });
-        await user.click(filterButton);
-
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "",
-          column: "created_at",
-          direction: "-1",
-        });
-      });
-    });
-
-    describe("filtering", () => {
-      it("does calls the functions to sort based on any words because it is the default", async () => {
-        const { user } = setup();
-        const status = 200;
-        const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
-          .mockImplementation(async () => {
-            return { json: { userWords: json, totalRows: 1 }, status };
-          });
-
-        const filterSelect = screen.getByRole("combobox", {
-          name: "Filter by:",
-        });
-        await user.selectOptions(filterSelect, ["Any"]);
-        const filterButton = screen.getByRole("button", { name: "Filter" });
-        await user.click(filterButton);
-
-        expect(mockWordServiceGetUserWords).not.toHaveBeenCalled();
-      });
-
-      it("calls the functions to sort based on learned words", async () => {
-        const { user } = setup();
-        const status = 200;
-        const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
-          .mockImplementation(async () => {
-            return { json: { userWords: json, totalRows: 1 }, status };
-          });
-
-        const filterSelect = screen.getByRole("combobox", {
-          name: "Filter by:",
-        });
-        await user.selectOptions(filterSelect, ["Learned"]);
-        const filterButton = screen.getByRole("button", { name: "Filter" });
-        await user.click(filterButton);
-
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "true",
-          column: "",
-          direction: "",
-        });
-      });
-
-      it("calls the functions to sort based on unlearned words", async () => {
-        const { user } = setup();
-        const status = 200;
-        const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
-          .mockImplementation(async () => {
-            return { json: { userWords: json, totalRows: 1 }, status };
-          });
-
-        const filterSelect = screen.getByRole("combobox", {
-          name: "Filter by:",
-        });
-        await user.selectOptions(filterSelect, ["Unlearned"]);
-        const filterButton = screen.getByRole("button", { name: "Filter" });
-        await user.click(filterButton);
-
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "false",
-          column: "",
-          direction: "",
-        });
-      });
-    });
+    setTimeout(() => {}, 0);
   });
 
   describe("word creation", () => {
+    beforeEach(() => {
+      vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
+        return {
+          json: {
+            userWords: json,
+            totalRows: 1,
+            previous: {
+              page: 1,
+              limit: PAGINATION_LIMIT,
+            },
+            next: { page: 3, limit: PAGINATION_LIMIT },
+          },
+          status: 200,
+        };
+      });
+    });
+
     describe("text word creation", () => {
       it("calls the functions to create a word", async () => {
         const formData = new FormData();
@@ -636,7 +367,7 @@ describe("UserWords component", () => {
       });
     });
 
-    describe("csv", () => {
+    describe("csv word creation", () => {
       describe("export words", () => {
         it("calls the functions to download csv file", async () => {
           const { user } = setup();
@@ -878,7 +609,7 @@ describe("UserWords component", () => {
       formData.append("word", word);
       formData.append("csv", new File([""], ""));
       formData.append("userId", testUser.id);
-      const delay = 500;
+      const delay = 50;
       const status = 200;
       const mockWordServiceCreateWord = vi
         .spyOn(wordService, "createWord")
@@ -918,9 +649,328 @@ describe("UserWords component", () => {
     });
   });
 
+  describe("query words", () => {
+    describe("paginated list", () => {
+      it("error response", async () => {
+        const message = "Bad Request.";
+        const status = 400;
+        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
+          return Promise.reject({ json: { message }, status });
+        });
+
+        setup();
+
+        const paginatedListProps = {
+          name: "User Words",
+          totalRows: undefined,
+          list: [],
+          isLoading: false,
+          isSuccess: false,
+          error: new Error(message),
+          previous: { page: 1, limit: PAGINATION_LIMIT },
+          next: { page: 3, limit: PAGINATION_LIMIT },
+        };
+        const paginatedList = await screen.findByTestId("paginated-list");
+        expect(paginatedList).toBeInTheDocument();
+        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
+      });
+
+      it("loading response", async () => {
+        const status = 200;
+        const delay = 50;
+        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve({
+                json: {
+                  userWords: json,
+                  totalRows: 1,
+                  previous: {
+                    page: 1,
+                    limit: PAGINATION_LIMIT,
+                  },
+                  next: { page: 3, limit: PAGINATION_LIMIT },
+                },
+                status,
+              });
+            }, delay);
+          });
+        });
+
+        setup();
+
+        const paginatedListProps = {
+          name: "User Words",
+          totalRows: 0,
+          list: [],
+          isLoading: true,
+          isSuccess: false,
+          error: null,
+          previous: { page: 1, limit: PAGINATION_LIMIT },
+          next: { page: 3, limit: PAGINATION_LIMIT },
+        };
+        const paginatedList = await screen.findByTestId("paginated-list");
+        expect(paginatedList).toBeInTheDocument();
+        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
+      });
+
+      it("success response", async () => {
+        const status = 200;
+        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
+          return {
+            json: {
+              userWords: json,
+              totalRows: 1,
+              previous: {
+                page: 1,
+                limit: PAGINATION_LIMIT,
+              },
+              next: { page: 3, limit: PAGINATION_LIMIT },
+            },
+            status,
+          };
+        });
+
+        setup();
+
+        const paginatedListProps = {
+          name: "User Words",
+          totalRows: 2,
+          list: [<UserWord {...userWord1} />, <UserWord {...userWord2} />],
+          isLoading: false,
+          isSuccess: true,
+          error: null,
+          previous: { page: 1, limit: PAGINATION_LIMIT },
+          next: { page: 3, limit: PAGINATION_LIMIT },
+        };
+        const paginatedList = await screen.findByTestId("paginated-list");
+        expect(paginatedList).toBeInTheDocument();
+        expect(paginatedList).toHaveTextContent(String(paginatedListProps));
+      });
+    });
+
+    describe("searching", () => {
+      it("calls the functions to make a search query", async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(wordService, "getWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const searchInput = await screen.findByLabelText("Search", {
+          selector: "input",
+        });
+        const search = "word";
+        await user.type(searchInput, search);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
+          page: "1",
+          limit: PAGINATION_LIMIT,
+          search,
+          learned: "",
+          column: "",
+          direction: "",
+        });
+      });
+    });
+
+    describe("sorting", () => {
+      it("does not call the functions to filter by featured because it is the default option", async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(wordService, "getWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const sortSelect = await screen.findByRole("combobox", {
+          name: "Sort by:",
+        });
+        await user.selectOptions(sortSelect, ["Featured"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).not.toHaveBeenCalled();
+      });
+
+      it("calls the functions to sort by newest based on 'created_at' field", async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(wordService, "getWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const sortSelect = await screen.findByRole("combobox", {
+          name: "Sort by:",
+        });
+        await user.selectOptions(sortSelect, ["Newest"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
+          page: "1",
+          limit: PAGINATION_LIMIT,
+          search: "",
+          learned: "",
+          column: "created_at",
+          direction: "1",
+        });
+      });
+
+      it("calls the functions to sort by oldest based on 'created_at' field", async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(wordService, "getWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const sortSelect = await screen.findByRole("combobox", {
+          name: "Sort by:",
+        });
+        await user.selectOptions(sortSelect, ["Oldest"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
+          page: "1",
+          limit: PAGINATION_LIMIT,
+          search: "",
+          learned: "",
+          column: "created_at",
+          direction: "-1",
+        });
+      });
+    });
+
+    describe("filtering", () => {
+      it("does calls the functions to sort based on any words because it is the default", async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(wordService, "getWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const filterSelect = await screen.findByRole("combobox", {
+          name: "Filter by:",
+        });
+        await user.selectOptions(filterSelect, ["Any"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).not.toHaveBeenCalled();
+      });
+
+      it("calls the functions to sort based on learned words", async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(wordService, "getWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const filterSelect = await screen.findByRole("combobox", {
+          name: "Filter by:",
+        });
+        await user.selectOptions(filterSelect, ["Learned"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
+          page: "1",
+          limit: PAGINATION_LIMIT,
+          search: "",
+          learned: "true",
+          column: "",
+          direction: "",
+        });
+      });
+
+      it("calls the functions to sort based on unlearned words", async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(wordService, "getWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const filterSelect = await screen.findByRole("combobox", {
+          name: "Filter by:",
+        });
+        await user.selectOptions(filterSelect, ["Unlearned"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
+          page: "1",
+          limit: PAGINATION_LIMIT,
+          search: "",
+          learned: "false",
+          column: "",
+          direction: "",
+        });
+      });
+    });
+  });
+
   it("renders two forms that have fields for creating a text word, importing a csv file of words, searching words, sorting words, and filtering words", async () => {
+    const status = 200;
+    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
+      return { json: { userWords: json, totalRows: 1 }, status };
+    });
     const { asFragment } = setup();
 
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("uses context menu hook", async () => {
+    vi.spyOn(hooks, "useContextMenu").mockImplementation(
+      ({
+        inputRef,
+        submitButtonRef,
+      }: {
+        inputRef: RefObject<HTMLInputElement | null>;
+        submitButtonRef: RefObject<HTMLButtonElement | null>;
+      }) => {
+        useEffect(() => {
+          if (inputRef.current) {
+            inputRef.current.value = "input has changed";
+          }
+          if (submitButtonRef.current) {
+            submitButtonRef.current.textContent = "button has changed";
+          }
+        }, [inputRef, submitButtonRef]);
+      }
+    );
+    const status = 200;
+    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
+      return { json: { userWords: json, totalRows: 1 }, status };
+    });
+
+    setup();
+
+    const input = await screen.findByDisplayValue("input has changed");
+    const submitButton = screen.getByRole("button", {
+      name: "button has changed",
+    });
+    expect(input).toBeInTheDocument();
+    expect(submitButton).toBeInTheDocument();
   });
 });

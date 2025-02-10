@@ -223,7 +223,7 @@ describe("AutoCreateWordReminderModal component", () => {
   });
 
   it("disables the create button when the mutation is loading", async () => {
-    const delay = 500;
+    const delay = 50;
     const mockCreateWordReminder = vi
       .spyOn(wordReminderService, "createWordReminder")
       .mockImplementation(async () => {

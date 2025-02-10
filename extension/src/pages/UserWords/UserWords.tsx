@@ -1,6 +1,6 @@
 import { User, UserWord as IUserWord, Word as IWord } from "common";
 import { Download, Import } from "lucide-react";
-import { ChangeEvent, MouseEvent, useContext, useState } from "react";
+import { ChangeEvent, MouseEvent, useContext, useRef, useState } from "react";
 import CSSModules from "react-css-modules";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import {
@@ -22,6 +22,7 @@ import { ErrorResponse } from "../../types";
 import { download } from "../../utils/download";
 import styles from "./UserWords.module.css";
 import { SortSelect } from "../../components/ui/SortSelect";
+import { useContextMenu } from "../../hooks/useContextMenu";
 
 export const UserWords = CSSModules(
   function () {
@@ -29,6 +30,9 @@ export const UserWords = CSSModules(
     const { showNotificationError } = useNotificationError();
     const { user }: { user: User } = useOutletContext();
     const userId = user.id;
+    const inputRef = useRef(null);
+    const submitButtonRef = useRef(null);
+    useContextMenu({ inputRef, submitButtonRef });
     const [file, setFile] = useState<File | null>(null);
     const [searchParams, setSearchParams] = useSearchParams({
       page: "1",
@@ -164,6 +168,7 @@ export const UserWords = CSSModules(
                     styleName="words__input words__input--add"
                     maxLength={MAX_WORD_LENGTH}
                     disabled={disabled}
+                    ref={inputRef}
                   />
                 </label>
               </div>
@@ -184,6 +189,7 @@ export const UserWords = CSSModules(
               <button
                 styleName="words__button words__button--add"
                 type="submit"
+                ref={submitButtonRef}
                 disabled={disabled}
               >
                 Add

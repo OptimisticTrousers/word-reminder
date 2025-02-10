@@ -311,7 +311,7 @@ describe("Router component", () => {
   });
 
   it("renders loading page", async () => {
-    const delay = 500;
+    const delay = 50;
     const mockSessionServiceGetCurrentUser = vi
       .spyOn(sessionService, "getCurrentUser")
       .mockImplementation(() => {

@@ -269,7 +269,7 @@ describe("Signup component", () => {
     });
 
     it("disables the form elements and buttons when while it is loading", async () => {
-      const delay = 500;
+      const delay = 50;
       vi.spyOn(userService, "signupUser").mockImplementation(() => {
         return new Promise((resolve) => {
           setTimeout(() => {

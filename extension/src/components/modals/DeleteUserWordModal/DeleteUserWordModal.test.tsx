@@ -194,7 +194,7 @@ describe("DeleteUserWordReminderModal component", () => {
       },
     ]);
     const status = 200;
-    const delay = 500;
+    const delay = 50;
     const mockDeleteUserWord = vi
       .spyOn(wordService, "deleteUserWord")
       .mockImplementation(async () => {

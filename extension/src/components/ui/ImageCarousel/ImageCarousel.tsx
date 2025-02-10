@@ -16,7 +16,7 @@ export const ImageCarousel = CSSModules(
   function ({ images, hasAutoScroll }: Props) {
     const [slideIndex, setSlideIndex] = useState(1);
 
-    const delay = 5000;
+    const delay = 500;
     useInterval(
       () => {
         plusSlides(1);

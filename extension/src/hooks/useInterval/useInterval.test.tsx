@@ -10,7 +10,7 @@ describe("useInterval", () => {
   });
 
   it("calls the callback function on an interval", () => {
-    const delay = 500;
+    const delay = 50;
     function TestComponent() {
       useInterval(mockCallback, delay);
 

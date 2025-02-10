@@ -828,7 +828,7 @@ describe("UserWord component", () => {
         ],
       },
     };
-    const delay = 500;
+    const delay = 50;
     vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
       return new Promise((resolve) => {
         setTimeout(() => {

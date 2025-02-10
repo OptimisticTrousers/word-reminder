@@ -50,7 +50,7 @@ describe("ImageCarousel component", () => {
   });
 
   describe("hasAutoScroll", () => {
-    const delay = 5000;
+    const delay = 500;
 
     beforeEach(() => {
       vi.useFakeTimers();
