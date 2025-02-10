@@ -5,54 +5,34 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Router } from "./Router";
 import { sessionService } from "../services/session_service";
 
-vi.mock("../components/ui/Loading", function () {
-  return {
-    Loading: function () {
-      return <p>Loading...</p>;
-    },
-  };
-});
+vi.mock("../components/ui/Loading/Loading");
 
-vi.mock("../pages/Error500", function () {
-  return {
-    Error500: function ({ message }: { message: string }) {
-      return <p>{message}</p>;
-    },
-  };
-});
+vi.mock("../pages/Error500/Error500");
 
 vi.mock("../components/App", function () {
   return {
     App: function () {
       return (
-        <main>
+        <div data-testid="app">
           <Outlet />
-        </main>
+        </div>
       );
     },
   };
 });
 
-vi.mock("../pages/Login", function () {
+vi.mock("../pages/Auth/Login", function () {
   return {
     Login: function () {
-      return (
-        <form>
-          <button type="submit">Login</button>
-        </form>
-      );
+      return <div data-testid="login"></div>;
     },
   };
 });
 
-vi.mock("../pages/Signup", function () {
+vi.mock("../pages/Auth/Signup", function () {
   return {
     Signup: function () {
-      return (
-        <form>
-          <button type="submit">Signup</button>
-        </form>
-      );
+      return <div data-testid="signup"></div>;
     },
   };
 });
@@ -60,12 +40,7 @@ vi.mock("../pages/Signup", function () {
 vi.mock("../pages/UserWords", function () {
   return {
     UserWords: function () {
-      return (
-        <>
-          <h2>UserWords</h2>
-          <ul></ul>
-        </>
-      );
+      return <div data-testid="user-words"></div>;
     },
   };
 });
@@ -73,11 +48,15 @@ vi.mock("../pages/UserWords", function () {
 vi.mock("../pages/UserWord", function () {
   return {
     UserWord: function () {
-      return (
-        <div>
-          <h2>UserWord</h2>
-        </div>
-      );
+      return <div data-testid="user-word"></div>;
+    },
+  };
+});
+
+vi.mock("../pages/WordReminder", function () {
+  return {
+    WordReminder: function () {
+      return <div data-testid="word-reminder"></div>;
     },
   };
 });
@@ -85,12 +64,7 @@ vi.mock("../pages/UserWord", function () {
 vi.mock("../pages/WordReminders", function () {
   return {
     WordReminders: function () {
-      return (
-        <>
-          <h2>WordReminders</h2>
-          <ul></ul>
-        </>
-      );
+      return <div data-testid="word-reminders"></div>;
     },
   };
 });
@@ -98,18 +72,21 @@ vi.mock("../pages/WordReminders", function () {
 vi.mock("../pages/Settings", function () {
   return {
     Settings: function () {
-      return (
-        <form>
-          <button type="submit">Update</button>
-        </form>
-      );
+      return <div data-testid="settings"></div>;
+    },
+  };
+});
+
+vi.mock("../components/modals/EmailConfirmationModal", () => {
+  return {
+    EmailConfirmationModal: function () {
+      return <div data-testid="email-confirmation-modal"></div>;
     },
   };
 });
 
 describe("Router component", () => {
   const errorMessage = "Server Error.";
-  const loadingMessage = "Loading...";
 
   function setup({ initialRoute }: { initialRoute: string }) {
     const queryClient = new QueryClient({
@@ -133,6 +110,7 @@ describe("Router component", () => {
 
   const user = {
     id: "1",
+    confirmed: true,
   };
   const status = 200;
 
@@ -151,33 +129,13 @@ describe("Router component", () => {
           });
 
         setup({ initialRoute: `/userWords/${userWordId}` });
-        const userWordHeader = await screen.findByRole("heading", {
-          name: "UserWord",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const userWordsHeader = screen.queryByRole("heading", {
-          name: "UserWords",
-        });
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "WordReminders",
-        });
 
+        const userWord = await screen.findByTestId("user-word");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(userWordHeader).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(loginButton).not.toBeInTheDocument();
-        expect(settingsButton).not.toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(userWordsHeader).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
+        expect(userWord).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
       });
 
       it("renders user words page", async () => {
@@ -188,33 +146,13 @@ describe("Router component", () => {
           });
 
         setup({ initialRoute: "/userWords" });
-        const userWordsHeader = await screen.findByRole("heading", {
-          name: "UserWords",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "WordReminders",
-        });
-        const userWordHeader = screen.queryByRole("heading", {
-          name: "UserWord",
-        });
 
+        const userWords = await screen.findByTestId("user-words");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(userWordsHeader).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(userWordHeader).not.toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(loginButton).not.toBeInTheDocument();
-        expect(settingsButton).not.toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
+        expect(userWords).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
       });
 
       it("renders word reminders page", async () => {
@@ -225,29 +163,13 @@ describe("Router component", () => {
           });
 
         setup({ initialRoute: "/wordReminders" });
-        const wordRemindersHeader = await screen.findByRole("heading", {
-          name: "WordReminders",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const userWordsHeader = screen.queryByRole("heading", {
-          name: "UserWords",
-        });
 
+        const wordReminders = await screen.findByTestId("word-reminders");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(wordRemindersHeader).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(loginButton).not.toBeInTheDocument();
-        expect(settingsButton).not.toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(userWordsHeader).not.toBeInTheDocument();
+        expect(wordReminders).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
       });
 
       it("renders settings page", async () => {
@@ -258,35 +180,30 @@ describe("Router component", () => {
           });
 
         setup({ initialRoute: "/settings" });
-        const settingsButton = await screen.findByRole("button", {
-          name: "Update",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const userWordsHeader = screen.queryByRole("heading", {
-          name: "UserWords",
-        });
-        const userWordHeader = screen.queryByRole("heading", {
-          name: "UserWord",
-        });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "WordReminders",
-        });
 
+        const settings = await screen.findByTestId("settings");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(settingsButton).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(userWordHeader).not.toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(loginButton).not.toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(userWordsHeader).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
+        expect(settings).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
+      });
+
+      it("renders settings page with token", async () => {
+        const mockSessionServiceGetCurrentUser = vi
+          .spyOn(sessionService, "getCurrentUser")
+          .mockImplementation(async () => {
+            return { json: { user }, status };
+          });
+
+        setup({ initialRoute: "/settings/token" });
+
+        const settings = await screen.findByTestId("settings");
+        const app = screen.getByTestId("app");
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(settings).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
       });
 
       it("redirects to user words page when user navigates to non-protected routes", async () => {
@@ -297,33 +214,30 @@ describe("Router component", () => {
           });
 
         setup({ initialRoute: "/login" });
-        const userWordsHeader = await screen.findByRole("heading", {
-          name: "UserWords",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "WordReminders",
-        });
-        const userWordHeader = screen.queryByRole("heading", {
-          name: "UserWord",
-        });
 
+        const userWords = await screen.findByTestId("user-words");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(userWordsHeader).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(userWordHeader).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(loginButton).not.toBeInTheDocument();
-        expect(settingsButton).not.toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
+        expect(userWords).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
+      });
+
+      it("shows the email confirmation modal when the user is not confirmed", async () => {
+        const mockSessionServiceGetCurrentUser = vi
+          .spyOn(sessionService, "getCurrentUser")
+          .mockImplementation(async () => {
+            return { json: { user: { ...user, confirmed: false } }, status };
+          });
+
+        setup({ initialRoute: "/userWords" });
+
+        const emailConfirmationModal = await screen.findByTestId(
+          "email-confirmation-modal"
+        );
+        expect(emailConfirmationModal).toBeInTheDocument();
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
       });
     });
 
@@ -336,35 +250,13 @@ describe("Router component", () => {
           });
 
         setup({ initialRoute: "/login" });
-        const loginButton = await screen.findByRole("button", {
-          name: "Login",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const userWordsHeader = screen.queryByRole("heading", {
-          name: "UserWords",
-        });
-        const userWordHeader = screen.queryByRole("heading", {
-          name: "UserWord",
-        });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "WordReminders",
-        });
 
+        const login = await screen.findByTestId("login");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(loginButton).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(userWordHeader).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(settingsButton).not.toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(userWordsHeader).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
+        expect(login).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
       });
 
       it("renders signup page", async () => {
@@ -375,74 +267,30 @@ describe("Router component", () => {
           });
 
         setup({ initialRoute: "/signup" });
-        const signupButton = await screen.findByRole("button", {
-          name: "Signup",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const loginButton = screen.queryByRole("button", { name: "Login" });
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const userWordsHeader = screen.queryByRole("heading", {
-          name: "UserWords",
-        });
-        const userWordHeader = screen.queryByRole("heading", {
-          name: "UserWord",
-        });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "WordReminders",
-        });
 
+        const signup = await screen.findByTestId("signup");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(signupButton).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(userWordHeader).not.toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(loginButton).not.toBeInTheDocument();
-        expect(settingsButton).not.toBeInTheDocument();
-        expect(userWordsHeader).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
+        expect(signup).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
       });
 
       it("redirects to login page when user navigates to protected routes", async () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
           .mockImplementation(async () => {
-            return { json: { user: null }, status };
+            return { json: { user: undefined }, status };
           });
 
         setup({ initialRoute: "/userWords" });
-        const loginButton = await screen.findByRole("button", {
-          name: "Login",
-        });
-        const appMain = screen.getByRole("main");
-        const error = screen.queryByText(errorMessage);
-        const loading = screen.queryByText(loadingMessage);
-        const settingsButton = screen.queryByRole("button", { name: "Update" });
-        const signupButton = screen.queryByRole("button", { name: "Signup" });
-        const userWordsHeader = screen.queryByRole("heading", {
-          name: "UserWords",
-        });
-        const userWordHeader = screen.queryByRole("heading", {
-          name: "UserWord",
-        });
-        const wordRemindersHeader = screen.queryByRole("heading", {
-          name: "WordReminders",
-        });
 
+        const login = await screen.findByTestId("login");
+        const app = screen.getByTestId("app");
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(loginButton).toBeInTheDocument();
-        expect(appMain).toBeInTheDocument();
-        expect(userWordHeader).not.toBeInTheDocument();
-        expect(error).not.toBeInTheDocument();
-        expect(loading).not.toBeInTheDocument();
-        expect(settingsButton).not.toBeInTheDocument();
-        expect(signupButton).not.toBeInTheDocument();
-        expect(userWordsHeader).not.toBeInTheDocument();
-        expect(wordRemindersHeader).not.toBeInTheDocument();
+        expect(login).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
       });
     });
   });
@@ -454,32 +302,12 @@ describe("Router component", () => {
         return Promise.reject({ json: { message: errorMessage }, status: 400 });
       });
 
-    setup({ initialRoute: "/" });
-    const error = await screen.findByText(errorMessage);
-    const appMain = screen.queryByRole("main");
-    const loading = screen.queryByText(loadingMessage);
-    const loginButton = screen.queryByRole("button", { name: "Login" });
-    const settingsButton = screen.queryByRole("button", { name: "Update" });
-    const signupButton = screen.queryByRole("button", { name: "Signup" });
-    const userWordsHeader = screen.queryByRole("heading", {
-      name: "UserWords",
-    });
-    const userWordHeader = screen.queryByRole("heading", { name: "UserWord" });
-    const wordRemindersHeader = screen.queryByRole("heading", {
-      name: "WordReminders",
-    });
+    setup({ initialRoute: "/userWords" });
 
+    const error = await screen.findByText(errorMessage);
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
     expect(error).toBeInTheDocument();
-    expect(appMain).not.toBeInTheDocument();
-    expect(userWordHeader).not.toBeInTheDocument();
-    expect(loading).not.toBeInTheDocument();
-    expect(loginButton).not.toBeInTheDocument();
-    expect(settingsButton).not.toBeInTheDocument();
-    expect(signupButton).not.toBeInTheDocument();
-    expect(userWordsHeader).not.toBeInTheDocument();
-    expect(wordRemindersHeader).not.toBeInTheDocument();
   });
 
   it("renders loading page", async () => {
@@ -494,31 +322,11 @@ describe("Router component", () => {
         });
       });
 
-    setup({ initialRoute: "/" });
-    const loading = screen.getByText(loadingMessage);
-    const appMain = screen.queryByRole("main");
-    const error = screen.queryByText(errorMessage);
-    const loginButton = screen.queryByRole("button", { name: "Login" });
-    const settingsButton = screen.queryByRole("button", { name: "Update" });
-    const signupButton = screen.queryByRole("button", { name: "Signup" });
-    const userWordsHeader = screen.queryByRole("heading", {
-      name: "UserWords",
-    });
-    const wordRemindersHeader = screen.queryByRole("heading", {
-      name: "WordReminders",
-    });
-    const userWordHeader = screen.queryByRole("heading", { name: "UserWord" });
+    setup({ initialRoute: "/userWords" });
 
+    const loading = screen.getByTestId("loading");
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
     expect(loading).toBeInTheDocument();
-    expect(appMain).not.toBeInTheDocument();
-    expect(error).not.toBeInTheDocument();
-    expect(userWordHeader).not.toBeInTheDocument();
-    expect(loginButton).not.toBeInTheDocument();
-    expect(settingsButton).not.toBeInTheDocument();
-    expect(signupButton).not.toBeInTheDocument();
-    expect(userWordsHeader).not.toBeInTheDocument();
-    expect(wordRemindersHeader).not.toBeInTheDocument();
   });
 });

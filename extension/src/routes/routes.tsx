@@ -7,6 +7,7 @@ import { Signup } from "../pages/Auth/Signup";
 import { Settings } from "../pages/Settings";
 import { UserWord } from "../pages/UserWord";
 import { UserWords } from "../pages/UserWords";
+import { WordReminder } from "../pages/WordReminder";
 import { WordReminders } from "../pages/WordReminders";
 
 export function routes(user: User | undefined) {
@@ -36,6 +37,11 @@ export function routes(user: User | undefined) {
             { path: "userWords", element: <UserWords /> },
             { path: "userWords/:userWordId", element: <UserWord /> },
             { path: "wordReminders", element: <WordReminders /> },
+            {
+              path: "wordReminders/:wordReminderId",
+              element: <WordReminder />,
+            },
+            { path: "settings/:token", element: <Settings /> },
             { path: "settings", element: <Settings /> },
           ],
         },
