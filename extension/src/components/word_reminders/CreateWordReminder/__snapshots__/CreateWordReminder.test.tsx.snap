@@ -1,3 +1,3 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`CreateWordReminder component > renders buton 1`] = `[Function]`;
+exports[`CreateWordReminder component > renders button 1`] = `[Function]`;

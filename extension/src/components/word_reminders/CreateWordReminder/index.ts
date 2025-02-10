@@ -1,1 +1,1 @@
-export { default } from "./CreateWordReminder";
+export { CreateWordReminder } from "./CreateWordReminder";

@@ -20,14 +20,15 @@ vi.mock("../../modals/CreateWordReminderModal/CreateWordReminderModal", () => {
 });
 
 describe("CreateWordReminder component", () => {
+  const searchParams = new URLSearchParams();
   function setup() {
     return {
       user: userEvent.setup(),
-      ...render(<CreateWordReminder />),
+      ...render(<CreateWordReminder searchParams={searchParams} />),
     };
   }
 
-  it("renders buton", async () => {
+  it("renders button", async () => {
     const { asFragment } = setup();
 
     const heading = screen.getByRole("heading", {
@@ -46,7 +47,7 @@ describe("CreateWordReminder component", () => {
       <ThemeContext.Provider
         value={{ theme: Theme.Light, toggleTheme: vi.fn() }}
       >
-        <CreateWordReminder />
+        <CreateWordReminder searchParams={searchParams} />
       </ThemeContext.Provider>
     );
 
@@ -59,7 +60,7 @@ describe("CreateWordReminder component", () => {
       <ThemeContext.Provider
         value={{ theme: Theme.Dark, toggleTheme: vi.fn() }}
       >
-        <CreateWordReminder />
+        <CreateWordReminder searchParams={searchParams} />
       </ThemeContext.Provider>
     );
 

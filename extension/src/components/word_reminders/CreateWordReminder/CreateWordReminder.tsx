@@ -3,11 +3,15 @@ import { useContext, useState } from "react";
 import CSSModules from "react-css-modules";
 
 import { ThemeContext } from "../../../context/Theme";
-import { CreateWordReminderModal } from "../../modals/CreateWordReminderModal/CreateWordReminderModal";
+import { CreateWordReminderModal } from "../../modals/CreateWordReminderModal";
 import styles from "./CreateWordReminder.module.css";
 
+interface Props {
+  searchParams: URLSearchParams;
+}
+
 export const CreateWordReminder = CSSModules(
-  function () {
+  function ({ searchParams }: Props) {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const { theme } = useContext(ThemeContext);
@@ -19,7 +23,10 @@ export const CreateWordReminder = CSSModules(
     return (
       <>
         {isModalVisible && (
-          <CreateWordReminderModal toggleModal={toggleModal} />
+          <CreateWordReminderModal
+            searchParams={searchParams}
+            toggleModal={toggleModal}
+          />
         )}
         <button
           styleName={`create create--${theme}`}
