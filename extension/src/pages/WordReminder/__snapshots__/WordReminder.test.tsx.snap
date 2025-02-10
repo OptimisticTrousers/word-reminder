@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WordReminder component > renders parent div 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="loading"
+  >
+    Loading...
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,49 @@
+import CSSModules from "react-css-modules";
+
+import { WordReminder as WordReminderItem } from "../../components/word_reminders/WordReminder";
+import styles from "./WordReminder.module.css";
+import { useQuery } from "@tanstack/react-query";
+import { useOutletContext, useParams } from "react-router-dom";
+import { wordReminderService } from "../../services/word_reminder_service";
+import { User } from "common";
+import { Loading } from "../../components/ui/Loading";
+import { Error500 } from "../Error500";
+
+export const WordReminder = CSSModules(
+  function () {
+    const { user }: { user: User } = useOutletContext();
+    const userId = user.id;
+    const { wordReminderId } = useParams();
+    const { data, failureReason, isLoading } = useQuery({
+      queryKey: ["wordReminders", wordReminderId],
+      queryFn: () => {
+        return wordReminderService.getWordReminder(
+          userId,
+          String(wordReminderId)
+        );
+      },
+      staleTime: STALE_TIME,
+    });
+
+    if (failureReason) {
+      return <Error500 message={failureReason.message} />;
+    }
+
+    if (isLoading) {
+      return <Loading />;
+    }
+
+    return (
+      <div styleName="word-reminder">
+        <WordReminderItem
+          searchParams={new URLSearchParams()}
+          wordReminder={data?.json.wordReminder}
+        />
+      </div>
+    );
+  },
+  styles,
+  { allowMultiple: true, handleNotFoundStyleName: "log" }
+);
+
+const STALE_TIME = 30000; // 30 seconds in milliseconds
