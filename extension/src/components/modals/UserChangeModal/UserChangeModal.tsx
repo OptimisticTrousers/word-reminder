@@ -1,27 +1,23 @@
-import { CODE_MAX_BYTES, User } from "common";
+import { TOKEN_MAX_BYTES, User } from "common";
 import CSSModules from "react-css-modules";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
 import { ModalContainer } from "../ModalContainer";
 import styles from "./UserChangeModal.module.css";
+import { ToggleModal } from "../types";
 
 interface Props {
-  toggleModal: () => void;
-  path: string;
+  toggleModal: ToggleModal;
 }
 
 export const UserChangeModal = CSSModules(
-  function ({ toggleModal, path }: Props) {
+  function ({ toggleModal }: Props) {
     const { user }: { user: User } = useOutletContext();
     const navigate = useNavigate();
 
     function handleConfirm(formData: FormData) {
-      const code = formData.get("code") as string;
-      navigate(`/users/update/${path}/${code}`);
-      toggleModal();
-    }
-
-    function handleCancel() {
+      const token = formData.get("token") as string;
+      navigate(`/settings/${token}`);
       toggleModal();
     }
 
@@ -32,23 +28,18 @@ export const UserChangeModal = CSSModules(
             Please enter the confirmation code that was sent to{" "}
             <span styleName="modal__bold">{user.email}</span> within 5 minutes.
           </p>
-          <label styleName="modal__label">
+          <label styleName="modal__label" htmlFor="token">
             Code
-            <input
-              styleName="modal__input"
-              name="code"
-              type="text"
-              required={true}
-              maxLength={CODE_MAX_BYTES}
-            />
           </label>
+          <input
+            styleName="modal__input"
+            id="token"
+            name="token"
+            type="text"
+            required
+            maxLength={TOKEN_MAX_BYTES}
+          />
           <div styleName="modal__buttons">
-            <button
-              styleName="modal__button modal__button--cancel"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
             <button
               styleName="modal__button modal__button--confirm"
               type="submit"

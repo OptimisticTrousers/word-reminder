@@ -4,18 +4,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
 
 import { UserChangeModal } from "./UserChangeModal";
+import { Mock } from "vitest";
+import { TOKEN_MAX_BYTES } from "common";
 
 vi.mock("../ModalContainer/ModalContainer");
 
-describe("EmailChangeModal", () => {
+describe("UserChangeModal", () => {
   const testUser = {
     email: "bob@email.com",
     id: "1",
   };
 
-  const mockToggleModal = vi.fn();
-
-  function setup(path: string) {
+  function setup({ toggleModal }: { toggleModal: Mock }) {
     const queryClient = new QueryClient();
     const Stub = createRoutesStub([
       {
@@ -25,35 +25,20 @@ describe("EmailChangeModal", () => {
         },
         children: [
           {
-            path: "/users/update",
+            path: "/settings",
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
-                  <UserChangeModal path={path} toggleModal={mockToggleModal} />
+                  <UserChangeModal toggleModal={toggleModal} />
                 </QueryClientProvider>
               );
             },
           },
           {
-            path: "/users/update/email/:code",
+            path: "/settings/:token",
             Component: function () {
-              const { code } = useParams();
-
-              return (
-                <div>You can change your email thanks to this code: {code}</div>
-              );
-            },
-          },
-          {
-            path: "/users/update/password/:code",
-            Component: function () {
-              const { code } = useParams();
-
-              return (
-                <div>
-                  You can change your password thanks to this code: {code}
-                </div>
-              );
+              const { token } = useParams();
+              return <div data-testid="settings-token">{token}</div>;
             },
           },
         ],
@@ -61,7 +46,7 @@ describe("EmailChangeModal", () => {
     ]);
     return {
       user: userEvent.setup(),
-      ...render(<Stub initialEntries={["/users/update"]} />),
+      ...render(<Stub initialEntries={["/settings"]} />),
     };
   }
 
@@ -69,141 +54,79 @@ describe("EmailChangeModal", () => {
     vi.clearAllMocks();
   });
 
-  describe("updateEmail", () => {
-    const path = "email";
+  it("shows form", async () => {
+    const mockToggleModal = vi.fn();
+    const { asFragment } = setup({ toggleModal: mockToggleModal });
 
-    it("shows form", async () => {
-      const { asFragment } = setup(path);
-
-      const message = screen.getByText((_, element) => {
-        return (
-          element?.textContent ===
-          `Please enter the confirmation code that was sent to ${testUser.email} within 5 minutes.`
-        );
-      });
-      expect(message).toBeInTheDocument();
-      expect(asFragment()).toMatchSnapshot();
-    });
-
-    it("calls the functions to navigate to update email page with token param", async () => {
-      const { user } = setup(path);
-
-      const code = "code";
-      const codeInput = screen.getByLabelText("Code", { selector: "input" });
-      await user.type(codeInput, code);
-      const enterCodeButton = screen.getByRole("button", {
-        name: "Enter Code",
-      });
-      await user.click(enterCodeButton);
-
-      const updateCode = await screen.findByText(
-        `You can change your email thanks to this code: ${code}`
+    const message = screen.getByText((_, element) => {
+      return (
+        element?.textContent ===
+        `Please enter the confirmation code that was sent to ${testUser.email} within 5 minutes.`
       );
-      expect(updateCode).toBeInTheDocument();
-      expect(mockToggleModal).toHaveBeenCalledTimes(1);
-      expect(mockToggleModal).toHaveBeenCalledWith();
     });
-
-    it("does not allow the user to submit when the code field is empty", async () => {
-      const { user } = setup(path);
-
-      const enterCodeButton = screen.getByRole("button", {
-        name: "Enter Code",
-      });
-      await user.click(enterCodeButton);
-
-      expect(mockToggleModal).not.toHaveBeenCalled();
-    });
-
-    it("works when user closes the modal using cancel button", async () => {
-      const { user } = setup("updatePassword");
-
-      const cancelButton = screen.getByRole("button", { name: "Cancel" });
-      await user.click(cancelButton);
-
-      expect(mockToggleModal).toHaveBeenCalledTimes(1);
-      expect(mockToggleModal).toHaveBeenCalledWith();
-    });
-
-    it("works when user closes the modal using x button", async () => {
-      const { user } = setup(path);
-
-      const modalContainerCloseButton = screen.getByRole("button", {
-        name: "Cancel",
-      });
-      await user.click(modalContainerCloseButton);
-
-      expect(mockToggleModal).toHaveBeenCalledTimes(1);
-      expect(mockToggleModal).toHaveBeenCalledWith();
-    });
+    expect(message).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  describe("updatePassword", () => {
-    const path = "password";
+  it("calls the functions to submit code", async () => {
+    const mockToggleModal = vi.fn();
+    const { user } = setup({ toggleModal: mockToggleModal });
 
-    it("shows form", async () => {
-      const { asFragment } = setup(path);
-
-      const message = screen.getByText((_, element) => {
-        return (
-          element?.textContent ===
-          `Please enter the confirmation code that was sent to ${testUser.email} within 5 minutes.`
-        );
-      });
-      expect(message).toBeInTheDocument();
-      expect(asFragment()).toMatchSnapshot();
+    const codeInput = screen.getByLabelText("Code", { selector: "input" });
+    const enterCodeButton = screen.getByRole("button", {
+      name: "Enter Code",
     });
+    await user.type(codeInput, "code");
+    await user.click(enterCodeButton);
 
-    it("calls the functions to navigate to update password page with token param", async () => {
-      const { user } = setup(path);
+    const settingsToken = await screen.findByTestId("settings-token");
+    expect(settingsToken).toBeInTheDocument();
+    expect(settingsToken).toHaveTextContent("code");
+    expect(mockToggleModal).toHaveBeenCalledTimes(1);
+    expect(mockToggleModal).toHaveBeenCalledWith();
+  });
 
-      const code = "code";
-      const codeInput = screen.getByLabelText("Code", { selector: "input" });
-      await user.type(codeInput, code);
-      const enterCodeButton = screen.getByRole("button", {
-        name: "Enter Code",
-      });
-      await user.click(enterCodeButton);
+  it("does not allow the user to submit when the code field is empty", async () => {
+    const mockToggleModal = vi.fn();
+    const { user } = setup({ toggleModal: mockToggleModal });
 
-      const updateCode = await screen.findByText(
-        `You can change your password thanks to this code: ${code}`
-      );
-      expect(updateCode).toBeInTheDocument();
-      expect(mockToggleModal).toHaveBeenCalledTimes(1);
-      expect(mockToggleModal).toHaveBeenCalledWith();
+    const enterCodeButton = screen.getByRole("button", {
+      name: "Enter Code",
     });
+    await user.click(enterCodeButton);
 
-    it("does not allow the user to submit when the code field is empty", async () => {
-      const { user } = setup(path);
+    expect(mockToggleModal).not.toHaveBeenCalled();
+  });
 
-      const enterCodeButton = screen.getByRole("button", {
-        name: "Enter Code",
-      });
-      await user.click(enterCodeButton);
+  it(`does not allow the user to enter a code larger than ${TOKEN_MAX_BYTES}`, async () => {
+    const mockToggleModal = vi.fn();
+    const { user } = setup({ toggleModal: mockToggleModal });
 
-      expect(mockToggleModal).not.toHaveBeenCalled();
+    const codeInput = screen.getByLabelText("Code", { selector: "input" });
+    const enterCodeButton = screen.getByRole("button", {
+      name: "Enter Code",
     });
+    const code = new Array(TOKEN_MAX_BYTES + 1).fill("a").join("");
+    await user.type(codeInput, code);
+    await user.click(enterCodeButton);
 
-    it("works when user closes the modal using cancel button", async () => {
-      const { user } = setup("updatePassword");
+    const settingsToken = await screen.findByTestId("settings-token");
+    expect(settingsToken).toBeInTheDocument();
+    expect(settingsToken).toHaveTextContent(code.slice(0, -1));
+    expect(mockToggleModal).toHaveBeenCalledTimes(1);
+    expect(mockToggleModal).toHaveBeenCalledWith();
+  });
 
-      const cancelButton = screen.getByRole("button", { name: "Cancel" });
-      await user.click(cancelButton);
+  it("works when user closes the modal using x button", async () => {
+    const mockToggleModal = vi.fn();
+    const { user } = setup({ toggleModal: mockToggleModal });
 
-      expect(mockToggleModal).toHaveBeenCalledTimes(1);
-      expect(mockToggleModal).toHaveBeenCalledWith();
+    const modalContainerCloseButton = screen.getByRole("button", {
+      name: "Close modal",
     });
+    await user.click(modalContainerCloseButton);
 
-    it("works when user closes the modal using x button", async () => {
-      const { user } = setup(path);
-
-      const modalContainerCloseButton = screen.getByRole("button", {
-        name: "Cancel",
-      });
-      await user.click(modalContainerCloseButton);
-
-      expect(mockToggleModal).toHaveBeenCalledTimes(1);
-      expect(mockToggleModal).toHaveBeenCalledWith();
-    });
+    expect(mockToggleModal).toHaveBeenCalledTimes(1);
+    expect(mockToggleModal).toHaveBeenCalledWith();
   });
 });
