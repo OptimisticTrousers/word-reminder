@@ -7,17 +7,23 @@ import userEvent from "@testing-library/user-event";
 import { wordReminderService } from "../../../services/word_reminder_service";
 import { Order } from "common";
 import { NotificationProvider } from "../../../context/Notification";
+import { Mock } from "vitest";
 
-vi.mock("../../ModalContainer/ModalContainer");
+vi.mock("../ModalContainer/ModalContainer");
 
 describe("AutoCreateWordReminderModal component", () => {
   const testUser = {
     id: "1",
   };
 
-  const mockToggleModal = vi.fn();
-  function setup() {
-    const queryClient = new QueryClient();
+  function setup({
+    toggleModal,
+    queryClient,
+  }: {
+    toggleModal: Mock;
+    queryClient: QueryClient;
+  }) {
+    const searchParams = new URLSearchParams();
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -32,7 +38,8 @@ describe("AutoCreateWordReminderModal component", () => {
                 <NotificationProvider>
                   <QueryClientProvider client={queryClient}>
                     <AutoCreateWordReminderModal
-                      toggleModal={mockToggleModal}
+                      searchParams={searchParams}
+                      toggleModal={toggleModal}
                     />
                   </QueryClientProvider>
                 </NotificationProvider>
@@ -60,17 +67,16 @@ describe("AutoCreateWordReminderModal component", () => {
   });
 
   it("renders form with all inputs", async () => {
-    vi.spyOn(wordReminderService, "createWordReminder").mockImplementation(
-      async () => {
-        return { json: { wordReminder }, status };
-      }
-    );
-
-    const { asFragment } = setup();
+    const mockToggleModal = vi.fn();
+    const queryClient = new QueryClient();
+    const { asFragment } = setup({ toggleModal: mockToggleModal, queryClient });
 
     const reminder = screen.getByLabelText("Reminder", { selector: "input" });
     const duration = screen.getByLabelText("Duration", { selector: "input" });
     const wordCount = screen.getByLabelText("Word Count", {
+      selector: "input",
+    });
+    const createNow = screen.getByLabelText("Create Now", {
       selector: "input",
     });
     const isActive = screen.getByLabelText("Is Active", { selector: "input" });
@@ -81,13 +87,18 @@ describe("AutoCreateWordReminderModal component", () => {
       selector: "input",
     });
     const order = screen.getByLabelText("Order", { selector: "select" });
-    const modal = screen.getByRole("dialog", {
-      name: "Automatically Create Word Reminder",
-    });
-    expect(modal).toBeInTheDocument();
+    const notification = screen.queryByRole("dialog");
+    const modalHeading = screen.getByTestId("modal-heading");
+    expect(modalHeading).toBeInTheDocument();
+    expect(modalHeading).toHaveTextContent(
+      "Automatically Create Word Reminder"
+    );
+    expect(notification).not.toBeInTheDocument();
     expect(reminder).toBeInTheDocument();
     expect(duration).toBeInTheDocument();
     expect(wordCount).toBeInTheDocument();
+    expect(createNow).toBeInTheDocument();
+    expect(createNow).toBeChecked();
     expect(isActive).toBeInTheDocument();
     expect(isActive).toBeChecked();
     expect(hasReminderOnload).toBeInTheDocument();
@@ -105,13 +116,19 @@ describe("AutoCreateWordReminderModal component", () => {
       .mockImplementation(async () => {
         return { json: { wordReminder }, status };
       });
-    const { user } = setup();
+    const mockToggleModal = vi.fn();
+    const queryClient = new QueryClient();
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const reminder = screen.getByLabelText("Reminder", { selector: "input" });
     const duration = screen.getByLabelText("Duration", { selector: "input" });
     const wordCount = screen.getByLabelText("Word Count", {
       selector: "input",
     });
     const createButton = screen.getByRole("button", { name: "Create" });
+    const createNow = screen.getByLabelText("Create Now", {
+      selector: "input",
+    });
     const isActive = screen.getByLabelText("Is Active", { selector: "input" });
     const hasReminderOnload = screen.getByLabelText("Has Reminder Onload", {
       selector: "input",
@@ -124,12 +141,22 @@ describe("AutoCreateWordReminderModal component", () => {
     await user.type(reminder, "1 hour");
     await user.type(duration, "2 weeks");
     await user.type(wordCount, "7");
+    await user.click(createNow);
     await user.click(isActive);
     await user.click(hasReminderOnload);
     await user.click(hasLearnedWords);
     await user.selectOptions(order, Order.Oldest);
     await user.click(createButton);
 
+    const notification = screen.getByRole("dialog", {
+      name: "Word reminders will now be created automatically!",
+    });
+    expect(notification).toBeInTheDocument();
+    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
+      exact: true,
+    });
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
     expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
@@ -138,11 +165,12 @@ describe("AutoCreateWordReminderModal component", () => {
       body: {
         auto: true,
         reminder: "1 hour",
+        create_now: false,
         duration: "2 weeks",
-        wordCount: 7,
-        isActive: false,
-        hasReminderOnload: false,
-        hasLearnedWords: true,
+        word_count: 7,
+        is_active: false,
+        has_reminder_onload: false,
+        has_learned_words: true,
         order: Order.Oldest,
       },
     });
@@ -156,7 +184,10 @@ describe("AutoCreateWordReminderModal component", () => {
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
-    const { user } = setup();
+    const mockToggleModal = vi.fn();
+    const queryClient = new QueryClient();
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const reminder = screen.getByLabelText("Reminder", { selector: "input" });
     const duration = screen.getByLabelText("Duration", { selector: "input" });
     const wordCount = screen.getByLabelText("Word Count", {
@@ -171,6 +202,9 @@ describe("AutoCreateWordReminderModal component", () => {
 
     const notification = screen.getByRole("dialog", { name: message });
     expect(notification).toBeInTheDocument();
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
+    expect(mockToggleModal).toHaveBeenCalledTimes(1);
+    expect(mockToggleModal).toHaveBeenCalledWith();
     expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
     expect(mockCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
@@ -178,10 +212,11 @@ describe("AutoCreateWordReminderModal component", () => {
         auto: true,
         reminder: "1 hour",
         duration: "2 weeks",
-        wordCount: 7,
-        isActive: true,
-        hasReminderOnload: true,
-        hasLearnedWords: false,
+        create_now: true,
+        word_count: 7,
+        is_active: true,
+        has_reminder_onload: true,
+        has_learned_words: false,
         order: Order.Random,
       },
     });
@@ -198,7 +233,10 @@ describe("AutoCreateWordReminderModal component", () => {
           }, delay);
         });
       });
-    const { user } = setup();
+    const mockToggleModal = vi.fn();
+    const queryClient = new QueryClient();
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const reminder = screen.getByLabelText("Reminder", { selector: "input" });
     const duration = screen.getByLabelText("Duration", { selector: "input" });
     const wordCount = screen.getByLabelText("Word Count", {
@@ -211,7 +249,11 @@ describe("AutoCreateWordReminderModal component", () => {
     await user.type(wordCount, "7");
     await user.click(createButton);
 
+    const notification = screen.queryByRole("dialog");
+    expect(notification).not.toBeInTheDocument();
     expect(createButton).toBeDisabled();
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
+    expect(mockToggleModal).not.toHaveBeenCalled();
     expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
     expect(mockCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
@@ -219,23 +261,36 @@ describe("AutoCreateWordReminderModal component", () => {
         auto: true,
         reminder: "1 hour",
         duration: "2 weeks",
-        wordCount: 7,
-        isActive: true,
-        hasReminderOnload: true,
-        hasLearnedWords: false,
+        word_count: 7,
+        is_active: true,
+        create_now: true,
+        has_reminder_onload: true,
+        has_learned_words: false,
         order: Order.Random,
       },
     });
   });
 
   it("calls the functions to close a modal", async () => {
-    const { user } = setup();
+    const mockCreateWordReminder = vi
+      .spyOn(wordReminderService, "createWordReminder")
+      .mockImplementation(async () => {
+        return { json: { wordReminder }, status };
+      });
+    const mockToggleModal = vi.fn();
+    const queryClient = new QueryClient();
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    const { user } = setup({ toggleModal: mockToggleModal, queryClient });
 
     const closeButton = screen.getByRole("button", { name: "Close modal" });
     await user.click(closeButton);
 
+    const notification = screen.queryByRole("dialog");
+    expect(notification).not.toBeInTheDocument();
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
+    expect(mockCreateWordReminder).not.toHaveBeenCalled();
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
   });
 
   describe("form validation", () => {
@@ -245,7 +300,10 @@ describe("AutoCreateWordReminderModal component", () => {
         .mockImplementation(async () => {
           return { json: { wordReminder }, status };
         });
-      const { user } = setup();
+      const mockToggleModal = vi.fn();
+      const queryClient = new QueryClient();
+      const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+      const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder", { selector: "input" });
       const duration = screen.getByLabelText("Duration", { selector: "input" });
       const wordCount = screen.getByLabelText("Word Count", {
@@ -258,19 +316,29 @@ describe("AutoCreateWordReminderModal component", () => {
       await user.type(wordCount, "7");
       await user.click(createButton);
 
+      const notification = screen.getByRole("dialog");
+      expect(notification).toBeInTheDocument();
       expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
       expect(mockCreateWordReminder).toHaveBeenCalledWith({
         userId: testUser.id,
         body: {
           auto: true,
           reminder: "10000 hour",
+          create_now: true,
           duration: "2 weeks",
-          wordCount: 7,
-          isActive: true,
-          hasReminderOnload: true,
-          hasLearnedWords: false,
+          word_count: 7,
+          is_active: true,
+          has_reminder_onload: true,
+          has_learned_words: false,
           order: Order.Random,
         },
+      });
+      expect(mockToggleModal).toHaveBeenCalledTimes(1);
+      expect(mockToggleModal).toHaveBeenCalledWith();
+      expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+      expect(mockInvalidateQueries).toHaveBeenCalledWith({
+        queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
+        exact: true,
       });
     });
 
@@ -280,7 +348,10 @@ describe("AutoCreateWordReminderModal component", () => {
         .mockImplementation(async () => {
           return { json: { wordReminder }, status };
         });
-      const { user } = setup();
+      const mockToggleModal = vi.fn();
+      const queryClient = new QueryClient();
+      const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+      const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder", { selector: "input" });
       const duration = screen.getByLabelText("Duration", { selector: "input" });
       const wordCount = screen.getByLabelText("Word Count", {
@@ -293,7 +364,11 @@ describe("AutoCreateWordReminderModal component", () => {
       await user.type(wordCount, "100");
       await user.click(createButton);
 
+      const notification = screen.queryByRole("dialog");
+      expect(notification).not.toBeInTheDocument();
       expect(mockCreateWordReminder).not.toHaveBeenCalled();
+      expect(mockToggleModal).not.toHaveBeenCalled();
+      expect(mockInvalidateQueries).not.toHaveBeenCalled();
     });
 
     it("only allows the user to enter up to 10 characters for duration", async () => {
@@ -302,7 +377,10 @@ describe("AutoCreateWordReminderModal component", () => {
         .mockImplementation(async () => {
           return { json: { wordReminder }, status };
         });
-      const { user } = setup();
+      const mockToggleModal = vi.fn();
+      const queryClient = new QueryClient();
+      const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+      const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder", { selector: "input" });
       const duration = screen.getByLabelText("Duration", { selector: "input" });
       const wordCount = screen.getByLabelText("Word Count", {
@@ -315,19 +393,29 @@ describe("AutoCreateWordReminderModal component", () => {
       await user.type(wordCount, "7");
       await user.click(createButton);
 
+      const notification = screen.getByRole("dialog");
+      expect(notification).toBeInTheDocument();
       expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
       expect(mockCreateWordReminder).toHaveBeenCalledWith({
         userId: testUser.id,
         body: {
           auto: true,
           reminder: "1 hour",
+          create_now: true,
           duration: "20000 week",
-          wordCount: 7,
-          isActive: true,
-          hasReminderOnload: true,
-          hasLearnedWords: false,
+          word_count: 7,
+          is_active: true,
+          has_reminder_onload: true,
+          has_learned_words: false,
           order: Order.Random,
         },
+      });
+      expect(mockToggleModal).toHaveBeenCalledTimes(1);
+      expect(mockToggleModal).toHaveBeenCalledWith();
+      expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+      expect(mockInvalidateQueries).toHaveBeenCalledWith({
+        queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
+        exact: true,
       });
     });
 
@@ -337,7 +425,10 @@ describe("AutoCreateWordReminderModal component", () => {
         .mockImplementation(async () => {
           return { json: { wordReminder }, status };
         });
-      const { user } = setup();
+      const mockToggleModal = vi.fn();
+      const queryClient = new QueryClient();
+      const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+      const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder", { selector: "input" });
       const duration = screen.getByLabelText("Duration", { selector: "input" });
       const wordCount = screen.getByLabelText("Word Count", {
@@ -350,7 +441,11 @@ describe("AutoCreateWordReminderModal component", () => {
       await user.clear(wordCount);
       await user.click(createButton);
 
+      const notification = screen.queryByRole("dialog");
+      expect(notification).not.toBeInTheDocument();
       expect(mockCreateWordReminder).not.toHaveBeenCalled();
+      expect(mockToggleModal).not.toHaveBeenCalled();
+      expect(mockInvalidateQueries).not.toHaveBeenCalled();
     });
 
     it("does not allow the user to submit when reminder is empty", async () => {
@@ -359,7 +454,10 @@ describe("AutoCreateWordReminderModal component", () => {
         .mockImplementation(async () => {
           return { json: { wordReminder }, status };
         });
-      const { user } = setup();
+      const mockToggleModal = vi.fn();
+      const queryClient = new QueryClient();
+      const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+      const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder", { selector: "input" });
       const duration = screen.getByLabelText("Duration", { selector: "input" });
       const wordCount = screen.getByLabelText("Word Count", {
@@ -372,7 +470,11 @@ describe("AutoCreateWordReminderModal component", () => {
       await user.type(wordCount, "7");
       await user.click(createButton);
 
+      const notification = screen.queryByRole("dialog");
+      expect(notification).not.toBeInTheDocument();
       expect(mockCreateWordReminder).not.toHaveBeenCalled();
+      expect(mockToggleModal).not.toHaveBeenCalled();
+      expect(mockInvalidateQueries).not.toHaveBeenCalled();
     });
 
     it("does not allow the user to submit when duration is empty", async () => {
@@ -381,7 +483,10 @@ describe("AutoCreateWordReminderModal component", () => {
         .mockImplementation(async () => {
           return { json: { wordReminder }, status };
         });
-      const { user } = setup();
+      const mockToggleModal = vi.fn();
+      const queryClient = new QueryClient();
+      const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+      const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder", { selector: "input" });
       const duration = screen.getByLabelText("Duration", { selector: "input" });
       const wordCount = screen.getByLabelText("Word Count", {
@@ -394,7 +499,11 @@ describe("AutoCreateWordReminderModal component", () => {
       await user.type(wordCount, "7");
       await user.click(createButton);
 
+      const notification = screen.queryByRole("dialog");
+      expect(notification).not.toBeInTheDocument();
       expect(mockCreateWordReminder).not.toHaveBeenCalled();
+      expect(mockToggleModal).not.toHaveBeenCalled();
+      expect(mockInvalidateQueries).not.toHaveBeenCalled();
     });
   });
 });

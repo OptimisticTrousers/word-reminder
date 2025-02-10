@@ -14,12 +14,12 @@ import { ModalContainer } from "../ModalContainer";
 import styles from "./AutoCreateWordReminderModal.module.css";
 
 interface Props {
+  searchParams: URLSearchParams;
   toggleModal: ToggleModal;
 }
 
-// TODO: Pass searchParams into this code so that it can invalidate the query correctly.
 export const AutoCreateWordReminderModal = CSSModules(
-  function ({ toggleModal }: Props) {
+  function ({ searchParams, toggleModal }: Props) {
     const { user }: { user: User } = useOutletContext();
     const userId = user.id;
     const { showNotification } = useContext(NotificationContext);
@@ -32,8 +32,9 @@ export const AutoCreateWordReminderModal = CSSModules(
           NOTIFICATION_ACTIONS.SUCCESS,
           AUTO_CREATE_WORD_REMINDER_NOTIFICATION_MSGS.autoCreateWordReminder()
         );
+        const searchParamsObject = Object.fromEntries(searchParams);
         queryClient.invalidateQueries({
-          queryKey: ["wordReminders"],
+          queryKey: ["wordReminders", searchParamsObject],
           exact: true,
         });
       },
@@ -49,13 +50,16 @@ export const AutoCreateWordReminderModal = CSSModules(
         body: {
           auto: true,
           reminder: formData.get("reminder") as string,
+          create_now: Boolean(formData.get("create_now") as string),
           duration: formData.get("duration") as string,
-          wordCount: Number(formData.get("wordCount") as string),
-          isActive: Boolean(formData.get("isActive") as string),
-          hasReminderOnload: Boolean(
-            formData.get("hasReminderOnload") as string
+          word_count: Number(formData.get("word_count") as string),
+          is_active: Boolean(formData.get("is_active") as string),
+          has_reminder_onload: Boolean(
+            formData.get("has_reminder_onload") as string
           ),
-          hasLearnedWords: Boolean(formData.get("hasLearnedWords") as string),
+          has_learned_words: Boolean(
+            formData.get("has_learned_words") as string
+          ),
           order: formData.get("order") as Order,
         },
       });
@@ -96,14 +100,14 @@ export const AutoCreateWordReminderModal = CSSModules(
             />
           </div>
           <div styleName="modal__control">
-            <label styleName="modal__label" htmlFor="wordCount">
+            <label styleName="modal__label" htmlFor="word_count">
               Word Count
             </label>
             <input
               styleName="modal__input"
               type="number"
-              id="wordCount"
-              name="wordCount"
+              id="word_count"
+              name="word_count"
               required
               max={99}
             />
@@ -111,38 +115,50 @@ export const AutoCreateWordReminderModal = CSSModules(
           <fieldset styleName="modal__fieldset">
             <legend styleName="modal__legend">Options</legend>
             <div styleName="modal__control">
-              <label styleName="modal__label" htmlFor="isActive">
+              <label styleName="modal__label" htmlFor="create_now">
+                Create Now
+              </label>
+              <input
+                styleName="modal__input"
+                type="checkbox"
+                id="create_now"
+                name="create_now"
+                defaultChecked
+              />
+            </div>
+            <div styleName="modal__control">
+              <label styleName="modal__label" htmlFor="is_active">
                 Is Active
               </label>
               <input
                 styleName="modal__input"
                 type="checkbox"
-                id="isActive"
-                name="isActive"
+                id="is_active"
+                name="is_active"
                 defaultChecked
               />
             </div>
             <div styleName="modal__control">
-              <label styleName="modal__label" htmlFor="hasReminderOnload">
+              <label styleName="modal__label" htmlFor="has_reminder_onload">
                 Has Reminder Onload
               </label>
               <input
                 styleName="modal__input"
                 type="checkbox"
-                id="hasReminderOnload"
-                name="hasReminderOnload"
+                id="has_reminder_onload"
+                name="has_reminder_onload"
                 defaultChecked
               />
             </div>
             <div styleName="modal__control">
-              <label styleName="modal__label" htmlFor="hasLearnedWords">
+              <label styleName="modal__label" htmlFor="has_learned_words">
                 Has Learned Words
               </label>
               <input
                 styleName="modal__input"
                 type="checkbox"
-                id="hasLearnedWords"
-                name="hasLearnedWords"
+                id="has_learned_words"
+                name="has_learned_words"
               />
             </div>
             <div styleName="modal__control">
