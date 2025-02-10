@@ -31,6 +31,24 @@ describe("ImageCarousel component", () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
+  it("shows no images placeholder when there are no images", () => {
+    const { asFragment } = render(
+      <ImageCarousel images={[]} hasAutoScroll={false} />
+    );
+
+    const count = screen.getByText("0/0");
+    const image = screen.getByRole("presentation");
+    const caption = screen.getByText("No Images Available");
+    expect(count).toBeInTheDocument();
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute(
+      "src",
+      "/src/assets/images/no-image-available.jpg"
+    );
+    expect(caption).toBeInTheDocument();
+    expect(asFragment).toMatchSnapshot();
+  });
+
   describe("hasAutoScroll", () => {
     const delay = 5000;
 

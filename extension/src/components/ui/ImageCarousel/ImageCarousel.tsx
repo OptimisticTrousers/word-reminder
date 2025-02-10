@@ -4,13 +4,10 @@ import CSSModules from "react-css-modules";
 
 import styles from "./ImageCarousel.module.css";
 import { useInterval } from "../../../hooks/useInterval";
+import { Image } from "common";
+import noImageAvailableImage from "../../../assets/images/no-image-available.jpg";
 
-interface Image {
-  src: string;
-  caption: string;
-}
-
-interface Props {
+export interface Props {
   images: Image[];
   hasAutoScroll: boolean;
 }
@@ -18,7 +15,14 @@ interface Props {
 export const ImageCarousel = CSSModules(
   function ({ images, hasAutoScroll }: Props) {
     const [slideIndex, setSlideIndex] = useState(1);
+
     const delay = 5000;
+    useInterval(
+      () => {
+        plusSlides(1);
+      },
+      hasAutoScroll ? delay : null
+    );
 
     function plusSlides(number: number) {
       setSlideIndex((prevSlideIndex) => {
@@ -36,37 +40,45 @@ export const ImageCarousel = CSSModules(
       setSlideIndex(index);
     }
 
-    useInterval(
-      () => {
-        plusSlides(1);
-      },
-      hasAutoScroll ? delay : null
-    );
-
     return (
-      <>
-        <div styleName="carousel">
-          {images.map((image: Image, index: number) => {
-            const position = index + 1;
-            return (
-              position === slideIndex && (
-                <figure key={index} styleName="carousel__item fade">
-                  <span styleName="carousel__count">
-                    {position}/{images.length}
-                  </span>
-                  <img
-                    styleName="carousel__image"
-                    src={image.src}
-                    alt=""
-                    role="presentation"
-                  />
-                  <figcaption styleName="carousel__caption">
-                    {image.caption}
-                  </figcaption>
-                </figure>
-              )
-            );
-          })}
+      <div styleName="carousel">
+        <div styleName="carousel__images">
+          {images.length > 0 ? (
+            images.map((image: Image, index: number) => {
+              const position = index + 1;
+              return (
+                position === slideIndex && (
+                  <figure key={index} styleName="carousel__item fade">
+                    <span styleName="carousel__count">
+                      {position}/{images.length}
+                    </span>
+                    <img
+                      styleName="carousel__image"
+                      src={image.src}
+                      alt=""
+                      role="presentation"
+                    />
+                    <figcaption styleName="carousel__caption">
+                      {image.caption}
+                    </figcaption>
+                  </figure>
+                )
+              );
+            })
+          ) : (
+            <figure styleName="carousel__item fade">
+              <span styleName="carousel__count">0/0</span>
+              <img
+                styleName="carousel__image"
+                src={noImageAvailableImage}
+                alt=""
+                role="presentation"
+              />
+              <figcaption styleName="carousel__caption">
+                No Images Available
+              </figcaption>
+            </figure>
+          )}
           <button
             styleName="carousel__button carousel__button--prev"
             aria-label="Previous image"
@@ -101,7 +113,7 @@ export const ImageCarousel = CSSModules(
             );
           })}
         </div>
-      </>
+      </div>
     );
   },
   styles,
