@@ -1,15 +1,10 @@
 import { http } from "common";
 
-export interface AuthParams {
-  email: string;
-  password: string;
-}
-
 export interface Params {
   [key: string]: string;
 }
 
-export const service = (function (http) {
+export const service = (function () {
   const VITE_API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
   const { get, post, put, remove } = http;
 
@@ -84,4 +79,4 @@ export const service = (function (http) {
     remove: rejectedRemove,
     VITE_API_DOMAIN,
   };
-})(http);
+})();

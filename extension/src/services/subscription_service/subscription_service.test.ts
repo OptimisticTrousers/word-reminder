@@ -1,9 +1,7 @@
-import { http } from "common";
-
 import { service } from "../service";
 import { subscriptionService } from "./subscription_service";
 
-vi.mock("common");
+vi.mock("../service");
 
 const { VITE_API_DOMAIN } = service;
 
@@ -23,9 +21,9 @@ describe("subscriptionService", () => {
   const status = 200;
 
   describe("createSubscription", () => {
-    it("calls the functions at the correct API endpoint with body", async () => {
-      const mockHttpPost = vi
-        .spyOn(http, "post")
+    it("creates using the correct API endpoint with subscription body", async () => {
+      const mockPost = vi
+        .spyOn(service, "post")
         .mockImplementation(async () => {
           return { json: { subscription }, status };
         });
@@ -34,8 +32,8 @@ describe("subscriptionService", () => {
         subscription
       );
 
-      expect(mockHttpPost).toHaveBeenCalledTimes(1);
-      expect(mockHttpPost).toHaveBeenCalledWith({
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/subscriptions`,
         options: { body: JSON.stringify(subscription), credentials: "include" },
       });

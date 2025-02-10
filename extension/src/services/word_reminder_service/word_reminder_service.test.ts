@@ -1,3 +1,4 @@
+import { Order } from "common";
 import { service } from "../service";
 import { wordReminderService } from "./word_reminder_service";
 
@@ -21,23 +22,23 @@ describe("wordReminderService", () => {
   const wordReminderId1 = "1";
   const wordReminder1 = {
     auto: false,
-    hasReminderOnload: true,
-    isActive: true,
+    has_reminder_onload: true,
+    is_active: true,
     reminder: "every 2 hours",
     finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    words: [],
+    user_words: [],
   };
 
-  const wordReminderId2 = "2";
   const wordReminder2 = {
     auto: true,
-    hasReminderOnload: true,
-    isActive: true,
+    create_now: true,
+    has_reminder_onload: true,
+    is_active: true,
     reminder: "every 2 hours",
     duration: "1 week",
-    count: 7,
-    hasLearnedWords: false,
-    order: -1,
+    word_count: 7,
+    has_learned_words: false,
+    order: Order.Random,
   };
 
   describe("getWordReminderList", () => {
@@ -72,6 +73,34 @@ describe("wordReminderService", () => {
     });
   });
 
+  describe("getWordReminder", () => {
+    it("gets using the correct API endpoint", async () => {
+      const mockGet = vi.spyOn(service, "get").mockImplementation(async () => {
+        return {
+          json: { wordReminder: wordReminder1 },
+          status,
+        };
+      });
+
+      const response = await wordReminderService.getWordReminder(
+        sampleUser1.id,
+        wordReminderId1
+      );
+
+      expect(mockGet).toHaveBeenCalledTimes(1);
+      expect(mockGet).toHaveBeenCalledWith({
+        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
+        options: {
+          credentials: "include",
+        },
+      });
+      expect(response).toEqual({
+        json: { wordReminder: wordReminder1 },
+        status,
+      });
+    });
+  });
+
   describe("createWordReminder", () => {
     describe("autoCreateWordReminder", () => {
       it("creates using the correct API endpoint with auto word reminder body", async () => {
@@ -81,15 +110,14 @@ describe("wordReminderService", () => {
             return { json: { wordReminder: wordReminder1 }, status };
           });
 
-        const response = await wordReminderService.createWordReminder(
-          sampleUser1.id,
-          wordReminderId1,
-          wordReminder1
-        );
+        const response = await wordReminderService.createWordReminder({
+          userId: sampleUser1.id,
+          body: wordReminder1,
+        });
 
         expect(mockPost).toHaveBeenCalledTimes(1);
         expect(mockPost).toHaveBeenCalledWith({
-          url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
+          url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
           options: {
             body: JSON.stringify(wordReminder1),
             credentials: "include",
@@ -110,15 +138,14 @@ describe("wordReminderService", () => {
             return { json: { wordReminder: wordReminder2 }, status };
           });
 
-        const response = await wordReminderService.createWordReminder(
-          sampleUser1.id,
-          wordReminderId2,
-          wordReminder2
-        );
+        const response = await wordReminderService.createWordReminder({
+          userId: sampleUser1.id,
+          body: wordReminder2,
+        });
 
         expect(mockPost).toHaveBeenCalledTimes(1);
         expect(mockPost).toHaveBeenCalledWith({
-          url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId2}`,
+          url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
           options: {
             body: JSON.stringify(wordReminder2),
             credentials: "include",
@@ -165,11 +192,11 @@ describe("wordReminderService", () => {
         return { json: { wordReminder: wordReminder1 }, status };
       });
 
-      const response = await wordReminderService.updateWordReminder(
-        sampleUser1.id,
-        wordReminderId1,
-        wordReminder1
-      );
+      const response = await wordReminderService.updateWordReminder({
+        userId: sampleUser1.id,
+        wordReminderId: wordReminderId1,
+        body: wordReminder1,
+      });
 
       expect(mockPut).toHaveBeenCalledTimes(1);
       expect(mockPut).toHaveBeenCalledWith({

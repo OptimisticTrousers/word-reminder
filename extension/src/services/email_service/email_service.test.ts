@@ -57,10 +57,10 @@ describe("emailService", () => {
           };
         });
       const body = {
-        code: "sometoken",
+        token: "sometoken",
       };
 
-      const response = await emailService.verifyEmailCode(body);
+      const response = await emailService.verifyEmailToken(body);
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({

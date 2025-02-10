@@ -12,11 +12,16 @@ export const userService = (function (service) {
     });
   }
 
-  function updateUser(id: string, auth: AuthParams) {
+  function updateUser(body: {
+    id: string;
+    email: string;
+    newPassword: string;
+    newPasswordConfirmation: string;
+  }) {
     return put({
-      url: `${VITE_API_DOMAIN}/users/${id}`,
+      url: `${VITE_API_DOMAIN}/users/${body.id}`,
       options: {
-        body: JSON.stringify(auth),
+        body: JSON.stringify(body),
         credentials: "include",
       },
     });

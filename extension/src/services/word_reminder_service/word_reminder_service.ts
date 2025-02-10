@@ -1,25 +1,6 @@
-import { UserWord } from "common";
+import { AutoWordReminderParams, ManualWordReminderParams } from "common";
 
 import { service, Params } from "../service";
-
-interface WordReminderParams {
-  auto: boolean;
-  hasReminderOnload: boolean;
-  isActive: boolean;
-  reminder: string;
-}
-
-interface ManualWordReminderParams extends WordReminderParams {
-  finish: Date;
-  words: UserWord[];
-}
-
-interface AutoWordReminderParams extends WordReminderParams {
-  duration: string;
-  count: number;
-  hasLearnedWords: boolean;
-  order: number;
-}
 
 export const wordReminderService = (function (service) {
   const { get, post, put, remove, VITE_API_DOMAIN } = service;
@@ -34,13 +15,24 @@ export const wordReminderService = (function (service) {
     });
   }
 
-  function createWordReminder(
-    userId: string,
-    wordReminderId: string,
-    body: ManualWordReminderParams | AutoWordReminderParams
-  ) {
-    return post({
+  function getWordReminder(userId: string, wordReminderId: string) {
+    return get({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminderId}`,
+      options: {
+        credentials: "include",
+      },
+    });
+  }
+
+  function createWordReminder({
+    userId,
+    body,
+  }: {
+    userId: string;
+    body: ManualWordReminderParams | AutoWordReminderParams;
+  }) {
+    return post({
+      url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
       options: { body: JSON.stringify(body), credentials: "include" },
     });
   }
@@ -52,11 +44,15 @@ export const wordReminderService = (function (service) {
     });
   }
 
-  function updateWordReminder(
-    userId: string,
-    wordReminderId: string,
-    body: ManualWordReminderParams
-  ) {
+  function updateWordReminder({
+    userId,
+    wordReminderId,
+    body,
+  }: {
+    userId: string;
+    wordReminderId: string;
+    body: Omit<ManualWordReminderParams, "auto">;
+  }) {
     return put({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminderId}`,
       options: { body: JSON.stringify(body), credentials: "include" },
@@ -80,6 +76,7 @@ export const wordReminderService = (function (service) {
     createWordReminder,
     deleteWordReminder,
     deleteWordReminders,
+    getWordReminder,
     getWordReminderList,
     updateWordReminder,
   };
