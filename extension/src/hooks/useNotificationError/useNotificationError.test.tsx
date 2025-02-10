@@ -4,11 +4,12 @@ import userEvent from "@testing-library/user-event";
 
 import { NotificationProvider } from "../../context/Notification";
 import { useNotificationError } from "./useNotificationError";
+import { ErrorResponse } from "../../types";
 
 describe("useNotificationError", () => {
   describe("showNotificationError", () => {
     it("shows credentials expired notification and navigates to the login page", async () => {
-      const fakeResponse = {
+      const fakeResponse: ErrorResponse = {
         json: { message: "Unathenticated." },
         status: 401,
       };
@@ -41,7 +42,7 @@ describe("useNotificationError", () => {
     });
 
     it("shows custom message notification", async () => {
-      const fakeResponse = {
+      const fakeResponse: ErrorResponse = {
         json: { message: "Bad Request." },
         status: 400,
       };
