@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import robotImage from "../../assets/images/robot.png";
 import styles from "./Error500.module.css";
 
-interface Props {
+export interface Props {
   message: string;
 }
 
