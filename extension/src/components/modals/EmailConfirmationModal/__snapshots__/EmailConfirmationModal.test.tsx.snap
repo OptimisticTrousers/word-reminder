@@ -1,9 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`EmailConfirmationModal > type email code modal > shows form 1`] = `
+exports[`EmailConfirmationModal > shows form 1`] = `
 <DocumentFragment>
   <div>
-    <h2>
+    <h2
+      data-testid="modal-heading"
+    >
       Confirm your email
     </h2>
     <button
@@ -34,7 +36,7 @@ exports[`EmailConfirmationModal > type email code modal > shows form 1`] = `
           <input
             class="_modal__input_516802"
             maxlength="16"
-            name="code"
+            name="token"
             required=""
             type="text"
           />
@@ -42,11 +44,6 @@ exports[`EmailConfirmationModal > type email code modal > shows form 1`] = `
         <div
           class="_modal__buttons_516802"
         >
-          <button
-            class="_modal__button_516802 _modal__button--cancel_516802"
-          >
-            Cancel
-          </button>
           <button
             class="_modal__button_516802 _modal__button--confirm_516802"
             type="submit"

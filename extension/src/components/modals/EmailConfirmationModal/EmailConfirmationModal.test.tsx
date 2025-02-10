@@ -5,6 +5,8 @@ import userEvent from "@testing-library/user-event";
 
 import { emailService } from "../../../services/email_service";
 import { EmailConfirmationModal } from "./EmailConfirmationModal";
+import { Subject, Templates } from "common";
+import { NotificationProvider } from "../../../context/Notification";
 
 vi.mock("../ModalContainer/ModalContainer");
 
@@ -20,8 +22,6 @@ describe("EmailConfirmationModal", () => {
   };
   const status = 200;
 
-  const mockToggleModal = vi.fn();
-
   function setup() {
     const queryClient = new QueryClient();
     const Stub = createRoutesStub([
@@ -32,13 +32,21 @@ describe("EmailConfirmationModal", () => {
         },
         children: [
           {
-            path: "/wordReminders",
+            path: "/",
             Component: function () {
               return (
-                <QueryClientProvider client={queryClient}>
-                  <EmailConfirmationModal toggleModal={mockToggleModal} />
-                </QueryClientProvider>
+                <NotificationProvider>
+                  <QueryClientProvider client={queryClient}>
+                    <EmailConfirmationModal />
+                  </QueryClientProvider>
+                </NotificationProvider>
               );
+            },
+          },
+          {
+            path: "/userWords",
+            Component: function () {
+              return <div data-testid="user-words"></div>;
             },
           },
         ],
@@ -47,7 +55,7 @@ describe("EmailConfirmationModal", () => {
 
     return {
       user: userEvent.setup(),
-      ...render(<Stub initialEntries={["/wordReminders"]} />),
+      ...render(<Stub initialEntries={["/"]} />),
     };
   }
 
@@ -56,101 +64,132 @@ describe("EmailConfirmationModal", () => {
   });
 
   it("shows form", async () => {
+    const mockSendEmail = vi
+      .spyOn(emailService, "sendEmail")
+      .mockImplementation(async () => {
+        return { json: { info }, status };
+      });
     const { asFragment } = setup();
 
-    const message = screen.getByText((_, element) => {
+    const message = await screen.findByText((_, element) => {
       return (
         element?.textContent ===
         `Please enter the confirmation code that was sent to ${testUser.email} within 5 minutes.`
       );
     });
+    const userWords = screen.queryByTestId("user-words");
     expect(message).toBeInTheDocument();
+    expect(userWords).not.toBeInTheDocument();
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockSendEmail).toHaveBeenCalledWith({
+      email: testUser.email,
+      subject: Subject.CHANGE_VERIFICATION,
+      template: Templates.CHANGE_VERIFICATION,
+    });
     expect(asFragment()).toMatchSnapshot();
   });
 
   it("calls the functions to verify confirmation email code", async () => {
-    const mockVerifyEmailCode = vi
-      .spyOn(emailService, "verifyEmailCode")
+    const mockSendEmail = vi
+      .spyOn(emailService, "sendEmail")
+      .mockImplementation(async () => {
+        return { json: { info }, status };
+      });
+    const mockVerifyEmailToken = vi
+      .spyOn(emailService, "verifyEmailToken")
       .mockImplementation(async () => {
         return { json: info, status };
       });
     const { user } = setup();
 
-    const code = "code";
-    const codeInput = screen.getByLabelText("Code", { selector: "input" });
-    await user.type(codeInput, code);
+    const token = "code";
+    const codeInput = await screen.findByLabelText("Code", {
+      selector: "input",
+    });
+    await user.type(codeInput, token);
     const enterCodeButton = screen.getByRole("button", {
       name: "Enter Code",
     });
     await user.click(enterCodeButton);
 
-    expect(mockVerifyEmailCode).toHaveBeenCalledTimes(1);
-    expect(mockVerifyEmailCode).toHaveBeenCalledWith({ code });
-    expect(mockToggleModal).toHaveBeenCalledTimes(1);
-    expect(mockToggleModal).toHaveBeenCalledWith();
+    const userWords = screen.getByTestId("user-words");
+    expect(userWords).toBeInTheDocument();
+    expect(mockVerifyEmailToken).toHaveBeenCalledTimes(1);
+    expect(mockVerifyEmailToken).toHaveBeenCalledWith({ token });
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockSendEmail).toHaveBeenCalledWith({
+      email: testUser.email,
+      subject: Subject.CHANGE_VERIFICATION,
+      template: Templates.CHANGE_VERIFICATION,
+    });
   });
 
   it("does not allow the user to submit when the code field is empty", async () => {
-    const mockVerifyEmailCode = vi
-      .spyOn(emailService, "verifyEmailCode")
+    const mockSendEmail = vi
+      .spyOn(emailService, "sendEmail")
+      .mockImplementation(async () => {
+        return { json: { info }, status };
+      });
+    const mockVerifyEmailToken = vi
+      .spyOn(emailService, "verifyEmailToken")
       .mockImplementation(async () => {
         return { json: info, status };
       });
 
     const { user } = setup();
 
-    const enterCodeButton = screen.getByRole("button", {
+    const enterCodeButton = await screen.findByRole("button", {
       name: "Enter Code",
     });
     await user.click(enterCodeButton);
 
-    expect(mockVerifyEmailCode).not.toHaveBeenCalled();
-    expect(mockToggleModal).not.toHaveBeenCalled();
+    const userWords = screen.queryByTestId("user-words");
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockSendEmail).toHaveBeenCalledWith({
+      email: testUser.email,
+      subject: Subject.CHANGE_VERIFICATION,
+      template: Templates.CHANGE_VERIFICATION,
+    });
+    expect(userWords).not.toBeInTheDocument();
+    expect(mockVerifyEmailToken).not.toHaveBeenCalled();
   });
 
   it("calls the functions to show notification error", async () => {
     const message = "Error Message.";
     const status = 400;
-    const mockVerifyEmailCode = vi
-      .spyOn(emailService, "verifyEmailCode")
+    const mockSendEmail = vi
+      .spyOn(emailService, "sendEmail")
+      .mockImplementation(async () => {
+        return { json: { info }, status };
+      });
+    const mockVerifyEmailToken = vi
+      .spyOn(emailService, "verifyEmailToken")
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
     const { user } = setup();
 
-    const code = "Wrong code.";
-    const codeInput = screen.getByLabelText("Code", { selector: "input" });
-    await user.type(codeInput, code);
+    const token = "Wrong code.";
+    const codeInput = await screen.findByLabelText("Code", {
+      selector: "input",
+    });
+    await user.type(codeInput, token);
     const enterCodeButton = screen.getByRole("button", {
       name: "Enter Code",
     });
     await user.click(enterCodeButton);
 
-    expect(mockVerifyEmailCode).toHaveBeenCalledTimes(1);
-    expect(mockVerifyEmailCode).toHaveBeenCalledWith({ code });
-    expect(mockToggleModal).toHaveBeenCalledTimes(1);
-    expect(mockToggleModal).toHaveBeenCalledWith();
-  });
-
-  it("works when user closes the modal using cancel button", async () => {
-    const { user } = setup();
-
-    const cancelButton = screen.getByRole("button", { name: "Cancel" });
-    await user.click(cancelButton);
-
-    expect(mockToggleModal).toHaveBeenCalledTimes(1);
-    expect(mockToggleModal).toHaveBeenCalledWith();
-  });
-
-  it("works when user closes the modal using x button", async () => {
-    const { user } = setup();
-
-    const modalContainerCloseButton = screen.getByRole("button", {
-      name: "Cancel",
+    const userWords = screen.queryByTestId("user-words");
+    const notification = screen.getByRole("dialog");
+    expect(notification).toBeInTheDocument();
+    expect(userWords).not.toBeInTheDocument();
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockSendEmail).toHaveBeenCalledWith({
+      email: testUser.email,
+      subject: Subject.CHANGE_VERIFICATION,
+      template: Templates.CHANGE_VERIFICATION,
     });
-    await user.click(modalContainerCloseButton);
-
-    expect(mockToggleModal).toHaveBeenCalledTimes(1);
-    expect(mockToggleModal).toHaveBeenCalledWith();
+    expect(mockVerifyEmailToken).toHaveBeenCalledTimes(1);
+    expect(mockVerifyEmailToken).toHaveBeenCalledWith({ token });
   });
 });

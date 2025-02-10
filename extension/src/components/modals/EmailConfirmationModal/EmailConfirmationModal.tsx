@@ -1,8 +1,8 @@
-import { CODE_MAX_BYTES, User } from "common";
+import { Subject, Templates, TOKEN_MAX_BYTES, User } from "common";
 import { useContext } from "react";
 import CSSModules from "react-css-modules";
-import { useOutletContext } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import {
   NotificationContext,
@@ -11,47 +11,51 @@ import {
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { ModalContainer } from "../ModalContainer";
 import { emailService } from "../../../services/email_service";
-import { ErrorResponse } from "../../../types";
 import styles from "./EmailConfirmationModal.module.css";
 
-interface Props {
-  toggleModal: () => void;
-}
-
 export const EmailConfirmationModal = CSSModules(
-  function ({ toggleModal }: Props) {
+  function () {
     const { user }: { user: User } = useOutletContext();
+    const navigate = useNavigate();
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
-    const { isPending, mutate } = useMutation({
-      mutationFn: emailService.verifyEmailCode,
-      onError: (response: ErrorResponse) => {
-        showNotificationError(response);
+    const { isLoading } = useQuery({
+      queryKey: ["emails"],
+      queryFn: () => {
+        return emailService.sendEmail({
+          email: user.email,
+          subject: Subject.CHANGE_VERIFICATION,
+          template: Templates.CHANGE_VERIFICATION,
+        });
       },
+      throwOnError: true,
+    });
+    const {
+      isPending: verifyEmailTokenIsPending,
+      mutate: verifyEmailTokenMutate,
+    } = useMutation({
+      mutationFn: emailService.verifyEmailToken,
+      onError: showNotificationError,
       onSuccess: () => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
           EMAIL_CONFIRMATION_NOTIFICATION_MSGS.confirmEmail(user.email)
         );
-      },
-      onSettled: () => {
-        toggleModal();
+        navigate("/userWords");
       },
     });
 
     function handleConfirm(formData: FormData) {
       const body = {
-        code: formData.get("code") as string,
+        token: formData.get("token") as string,
       };
-      mutate(body);
+      verifyEmailTokenMutate(body);
     }
 
-    function handleCancel() {
-      toggleModal();
-    }
+    const disabled = isLoading || verifyEmailTokenIsPending;
 
     return (
-      <ModalContainer title="Confirm your email" toggleModal={toggleModal}>
+      <ModalContainer title="Confirm your email" toggleModal={function () {}}>
         <form styleName="modal" action={handleConfirm}>
           <p styleName="modal__message">
             Please enter the confirmation code that was sent to{" "}
@@ -61,25 +65,18 @@ export const EmailConfirmationModal = CSSModules(
             Code
             <input
               styleName="modal__input"
-              name="code"
+              name="token"
               type="text"
               required={true}
-              disabled={isPending}
-              maxLength={CODE_MAX_BYTES}
+              disabled={disabled}
+              maxLength={TOKEN_MAX_BYTES}
             />
           </label>
           <div styleName="modal__buttons">
             <button
-              styleName="modal__button modal__button--cancel"
-              onClick={handleCancel}
-              disabled={isPending}
-            >
-              Cancel
-            </button>
-            <button
               styleName="modal__button modal__button--confirm"
               type="submit"
-              disabled={isPending}
+              disabled={disabled}
             >
               Enter Code
             </button>
@@ -89,7 +86,7 @@ export const EmailConfirmationModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
+  { allowMultiple: true, handleNotFoundStyleName: "log" }
 );
 
 const EMAIL_CONFIRMATION_NOTIFICATION_MSGS = {
