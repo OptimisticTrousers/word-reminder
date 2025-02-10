@@ -1,9 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`App component > renders main element 1`] = `
+exports[`App component > renders main element and footer 1`] = `
 <DocumentFragment>
   <main
     class="_main_2f9351 _main--dark_2f9351"
-  />
+  >
+    <div
+      data-testid="navigation"
+    />
+    <div
+      data-testid="outlet"
+    />
+    <div
+      data-testid="footer"
+    />
+  </main>
 </DocumentFragment>
 `;
