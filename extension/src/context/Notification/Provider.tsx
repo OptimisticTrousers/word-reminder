@@ -1,7 +1,7 @@
 import { useReducer, ReactNode } from "react";
 
 import { NOTIFICATION_ACTIONS, NotificationContext } from "./Context";
-import { Notification } from "../../components/ui/Notification/Notification";
+import { Notification } from "../../components/ui/Notification";
 
 interface Props {
   children: ReactNode;
@@ -45,7 +45,7 @@ const notificationReducer = (
     case DISAPPEAR:
       return { ...state, isVisible: false, type: "", message: "" };
     default: {
-      throw Error("Unknown action: " + action.type);
+      throw new Error("Unknown action: " + action.type);
     }
   }
 };
