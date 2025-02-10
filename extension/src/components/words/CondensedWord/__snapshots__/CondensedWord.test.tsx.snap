@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`CondensedWord > renders meanings with part of speech, definitions, examples, synonyms, and antonyms 1`] = `
+exports[`CondensedWord > renders meanings with part of speech, definitions, examples only 1`] = `
 <DocumentFragment>
   <div
     class="_word_09a47a"
@@ -204,6 +204,10 @@ exports[`CondensedWord > renders meanings with part of speech, definitions, exam
         </div>
       </div>
     </div>
+  </div>
+  <div
+    class="_word_09a47a"
+  >
     <div
       class="_word__top_09a47a"
     >
