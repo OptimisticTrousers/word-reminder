@@ -84,7 +84,7 @@ exports[`Signup component > calls the functions to signup, login, show notificat
     </div>
   </div>
   <button>
-    Current URL: /words
+    Current URL: /userWords
   </button>
 </DocumentFragment>
 `;

@@ -16,9 +16,9 @@ describe("Signup component", () => {
       Component: Signup,
     },
     {
-      path: "/words",
+      path: "/userWords",
       Component: function () {
-        return <button>Current URL: /words</button>;
+        return <button>Current URL: /userWords</button>;
       },
     },
   ]);
@@ -80,7 +80,9 @@ describe("Signup component", () => {
     const signupButton = screen.getByRole("button", { name: "Signup" });
     await user.click(signupButton);
 
-    const words = screen.getByRole("button", { name: "Current URL: /words" });
+    const userWords = screen.getByRole("button", {
+      name: "Current URL: /userWords",
+    });
     const notification = screen.getByRole("dialog", {
       name: `You have successfully signed in, ${email}.`,
     });
@@ -88,9 +90,38 @@ describe("Signup component", () => {
     expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
     expect(mockUserServiceSignup).toHaveBeenCalledTimes(1);
     expect(mockUserServiceSignup).toHaveBeenCalledWith(testUser);
-    expect(words).toBeInTheDocument();
+    expect(userWords).toBeInTheDocument();
     expect(notification).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("returns signup user response when the response is not 200", async () => {
+    const message = "Bad Request.";
+    const status = 400;
+    const mockUserServiceSignup = vi
+      .spyOn(userService, "signupUser")
+      .mockImplementation(async () => {
+        return Promise.reject({ json: { message }, status });
+      });
+    const { user } = setup();
+
+    const email = testUser.email;
+    const password = testUser.password;
+    const passwordInput = screen.getByLabelText("Password (required)", {
+      selector: "input",
+    });
+    const emailInput = screen.getByLabelText("Email (required)", {
+      selector: "input",
+    });
+    const signupButton = screen.getByRole("button", { name: "Signup" });
+    await user.type(emailInput, email);
+    await user.type(passwordInput, password);
+    await user.click(signupButton);
+
+    const notification = screen.getByRole("dialog", { name: message });
+    expect(notification).toBeInTheDocument();
+    expect(mockUserServiceSignup).toHaveBeenCalledTimes(1);
+    expect(mockUserServiceSignup).toHaveBeenCalledWith(testUser);
   });
 
   it("shows correct link to log into account", async () => {

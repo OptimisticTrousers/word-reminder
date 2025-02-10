@@ -15,9 +15,9 @@ describe("Login component", () => {
       Component: Login,
     },
     {
-      path: "/words",
+      path: "/userWords",
       Component: function () {
-        return <button>Current URL: /words</button>;
+        return <button>Current URL: /userWords</button>;
       },
     },
   ]);
@@ -74,13 +74,15 @@ describe("Login component", () => {
     const loginButton = screen.getByRole("button", { name: "Login" });
     await user.click(loginButton);
 
-    const words = screen.getByRole("button", { name: "Current URL: /words" });
+    const userWords = screen.getByRole("button", {
+      name: "Current URL: /userWords",
+    });
     const notification = screen.getByRole("dialog", {
       name: `You have successfully logged in, ${email}.`,
     });
     expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
-    expect(words).toBeInTheDocument();
+    expect(userWords).toBeInTheDocument();
     expect(notification).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });

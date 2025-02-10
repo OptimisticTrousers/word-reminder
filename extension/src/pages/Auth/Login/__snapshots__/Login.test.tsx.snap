@@ -84,7 +84,7 @@ exports[`Login component > calls the functions to login, show notification, and 
     </div>
   </div>
   <button>
-    Current URL: /words
+    Current URL: /userWords
   </button>
 </DocumentFragment>
 `;

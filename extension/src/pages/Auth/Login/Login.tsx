@@ -10,12 +10,14 @@ import {
   NotificationContext,
 } from "../../../context/Notification";
 import { sessionService } from "../../../services/session_service";
-import { ErrorResponse, Response } from "../../../types";
+import { Response } from "../../../types";
 import styles from "../Auth.module.css";
+import { useNotificationError } from "../../../hooks/useNotificationError";
 
 export const Login = CSSModules(
   function () {
     const { showNotification } = useContext(NotificationContext);
+    const { showNotificationError } = useNotificationError();
     const navigate = useNavigate();
 
     const { status, mutate } = useMutation({
@@ -25,11 +27,9 @@ export const Login = CSSModules(
           NOTIFICATION_ACTIONS.SUCCESS,
           LOGIN_AUTH_NOTIFICATION_MSGS.login(response.json.user.email)
         );
-        navigate("/words");
+        navigate("/userWords");
       },
-      onError: (response: ErrorResponse) => {
-        showNotification(NOTIFICATION_ACTIONS.ERROR, response.json.message);
-      },
+      onError: showNotificationError,
     });
 
     function handleSubmit(formData: FormData) {
