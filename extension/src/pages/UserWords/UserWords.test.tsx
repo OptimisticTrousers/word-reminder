@@ -1,7 +1,7 @@
 import { WORD_MAX } from "common";
 import { createRoutesStub, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { AUTH_NOTIFICATION_MSGS } from "../Auth/constants";
@@ -631,20 +631,17 @@ describe("UserWords component", () => {
       });
       await user.click(addButton);
 
+      const inputs = screen.getAllByLabelText(/[\s\S]*/, {
+        selector: "input",
+      });
+      for (const input of inputs) {
+        expect(input).toBeDisabled();
+      }
+      expect(addButton).toBeDisabled();
       expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
       expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
         userId: testUser.id,
         formData,
-      });
-      await waitFor(() => {
-        const addButton = screen.getByRole("button", { name: "Add" });
-        const inputs = screen.getAllByLabelText(/[\s\S]*/, {
-          selector: "input",
-        });
-        expect(addButton).toBeDisabled();
-        for (const input of inputs) {
-          expect(input).toBeDisabled();
-        }
       });
     });
   });
@@ -767,15 +764,30 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search,
-          learned: "",
-          column: "",
-          direction: "",
-        });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(
+          1,
+          testUser.id,
+          {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: "",
+            direction: "",
+          }
+        );
+        expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith(
+          testUser.id,
+          {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search,
+            learned: "",
+            column: "",
+            direction: "",
+          }
+        );
       });
     });
 

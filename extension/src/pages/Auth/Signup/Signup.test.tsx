@@ -80,7 +80,7 @@ describe("Signup component", () => {
     const signupButton = screen.getByRole("button", { name: "Signup" });
     await user.click(signupButton);
 
-    const userWords = screen.getByRole("button", {
+    const userWords = await screen.findByRole("button", {
       name: "Current URL: /userWords",
     });
     const notification = screen.getByRole("dialog", {

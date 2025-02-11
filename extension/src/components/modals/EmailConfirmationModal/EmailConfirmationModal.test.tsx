@@ -112,7 +112,7 @@ describe("EmailConfirmationModal", () => {
     });
     await user.click(enterCodeButton);
 
-    const userWords = screen.getByTestId("user-words");
+    const userWords = await screen.findByTestId("user-words");
     expect(userWords).toBeInTheDocument();
     expect(mockVerifyEmailToken).toHaveBeenCalledTimes(1);
     expect(mockVerifyEmailToken).toHaveBeenCalledWith({ token });
