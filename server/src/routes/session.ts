@@ -7,7 +7,7 @@ import {
 } from "../controllers/session_controller";
 import { isAuthenticated } from "../middleware/is_authenticated";
 
-export const sessionRouter = Router();
+export const sessionRouter = Router({ caseSensitive: true });
 
 sessionRouter
   .route("/")

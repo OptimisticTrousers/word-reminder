@@ -12,7 +12,7 @@ import { validateUserId } from "../middleware/validate_user_id";
 import { wordReminderRouter } from "./wordReminders";
 import { wordRouter } from "./words";
 
-export const userRouter = Router();
+export const userRouter = Router({ caseSensitive: true });
 
 userRouter.route("/").post(signup_user);
 

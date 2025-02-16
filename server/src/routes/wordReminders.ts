@@ -14,7 +14,7 @@ import {
   validateWordReminder,
 } from "../middleware/validate_word_reminder";
 
-export const wordReminderRouter = Router();
+export const wordReminderRouter = Router({ caseSensitive: true });
 
 wordReminderRouter
   .route("/")

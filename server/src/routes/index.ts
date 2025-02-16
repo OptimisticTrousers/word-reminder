@@ -5,7 +5,7 @@ import { sessionRouter } from "./session";
 import { subscriptionRouter } from "./subscriptions";
 import { userRouter } from "./users";
 
-export const router = Router();
+export const router = Router({ caseSensitive: true });
 
 router.use("/sessions", sessionRouter);
 router.use("/users", userRouter);

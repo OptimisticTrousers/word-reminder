@@ -9,7 +9,7 @@ import { validatePageQuery } from "../middleware/validate_page_query";
 import { validateSortQuery } from "../middleware/validate_sort_query";
 import { validateUserId } from "../middleware/validate_user_id";
 
-export const wordRouter = Router({ mergeParams: true });
+export const wordRouter = Router({ caseSensitive: true, mergeParams: true });
 
 wordRouter
   .route("/")
