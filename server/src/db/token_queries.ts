@@ -1,3 +1,4 @@
+import { TOKEN_MAX_BYTES } from "common";
 import crypto from "crypto";
 import { QueryResult } from "pg";
 
@@ -12,7 +13,7 @@ export const tokenQueries = (function () {
   const { columns, db, table } = createQueries(["*"], "tokens");
 
   const create = async () => {
-    const token = crypto.randomBytes(16).toString("hex");
+    const token = crypto.randomBytes(TOKEN_MAX_BYTES).toString("hex");
     const { rows }: QueryResult<Token> = await db.query(
       `
     INSERT INTO ${table}(token)

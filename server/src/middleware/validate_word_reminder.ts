@@ -1,31 +1,27 @@
 import { body } from "express-validator";
 
-import { Order } from "../db/user_word_queries";
 import { errorValidationHandler } from "./error_validation_handler";
+import { Order } from "common";
 
 const validateOptions = [
   errorValidationHandler, // stop here if 'random' is not provided
-  body("hasReminderOnload")
+  body("has_reminder_onload")
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'hasReminderOnload' must be specified.")
+    .withMessage("'has_reminder_onload' must be specified.")
     .bail()
     .isBoolean()
     .toBoolean()
-    .withMessage("'hasReminderOnload' must be a boolean."),
-  body("isActive")
+    .withMessage("'has_reminder_onload' must be a boolean."),
+  body("is_active")
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'isActive' must be specified.")
+    .withMessage("'is_active' must be specified.")
     .bail()
     .isBoolean()
     .toBoolean()
-    .withMessage("'isActive' must be a boolean."),
+    .withMessage("'is_active' must be a boolean."),
   body("reminder")
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'reminder' must be specified.")
-    .bail()
-    .isInt({ gt: 0 })
-    .toInt()
-    .withMessage("'reminder' must be a positive integer."),
+    .withMessage("'reminder' must be specified."),
 ];
 
 const validateManualWordReminder = [
@@ -43,17 +39,17 @@ const validateManualWordReminder = [
     .bail()
     .isAfter()
     .withMessage("'finish' must come after the current date."),
-  body("words")
+  body("user_words")
     .if((_value, { req }) => {
       return req.body.auto === false;
     })
     .bail()
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'words' must be specified.")
+    .withMessage("'user_words' must be specified.")
     .bail()
     .isArray()
     .toArray()
-    .withMessage("'words' must be an array."),
+    .withMessage("'user_words' must be an array."),
 ];
 
 export const validateAuto = [
@@ -73,22 +69,18 @@ export const validateAutoWordReminder = [
     })
     .bail()
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'duration' must be specified.")
-    .bail()
-    .isInt({ gt: 0 })
-    .toInt()
-    .withMessage("'duration' must be a positive integer."),
-  body("hasLearnedWords")
+    .withMessage("'duration' must be specified."),
+  body("has_learned_words")
     .if((_value, { req }) => {
       return req.body.auto === true;
     })
     .bail()
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'hasLearnedWords' must be specified.")
+    .withMessage("'has_learned_words' must be specified.")
     .bail()
     .isBoolean()
     .toBoolean()
-    .withMessage("'hasLearnedWords' must be a boolean."),
+    .withMessage("'has_learned_words' must be a boolean."),
   body("order")
     .if((_value, { req }) => {
       return req.body.auto === true;
@@ -97,23 +89,23 @@ export const validateAutoWordReminder = [
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'order' must be specified.")
     .bail()
-    .custom((value) => value in Order)
+    .custom((value) => Object.values<string>(Order).includes(value))
     .withMessage(
       `'order' must be a value in this enum: ${Object.values(Order).filter(
         (value) => typeof value === "string"
       )}.`
     ),
-  body("wordCount")
+  body("word_count")
     .if((_value, { req }) => {
       return req.body.auto === true;
     })
     .bail()
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'wordCount' must be specified.")
+    .withMessage("'word_count' must be specified.")
     .bail()
     .isInt({ gt: 0 })
     .toInt()
-    .withMessage("'wordCount' must be a positive integer."),
+    .withMessage("'word_count' must be a positive integer."),
 ];
 
 export const validateWordReminder = [

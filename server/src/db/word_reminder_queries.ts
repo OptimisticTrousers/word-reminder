@@ -1,4 +1,4 @@
-import { WordReminder, WordReminderParams } from "common";
+import { WordReminder, WordReminderDbParams } from "common";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
@@ -8,7 +8,9 @@ export const wordReminderQueries = (function () {
   const { columns, db, getById, table } = queries;
 
   const create = async (
-    wordReminder: WordReminderParams
+    wordReminder: Omit<WordReminderDbParams, "user_words"> & {
+      user_id: string;
+    }
   ): Promise<WordReminder> => {
     const { rows }: QueryResult<WordReminder> = await db.query(
       `

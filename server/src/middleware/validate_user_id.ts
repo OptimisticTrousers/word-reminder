@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 
-import { User, userQueries } from "../db/user_queries";
+import { userQueries } from "../db/user_queries";
+import { User } from "common";
 
 export const validateUserId = asyncHandler(
   async (req, res, next): Promise<void> => {

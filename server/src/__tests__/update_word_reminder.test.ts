@@ -16,7 +16,7 @@ describe("update_word_reminder", () => {
     id: "1",
     user_id: sampleUser1.id,
     finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    reminder: "every 2 hours",
+    reminder: "2 hours",
     is_active: true,
     has_reminder_onload: true,
     created_at: new Date(),
@@ -173,14 +173,14 @@ describe("update_word_reminder", () => {
     const body = {
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
       auto: false,
-      words: [
+      user_words: [
         { ...userWord1, ...clemencyJson },
         { ...userWord2, ...helloJson },
         { ...userWord3, ...milieuJson },
       ],
-      isActive: false,
-      hasReminderOnload: false,
-      reminder: 60, // 1 hour in minutes,
+      is_active: false,
+      has_reminder_onload: false,
+      reminder: "1 hour",
     };
 
     const response = await request(app)
@@ -196,7 +196,7 @@ describe("update_word_reminder", () => {
         finish: wordReminder1.finish.toISOString(),
         created_at: wordReminder1.created_at.toISOString(),
         updated_at: wordReminder1.updated_at.toISOString(),
-        words: [
+        user_words: [
           {
             ...userWord1,
             ...clemencyJson,
@@ -222,8 +222,8 @@ describe("update_word_reminder", () => {
     expect(wordReminderUpdateMock).toHaveBeenCalledWith({
       id: wordReminder1.id,
       reminder: body.reminder,
-      is_active: body.isActive,
-      has_reminder_onload: body.hasReminderOnload,
+      is_active: body.is_active,
+      has_reminder_onload: body.has_reminder_onload,
       finish: body.finish.toISOString(),
     });
     expect(deleteAllByWordReminderIdMock).toHaveBeenCalledTimes(1);

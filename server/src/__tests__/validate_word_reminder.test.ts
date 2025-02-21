@@ -2,13 +2,13 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import request from "supertest";
 
-import { Order } from "../db/user_word_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import {
   validateAutoWordReminder,
   validateAuto,
   validateWordReminder,
 } from "../middleware/validate_word_reminder";
+import { Order } from "common";
 
 describe("validateWordReminder", () => {
   const message = "Success!";
@@ -57,10 +57,10 @@ describe("validateWordReminder", () => {
       const body = {
         auto: undefined,
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        words: [userWord1, userWord2, userWord3],
-        isActive: false,
-        hasReminderOnload: false,
-        reminder: 60, // 1 hour in minutes,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: false,
+        has_reminder_onload: false,
+        reminder: "1 hour",
       };
 
       const response = await request(app)
@@ -86,10 +86,10 @@ describe("validateWordReminder", () => {
       const body = {
         auto: "string",
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        words: [userWord1, userWord2, userWord3],
-        isActive: false,
-        hasReminderOnload: false,
-        reminder: 60, // 1 hour in minutes,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: false,
+        has_reminder_onload: false,
+        reminder: "1 hour",
       };
 
       const response = await request(app)
@@ -113,15 +113,15 @@ describe("validateWordReminder", () => {
     });
   });
 
-  describe("isActive", () => {
-    it("returns 400 status code when 'isActive' is not provided", async () => {
+  describe("is_active", () => {
+    it("returns 400 status code when 'is_active' is not provided", async () => {
       const body = {
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
-        words: [userWord1, userWord2, userWord3],
-        isActive: undefined,
-        hasReminderOnload: false,
-        reminder: 60, // 1 hour in minutes,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: undefined,
+        has_reminder_onload: false,
+        reminder: "1 hour",
       };
 
       const response = await request(app)
@@ -135,22 +135,22 @@ describe("validateWordReminder", () => {
         errors: [
           {
             location: "body",
-            msg: "'isActive' must be specified.",
-            path: "isActive",
+            msg: "'is_active' must be specified.",
+            path: "is_active",
             type: "field",
           },
         ],
       });
     });
 
-    it("returns 400 status code when 'isActive' is not a boolean", async () => {
+    it("returns 400 status code when 'is_active' is not a boolean", async () => {
       const body = {
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
-        words: [userWord1, userWord2, userWord3],
-        isActive: "string",
-        hasReminderOnload: false,
-        reminder: 60, // 1 hour in minutes,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: "string",
+        has_reminder_onload: false,
+        reminder: "1 hour",
       };
 
       const response = await request(app)
@@ -164,8 +164,8 @@ describe("validateWordReminder", () => {
         errors: [
           {
             location: "body",
-            msg: "'isActive' must be a boolean.",
-            path: "isActive",
+            msg: "'is_active' must be a boolean.",
+            path: "is_active",
             type: "field",
             value: "string",
           },
@@ -174,15 +174,15 @@ describe("validateWordReminder", () => {
     });
   });
 
-  describe("hasReminderOnLoad", () => {
-    it("returns 400 status code when 'hasReminderOnload' is not provided", async () => {
+  describe("has_reminder_onload", () => {
+    it("returns 400 status code when 'has_reminder_onload' is not provided", async () => {
       const body = {
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
-        words: [userWord1, userWord2, userWord3],
-        isActive: false,
-        hasReminderOnload: undefined,
-        reminder: 60, // 1 hour in minutes,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: false,
+        has_reminder_onload: undefined,
+        reminder: "1 hour",
       };
       const response = await request(app)
         .post("/api/users/:userId/wordReminders")
@@ -194,22 +194,22 @@ describe("validateWordReminder", () => {
         errors: [
           {
             location: "body",
-            msg: "'hasReminderOnload' must be specified.",
-            path: "hasReminderOnload",
+            msg: "'has_reminder_onload' must be specified.",
+            path: "has_reminder_onload",
             type: "field",
           },
         ],
       });
     });
 
-    it("returns 400 status code when 'hasReminderOnload' is not a boolean", async () => {
+    it("returns 400 status code when 'has_reminder_onload' is not a boolean", async () => {
       const body = {
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
-        words: [userWord1, userWord2, userWord3],
-        isActive: false,
-        hasReminderOnload: "string",
-        reminder: 60, // 1 hour in minutes,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: false,
+        has_reminder_onload: "string",
+        reminder: "1 hour",
       };
 
       const response = await request(app)
@@ -223,8 +223,8 @@ describe("validateWordReminder", () => {
         errors: [
           {
             location: "body",
-            msg: "'hasReminderOnload' must be a boolean.",
-            path: "hasReminderOnload",
+            msg: "'has_reminder_onload' must be a boolean.",
+            path: "has_reminder_onload",
             type: "field",
             value: "string",
           },
@@ -238,9 +238,9 @@ describe("validateWordReminder", () => {
       const body = {
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
-        words: [userWord1, userWord2, userWord3],
-        isActive: false,
-        hasReminderOnload: false,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: false,
+        has_reminder_onload: false,
         reminder: undefined,
       };
 
@@ -262,36 +262,6 @@ describe("validateWordReminder", () => {
         ],
       });
     });
-
-    it("returns 400 status code when 'reminder' is not a positive integer", async () => {
-      const body = {
-        finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        auto: false,
-        words: [userWord1, userWord2, userWord3],
-        isActive: false,
-        hasReminderOnload: false,
-        reminder: -1,
-      };
-
-      const response = await request(app)
-        .post("/api/users/:userId/wordReminders")
-        .set("Accept", "application/json")
-        .send(body);
-
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({
-        errors: [
-          {
-            location: "body",
-            msg: "'reminder' must be a positive integer.",
-            path: "reminder",
-            type: "field",
-            value: -1,
-          },
-        ],
-      });
-    });
   });
 
   describe("validateManualWordReminder", () => {
@@ -300,10 +270,10 @@ describe("validateWordReminder", () => {
         const body = {
           finish: undefined,
           auto: false,
-          words: [userWord1, userWord2, userWord3],
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
+          user_words: [userWord1, userWord2, userWord3],
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
         };
 
         const response = await request(app)
@@ -329,10 +299,10 @@ describe("validateWordReminder", () => {
         const body = {
           finish: "string",
           auto: false,
-          words: [userWord1, userWord2, userWord3],
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
+          user_words: [userWord1, userWord2, userWord3],
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
         };
 
         const response = await request(app)
@@ -360,10 +330,10 @@ describe("validateWordReminder", () => {
         const body = {
           finish,
           auto: false,
-          words: [userWord1, userWord2, userWord3],
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
+          user_words: [userWord1, userWord2, userWord3],
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
         };
 
         const response = await request(app)
@@ -387,15 +357,15 @@ describe("validateWordReminder", () => {
       });
     });
 
-    describe("words", () => {
-      it("returns 400 status code when 'words' is not provided", async () => {
+    describe("user_words", () => {
+      it("returns 400 status code when 'user_words' is not provided", async () => {
         const body = {
           finish: new Date(Date.now() + 1000), // make sure date comes after current date
           auto: false,
-          words: undefined,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
+          user_words: undefined,
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
         };
 
         const response = await request(app)
@@ -409,8 +379,8 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'words' must be specified.",
-              path: "words",
+              msg: "'user_words' must be specified.",
+              path: "user_words",
               type: "field",
             },
           ],
@@ -421,10 +391,10 @@ describe("validateWordReminder", () => {
         const body = {
           finish: new Date(Date.now() + 1000), // make sure date comes after current date
           auto: false,
-          words: "string",
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
+          user_words: "string",
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
         };
 
         const response = await request(app)
@@ -438,8 +408,8 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'words' must be an array.",
-              path: "words",
+              msg: "'user_words' must be an array.",
+              path: "user_words",
               type: "field",
               value: "string",
             },
@@ -452,10 +422,10 @@ describe("validateWordReminder", () => {
       const body = {
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
-        words: [userWord1, userWord2, userWord3],
-        isActive: false,
-        hasReminderOnload: false,
-        reminder: 60, // 1 hour in minutes,
+        user_words: [userWord1, userWord2, userWord3],
+        is_active: false,
+        has_reminder_onload: false,
+        reminder: "1 hour",
       };
 
       const response = await request(app)
@@ -472,16 +442,16 @@ describe("validateWordReminder", () => {
   });
 
   describe("validateAutoWordReminder", () => {
-    describe("wordCount", () => {
-      it("returns 400 status code when 'wordCount' is not provided", async () => {
+    describe("word_count", () => {
+      it("returns 400 status code when 'word_count' is not provided", async () => {
         const body = {
           auto: true,
-          wordCount: undefined,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
-          duration: 7 * 24 * 60, // 1 week in minutes
-          hasLearnedWords: false,
+          word_count: undefined,
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
+          duration: "1 week",
+          has_learned_words: false,
           order: Order.Random,
         };
 
@@ -496,23 +466,23 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'wordCount' must be specified.",
-              path: "wordCount",
+              msg: "'word_count' must be specified.",
+              path: "word_count",
               type: "field",
             },
           ],
         });
       });
 
-      it("returns 400 status code when 'wordCount' is not a number", async () => {
+      it("returns 400 status code when 'word_count' is not a number", async () => {
         const body = {
           auto: true,
-          wordCount: "string",
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
-          duration: 7 * 24 * 60, // 1 week in minutes
-          hasLearnedWords: false,
+          word_count: "string",
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
+          duration: "1 week",
+          has_learned_words: false,
           order: Order.Random,
         };
 
@@ -527,8 +497,8 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'wordCount' must be a positive integer.",
-              path: "wordCount",
+              msg: "'word_count' must be a positive integer.",
+              path: "word_count",
               type: "field",
               value: "string",
             },
@@ -541,12 +511,12 @@ describe("validateWordReminder", () => {
       it("returns 400 status code when 'duration' is not provided", async () => {
         const body = {
           auto: true,
-          wordCount: 7,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
+          word_count: 7,
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
           duration: undefined,
-          hasLearnedWords: false,
+          has_learned_words: false,
           order: Order.Random,
         };
 
@@ -568,50 +538,18 @@ describe("validateWordReminder", () => {
           ],
         });
       });
-
-      it("returns 400 status code when 'duration' is not a positive integer", async () => {
-        const body = {
-          auto: true,
-          wordCount: 7,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
-          duration: -1,
-          hasLearnedWords: false,
-          order: Order.Random,
-        };
-
-        const response = await request(app)
-          .post("/api/users/:userId/wordReminders")
-          .set("Accept", "application/json")
-          .send(body);
-
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "body",
-              msg: "'duration' must be a positive integer.",
-              path: "duration",
-              type: "field",
-              value: -1,
-            },
-          ],
-        });
-      });
     });
 
-    describe("hasLearnedWords", () => {
-      it("returns 400 status code when 'hasLearnedWords' is not provided", async () => {
+    describe("has_learned_words", () => {
+      it("returns 400 status code when 'has_learned_words' is not provided", async () => {
         const body = {
           auto: true,
-          wordCount: 7,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
-          duration: 7 * 24 * 60, // 1 week in minutes
-          hasLearnedWords: undefined,
+          word_count: 7,
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
+          duration: "1 week",
+          has_learned_words: undefined,
           order: Order.Random,
         };
 
@@ -626,23 +564,23 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'hasLearnedWords' must be specified.",
-              path: "hasLearnedWords",
+              msg: "'has_learned_words' must be specified.",
+              path: "has_learned_words",
               type: "field",
             },
           ],
         });
       });
 
-      it("returns 400 status code when 'hasLearnedWords' is not a boolean", async () => {
+      it("returns 400 status code when 'has_learned_words' is not a boolean", async () => {
         const body = {
           auto: true,
-          wordCount: 7,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
-          duration: 7 * 24 * 60, // 1 week in minutes
-          hasLearnedWords: "string",
+          word_count: 7,
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
+          duration: "1 week",
+          has_learned_words: "string",
           order: Order.Random,
         };
 
@@ -657,8 +595,8 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'hasLearnedWords' must be a boolean.",
-              path: "hasLearnedWords",
+              msg: "'has_learned_words' must be a boolean.",
+              path: "has_learned_words",
               type: "field",
               value: "string",
             },
@@ -671,12 +609,12 @@ describe("validateWordReminder", () => {
       it("returns 400 status code when 'order' is not provided", async () => {
         const body = {
           auto: true,
-          wordCount: 7,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
-          duration: 7 * 24 * 60, // 1 week in minutes
-          hasLearnedWords: true,
+          word_count: 7,
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
+          duration: "1 week",
+          has_learned_words: true,
           order: undefined,
         };
 
@@ -702,12 +640,12 @@ describe("validateWordReminder", () => {
       it("returns 400 status code when 'order' is not one of the 'Order' enum values", async () => {
         const body = {
           auto: true,
-          wordCount: 7,
-          isActive: false,
-          hasReminderOnload: false,
-          reminder: 60, // 1 hour in minutes,
-          duration: 7 * 24 * 60, // 1 week in minutes
-          hasLearnedWords: false,
+          word_count: 7,
+          is_active: false,
+          has_reminder_onload: false,
+          reminder: "1 hour",
+          duration: "1 week",
+          has_learned_words: false,
           order: "string",
         };
 
@@ -738,12 +676,12 @@ describe("validateWordReminder", () => {
   it("the next request handler is called", async () => {
     const body = {
       auto: true,
-      wordCount: 7,
-      isActive: false,
-      hasReminderOnload: false,
-      reminder: 60, // 1 hour in minutes,
-      duration: 7 * 24 * 60, // 1 week in minutes
-      hasLearnedWords: false,
+      word_count: 7,
+      is_active: false,
+      has_reminder_onload: false,
+      reminder: "1 hour",
+      duration: "1 week",
+      has_learned_words: false,
       order: Order.Random,
     };
 

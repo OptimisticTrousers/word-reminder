@@ -24,6 +24,7 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: sampleUser1.email,
+        auto: false,
         confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
@@ -54,6 +55,7 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: sampleUser1.email,
+        auto: false,
         confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
@@ -107,6 +109,7 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: sampleUser1.email,
+        auto: false,
         confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
@@ -151,6 +154,7 @@ describe("userQueries", () => {
       expect(updatedUser).toEqual({
         id: 1,
         email: sampleUser1.email,
+        auto: false,
         confirmed: true,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
@@ -176,6 +180,7 @@ describe("userQueries", () => {
       expect(updatedUser).toEqual({
         id: 1,
         email,
+        auto: false,
         confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
@@ -200,6 +205,7 @@ describe("userQueries", () => {
       expect(updatedUser).toEqual({
         id: 1,
         email: sampleUser1.email,
+        auto: false,
         confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
@@ -227,6 +233,7 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: sampleUser1.email,
+        auto: false,
         confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),

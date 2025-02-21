@@ -298,9 +298,9 @@ describe("create_word", () => {
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
-      );
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`,
+      });
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
@@ -350,9 +350,9 @@ describe("create_word", () => {
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
-      );
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`,
+      });
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
@@ -422,9 +422,9 @@ describe("create_word", () => {
       expect(getWordByWordMock).toHaveBeenCalledTimes(1);
       expect(getWordByWordMock).toHaveBeenCalledWith(word);
       expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-      );
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+      });
       expect(createWordMock).not.toHaveBeenCalled();
       expect(createUserWordMock).not.toHaveBeenCalled();
     });
@@ -689,7 +689,7 @@ describe("create_word", () => {
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", "src/csv/column_words.csv");
+        .attach("csv", "src/__tests__/csv/column_words.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
@@ -698,12 +698,12 @@ describe("create_word", () => {
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
       expect(httpGetMock).toHaveBeenCalledTimes(2);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
-      );
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`,
+      });
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`,
+      });
       expect(createWordMock).toHaveBeenCalledTimes(2);
       expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createWordMock).toHaveBeenCalledWith({ json: response2 });
@@ -751,7 +751,7 @@ describe("create_word", () => {
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", "src/csv/column_words.csv");
+        .attach("csv", "src/__tests__/csv/column_words.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
@@ -760,9 +760,9 @@ describe("create_word", () => {
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(response2[0].word);
       expect(httpGetMock).toHaveBeenCalledTimes(1);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`
-      );
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${response2[0].word}`,
+      });
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith({ json: response2 });
       expect(createUserWordMock).toHaveBeenCalledTimes(2);
@@ -787,7 +787,7 @@ describe("create_word", () => {
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", "src/csv/empty.csv");
+        .attach("csv", "src/__tests__/csv/empty.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
@@ -903,7 +903,7 @@ describe("create_word", () => {
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", "src/csv/some_valid.csv");
+        .attach("csv", "src/__tests__/csv/some_valid.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
@@ -914,12 +914,12 @@ describe("create_word", () => {
       expect(getWordByWordMock).toHaveBeenCalledWith(response1[0].word);
       expect(getWordByWordMock).toHaveBeenCalledWith(word2);
       expect(httpGetMock).toHaveBeenCalledTimes(2);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`
-      );
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${response1[0].word}`,
+      });
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${word2}`,
+      });
       expect(createWordMock).toHaveBeenCalledTimes(1);
       expect(createWordMock).toHaveBeenCalledWith({ json: response1 });
       expect(createUserWordMock).toHaveBeenCalledTimes(1);
@@ -948,7 +948,7 @@ describe("create_word", () => {
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", "src/csv/phrases.csv");
+        .attach("csv", "src/__tests__/csv/phrases.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);
@@ -960,15 +960,15 @@ describe("create_word", () => {
       expect(getWordByWordMock).toHaveBeenCalledWith(phrases[1]);
       expect(getWordByWordMock).toHaveBeenCalledWith(phrases[2]);
       expect(httpGetMock).toHaveBeenCalledTimes(3);
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${phrases[0]}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${phrases[1]}`
-      );
-      expect(httpGetMock).toHaveBeenCalledWith(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${phrases[2]}`
-      );
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${phrases[0]}`,
+      });
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${phrases[1]}`,
+      });
+      expect(httpGetMock).toHaveBeenCalledWith({
+        url: `https://api.dictionaryapi.dev/api/v2/entries/en/${phrases[2]}`,
+      });
       expect(createWordMock).not.toHaveBeenCalled();
       expect(createUserWordMock).not.toHaveBeenCalled();
     });
@@ -990,7 +990,7 @@ describe("create_word", () => {
       const response = await request(app)
         .post(`/api/users/${userId}/words`)
         .set("Accept", "application/json")
-        .attach("csv", "src/csv/incorrect.csv");
+        .attach("csv", "src/__tests__/csv/incorrect.csv");
 
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(400);

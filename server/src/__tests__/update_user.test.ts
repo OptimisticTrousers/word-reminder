@@ -21,6 +21,7 @@ describe("update_user", () => {
   const user = {
     id: "1",
     email: "bob@protonmail.com",
+    auto: true,
     confirmed: false,
     created_at: new Date(),
     updated_at: new Date(),

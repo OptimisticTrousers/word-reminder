@@ -1,3 +1,4 @@
+import { Order, UserWord } from "common";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
@@ -13,16 +14,11 @@ interface RandomOptions {
   order: Order;
 }
 
-export enum Order {
-  Newest,
-  Oldest,
-  Random,
-}
-
 export interface Result {
   userWords: UserWord[];
   previous?: Page;
   next?: Page;
+  totalRows: number;
 }
 
 export const userWordQueries = (function () {
@@ -214,7 +210,7 @@ export const userWordQueries = (function () {
       queryParams
     );
 
-    let result: Result = { userWords: rows };
+    let result: Result = { userWords: rows, totalRows };
 
     if (startIndex > 0) {
       result.previous = {

@@ -14,7 +14,7 @@ describe("wordReminderQueries", () => {
   const wordReminder1 = {
     user_id: sampleUser1.id,
     finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    reminder: "every 2 hours",
+    reminder: "2 hours",
     is_active: true,
     has_reminder_onload: true,
   };
@@ -134,7 +134,7 @@ describe("wordReminderQueries", () => {
       const wordReminder = await wordReminderQueries.update({
         id: wordReminderId1,
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        reminder: "every 2 hours",
+        reminder: "2 hours",
         is_active: true,
         has_reminder_onload: true,
       });
@@ -146,7 +146,7 @@ describe("wordReminderQueries", () => {
         id: Number(wordReminderId1),
         user_id: Number(wordReminder1.user_id),
         finish: expect.any(Date),
-        reminder: "every 2 hours",
+        reminder: "2 hours",
         is_active: true,
         has_reminder_onload: true,
         created_at: expect.any(Date),
@@ -165,7 +165,7 @@ describe("wordReminderQueries", () => {
       const wordReminder = await wordReminderQueries.update({
         id: wordReminderId1,
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        reminder: "every 2 hours",
+        reminder: "2 hours",
         is_active: true,
         has_reminder_onload: true,
       });

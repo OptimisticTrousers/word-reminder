@@ -3,8 +3,9 @@ import asyncHandler from "express-async-handler";
 import { body } from "express-validator";
 import passport from "passport";
 
-import { EMAIL_MAX, PASSWORD_MAX, User } from "../db/user_queries";
+import { EMAIL_MAX, PASSWORD_MAX } from "../db/user_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
+import { User } from "common";
 
 // @desc    Get the current user (public details)
 // @route   GET /api/sessions

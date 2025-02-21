@@ -71,6 +71,7 @@ export const createPopulateDb = function (client: Client) {
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         email VARCHAR ( 255 ) UNIQUE NOT NULL,
         password VARCHAR ( 72 ) NOT NULL,
+        auto BOOLEAN NOT NULL DEFAULT FALSE,
         confirmed BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

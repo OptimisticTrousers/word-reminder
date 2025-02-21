@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 
-import { Word, wordQueries } from "../db/word_queries";
+import { wordQueries } from "../db/word_queries";
+import { Word } from "common";
 
 export const validateWordId = asyncHandler(
   async (req, res, next): Promise<void> => {

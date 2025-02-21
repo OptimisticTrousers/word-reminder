@@ -4,6 +4,7 @@ import { emailExists } from "../utils/email_exists";
 describe("emailExists", () => {
   const user = {
     id: "1",
+    auto: false,
     confirmed: false,
     email: "email",
     password: "password",

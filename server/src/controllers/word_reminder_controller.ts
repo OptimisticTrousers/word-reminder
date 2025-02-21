@@ -4,10 +4,11 @@ import {
   Result,
   userWordsWordRemindersQueries,
 } from "../db/user_words_word_reminders_queries";
-import { UserWord, userWordQueries } from "../db/user_word_queries";
+import { userWordQueries } from "../db/user_word_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { addMinutesToDate } from "../utils/date";
+import { UserWord } from "common";
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders
@@ -16,25 +17,25 @@ export const create_word_reminder = [
   errorValidationHandler,
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { isActive, hasReminderOnload, reminder, auto } = req.body;
+    const { is_active, has_reminder_onload, reminder, auto } = req.body;
 
     const duration = req.body.duration;
-    const hasLearnedWords = req.body.hasLearnedWords;
-    const wordCount = req.body.wordCount;
+    const has_learned_words = req.body.has_learned_words;
+    const word_count = req.body.word_count;
     const order = req.body.order;
 
     if (auto) {
       // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
       const randomUserWords = await userWordQueries.getUserWords(userId, {
-        count: wordCount,
-        learned: hasLearnedWords,
+        count: word_count,
+        learned: has_learned_words,
         order,
       });
       const wordReminder = await wordReminderQueries.create({
         user_id: userId,
         reminder,
-        is_active: isActive,
-        has_reminder_onload: hasReminderOnload,
+        is_active: is_active,
+        has_reminder_onload: has_reminder_onload,
         finish: addMinutesToDate(duration),
       });
       randomUserWords.forEach(async (word: UserWord) => {
@@ -45,28 +46,28 @@ export const create_word_reminder = [
       });
 
       res.status(200).json({
-        wordReminder: { ...wordReminder, words: randomUserWords },
+        wordReminder: { ...wordReminder, user_words: randomUserWords },
       });
       return;
     }
 
     const finish = req.body.finish;
-    const words = req.body.words;
+    const user_words = req.body.user_words;
     const wordReminder = await wordReminderQueries.create({
       user_id: userId,
       reminder,
-      is_active: isActive,
-      has_reminder_onload: hasReminderOnload,
+      is_active: is_active,
+      has_reminder_onload: has_reminder_onload,
       finish,
     });
-    words.forEach(async (word: UserWord) => {
+    user_words.forEach(async (word: UserWord) => {
       await userWordsWordRemindersQueries.create({
         user_word_id: word.id,
         word_reminder_id: wordReminder.id,
       });
     });
 
-    res.status(200).json({ wordReminder: { ...wordReminder, words } });
+    res.status(200).json({ wordReminder: { ...wordReminder, user_words } });
   }),
 ];
 
@@ -107,26 +108,27 @@ export const update_word_reminder = [
   errorValidationHandler,
   asyncHandler(async (req, res) => {
     const { wordReminderId } = req.params;
-    const { isActive, hasReminderOnload, reminder, finish, words } = req.body;
+    const { is_active, has_reminder_onload, reminder, finish, user_words } =
+      req.body;
 
     const wordReminder = await wordReminderQueries.update({
       id: wordReminderId,
       reminder,
-      is_active: isActive,
-      has_reminder_onload: hasReminderOnload,
+      is_active: is_active,
+      has_reminder_onload: has_reminder_onload,
       finish,
     });
     await userWordsWordRemindersQueries.deleteAllByWordReminderId(
       wordReminderId
     );
-    words.forEach(async (word: UserWord) => {
+    user_words.forEach(async (word: UserWord) => {
       await userWordsWordRemindersQueries.create({
         user_word_id: word.id,
         word_reminder_id: wordReminderId,
       });
     });
 
-    res.status(200).json({ wordReminder: { ...wordReminder, words } });
+    res.status(200).json({ wordReminder: { ...wordReminder, user_words } });
   }),
 ];
 

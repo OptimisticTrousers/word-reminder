@@ -19,7 +19,7 @@ describe("delete_word_reminders", () => {
   const wordReminder1 = {
     id: "1",
     user_id: sampleUser1.id,
-    reminder: "every 2 hours",
+    reminder: "2 hours",
     is_active: true,
     has_reminder_onload: true,
     finish: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),

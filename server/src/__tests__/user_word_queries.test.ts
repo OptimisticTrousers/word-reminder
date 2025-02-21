@@ -1,8 +1,9 @@
 import { userQueries } from "../db/user_queries";
-import { Order, UserWord, userWordQueries } from "../db/user_word_queries";
-import { Word, wordQueries } from "../db/word_queries";
+import { userWordQueries } from "../db/user_word_queries";
+import { wordQueries } from "../db/word_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
+import { Word, UserWord, Order } from "common";
 
 describe("userWordQueries", () => {
   const sampleUser1 = {
@@ -247,6 +248,7 @@ describe("userWordQueries", () => {
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(result).toEqual({
+        totalRows: 1,
         userWords: [
           {
             id: 1,
@@ -272,6 +274,7 @@ describe("userWordQueries", () => {
       const result = await userWordQueries.getByUserId(newUser!.id);
 
       expect(result).toEqual({
+        totalRows: 0,
         userWords: [],
       });
     });
@@ -498,6 +501,7 @@ describe("userWordQueries", () => {
         const result = await userWordQueries.getByUserId(sampleUser1.id);
 
         expect(result).toEqual({
+          totalRows: 9,
           next: {
             page: 2,
             limit: 8, // default limit
@@ -526,6 +530,7 @@ describe("userWordQueries", () => {
         });
 
         expect(result).toEqual({
+          totalRows: 1,
           userWords: [{ ...admonitionWord, ...admonitionUserWord }],
         });
       });
@@ -537,6 +542,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 4,
             userWords: [
               { ...clemencyWord, ...clemencyUserWord },
               { ...sanguineWord, ...sanguineUserWord },
@@ -552,6 +558,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 5,
             userWords: [
               { ...milieuWord, ...milieuUserWord },
               { ...concomitantlyWord, ...concomitantlyUserWord },
@@ -570,6 +577,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 9,
             next: {
               page: 2,
               limit: 8, // default limit
@@ -594,6 +602,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 9,
             next: {
               page: 2,
               limit: 8, // default limit
@@ -618,6 +627,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 9,
             next: {
               page: 2,
               limit: 8, // default limit
@@ -646,6 +656,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 9,
             next: {
               limit: 8,
               page: 2,
@@ -672,6 +683,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 1,
             userWords: [{ ...milieuWord, ...milieuUserWord }],
           });
         });
@@ -682,6 +694,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 1,
             userWords: [{ ...milieuWord, ...milieuUserWord }],
           });
         });
@@ -692,6 +705,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 0,
             userWords: [],
           });
         });
@@ -705,6 +719,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 9,
             next: {
               page: 3,
               limit: 2,
@@ -727,6 +742,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 9,
             previous: {
               page: 4,
               limit: 2,
@@ -742,6 +758,7 @@ describe("userWordQueries", () => {
           });
 
           expect(result).toEqual({
+            totalRows: 9,
             next: {
               page: 2,
               limit: 2,
@@ -921,6 +938,7 @@ describe("userWordQueries", () => {
       const result = await userWordQueries.getByUserId(newUser!.id);
       expect(deletedUserWords).toEqual([newUserWord1, newUserWord2]);
       expect(result).toEqual({
+        totalRows: 0,
         userWords: [],
       });
     });
@@ -938,6 +956,7 @@ describe("userWordQueries", () => {
       const result = await userWordQueries.getByUserId(newUser!.id);
       expect(deletedUserWords).toEqual([]);
       expect(result).toEqual({
+        totalRows: 0,
         userWords: [],
       });
     });

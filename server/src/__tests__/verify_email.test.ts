@@ -60,6 +60,7 @@ describe("verifyEmail", () => {
     const user = {
       id: "1",
       email: "bob@protonmail.com",
+      auto: false,
       confirmed: false,
       created_at: new Date(),
       updated_at: new Date(),
@@ -104,6 +105,7 @@ describe("verifyEmail", () => {
     const user = {
       id: "1",
       email: "bob@protonmail.com",
+      auto: false,
       confirmed: true,
       created_at: new Date(),
       updated_at: new Date(),

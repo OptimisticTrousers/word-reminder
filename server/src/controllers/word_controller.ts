@@ -1,10 +1,10 @@
-import { WORD_MAX } from "common";
+import { UserWord, Word, WORD_MAX } from "common";
 import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 
 import { upload } from "../config/multer";
-import { Result, UserWord, userWordQueries } from "../db/user_word_queries";
-import { Word, wordQueries } from "../db/word_queries";
+import { Result, userWordQueries } from "../db/user_word_queries";
+import { wordQueries } from "../db/word_queries";
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { csv } from "../utils/csv";
@@ -60,7 +60,7 @@ export const create_word = [
     }
 
     const invalidWords: string[] = [];
-    let wordCount = 0;
+    let word_count = 0;
 
     for (const record of records) {
       for (const word of record) {
@@ -77,14 +77,14 @@ export const create_word = [
           });
 
           /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
-          if (userWord) wordCount++;
+          if (userWord) word_count++;
 
           continue;
         }
 
-        const { json } = await http.get(
-          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-        );
+        const { json } = await http.get({
+          url: `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+        });
 
         /* If the word is invalid, add it to the `invalidWords` array and continue processing. There is no reason to create a word or a user word if the word is invalid. */
         if (json.message) {
@@ -101,7 +101,7 @@ export const create_word = [
         });
 
         /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
-        if (userWord) wordCount++;
+        if (userWord) word_count++;
       }
     }
 
@@ -125,7 +125,7 @@ export const create_word = [
       return;
     }
 
-    res.status(200).json({ message: `${wordCount} words have been created.` });
+    res.status(200).json({ message: `${word_count} words have been created.` });
   }),
   asyncHandler(async (req, res) => {
     const { userId } = req.params;
@@ -144,9 +144,9 @@ export const create_word = [
       return;
     }
 
-    const { json } = await http.get(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-    );
+    const { json } = await http.get({
+      url: `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+    });
 
     // Handle API error response
     if (json.message) {

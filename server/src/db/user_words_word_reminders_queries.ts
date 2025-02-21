@@ -1,7 +1,7 @@
 import { QueryResult } from "pg";
 
-import { WordReminder } from "./word_reminder_queries";
 import { createQueries } from "./queries";
+import { WordReminder } from "common";
 
 interface Page {
   page: number;

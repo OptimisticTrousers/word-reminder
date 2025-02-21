@@ -26,6 +26,7 @@ describe("word_list", () => {
     .spyOn(userWordQueries, "getByUserId")
     .mockImplementation(async () => {
       return {
+        totalRows: 1,
         userWords: [userWord],
       };
     })
@@ -50,6 +51,7 @@ describe("word_list", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
+        totalRows: 1,
         userWords: [userWordISO],
       });
     });
@@ -88,6 +90,7 @@ describe("word_list", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
+        totalRows: 1,
         userWords: [userWordISO],
       });
     });
@@ -106,7 +109,7 @@ describe("word_list", () => {
       });
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
-      expect(response.body).toEqual({ userWords: [userWordISO] });
+      expect(response.body).toEqual({ userWords: [userWordISO], totalRows: 1 });
     });
 
     it("returns errors with status code 400 when the learned option is not a boolean", async () => {
@@ -148,6 +151,7 @@ describe("word_list", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
+        totalRows: 1,
         userWords: [userWordISO],
       });
     });
