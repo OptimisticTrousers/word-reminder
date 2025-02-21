@@ -24,7 +24,7 @@ describe("wordReminderService", () => {
     auto: false,
     has_reminder_onload: true,
     is_active: true,
-    reminder: "every 2 hours",
+    reminder: "2 hours",
     finish: new Date(Date.now() + 1000), // make sure date comes after current date
     user_words: [],
   };
@@ -34,7 +34,7 @@ describe("wordReminderService", () => {
     create_now: true,
     has_reminder_onload: true,
     is_active: true,
-    reminder: "every 2 hours",
+    reminder: "2 hours",
     duration: "1 week",
     word_count: 7,
     has_learned_words: false,

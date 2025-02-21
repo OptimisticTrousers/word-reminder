@@ -162,7 +162,7 @@ describe("wordReminder component", () => {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "every 2 hours",
+      reminder: "2 hours",
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -213,7 +213,7 @@ describe("wordReminder component", () => {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "every 2 hours",
+      reminder: "2 hours",
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -241,7 +241,7 @@ describe("wordReminder component", () => {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "every 2 hours",
+      reminder: "2 hours",
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -270,7 +270,7 @@ describe("wordReminder component", () => {
         id: "1",
         user_id: sampleUser1.id,
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        reminder: "every 2 hours",
+        reminder: "2 hours",
         is_active: true,
         has_reminder_onload: false,
         created_at: new Date(),
@@ -322,7 +322,7 @@ describe("wordReminder component", () => {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "every 2 hours",
+      reminder: "2 hours",
       is_active: false,
       has_reminder_onload: true,
       created_at: new Date(),
