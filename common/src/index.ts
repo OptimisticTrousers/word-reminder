@@ -15,6 +15,7 @@ export {
   WordReminder,
   AutoWordReminderParams,
   ManualWordReminderParams,
+  WordReminderDbParams
 } from "./types";
 export {
   TOKEN_MAX_BYTES,

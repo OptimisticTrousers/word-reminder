@@ -109,6 +109,11 @@ interface WordReminderParams {
   reminder: string;
 }
 
+export type WordReminderDbParams = Omit<
+  ManualWordReminderParams,
+  "user_words" | "auto"
+> & { user_id: string };
+
 export interface ManualWordReminderParams extends WordReminderParams {
   finish: Date;
   user_words: string[];
