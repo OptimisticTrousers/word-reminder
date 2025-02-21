@@ -764,30 +764,15 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(
-          1,
-          testUser.id,
-          {
-            page: "1",
-            limit: PAGINATION_LIMIT,
-            search: "",
-            learned: "",
-            column: "",
-            direction: "",
-          }
-        );
-        expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith(
-          testUser.id,
-          {
-            page: "1",
-            limit: PAGINATION_LIMIT,
-            search,
-            learned: "",
-            column: "",
-            direction: "",
-          }
-        );
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
+          page: "1",
+          limit: PAGINATION_LIMIT,
+          search,
+          learned: "",
+          column: "",
+          direction: "",
+        });
       });
     });
 
