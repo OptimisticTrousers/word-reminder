@@ -9,5 +9,5 @@ export enum Theme {
 
 export const ThemeContext = createContext<Context>({
   theme: Theme.Dark,
-  setTheme: function () {},
+  toggleTheme: function () {},
 });
