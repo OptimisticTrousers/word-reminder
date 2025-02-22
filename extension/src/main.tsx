@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import { NotificationProvider } from "./context/Notification";
 import { Router } from "./routes/Router";
 import "./index.css";
 
@@ -12,9 +13,11 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root") as HTMLDivElement).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <Router />
-      </MemoryRouter>
+      <NotificationProvider>
+        <MemoryRouter>
+          <Router />
+        </MemoryRouter>
+      </NotificationProvider>
       <ReactQueryDevtools />
     </QueryClientProvider>
   </StrictMode>
