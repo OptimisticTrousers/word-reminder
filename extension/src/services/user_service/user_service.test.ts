@@ -26,7 +26,10 @@ describe("userService", () => {
           return { json: { user }, status };
         });
 
-      const response = await userService.signupUser(user);
+      const response = await userService.signupUser({
+        email: user.email,
+        password: user.newPassword,
+      });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({

@@ -1,2 +1,2 @@
-export type { AuthParams, Params } from "./service";
+export type { Params } from "./service";
 export { service } from "./service";

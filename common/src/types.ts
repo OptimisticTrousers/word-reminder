@@ -126,3 +126,8 @@ export interface AutoWordReminderParams extends WordReminderParams {
   has_learned_words: boolean;
   order: Order;
 }
+
+export interface AuthParams {
+  email: string;
+  password: string;
+}

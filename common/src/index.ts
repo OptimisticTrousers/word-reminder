@@ -1,5 +1,6 @@
 export { http } from "./http";
 export {
+  AuthParams,
   Definition,
   Detail,
   Meaning,
@@ -15,7 +16,7 @@ export {
   WordReminder,
   AutoWordReminderParams,
   ManualWordReminderParams,
-  WordReminderDbParams
+  WordReminderDbParams,
 } from "./types";
 export {
   TOKEN_MAX_BYTES,

@@ -1,4 +1,5 @@
-import { AuthParams, service } from "../service";
+import { AuthParams } from "common";
+import { service } from "../service";
 
 export const userService = (function (service) {
   const { post, put, remove, VITE_API_DOMAIN } = service;
