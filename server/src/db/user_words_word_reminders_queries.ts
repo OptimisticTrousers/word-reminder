@@ -129,7 +129,7 @@ export const userWordsWordRemindersQueries = (function () {
               'learned', user_words.learned,
               'details', words.details
             )
-           ) AS words
+           ) AS user_words
     FROM ${table}
     JOIN user_words 
     ON user_words.id = ${table}.user_word_id
