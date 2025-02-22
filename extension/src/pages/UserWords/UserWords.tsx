@@ -169,6 +169,7 @@ export const UserWords = CSSModules(
                     maxLength={MAX_WORD_LENGTH}
                     disabled={disabled}
                     ref={inputRef}
+                    autoFocus
                   />
                 </label>
               </div>

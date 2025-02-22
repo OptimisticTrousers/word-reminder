@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`UserWords component > renders two forms that have fields for creating a text word, importing a csv file of words, searching words, sorting words, and filtering words 1`] = `
+exports[`UserWords component > renders two forms that have fields for creating a text word, importing a csv file of words, searching words, sorting words, filtering words, and add word input is focused 1`] = `
 <DocumentFragment>
   <section
     class="_words_727679"

@@ -927,13 +927,17 @@ describe("UserWords component", () => {
     });
   });
 
-  it("renders two forms that have fields for creating a text word, importing a csv file of words, searching words, sorting words, and filtering words", async () => {
+  it("renders two forms that have fields for creating a text word, importing a csv file of words, searching words, sorting words, filtering words, and add word input is focused", async () => {
     const status = 200;
     vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
       return { json: { userWords: json, totalRows: 1 }, status };
     });
     const { asFragment } = setup();
 
+    const wordInput = await screen.findByLabelText("Word", {
+      selector: "input",
+    });
+    expect(wordInput).toHaveFocus();
     expect(asFragment()).toMatchSnapshot();
   });
 
