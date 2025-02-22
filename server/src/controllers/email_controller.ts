@@ -16,6 +16,9 @@ import { scheduler } from "../utils/scheduler";
 const { FRONTEND_VERIFICATION, FRONTEND_URL, SERVER_URL, SERVER_PORT } =
   variables;
 
+// @desc Sends an email
+// @route POST /api/emails
+// @access Private
 export const send_email = [
   body("email")
     .trim()
@@ -71,6 +74,9 @@ export const send_email = [
   }),
 ];
 
+// @desc Verifies a token sent by email
+// @route POST /api/emails/:token
+// @access Private
 export const verify_email = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
   const token = req.params.token;

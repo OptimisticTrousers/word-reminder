@@ -101,6 +101,15 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Get single word reminder
+// @route   GET /api/users/:userId/wordReminders/:wordReminderId
+// @access  Private
+export const get_word_reminder = asyncHandler(async (req, res) => {
+  const wordReminderId: string = req.params.wordReminderId;
+  const wordReminder = await wordReminderQueries.getById(wordReminderId);
+  res.status(200).json({ wordReminder });
+});
+
 // @desc Update a word reminder
 // @route PUT /api/users/:userId/wordReminders/:wordReminderId
 // @access Private
