@@ -13,37 +13,26 @@ import { WordReminders } from "../pages/WordReminders";
 export function routes(user: User | undefined) {
   return [
     {
+      path: "/login",
+      element: user ? <Navigate to="/userWords" /> : <Login />,
+    },
+    {
+      path: "/signup",
+      element: user ? <Navigate to="/userWords" /> : <Signup />,
+    },
+    {
       path: "/",
+      element: user ? <App user={user} /> : <Navigate to="/login" />,
       children: [
+        { path: "userWords", element: <UserWords /> },
+        { path: "userWords/:userWordId", element: <UserWord /> },
+        { path: "wordReminders", element: <WordReminders /> },
         {
-          path: "/",
-          element: user && <Navigate to="/userWords" />,
-          children: [
-            {
-              path: "login",
-              element: <Login />,
-            },
-            {
-              path: "signup",
-              element: <Signup />,
-            },
-          ],
+          path: "wordReminders/:wordReminderId",
+          element: <WordReminder />,
         },
-        {
-          path: "/",
-          element: !user ? <Navigate to="/login" /> : <App user={user} />,
-          children: [
-            { path: "userWords", element: <UserWords /> },
-            { path: "userWords/:userWordId", element: <UserWord /> },
-            { path: "wordReminders", element: <WordReminders /> },
-            {
-              path: "wordReminders/:wordReminderId",
-              element: <WordReminder />,
-            },
-            { path: "settings/:token", element: <Settings /> },
-            { path: "settings", element: <Settings /> },
-          ],
-        },
+        { path: "settings/:token", element: <Settings /> },
+        { path: "settings", element: <Settings /> },
       ],
     },
   ];
