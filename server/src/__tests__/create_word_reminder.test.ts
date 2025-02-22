@@ -198,26 +198,6 @@ describe("create_word_reminder", () => {
           finish: wordReminder1.finish.toISOString(),
           created_at: wordReminder1.created_at.toISOString(),
           updated_at: wordReminder1.updated_at.toISOString(),
-          user_words: [
-            {
-              ...userWord1,
-              ...clemencyJson,
-              created_at: userWord1.created_at.toISOString(),
-              updated_at: userWord1.updated_at.toISOString(),
-            },
-            {
-              ...userWord2,
-              ...helloJson,
-              created_at: userWord2.created_at.toISOString(),
-              updated_at: userWord2.updated_at.toISOString(),
-            },
-            {
-              ...userWord3,
-              ...milieuJson,
-              created_at: userWord3.created_at.toISOString(),
-              updated_at: userWord3.updated_at.toISOString(),
-            },
-          ],
         },
       });
       expect(getUserWordsMock).toHaveBeenCalledTimes(1);
@@ -255,11 +235,7 @@ describe("create_word_reminder", () => {
       const body = {
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         auto: false,
-        user_words: [
-          { ...userWord1, ...clemencyJson },
-          { ...userWord2, ...helloJson },
-          { ...userWord3, ...milieuJson },
-        ],
+        user_words: [userWord1.id, userWord2.id, userWord3.id],
         is_active: false,
         has_reminder_onload: false,
         reminder: "1 week",
@@ -278,26 +254,6 @@ describe("create_word_reminder", () => {
           finish: wordReminder1.finish.toISOString(),
           created_at: wordReminder1.created_at.toISOString(),
           updated_at: wordReminder1.updated_at.toISOString(),
-          user_words: [
-            {
-              ...userWord1,
-              ...clemencyJson,
-              created_at: userWord1.created_at.toISOString(),
-              updated_at: userWord1.updated_at.toISOString(),
-            },
-            {
-              ...userWord2,
-              ...helloJson,
-              created_at: userWord2.created_at.toISOString(),
-              updated_at: userWord2.updated_at.toISOString(),
-            },
-            {
-              ...userWord3,
-              ...milieuJson,
-              created_at: userWord3.created_at.toISOString(),
-              updated_at: userWord3.updated_at.toISOString(),
-            },
-          ],
         },
       });
       expect(wordReminderCreateMock).toHaveBeenCalledTimes(1);

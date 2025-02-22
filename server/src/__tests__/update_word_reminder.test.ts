@@ -23,94 +23,16 @@ describe("update_word_reminder", () => {
     updated_at: new Date(),
   };
 
-  const milieuWordId = "1";
-  const milieuJson = [
-    {
-      word: "milieu",
-      meanings: [
-        {
-          partOfSpeech: "noun",
-          definitions: [{ definition: "A person's social environment." }],
-        },
-      ],
-      phonetics: [],
-    },
-  ];
+  const wordId1 = "1";
 
-  const clemencyWordId = "2";
-  const clemencyJson = [
-    {
-      word: "clemency",
-      meanings: [
-        {
-          partOfSpeech: "noun",
-          definitions: [{ definition: "Mercy; lenience." }],
-        },
-      ],
-      phonetics: [],
-    },
-  ];
+  const wordId2 = "2";
 
-  const helloWordId = "3";
-  const helloJson = [
-    {
-      word: "hello",
-      phonetic: "həˈləʊ",
-      phonetics: [
-        {
-          text: "həˈləʊ",
-          audio:
-            "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
-        },
-        {
-          text: "hɛˈləʊ",
-        },
-      ],
-      origin:
-        "early 19th century: variant of earlier hollo ; related to holla.",
-      meanings: [
-        {
-          partOfSpeech: "exclamation",
-          definitions: [
-            {
-              definition:
-                "used as a greeting or to begin a phone conversation.",
-              example: "hello there, Katie!",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-        {
-          partOfSpeech: "noun",
-          definitions: [
-            {
-              definition: "an utterance of ‘hello’; a greeting.",
-              example: "she was getting polite nods and hellos from people",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-        {
-          partOfSpeech: "verb",
-          definitions: [
-            {
-              definition: "say or shout ‘hello’.",
-              example: "I pressed the phone button and helloed",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  const wordId3 = "3";
 
   const userWord1 = {
     id: "1",
     user_id: sampleUser1.id,
-    word_id: helloWordId,
+    word_id: wordId1,
     learned: false,
     created_at: new Date(),
     updated_at: new Date(),
@@ -119,7 +41,7 @@ describe("update_word_reminder", () => {
   const userWord2 = {
     id: "2",
     user_id: sampleUser1.id,
-    word_id: clemencyWordId,
+    word_id: wordId2,
     learned: false,
     created_at: new Date(),
     updated_at: new Date(),
@@ -128,7 +50,7 @@ describe("update_word_reminder", () => {
   const userWord3 = {
     id: "3",
     user_id: sampleUser1.id,
-    word_id: milieuWordId,
+    word_id: wordId3,
     learned: false,
     created_at: new Date(),
     updated_at: new Date(),
@@ -173,11 +95,7 @@ describe("update_word_reminder", () => {
     const body = {
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
       auto: false,
-      user_words: [
-        { ...userWord1, ...clemencyJson },
-        { ...userWord2, ...helloJson },
-        { ...userWord3, ...milieuJson },
-      ],
+      user_words: [userWord1.id, userWord2.id, userWord3.id],
       is_active: false,
       has_reminder_onload: false,
       reminder: "1 hour",
@@ -196,26 +114,6 @@ describe("update_word_reminder", () => {
         finish: wordReminder1.finish.toISOString(),
         created_at: wordReminder1.created_at.toISOString(),
         updated_at: wordReminder1.updated_at.toISOString(),
-        user_words: [
-          {
-            ...userWord1,
-            ...clemencyJson,
-            created_at: userWord1.created_at.toISOString(),
-            updated_at: userWord1.updated_at.toISOString(),
-          },
-          {
-            ...userWord2,
-            ...helloJson,
-            created_at: userWord2.created_at.toISOString(),
-            updated_at: userWord2.updated_at.toISOString(),
-          },
-          {
-            ...userWord3,
-            ...milieuJson,
-            created_at: userWord3.created_at.toISOString(),
-            updated_at: userWord3.updated_at.toISOString(),
-          },
-        ],
       },
     });
     expect(wordReminderUpdateMock).toHaveBeenCalledTimes(1);

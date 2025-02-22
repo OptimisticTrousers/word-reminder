@@ -146,7 +146,7 @@ describe("word_reminder_list", () => {
         .spyOn(userWordsWordRemindersQueries, "getByUserId")
         .mockImplementation(async () => {
           return {
-            wordReminders: [{ ...wordReminder1, words: userWords }],
+            wordReminders: [{ ...wordReminder1, user_words: userWords }],
           };
         });
 
@@ -163,7 +163,7 @@ describe("word_reminder_list", () => {
             finish: wordReminder1.finish.toISOString(),
             created_at: wordReminder1.created_at.toISOString(),
             updated_at: wordReminder1.updated_at.toISOString(),
-            words: [
+            user_words: [
               {
                 ...userWords[0],
                 created_at: userWords[0].created_at.toISOString(),
@@ -197,7 +197,7 @@ describe("word_reminder_list", () => {
             wordReminders: [
               {
                 ...wordReminder1,
-                words: userWords,
+                user_words: userWords,
               },
             ],
             next: {
@@ -225,7 +225,7 @@ describe("word_reminder_list", () => {
             finish: wordReminder1.finish.toISOString(),
             created_at: wordReminder1.created_at.toISOString(),
             updated_at: wordReminder1.updated_at.toISOString(),
-            words: [
+            user_words: [
               {
                 ...userWords[0],
                 created_at: userWords[0].created_at.toISOString(),

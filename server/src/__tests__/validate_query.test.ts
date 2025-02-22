@@ -110,7 +110,7 @@ describe("validateQuery", () => {
       is_active: wordReminder1.is_active,
       has_reminder_onload: wordReminder1.has_reminder_onload,
       finish: wordReminder1.finish,
-      words: [
+      user_words: [
         {
           learned: false,
           details: clemencyJson,
@@ -126,7 +126,7 @@ describe("validateQuery", () => {
       is_active: wordReminder1.is_active,
       has_reminder_onload: wordReminder1.has_reminder_onload,
       finish: wordReminder1.finish,
-      words: [
+      user_words: [
         {
           learned: false,
           details: helloJson,
@@ -142,7 +142,7 @@ describe("validateQuery", () => {
       is_active: wordReminder1.is_active,
       has_reminder_onload: wordReminder1.has_reminder_onload,
       finish: wordReminder1.finish,
-      words: [
+      user_words: [
         {
           learned: false,
           details: milieuJson,
@@ -204,7 +204,7 @@ describe("validateQuery", () => {
               finish: wordReminder1.finish.toISOString(),
               created_at: wordReminders[0].created_at.toISOString(),
               updated_at: wordReminders[0].updated_at.toISOString(),
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: clemencyJson,
@@ -220,7 +220,7 @@ describe("validateQuery", () => {
               finish: wordReminder1.finish.toISOString(),
               created_at: wordReminders[0].created_at.toISOString(),
               updated_at: wordReminders[0].updated_at.toISOString(),
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: helloJson,
@@ -236,7 +236,7 @@ describe("validateQuery", () => {
               finish: wordReminder1.finish.toISOString(),
               created_at: wordReminders[0].created_at.toISOString(),
               updated_at: wordReminders[0].updated_at.toISOString(),
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: milieuJson,
@@ -392,7 +392,7 @@ describe("validateQuery", () => {
               finish: wordReminder1.finish.toISOString(),
               created_at: wordReminders[0].created_at.toISOString(),
               updated_at: wordReminders[0].updated_at.toISOString(),
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: clemencyJson,
@@ -408,7 +408,7 @@ describe("validateQuery", () => {
               finish: wordReminder1.finish.toISOString(),
               created_at: wordReminders[0].created_at.toISOString(),
               updated_at: wordReminders[0].updated_at.toISOString(),
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: helloJson,
@@ -424,7 +424,7 @@ describe("validateQuery", () => {
               finish: wordReminder1.finish.toISOString(),
               created_at: wordReminders[0].created_at.toISOString(),
               updated_at: wordReminders[0].updated_at.toISOString(),
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: milieuJson,

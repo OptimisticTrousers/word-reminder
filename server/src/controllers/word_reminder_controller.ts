@@ -46,7 +46,7 @@ export const create_word_reminder = [
       });
 
       res.status(200).json({
-        wordReminder: { ...wordReminder, user_words: randomUserWords },
+        wordReminder,
       });
       return;
     }
@@ -60,14 +60,14 @@ export const create_word_reminder = [
       has_reminder_onload: has_reminder_onload,
       finish,
     });
-    user_words.forEach(async (word: UserWord) => {
+    user_words.forEach(async (user_word_id: string) => {
       await userWordsWordRemindersQueries.create({
-        user_word_id: word.id,
+        user_word_id: user_word_id,
         word_reminder_id: wordReminder.id,
       });
     });
 
-    res.status(200).json({ wordReminder: { ...wordReminder, user_words } });
+    res.status(200).json({ wordReminder });
   }),
 ];
 
@@ -121,14 +121,14 @@ export const update_word_reminder = [
     await userWordsWordRemindersQueries.deleteAllByWordReminderId(
       wordReminderId
     );
-    user_words.forEach(async (word: UserWord) => {
+    user_words.forEach(async (user_word_id: string) => {
       await userWordsWordRemindersQueries.create({
-        user_word_id: word.id,
+        user_word_id: user_word_id,
         word_reminder_id: wordReminderId,
       });
     });
 
-    res.status(200).json({ wordReminder: { ...wordReminder, user_words } });
+    res.status(200).json({ wordReminder });
   }),
 ];
 

@@ -356,7 +356,7 @@ describe("userWordsWordRemindersQueries", () => {
             is_active: wordReminder1.is_active,
             has_reminder_onload: wordReminder1.has_reminder_onload,
             finish: wordReminder1.finish,
-            words: [
+            user_words: [
               {
                 learned: false,
                 details: clemencyJson,
@@ -369,7 +369,7 @@ describe("userWordsWordRemindersQueries", () => {
             is_active: wordReminder1.is_active,
             has_reminder_onload: wordReminder1.has_reminder_onload,
             finish: wordReminder1.finish,
-            words: [
+            user_words: [
               {
                 learned: false,
                 details: helloJson,
@@ -382,7 +382,7 @@ describe("userWordsWordRemindersQueries", () => {
             is_active: wordReminder1.is_active,
             has_reminder_onload: wordReminder1.has_reminder_onload,
             finish: wordReminder1.finish,
-            words: [
+            user_words: [
               {
                 learned: false,
                 details: milieuJson,
@@ -480,7 +480,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: clemencyJson,
@@ -493,7 +493,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: helloJson,
@@ -584,7 +584,7 @@ describe("userWordsWordRemindersQueries", () => {
                 is_active: wordReminder1.is_active,
                 has_reminder_onload: wordReminder1.has_reminder_onload,
                 finish: wordReminder1.finish,
-                words: [
+                user_words: [
                   {
                     learned: false,
                     details: helloJson,
@@ -667,7 +667,7 @@ describe("userWordsWordRemindersQueries", () => {
                 is_active: wordReminder1.is_active,
                 has_reminder_onload: wordReminder1.has_reminder_onload,
                 finish: wordReminder1.finish,
-                words: [
+                user_words: [
                   {
                     learned: false,
                     details: milieuJson,
@@ -743,7 +743,7 @@ describe("userWordsWordRemindersQueries", () => {
                 is_active: wordReminder1.is_active,
                 has_reminder_onload: wordReminder1.has_reminder_onload,
                 finish: wordReminder1.finish,
-                words: [
+                user_words: [
                   {
                     learned: false,
                     details: clemencyJson,
@@ -832,7 +832,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: clemencyJson,
@@ -845,7 +845,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: helloJson,
@@ -858,7 +858,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: milieuJson,
@@ -936,7 +936,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: milieuJson,
@@ -949,7 +949,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: helloJson,
@@ -962,7 +962,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: clemencyJson,
@@ -1040,7 +1040,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: clemencyJson,
@@ -1053,7 +1053,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: helloJson,
@@ -1066,7 +1066,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: milieuJson,
@@ -1144,7 +1144,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: milieuJson,
@@ -1157,7 +1157,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: helloJson,
@@ -1170,7 +1170,7 @@ describe("userWordsWordRemindersQueries", () => {
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
-              words: [
+              user_words: [
                 {
                   learned: false,
                   details: clemencyJson,
