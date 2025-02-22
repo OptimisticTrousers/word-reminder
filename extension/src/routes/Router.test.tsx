@@ -252,11 +252,11 @@ describe("Router component", () => {
         setup({ initialRoute: "/login" });
 
         const login = await screen.findByTestId("login");
-        const app = screen.getByTestId("app");
+        const app = screen.queryByTestId("app");
+        expect(app).not.toBeInTheDocument();
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
         expect(login).toBeInTheDocument();
-        expect(app).toBeInTheDocument();
       });
 
       it("renders signup page", async () => {
@@ -269,11 +269,11 @@ describe("Router component", () => {
         setup({ initialRoute: "/signup" });
 
         const signup = await screen.findByTestId("signup");
-        const app = screen.getByTestId("app");
+        const app = screen.queryByTestId("app");
+        expect(app).not.toBeInTheDocument();
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
         expect(signup).toBeInTheDocument();
-        expect(app).toBeInTheDocument();
       });
 
       it("redirects to login page when user navigates to protected routes", async () => {
@@ -286,11 +286,11 @@ describe("Router component", () => {
         setup({ initialRoute: "/userWords" });
 
         const login = await screen.findByTestId("login");
-        const app = screen.getByTestId("app");
+        const app = screen.queryByTestId("app");
+        expect(app).not.toBeInTheDocument();
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
         expect(login).toBeInTheDocument();
-        expect(app).toBeInTheDocument();
       });
     });
   });

@@ -18,7 +18,7 @@ export const service = (function () {
     options?: RequestInit;
   }) {
     const response = await get({ url, params, options });
-    if (response.status !== 200) {
+    if (response.status !== 200 && response.status !== 401) {
       return Promise.reject(response);
     }
     return response;
@@ -50,7 +50,7 @@ export const service = (function () {
     options?: RequestInit;
   }) {
     const response = await put({ url, params, options });
-    if (response.status !== 200) {
+    if (response.status !== 200 && response.status !== 401) {
       return Promise.reject(response);
     }
     return response;

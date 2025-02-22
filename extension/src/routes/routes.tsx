@@ -14,7 +14,6 @@ export function routes(user: User | undefined) {
   return [
     {
       path: "/",
-      element: <App user={user} />,
       children: [
         {
           path: "/",
@@ -32,7 +31,7 @@ export function routes(user: User | undefined) {
         },
         {
           path: "/",
-          element: !user && <Navigate to="/login" />,
+          element: !user ? <Navigate to="/login" /> : <App user={user} />,
           children: [
             { path: "userWords", element: <UserWords /> },
             { path: "userWords/:userWordId", element: <UserWord /> },

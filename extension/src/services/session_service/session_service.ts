@@ -6,7 +6,7 @@ export const sessionService = (function (service) {
 
   function getCurrentUser() {
     return get({
-      url: `${VITE_API_DOMAIN}/session`,
+      url: `${VITE_API_DOMAIN}/sessions`,
       options: {
         credentials: "include",
       },
@@ -15,7 +15,7 @@ export const sessionService = (function (service) {
 
   function logoutUser() {
     return remove({
-      url: `${VITE_API_DOMAIN}/session`,
+      url: `${VITE_API_DOMAIN}/sessions`,
       options: {
         credentials: "include",
       },
@@ -24,7 +24,7 @@ export const sessionService = (function (service) {
 
   function loginUser(auth: AuthParams) {
     return post({
-      url: `${VITE_API_DOMAIN}/session`,
+      url: `${VITE_API_DOMAIN}/sessions`,
       options: {
         body: JSON.stringify(auth),
       },

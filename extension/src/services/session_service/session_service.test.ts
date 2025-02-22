@@ -31,7 +31,7 @@ describe("sessionService", () => {
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/session`,
+        url: `${VITE_API_DOMAIN}/sessions`,
         options: { body: JSON.stringify(user) },
       });
       expect(response).toEqual({ json: { user }, status });
@@ -51,7 +51,7 @@ describe("sessionService", () => {
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/session`,
+        url: `${VITE_API_DOMAIN}/sessions`,
         options: {
           credentials: "include",
         },
@@ -78,7 +78,7 @@ describe("sessionService", () => {
 
       expect(mockRemove).toHaveBeenCalledTimes(1);
       expect(mockRemove).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/session`,
+        url: `${VITE_API_DOMAIN}/sessions`,
         options: {
           credentials: "include",
         },

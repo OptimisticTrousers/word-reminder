@@ -10,7 +10,7 @@ describe("service", () => {
   });
 
   describe("get", () => {
-    it("returns resolved promise from fetch", async () => {
+    it("returns resolved promise from fetch when status code is 200", async () => {
       const mockHttpGet = vi.spyOn(http, "get").mockImplementation(async () => {
         return {
           json: {},
@@ -23,6 +23,22 @@ describe("service", () => {
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith({ url: "https://example.com" });
       expect(response).toEqual({ json: {}, status: 200 });
+    });
+
+    it("returns resolved promise from fetch when status code is 401", async () => {
+      const message = "User is unauthenticated.";
+      const mockHttpGet = vi.spyOn(http, "get").mockImplementation(async () => {
+        return {
+          json: { message },
+          status: 401,
+        };
+      });
+
+      const response = await service.get({ url: "https://example.com" });
+
+      expect(mockHttpGet).toHaveBeenCalledTimes(1);
+      expect(mockHttpGet).toHaveBeenCalledWith({ url: "https://example.com" });
+      expect(response).toEqual({ json: { message }, status: 401 });
     });
 
     it("returns rejected promise from fetch when the status is not 200", async () => {
