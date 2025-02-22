@@ -7,11 +7,11 @@ export const Navigation = CSSModules(
   function () {
     const { pathname } = useLocation();
 
-    let isWordsActive = false;
+    let isUserWordsActive = false;
     let isWordRemindersActive = false;
 
-    if (pathname === "/words") {
-      isWordsActive = true;
+    if (pathname === "/userWords") {
+      isUserWordsActive = true;
     } else if (pathname === "/wordReminders") {
       isWordRemindersActive = true;
     }
@@ -19,13 +19,13 @@ export const Navigation = CSSModules(
     return (
       <nav styleName="navigation">
         <Link
-          to="/words"
+          to="/userWords"
           styleName={`navigation__link ${
-            isWordsActive && "navigation__link--active"
+            isUserWordsActive && "navigation__link--active"
           }`}
-          aria-current={isWordsActive && "page"}
+          aria-current={isUserWordsActive && "page"}
         >
-          Words
+          User Words
         </Link>
         <Link
           to="/wordReminders"

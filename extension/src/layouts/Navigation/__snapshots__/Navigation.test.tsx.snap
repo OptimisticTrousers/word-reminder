@@ -9,9 +9,9 @@ exports[`Navigation component > renders two links to words and word reminders pa
       aria-current="false"
       class="_navigation__link_511cb9 _false_511cb9"
       data-discover="true"
-      href="/words"
+      href="/userWords"
     >
-      Words
+      User Words
     </a>
     <a
       aria-current="false"

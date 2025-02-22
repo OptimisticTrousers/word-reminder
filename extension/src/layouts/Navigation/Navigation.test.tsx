@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import { Navigation } from "./Navigation";
 import userEvent from "@testing-library/user-event";
 
-function Words() {
-  return <div data-testid="words">words</div>;
+function UserWords() {
+  return <div data-testid="userWords">user words</div>;
 }
 
 function WordReminders() {
@@ -41,8 +41,8 @@ describe("Navigation component", () => {
         },
         children: [
           {
-            path: "/words",
-            Component: Words,
+            path: "/userWords",
+            Component: UserWords,
           },
           { path: "/wordReminders", Component: WordReminders },
         ],
@@ -51,18 +51,18 @@ describe("Navigation component", () => {
     const user = userEvent.setup();
     render(<Stub initialEntries={["/wordReminders"]} />);
 
-    const wordsLink = screen.getByRole("link", {
-      name: "Words",
+    const userWordsLink = screen.getByRole("link", {
+      name: "User Words",
       current: false,
     });
-    await user.click(wordsLink);
+    await user.click(userWordsLink);
 
-    const words = screen.getByTestId("words");
-    expect(wordsLink.getAttribute("class")).toContain(
+    const userWords = screen.getByTestId("userWords");
+    expect(userWordsLink.getAttribute("class")).toContain(
       "navigation__link--active"
     );
-    expect(words).toBeInTheDocument();
-    expect(wordsLink).toHaveAttribute("aria-current", "page");
+    expect(userWords).toBeInTheDocument();
+    expect(userWordsLink).toHaveAttribute("aria-current", "page");
   });
 
   it("adds the active class to the word reminders page when on the word reminders page", async () => {
@@ -79,8 +79,8 @@ describe("Navigation component", () => {
         },
         children: [
           {
-            path: "/words",
-            Component: Words,
+            path: "/userWords",
+            Component: UserWords,
           },
           { path: "/wordReminders", Component: WordReminders },
         ],
@@ -88,7 +88,7 @@ describe("Navigation component", () => {
     ]);
     const user = userEvent.setup();
 
-    render(<Stub initialEntries={["/words"]} />);
+    render(<Stub initialEntries={["/userWords"]} />);
 
     const wordRemindersLink = screen.getByRole("link", {
       name: "Word Reminders",
