@@ -83,6 +83,14 @@ export const createPopulateDb = function (client: Client) {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
 
+      CREATE TABLE images (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        url TEXT NOT NULL,
+        descriptionurl TEXT NOT NULL,
+        comment TEXT NOT NULL,
+        word_id INTEGER REFERENCES words(id) NOT NULL
+      );
+
       CREATE TABLE user_words (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         user_id INTEGER REFERENCES users(id) NOT NULL,

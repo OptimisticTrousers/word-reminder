@@ -1,4 +1,4 @@
-import { UserWord, Word, WORD_MAX } from "common";
+import { Detail, ImageJson, UserWord, Word, WORD_MAX } from "common";
 import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 
@@ -9,13 +9,15 @@ import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { csv } from "../utils/csv";
 import { http } from "../utils/http";
+import { API_ENDPOINTS } from "../utils/api";
+import { imageQueries } from "../db/image_queries";
 
 // @desc Add new word and user word
 // @route POST /api/users/:userId/words
 // @access Private
 export const create_word = [
   upload.single("csv"),
-  // Check for the user to create a word with either text or csv upload, but with neither
+  // Check for the user to create a word with an exclusive or with text or csv upload
   body("word")
     .trim()
     .escape()
@@ -25,17 +27,14 @@ export const create_word = [
     .bail()
     .custom((value: string, { req }): Promise<string> | boolean => {
       if ((!value || value.length === 0) && !req.file) {
-        // neither word nor csv has been provided
         throw new CustomBadRequestError("Word or CSV file is required.");
       }
-      // User has included one of either word or csv file. Continue with request handling
       return true;
     }),
   errorValidationHandler,
   // @desc    Upload files in order to add them into the database
   asyncHandler(async (req, res, next): Promise<void> => {
     const { userId } = req.params;
-    // If a CSV file is not provided, then go to the next request handler
     if (!req.file) {
       next();
       return;
@@ -64,35 +63,50 @@ export const create_word = [
 
     for (const record of records) {
       for (const word of record) {
-        // Check if the word already exists in the database
         const existingWord: Word | undefined = await wordQueries.getByWord(
           word
         );
         if (existingWord) {
-          // Create user word and increment count if successful
           const userWord: UserWord | undefined = await userWordQueries.create({
             user_id: userId,
             word_id: existingWord.id,
             learned: false,
           });
 
-          /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
           if (userWord) word_count++;
 
           continue;
         }
 
-        const { json } = await http.get({
-          url: `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+        const { json: wordJson } = await http.get({
+          url: API_ENDPOINTS.dictionary(word),
         });
 
-        /* If the word is invalid, add it to the `invalidWords` array and continue processing. There is no reason to create a word or a user word if the word is invalid. */
-        if (json.message) {
+        // Handle API error response
+        if (wordJson.message) {
           invalidWords.push(word);
           continue;
         }
 
-        const newWord: Word = await wordQueries.create({ json });
+        const newWord: Word = await wordQueries.create({ json: wordJson });
+
+        const { json: imagesJson }: { json: ImageJson } = await http.get({
+          url: API_ENDPOINTS.images(word),
+        });
+
+        // 4 images maximum for each word
+        const pages = Object.values(imagesJson.query.pages);
+        const maximum = Math.min(pages.length, 4);
+        for (let i = 0; i < maximum; i++) {
+          const page = pages[i];
+          const image = {
+            url: page.imageinfo[0].url,
+            descriptionurl: page.imageinfo[0].descriptionurl,
+            comment: page.imageinfo[0].comment ?? page.title,
+            word_id: newWord.id,
+          };
+          await imageQueries.create(image);
+        }
 
         const userWord: UserWord = await userWordQueries.create({
           user_id: userId,
@@ -100,7 +114,6 @@ export const create_word = [
           learned: false,
         });
 
-        /* Increment the word count only if a new user word was successfully created. From the perspective of the user, they only care if a user word was created for their own dictionary, not if a word was created. */
         if (userWord) word_count++;
       }
     }
@@ -144,19 +157,36 @@ export const create_word = [
       return;
     }
 
-    const { json } = await http.get({
-      url: `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+    const { json: wordJson } = await http.get({
+      url: API_ENDPOINTS.dictionary(word),
     });
 
     // Handle API error response
-    if (json.message) {
-      res.status(400).json({ message: json.message });
+    if (wordJson.message) {
+      res.status(400).json({ message: wordJson.message });
       return;
     }
 
-    const newWord: Word = await wordQueries.create({ json });
+    const newWord: Word = await wordQueries.create({ json: wordJson });
 
-    // Associate the new word with the user
+    const { json: imagesJson }: { json: ImageJson } = await http.get({
+      url: API_ENDPOINTS.images(word),
+    });
+
+    // 4 images maximum for each word
+    const pages = Object.values(imagesJson.query.pages);
+    const maximum = Math.min(pages.length, 4);
+    for (let i = 0; i < maximum; i++) {
+      const page = pages[i];
+      const image = {
+        url: page.imageinfo[0].url,
+        descriptionurl: page.imageinfo[0].descriptionurl,
+        comment: page.imageinfo[0].comment ?? page.title,
+        word_id: newWord.id,
+      };
+      await imageQueries.create(image);
+    }
+
     await userWordQueries.create({
       user_id: userId,
       word_id: newWord.id,
