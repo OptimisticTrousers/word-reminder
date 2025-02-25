@@ -18,8 +18,8 @@ const { SALT } = variables;
 export const delete_user = asyncHandler(
   async (req, _res, next): Promise<void> => {
     const userId: string = req.params.userId;
-    await userQueries.deleteById(userId);
     await userWordQueries.deleteAllByUserId(userId);
+    await userQueries.deleteById(userId);
     next();
   }
 );
