@@ -40,19 +40,39 @@ export enum Order {
   Random = "random",
 }
 
-export interface Word {
+export interface Id {
   id: string;
+}
+
+export interface Page {
+  title: string;
+  imageinfo: Image[];
+}
+
+export interface ImageJson {
+  query: {
+    pages: Record<string, Page>;
+  };
+}
+
+export interface Word extends Id {
   details: Detail[];
   images?: Image[];
   created_at: Date;
 }
 
-export interface Image {
-  src: string;
-  caption: string;
+export interface Image extends Omit<ImageParams, "title" | "word_id"> {
+  comment: string;
 }
-export interface User {
-  id: string;
+
+export interface ImageParams {
+  url: string;
+  descriptionurl: string;
+  title?: string;
+  comment?: string;
+  word_id: string;
+}
+export interface User extends Id {
   auto: boolean;
   email: string;
   confirmed: boolean;
@@ -60,8 +80,7 @@ export interface User {
   updated_at: Date;
 }
 
-export interface UserWord {
-  id: string;
+export interface UserWord extends Id {
   word_id: string;
   user_id: string;
   learned: boolean;
@@ -87,8 +106,7 @@ export enum Subject {
   CHANGE_VERIFICATION = "Change Account Details",
 }
 
-export interface WordReminder {
-  id: string;
+export interface WordReminder extends Id {
   created_at: Date;
   updated_at: Date;
   user_id: string;

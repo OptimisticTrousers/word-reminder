@@ -13,22 +13,27 @@ exports[`ImageCarousel component > shows the first image by default 1`] = `
       <figure
         class="_carousel__item_02d13e _fade_02d13e"
       >
-        <span
-          class="_carousel__count_02d13e"
+        <a
+          class="_carousel__link_02d13e"
+          href="/descriptionurl1"
         >
-          1/3
-        </span>
-        <img
-          alt=""
-          class="_carousel__image_02d13e"
-          role="presentation"
-          src="/src/assets/test/la-rocher-de-baume.jpg"
-        />
-        <figcaption
-          class="_carousel__caption_02d13e"
-        >
-          La Rocher De La Baume
-        </figcaption>
+          <span
+            class="_carousel__count_02d13e"
+          >
+            1/3
+          </span>
+          <img
+            alt=""
+            class="_carousel__image_02d13e"
+            role="presentation"
+            src="/src/assets/test/la-rocher-de-baume.jpg"
+          />
+          <figcaption
+            class="_carousel__caption_02d13e"
+          >
+            La Rocher De La Baume
+          </figcaption>
+        </a>
       </figure>
       <button
         aria-label="Previous image"

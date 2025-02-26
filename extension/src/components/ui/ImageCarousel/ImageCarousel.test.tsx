@@ -8,9 +8,21 @@ import userEvent from "@testing-library/user-event";
 
 describe("ImageCarousel component", () => {
   const images = [
-    { src: laRocherDeBaumeImage, caption: "La Rocher De La Baume" },
-    { src: legoImage, caption: "Crowd Lego Staff" },
-    { src: selfParkingSignImage, caption: "UFO Parking Sign" },
+    {
+      url: laRocherDeBaumeImage,
+      descriptionurl: "/descriptionurl1",
+      comment: "La Rocher De La Baume",
+    },
+    {
+      url: legoImage,
+      descriptionurl: "/descriptionurl2",
+      comment: "Crowd Lego Staff",
+    },
+    {
+      url: selfParkingSignImage,
+      descriptionurl: "/descriptionurl3",
+      comment: "UFO Parking Sign",
+    },
   ];
 
   it("shows the first image by default", () => {
@@ -20,7 +32,10 @@ describe("ImageCarousel component", () => {
 
     const count = screen.getByText("1/3");
     const image = screen.getByRole("presentation");
-    const caption = screen.getByText(images[0].caption);
+    const caption = screen.getByText(images[0].comment);
+    const link = screen.getByRole("link");
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", images[0].descriptionurl);
     expect(count).toBeInTheDocument();
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute(
@@ -39,6 +54,8 @@ describe("ImageCarousel component", () => {
     const count = screen.getByText("0/0");
     const image = screen.getByRole("presentation");
     const caption = screen.getByText("No Images Available");
+    const link = screen.queryByRole("link");
+    expect(link).not.toBeInTheDocument();
     expect(count).toBeInTheDocument();
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute(
@@ -71,7 +88,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("2/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[1].caption);
+      const caption = screen.getByText(images[1].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[1].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(caption).toBeInTheDocument();
@@ -90,7 +110,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("3/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[2].caption);
+      const caption = screen.getByText(images[2].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[2].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(caption).toBeInTheDocument();
@@ -110,7 +133,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("1/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[0].caption);
+      const caption = screen.getByText(images[0].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[0].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(caption).toBeInTheDocument();
@@ -135,7 +161,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("2/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[1].caption);
+      const caption = screen.getByText(images[1].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[1].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute("src", "/src/assets/test/lego.jpg");
@@ -153,7 +182,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("3/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[2].caption);
+      const caption = screen.getByText(images[2].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[2].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute(
@@ -176,7 +208,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("2/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[1].caption);
+      const caption = screen.getByText(images[1].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[1].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute("src", "/src/assets/test/lego.jpg");
@@ -198,7 +233,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("1/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[0].caption);
+      const caption = screen.getByText(images[0].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[0].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute(
@@ -221,7 +259,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("2/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[1].caption);
+      const caption = screen.getByText(images[1].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[1].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute("src", "/src/assets/test/lego.jpg");
@@ -243,7 +284,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("1/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[0].caption);
+      const caption = screen.getByText(images[0].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[0].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute(
@@ -264,7 +308,10 @@ describe("ImageCarousel component", () => {
 
       const count = screen.getByText("3/3");
       const image = screen.getByRole("presentation");
-      const caption = screen.getByText(images[2].caption);
+      const caption = screen.getByText(images[2].comment);
+      const link = screen.getByRole("link");
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute("href", images[2].descriptionurl);
       expect(count).toBeInTheDocument();
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute(

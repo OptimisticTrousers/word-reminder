@@ -49,18 +49,20 @@ export const ImageCarousel = CSSModules(
               return (
                 position === slideIndex && (
                   <figure key={index} styleName="carousel__item fade">
-                    <span styleName="carousel__count">
-                      {position}/{images.length}
-                    </span>
-                    <img
-                      styleName="carousel__image"
-                      src={image.src}
-                      alt=""
-                      role="presentation"
-                    />
-                    <figcaption styleName="carousel__caption">
-                      {image.caption}
-                    </figcaption>
+                    <a styleName="carousel__link" href={image.descriptionurl}>
+                      <span styleName="carousel__count">
+                        {position}/{images.length}
+                      </span>
+                      <img
+                        styleName="carousel__image"
+                        src={image.url}
+                        alt=""
+                        role="presentation"
+                      />
+                      <figcaption styleName="carousel__caption">
+                        {image.comment}
+                      </figcaption>
+                    </a>
                   </figure>
                 )
               );
