@@ -104,7 +104,13 @@ describe("WordReminders component", () => {
     has_reminder_onload: true,
     is_active: true,
     user_id: testUser.id,
-    reminder: "2 hours",
+    reminder: {
+      minutes: 0,
+      hours: 2,
+      days: 0,
+      weeks: 0,
+      months: 0,
+    },
     finish: new Date(Date.now() + 1000), // make sure date comes after current date
     user_words: [userWord1, userWord2],
     created_at: new Date(),
@@ -117,7 +123,13 @@ describe("WordReminders component", () => {
     has_reminder_onload: true,
     is_active: true,
     user_id: testUser.id,
-    reminder: "2 hours",
+    reminder: {
+      minutes: 0,
+      hours: 2,
+      days: 0,
+      weeks: 0,
+      months: 0,
+    },
     finish: new Date(Date.now() + 1000), // make sure date comes after current date
     user_words: [userWord1, userWord2],
     created_at: new Date(),

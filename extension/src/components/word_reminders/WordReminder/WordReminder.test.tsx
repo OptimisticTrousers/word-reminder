@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { WordReminder } from "./WordReminder";
 import { Mock } from "vitest";
 import userEvent from "@testing-library/user-event";
+import { addToDateToString } from "../../../utils/date/date";
 
 vi.mock("../../modals/UpdateWordReminderModal", () => {
   return {
@@ -162,7 +163,13 @@ describe("wordReminder component", () => {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "2 hours",
+      reminder: {
+        minutes: 0,
+        hours: 2,
+        days: 0,
+        weeks: 0,
+        months: 0,
+      },
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -179,7 +186,9 @@ describe("wordReminder component", () => {
 
     const id = screen.getByText(wordReminder.id);
     const reminder = screen.getByText(
-      `This word reminder will remind you of these words ${wordReminder.reminder}`
+      `This word reminder will remind you of these words ${addToDateToString(
+        wordReminder.reminder
+      )}.`
     );
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"
@@ -208,12 +217,50 @@ describe("wordReminder component", () => {
     expect(asFragment());
   });
 
+  it("renders that the word reminder will not remind if the reminder is set to zero values", async () => {
+    const wordReminder = {
+      id: "1",
+      user_id: sampleUser1.id,
+      finish: new Date(Date.now() + 1000), // make sure date comes after current date
+      reminder: {
+        minutes: 0,
+        hours: 0,
+        days: 0,
+        weeks: 0,
+        months: 0,
+      },
+      is_active: false,
+      has_reminder_onload: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+    const searchParams = new URLSearchParams();
+
+    render(
+      <WordReminder
+        searchParams={searchParams}
+        wordReminder={{ ...wordReminder, user_words: userWords }}
+      />
+    );
+
+    const reminder = screen.getByText(
+      `This word reminder will not remind you of these words.`
+    );
+    expect(reminder).toBeInTheDocument();
+  });
+
   it("opens update modal when use clicks on update button", async () => {
     const wordReminder = {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "2 hours",
+      reminder: {
+        minutes: 0,
+        hours: 2,
+        days: 0,
+        weeks: 0,
+        months: 0,
+      },
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -241,7 +288,13 @@ describe("wordReminder component", () => {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "2 hours",
+      reminder: {
+        minutes: 0,
+        hours: 2,
+        days: 0,
+        weeks: 0,
+        months: 0,
+      },
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -270,7 +323,13 @@ describe("wordReminder component", () => {
         id: "1",
         user_id: sampleUser1.id,
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        reminder: "2 hours",
+        reminder: {
+          minutes: 0,
+          hours: 2,
+          days: 0,
+          weeks: 0,
+          months: 0,
+        },
         is_active: true,
         has_reminder_onload: false,
         created_at: new Date(),
@@ -287,7 +346,9 @@ describe("wordReminder component", () => {
 
       const id = screen.getByText(wordReminder.id);
       const reminder = screen.getByText(
-        `This word reminder will remind you of these words ${wordReminder.reminder}`
+        `This word reminder will remind you of these words ${addToDateToString(
+          wordReminder.reminder
+        )}.`
       );
       const isActive = screen.getByText(
         "Active (whether the word reminder will actively remind you of the words in it): Yes"
@@ -322,7 +383,13 @@ describe("wordReminder component", () => {
       id: "1",
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "2 hours",
+      reminder: {
+        minutes: 0,
+        hours: 2,
+        days: 0,
+        weeks: 0,
+        months: 0,
+      },
       is_active: false,
       has_reminder_onload: true,
       created_at: new Date(),
@@ -339,7 +406,9 @@ describe("wordReminder component", () => {
 
     const id = screen.getByText(wordReminder.id);
     const reminder = screen.getByText(
-      `This word reminder will remind you of these words ${wordReminder.reminder}`
+      `This word reminder will remind you of these words ${addToDateToString(
+        wordReminder.reminder
+      )}.`
     );
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"

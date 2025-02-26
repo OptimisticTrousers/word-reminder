@@ -87,7 +87,13 @@ describe("UpdateWordReminderModal component", () => {
     has_reminder_onload: false,
     is_active: false,
     user_id: testUser.id,
-    reminder: "2 hours",
+    reminder: {
+      minutes: 0,
+      hours: 2,
+      days: 0,
+      weeks: 0,
+      months: 0,
+    },
     finish: new Date("2025-02-08"),
     user_words: [userWord1, userWord2],
     created_at: new Date(),
@@ -152,7 +158,7 @@ describe("UpdateWordReminderModal component", () => {
 
     const { asFragment } = setup({ toggleModal: mockToggleModal, queryClient });
 
-    const reminder = screen.getByDisplayValue(wordReminder.reminder);
+    const reminder = screen.getByText("Reminder");
     const finish = screen.getByDisplayValue(
       wordReminder.finish.toISOString().split("T")[0]
     );
@@ -199,7 +205,11 @@ describe("UpdateWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const reminder = screen.getByDisplayValue(wordReminder.reminder);
+    const minutes = screen.getByLabelText("Minutes");
+    const hours = screen.getByLabelText("Hours");
+    const days = screen.getByLabelText("Days");
+    const weeks = screen.getByLabelText("Weeks");
+    const months = screen.getByLabelText("Months");
     const finish = screen.getByDisplayValue(
       wordReminder.finish.toISOString().split("T")[0]
     );
@@ -216,8 +226,16 @@ describe("UpdateWordReminderModal component", () => {
     );
     const updateButton = screen.getByRole("button", { name: "Update" });
 
-    await user.clear(reminder);
-    await user.type(reminder, "1 hour");
+    await user.clear(minutes);
+    await user.clear(hours);
+    await user.clear(days);
+    await user.clear(weeks);
+    await user.clear(months);
+    await user.type(minutes, "30");
+    await user.type(hours, "1");
+    await user.type(days, "7");
+    await user.type(weeks, "1");
+    await user.type(months, "1");
     await user.clear(finish);
     await user.type(finish, "2025-02-10");
     await user.clear(userWords);
@@ -237,7 +255,13 @@ describe("UpdateWordReminderModal component", () => {
       userId: testUser.id,
       wordReminderId: wordReminder.id,
       body: {
-        reminder: "1 hour",
+        reminder: {
+          minutes: 30,
+          hours: 1,
+          days: 7,
+          weeks: 1,
+          months: 1,
+        },
         finish: new Date("2025-02-10"),
         user_words: [userWord1.id],
         is_active: !wordReminder.is_active,
@@ -385,7 +409,11 @@ describe("UpdateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const reminder = screen.getByDisplayValue(wordReminder.reminder);
+      const minutes = screen.getByLabelText("Minutes");
+      const hours = screen.getByLabelText("Hours");
+      const days = screen.getByLabelText("Days");
+      const weeks = screen.getByLabelText("Weeks");
+      const months = screen.getByLabelText("Months");
       const finish = screen.getByDisplayValue(
         wordReminder.finish.toISOString().split("T")[0]
       );
@@ -398,7 +426,11 @@ describe("UpdateWordReminderModal component", () => {
       );
       const updateButton = screen.getByRole("button", { name: "Update" });
 
-      await user.clear(reminder);
+      await user.clear(minutes);
+      await user.clear(hours);
+      await user.clear(days);
+      await user.clear(weeks);
+      await user.clear(months);
       await user.type(finish, "2025-02-04");
       await user.type(userWords, `${userWord1.details[0].word}`);
       await user.click(updateButton);
@@ -426,7 +458,7 @@ describe("UpdateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const reminder = screen.getByDisplayValue(wordReminder.reminder);
+      const hours = screen.getByLabelText("Hours");
       const finish = screen.getByDisplayValue(
         wordReminder.finish.toISOString().split("T")[0]
       );
@@ -439,7 +471,7 @@ describe("UpdateWordReminderModal component", () => {
       );
       const updateButton = screen.getByRole("button", { name: "Update" });
 
-      await user.type(reminder, "1 hour");
+      await user.type(hours, "1");
       await user.type(finish, "2025-02-04");
       await user.clear(userWords);
       await user.click(updateButton);
@@ -467,7 +499,7 @@ describe("UpdateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const reminder = screen.getByDisplayValue(wordReminder.reminder);
+      const hours = screen.getByLabelText("Hours");
       const finish = screen.getByDisplayValue(
         wordReminder.finish.toISOString().split("T")[0]
       );
@@ -480,7 +512,7 @@ describe("UpdateWordReminderModal component", () => {
       );
       const updateButton = screen.getByRole("button", { name: "Update" });
 
-      await user.type(reminder, "1 hour");
+      await user.type(hours, "1");
       await user.clear(finish);
       await user.type(userWords, `${userWord1.details[0].word}`);
       await user.click(updateButton);

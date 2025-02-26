@@ -116,8 +116,16 @@ export interface WordReminder extends Id {
   // Determines if the reminder should be shown immediately upon loading the application or feature. One notification will be shown if at least one notification was emitted after the last time the user signed onto the application.
   is_active: boolean;
   // Specifies if the reminder is active
-  reminder: string;
+  reminder: AddToDate;
   // Defines how often a reminder notification is sent to the user which will include all of the words in this word reminder.
+}
+
+export interface AddToDate {
+  minutes: number;
+  hours: number;
+  days: number;
+  weeks: number;
+  months: number;
 }
 
 interface WordReminderParams {

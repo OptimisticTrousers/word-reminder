@@ -10,6 +10,7 @@ import { UserWord } from "../../words/UserWord";
 import styles from "./WordReminder.module.css";
 import { useState } from "react";
 import { DeleteWordReminderModal } from "../../modals/DeleteWordReminderModal";
+import { addToDateToString } from "../../../utils/date/date";
 
 export interface Props {
   searchParams: URLSearchParams;
@@ -29,13 +30,16 @@ export const WordReminder = CSSModules(
       setIsDeleteModalOpen((prevIsDeleteModalOpen) => !prevIsDeleteModalOpen);
     }
 
+    const reminder = addToDateToString(wordReminder.reminder);
+
     return (
       <>
         <div styleName="word-reminder">
           <div styleName="word-reminder__id">{wordReminder.id}</div>
           <div styleName="word-reminder__reminder">
-            This word reminder will remind you of these words{" "}
-            {wordReminder.reminder}
+            {reminder
+              ? `This word reminder will remind you of these words ${reminder}.`
+              : "This word reminder will not remind you of these words."}
           </div>
           <div styleName="word-reminder__is-active">
             Active (whether the word reminder will actively remind you of the

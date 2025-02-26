@@ -1,5 +1,6 @@
 export { http } from "./http";
 export {
+  AddToDate,
   AuthParams,
   Definition,
   Detail,

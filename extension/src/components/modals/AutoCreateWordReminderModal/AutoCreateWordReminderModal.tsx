@@ -12,6 +12,7 @@ import {
 } from "../../../context/Notification";
 import { ModalContainer } from "../ModalContainer";
 import styles from "./AutoCreateWordReminderModal.module.css";
+import { AddToDate } from "../../ui/AddToDate";
 
 interface Props {
   searchParams: URLSearchParams;
@@ -49,9 +50,21 @@ export const AutoCreateWordReminderModal = CSSModules(
         userId,
         body: {
           auto: true,
-          reminder: formData.get("reminder") as string,
+          reminder: {
+            minutes: Number(formData.get("reminder-minutes") as string),
+            hours: Number(formData.get("reminder-hours") as string),
+            days: Number(formData.get("reminder-days") as string),
+            weeks: Number(formData.get("reminder-weeks") as string),
+            months: Number(formData.get("reminder-months") as string),
+          },
           create_now: Boolean(formData.get("create_now") as string),
-          duration: formData.get("duration") as string,
+          duration: {
+            minutes: Number(formData.get("duration-minutes") as string),
+            hours: Number(formData.get("duration-hours") as string),
+            days: Number(formData.get("duration-days") as string),
+            weeks: Number(formData.get("duration-weeks") as string),
+            months: Number(formData.get("duration-months") as string),
+          },
           word_count: Number(formData.get("word_count") as string),
           is_active: Boolean(formData.get("is_active") as string),
           has_reminder_onload: Boolean(
@@ -71,34 +84,8 @@ export const AutoCreateWordReminderModal = CSSModules(
         toggleModal={toggleModal}
       >
         <form styleName="modal__form" action={handleCreate}>
-          <div styleName="modal__control">
-            <label styleName="modal__label" htmlFor="reminder">
-              Reminder
-            </label>
-            <input
-              styleName="modal__input"
-              type="text"
-              id="reminder"
-              name="reminder"
-              placeholder="1 hour (indicating every hour), 30 minutes (indicating every thirty minutes)"
-              required
-              maxLength={10}
-            />
-          </div>
-          <div styleName="modal__control">
-            <label styleName="modal__label" htmlFor="duration">
-              Duration
-            </label>
-            <input
-              styleName="modal__input"
-              type="text"
-              id="duration"
-              name="duration"
-              placeholder="1 week, 2 weeks, 10 days"
-              required
-              maxLength={10}
-            />
-          </div>
+          <AddToDate legend="Reminder" disabled={false} />
+          <AddToDate legend="Duration" disabled={false} />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="word_count">
               Word Count

@@ -99,7 +99,7 @@ describe("CreateWordReminderModal component", () => {
 
     const { asFragment } = setup({ toggleModal: mockToggleModal, queryClient });
 
-    const reminder = screen.getByLabelText("Reminder", { selector: " input" });
+    const reminder = screen.getByText("Reminder");
     const finish = screen.getByLabelText("Finish", { selector: "input" });
     const isActive = screen.getByLabelText("Is Active", { selector: "input" });
     const hasReminderOnload = screen.getByLabelText("Has Reminder Onload", {
@@ -144,7 +144,11 @@ describe("CreateWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const reminder = screen.getByLabelText("Reminder", { selector: "input" });
+    const minutes = screen.getByLabelText("Minutes");
+    const hours = screen.getByLabelText("Hours");
+    const days = screen.getByLabelText("Days");
+    const weeks = screen.getByLabelText("Weeks");
+    const months = screen.getByLabelText("Months");
     const finish = screen.getByLabelText("Finish", { selector: "input" });
     const isActive = screen.getByLabelText("Is Active", { selector: "input" });
     const hasReminderOnload = screen.getByLabelText("Has Reminder Onload", {
@@ -153,7 +157,11 @@ describe("CreateWordReminderModal component", () => {
     const userWords = await screen.findByRole("combobox");
     const createButton = screen.getByRole("button", { name: "Create" });
 
-    await user.type(reminder, "1 hour");
+    await user.type(minutes, "30");
+    await user.type(hours, "1");
+    await user.type(days, "7");
+    await user.type(weeks, "1");
+    await user.type(months, "1");
     await user.type(finish, "2025-02-04");
     await user.type(
       userWords,
@@ -174,7 +182,13 @@ describe("CreateWordReminderModal component", () => {
       userId: testUser.id,
       body: {
         auto: false,
-        reminder: "1 hour",
+        reminder: {
+          minutes: 30,
+          hours: 1,
+          days: 7,
+          weeks: 1,
+          months: 1,
+        },
         finish: new Date("2025-02-04"),
         user_words: [userWord1.id, userWord2.id],
         is_active: false,
@@ -216,7 +230,7 @@ describe("CreateWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const reminder = screen.getByLabelText("Reminder", { selector: "input" });
+    const hours = screen.getByLabelText("Hours");
     const finish = screen.getByLabelText("Finish", { selector: "input" });
     const isActive = screen.getByLabelText("Is Active", { selector: "input" });
     const hasReminderOnload = screen.getByLabelText("Has Reminder Onload", {
@@ -225,7 +239,7 @@ describe("CreateWordReminderModal component", () => {
     const userWords = await screen.findByRole("combobox");
     const createButton = screen.getByRole("button", { name: "Create" });
 
-    await user.type(reminder, "1 hour");
+    await user.type(hours, "1");
     await user.type(finish, "2025-02-04");
     await user.type(
       userWords,
@@ -244,7 +258,13 @@ describe("CreateWordReminderModal component", () => {
       userId: testUser.id,
       body: {
         auto: false,
-        reminder: "1 hour",
+        reminder: {
+          minutes: 0,
+          hours: 1,
+          days: 0,
+          weeks: 0,
+          months: 0,
+        },
         finish: new Date("2025-02-04"),
         user_words: [userWord1.id, userWord2.id, userWord3.id],
         is_active: false,
@@ -277,12 +297,12 @@ describe("CreateWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const reminder = screen.getByLabelText("Reminder", { selector: "input" });
+    const hours = screen.getByLabelText("Hours");
     const finish = screen.getByLabelText("Finish", { selector: "input" });
     const userWords = await screen.findByRole("combobox");
     const createButton = screen.getByRole("button", { name: "Create" });
 
-    await user.type(reminder, "1 hour");
+    await user.type(hours, "1");
     await user.type(finish, "2025-02-04");
     await user.type(userWords, `${userWord1.details[0].word}`);
     await user.click(createButton);
@@ -293,7 +313,13 @@ describe("CreateWordReminderModal component", () => {
       userId: testUser.id,
       body: {
         auto: false,
-        reminder: "1 hour",
+        reminder: {
+          minutes: 0,
+          hours: 1,
+          days: 0,
+          weeks: 0,
+          months: 0,
+        },
         finish: new Date("2025-02-04"),
         user_words: [userWord1.id],
         is_active: true,
@@ -349,12 +375,20 @@ describe("CreateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const reminder = screen.getByLabelText("Reminder", { selector: "input" });
+      const minutes = screen.getByLabelText("Minutes");
+      const hours = screen.getByLabelText("Hours");
+      const days = screen.getByLabelText("Days");
+      const weeks = screen.getByLabelText("Weeks");
+      const months = screen.getByLabelText("Months");
       const finish = screen.getByLabelText("Finish", { selector: "input" });
       const userWords = await screen.findByRole("combobox");
       const createButton = screen.getByRole("button", { name: "Create" });
 
-      await user.clear(reminder);
+      await user.clear(minutes);
+      await user.clear(hours);
+      await user.clear(days);
+      await user.clear(weeks);
+      await user.clear(months);
       await user.type(finish, "2025-02-04");
       await user.type(userWords, `${userWord1.details[0].word}`);
       await user.click(createButton);
@@ -385,12 +419,12 @@ describe("CreateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const reminder = screen.getByLabelText("Reminder", { selector: "input" });
+      const hours = screen.getByLabelText("Hours");
       const finish = screen.getByLabelText("Finish", { selector: "input" });
       const userWords = await screen.findByRole("combobox");
       const createButton = screen.getByRole("button", { name: "Create" });
 
-      await user.type(reminder, "1 hour");
+      await user.type(hours, "1");
       await user.type(finish, "2025-02-04");
       await user.clear(userWords);
       await user.click(createButton);
@@ -421,12 +455,12 @@ describe("CreateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const reminder = screen.getByLabelText("Reminder", { selector: "input" });
+      const hours = screen.getByLabelText("Hours");
       const finish = screen.getByLabelText("Finish", { selector: "input" });
       const userWords = await screen.findByRole("combobox");
       const createButton = screen.getByRole("button", { name: "Create" });
 
-      await user.type(reminder, "1 hour");
+      await user.type(hours, "1");
       await user.clear(finish);
       await user.type(userWords, `${userWord1.details[0].word}`);
       await user.click(createButton);

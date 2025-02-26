@@ -14,6 +14,7 @@ import {
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { wordReminderService } from "../../../services/word_reminder_service";
 import { ToggleModal } from "../types";
+import { AddToDate } from "../../ui/AddToDate";
 
 interface Props {
   searchParams: URLSearchParams;
@@ -70,7 +71,13 @@ export const UpdateWordReminderModal = CSSModules(
         userId,
         wordReminderId: wordReminder.id,
         body: {
-          reminder: formData.get("reminder") as string,
+          reminder: {
+            minutes: Number(formData.get("reminder-minutes") as string),
+            hours: Number(formData.get("reminder-hours") as string),
+            days: Number(formData.get("reminder-days") as string),
+            weeks: Number(formData.get("reminder-weeks") as string),
+            months: Number(formData.get("reminder-months") as string),
+          },
           finish: new Date(formData.get("finish") as string),
           is_active: Boolean(formData.get("is_active") as string),
           has_reminder_onload: Boolean(
@@ -81,24 +88,22 @@ export const UpdateWordReminderModal = CSSModules(
       });
     }
 
+    const { minutes, hours, days, weeks, months } = wordReminder.reminder;
+
     return (
       <ModalContainer title="Update Word Reminder" toggleModal={toggleModal}>
         <form styleName="modal__form" action={handleUpdate}>
-          <div styleName="modal__control">
-            <label styleName="modal__label" htmlFor="reminder">
-              Reminder
-            </label>
-            <input
-              styleName="modal__input"
-              type="text"
-              id="reminder"
-              name="reminder"
-              placeholder="1 hour (indicating every hour), 30 minutes (indicating every thirty minutes)"
-              required
-              maxLength={10}
-              defaultValue={wordReminder.reminder}
-            />
-          </div>
+          <AddToDate
+            legend="Reminder"
+            disabled={false}
+            defaultValues={{
+              minutes,
+              hours,
+              days,
+              weeks,
+              months,
+            }}
+          />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="finish">
               Finish
