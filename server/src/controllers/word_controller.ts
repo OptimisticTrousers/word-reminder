@@ -1,4 +1,4 @@
-import { Detail, ImageJson, UserWord, Word, WORD_MAX } from "common";
+import { ImageJson, UserWord, Word, WORD_MAX } from "common";
 import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 
@@ -204,6 +204,20 @@ export const delete_user_word = asyncHandler(async (req, res) => {
   const userId: string = req.params.userId;
   const wordId: string = req.params.wordId;
   const userWord: UserWord = await userWordQueries.delete({
+    user_id: userId,
+    word_id: wordId,
+  });
+
+  res.status(200).json({ userWord });
+});
+
+// @desc    Get single user word
+// @route   GET /api/users/:userId/words/:wordId
+// @access  Private
+export const get_user_word = asyncHandler(async (req, res) => {
+  const userId: string = req.params.userId;
+  const wordId: string = req.params.wordId;
+  const userWord: UserWord | undefined = await userWordQueries.get({
     user_id: userId,
     word_id: wordId,
   });

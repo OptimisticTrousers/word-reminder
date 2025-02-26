@@ -32,6 +32,19 @@ export const imageQueries = (function () {
     return rows[0];
   };
 
+  const getByWordId = async (word_id: string): Promise<Image[] | undefined> => {
+    const { rows }: QueryResult<Image> = await db.query(
+      `
+    SELECT ${columns}
+    FROM ${table}
+    WHERE word_id = $1;
+      `,
+      [word_id]
+    );
+
+    return rows;
+  };
+
   const getByUrl = async (url: string): Promise<Image | undefined> => {
     const { rows }: QueryResult<Image> = await db.query(
       `
@@ -45,5 +58,5 @@ export const imageQueries = (function () {
     return rows[0];
   };
 
-  return { create, getById: getById.bind(queries) };
+  return { create, getByWordId, getById: getById.bind(queries) };
 })();

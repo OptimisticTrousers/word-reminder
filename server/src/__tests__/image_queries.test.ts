@@ -121,4 +121,74 @@ describe("imageQueries", () => {
       });
     });
   });
+
+  describe("getByWordId", () => {
+    it("returns all images associated with a word", async () => {
+      const image1 = {
+        title: "File:Blue pencil.svg",
+        comment: "Colors aligned with Wikimedia color palette ([[phab:M82]])",
+        url: "/url1",
+        descriptionurl: "/descriptionurl1",
+      };
+      const image2 = {
+        title: "File:Blue pencil.svg",
+        comment: "Colors aligned with Wikimedia color palette ([[phab:M82]])",
+        url: "/url2",
+        descriptionurl: "/descriptionurl2",
+      };
+      const image3 = {
+        title: "File:Blue pencil.svg",
+        comment: "Colors aligned with Wikimedia color palette ([[phab:M82]])",
+        url: "/url3",
+        descriptionurl: "/descriptionurl3",
+      };
+      const newWord = await wordQueries.create({ json: wordJson });
+
+      await imageQueries.create({
+        ...image1,
+        word_id: newWord.id,
+      });
+      await imageQueries.create({
+        ...image2,
+        word_id: newWord.id,
+      });
+      await imageQueries.create({
+        ...image3,
+        word_id: newWord.id,
+      });
+      const newImages = await imageQueries.getByWordId(newWord.id);
+
+      expect(newImages).toEqual([
+        {
+          id: 1,
+          url: image1.url,
+          descriptionurl: image1.descriptionurl,
+          comment: image1.comment,
+          word_id: newWord.id,
+        },
+        {
+          id: 2,
+          url: image2.url,
+          descriptionurl: image2.descriptionurl,
+          comment: image2.comment,
+          word_id: newWord.id,
+        },
+        {
+          id: 3,
+          url: image3.url,
+          descriptionurl: image3.descriptionurl,
+          comment: image3.comment,
+          word_id: newWord.id,
+        },
+      ]);
+    });
+
+    it("returns an empty list if the word has no images", async () => {
+      const newWord = await wordQueries.create({ json: wordJson });
+
+      const newImages = await imageQueries.getByWordId(newWord.id);
+
+      expect(newImages).toEqual([]);
+    });
+  });
 });
