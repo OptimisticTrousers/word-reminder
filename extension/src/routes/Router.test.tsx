@@ -37,6 +37,14 @@ vi.mock("../pages/Auth/Signup", function () {
   };
 });
 
+vi.mock("../pages/Auth/ForgotPassword", function () {
+  return {
+    ForgotPassword: function () {
+      return <div data-testid="forgot-password"></div>;
+    },
+  };
+});
+
 vi.mock("../pages/UserWords", function () {
   return {
     UserWords: function () {
@@ -77,10 +85,10 @@ vi.mock("../pages/Settings", function () {
   };
 });
 
-vi.mock("../components/modals/EmailConfirmationModal", () => {
+vi.mock("../pages/Auth/EmailConfirmation", () => {
   return {
-    EmailConfirmationModal: function () {
-      return <div data-testid="email-confirmation-modal"></div>;
+    EmailConfirmation: function ({ email }: { email: string }) {
+      return <div data-testid="email-confirmation">{email}</div>;
     },
   };
 });
@@ -110,8 +118,10 @@ describe("Router component", () => {
 
   const user = {
     id: "1",
+    email: "bob@gmail.com",
     confirmed: true,
   };
+
   const status = 200;
 
   beforeEach(() => {
@@ -189,23 +199,6 @@ describe("Router component", () => {
         expect(app).toBeInTheDocument();
       });
 
-      it("renders settings page with token", async () => {
-        const mockSessionServiceGetCurrentUser = vi
-          .spyOn(sessionService, "getCurrentUser")
-          .mockImplementation(async () => {
-            return { json: { user }, status };
-          });
-
-        setup({ initialRoute: "/settings/token" });
-
-        const settings = await screen.findByTestId("settings");
-        const app = screen.getByTestId("app");
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
-        expect(settings).toBeInTheDocument();
-        expect(app).toBeInTheDocument();
-      });
-
       it("redirects to user words page when user navigates to non-protected routes", async () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
@@ -223,7 +216,7 @@ describe("Router component", () => {
         expect(app).toBeInTheDocument();
       });
 
-      it("shows the email confirmation modal when the user is not confirmed", async () => {
+      it("shows the email confirmation page when the user is not confirmed", async () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
           .mockImplementation(async () => {
@@ -232,10 +225,8 @@ describe("Router component", () => {
 
         setup({ initialRoute: "/userWords" });
 
-        const emailConfirmationModal = await screen.findByTestId(
-          "email-confirmation-modal"
-        );
-        expect(emailConfirmationModal).toBeInTheDocument();
+        const emailConfirmationEmail = await screen.findByText(user.email);
+        expect(emailConfirmationEmail).toBeInTheDocument();
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
       });
@@ -274,6 +265,23 @@ describe("Router component", () => {
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
         expect(signup).toBeInTheDocument();
+      });
+
+      it("renders forgot password page", async () => {
+        const mockSessionServiceGetCurrentUser = vi
+          .spyOn(sessionService, "getCurrentUser")
+          .mockImplementation(async () => {
+            return { json: { user: null }, status };
+          });
+
+        setup({ initialRoute: "/forgotPassword" });
+
+        const forgotPassword = await screen.findByTestId("forgot-password");
+        const app = screen.queryByTestId("app");
+        expect(app).not.toBeInTheDocument();
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(forgotPassword).toBeInTheDocument();
       });
 
       it("redirects to login page when user navigates to protected routes", async () => {

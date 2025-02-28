@@ -94,6 +94,13 @@ describe("Login component", () => {
     expect(link).toHaveAttribute("href", "/register");
   });
 
+  it("shows correct link when user forgets their password", async () => {
+    setup();
+    const link = screen.getByRole("link", { name: "Forgot Password?" });
+
+    expect(link).toHaveAttribute("href", "/forgotPassword");
+  });
+
   describe("form validation", () => {
     it("allows user to type on the email field", async () => {
       const { user } = setup();

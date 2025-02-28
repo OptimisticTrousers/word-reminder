@@ -9,6 +9,7 @@ import { UserWord } from "../pages/UserWord";
 import { UserWords } from "../pages/UserWords";
 import { WordReminder } from "../pages/WordReminder";
 import { WordReminders } from "../pages/WordReminders";
+import { ForgotPassword } from "../pages/Auth/ForgotPassword";
 
 export function routes(user: User | undefined) {
   return [
@@ -19,6 +20,10 @@ export function routes(user: User | undefined) {
     {
       path: "/signup",
       element: user ? <Navigate to="/userWords" /> : <Signup />,
+    },
+    {
+      path: "/forgotPassword",
+      element: user ? <Navigate to="/userWords" /> : <ForgotPassword />,
     },
     {
       path: "/",

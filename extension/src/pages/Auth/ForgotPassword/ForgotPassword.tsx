@@ -1,0 +1,82 @@
+import CSSModules from "react-css-modules";
+import styles from "./ForgotPassword.module.css";
+import { EMAIL_MAX, Subject, Templates } from "common";
+import { useMutation } from "@tanstack/react-query";
+import { emailService } from "../../../services/email_service";
+import { useNotificationError } from "../../../hooks/useNotificationError";
+import { useContext, useRef } from "react";
+import {
+  NotificationContext,
+  NOTIFICATION_ACTIONS,
+} from "../../../context/Notification";
+
+export const ForgotPassword = CSSModules(
+  function () {
+    const emailRef = useRef<string>("");
+    const { showNotificationError } = useNotificationError();
+    const { showNotification } = useContext(NotificationContext);
+    const { isPending, mutate } = useMutation({
+      mutationFn: emailService.sendEmail,
+      onSuccess: () => {
+        showNotification(
+          NOTIFICATION_ACTIONS.SUCCESS,
+          FORGOT_PASSWORD_NOTIFICATION_MSGS.sendEmail()
+        );
+      },
+      onError: showNotificationError,
+    });
+
+    function handleSubmit(formData: FormData) {
+      const email = formData.get("email") as string;
+      emailRef.current = email;
+      mutate({
+        email,
+        subject: Subject.CHANGE_VERIFICATION,
+        template: Templates.FORGOT_PASSWORD,
+      });
+    }
+
+    const disabled = isPending;
+
+    return (
+      <div styleName="enter-email">
+        <h2 styleName="enter-email__heading">Reset your password</h2>
+        <p styleName="enter-email__description">
+          Enter your email address and we'll send you a link to reset your
+          password.
+        </p>
+        <form styleName="enter-email__form" action={handleSubmit}>
+          <div styleName="enter-email__control">
+            <label htmlFor="email" styleName="enter-email__label">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              styleName="enter-email__input"
+              required={true}
+              disabled={disabled}
+              maxLength={EMAIL_MAX}
+            />
+          </div>
+          <button
+            styleName="enter-email__button"
+            type="submit"
+            disabled={disabled}
+          >
+            Send verification email
+          </button>
+        </form>
+      </div>
+    );
+  },
+  styles,
+  { allowMultiple: true, handleNotFoundStyleName: "log" }
+);
+
+const FORGOT_PASSWORD_NOTIFICATION_MSGS = {
+  sendEmail: () => {
+    return `A confirmation email was sent to your email to reset your password.`;
+  },
+};

@@ -88,6 +88,11 @@ export const Login = CSSModules(
             Create account
           </Link>
         </p>
+        <p styleName="auth__redirect">
+          <Link styleName="auth_link" to="/forgotPassword">
+            Forgot Password?
+          </Link>
+        </p>
       </section>
     );
   },

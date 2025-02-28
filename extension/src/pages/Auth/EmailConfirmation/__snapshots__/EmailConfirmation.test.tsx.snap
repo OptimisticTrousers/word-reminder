@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmailConfirmation component > calls the functions to send confirmation email 1`] = `
+<DocumentFragment>
+  <div
+    class="_email-confirmation_9d1292"
+  >
+    <h2
+      class="_email-confirmation__heading_9d1292"
+    >
+      Check your email
+    </h2>
+    <p
+      class="_email-confirmation__message_9d1292"
+    >
+      Follow the link in the email sent to
+      <span
+        class="_email-confirmation__bold_9d1292"
+      >
+         bob@gmail.com 
+      </span>
+      and continue creating your account.
+    </p>
+  </div>
+</DocumentFragment>
+`;

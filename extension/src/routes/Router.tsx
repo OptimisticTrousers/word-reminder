@@ -6,7 +6,7 @@ import { Error500 } from "../pages/Error500";
 import { sessionService } from "../services/session_service";
 import { routes } from "./routes";
 import { ErrorResponse } from "../types";
-import { EmailConfirmationModal } from "../components/modals/EmailConfirmationModal";
+import { EmailConfirmation } from "../pages/Auth/EmailConfirmation";
 
 export function Router() {
   const { data, error, isError, isLoading } = useQuery({
@@ -30,7 +30,7 @@ export function Router() {
   }
 
   if (user && user.confirmed === false) {
-    return <EmailConfirmationModal />;
+    return <EmailConfirmation email={user.email} />;
   }
 
   return routing;
