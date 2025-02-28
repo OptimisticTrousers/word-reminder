@@ -1,9 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Settings component > settings with token > renders non disabled inputs, heading, and change button 1`] = `
+exports[`Settings component > renders non disabled inputs and heading 1`] = `
 <DocumentFragment>
-  <form
-    action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
+  <div
     class="_settings_9f5ad4"
   >
     <h2
@@ -12,146 +11,41 @@ exports[`Settings component > settings with token > renders non disabled inputs,
       Change Account Details
     </h2>
     <div
-      class="_settings__control_9f5ad4"
+      class="_settings__buttons_9f5ad4"
     >
-      <label
-        class="_settings__label_9f5ad4"
-        for="email"
+      <div
+        class="_settings__control_9f5ad4"
       >
-        Email
-      </label>
-      <input
-        class="_settings__input_9f5ad4"
-        id="email"
-        maxlength="255"
-        name="email"
-        required=""
-        type="email"
-        value="bob@gmail.com"
-      />
-    </div>
-    <div
-      class="_settings__control_9f5ad4"
-    >
-      <label
-        class="_settings__label_9f5ad4"
-        for="newPassword"
+        <label
+          class="_settings__label_9f5ad4"
+          for="email"
+        >
+          Change Email
+        </label>
+        <input
+          class="_settings__input_9f5ad4"
+          id="email"
+          name="email"
+          type="button"
+        />
+      </div>
+      <div
+        class="_settings__control_9f5ad4"
       >
-        New Password
-      </label>
-      <input
-        class="_settings__input_9f5ad4"
-        id="newPassword"
-        maxlength="72"
-        name="newPassword"
-        placeholder="Password: *********"
-        type="password"
-      />
+        <label
+          class="_settings__label_9f5ad4"
+          for="password"
+        >
+          Change Password
+        </label>
+        <input
+          class="_settings__input_9f5ad4"
+          id="password"
+          name="password"
+          type="button"
+        />
+      </div>
     </div>
-    <div
-      class="_settings__control_9f5ad4"
-    >
-      <label
-        class="_settings__label_9f5ad4"
-        for="newPasswordConfirmation"
-      >
-        New Password Confirmation
-      </label>
-      <input
-        class="_settings__input_9f5ad4"
-        id="newPasswordConfirmation"
-        maxlength="72"
-        name="newPasswordConfirmation"
-        placeholder="Password: *********"
-        type="password"
-      />
-    </div>
-    <button
-      class="_settings_button_9f5ad4"
-      type="submit"
-    >
-      Submit
-    </button>
-  </form>
-</DocumentFragment>
-`;
-
-exports[`Settings component > settings without token > renders disabled inputs, headings, and change button 1`] = `
-<DocumentFragment>
-  <form
-    action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
-    class="_settings_9f5ad4"
-  >
-    <h2
-      class="_settings__heading_9f5ad4"
-    >
-      Change Account Details
-    </h2>
-    <div
-      class="_settings__control_9f5ad4"
-    >
-      <label
-        class="_settings__label_9f5ad4"
-        for="email"
-      >
-        Email
-      </label>
-      <input
-        class="_settings__input_9f5ad4"
-        disabled=""
-        id="email"
-        maxlength="255"
-        name="email"
-        required=""
-        type="email"
-        value="bob@gmail.com"
-      />
-    </div>
-    <div
-      class="_settings__control_9f5ad4"
-    >
-      <label
-        class="_settings__label_9f5ad4"
-        for="newPassword"
-      >
-        New Password
-      </label>
-      <input
-        class="_settings__input_9f5ad4"
-        disabled=""
-        id="newPassword"
-        maxlength="72"
-        name="newPassword"
-        placeholder="Password: *********"
-        type="password"
-      />
-    </div>
-    <div
-      class="_settings__control_9f5ad4"
-    >
-      <label
-        class="_settings__label_9f5ad4"
-        for="newPasswordConfirmation"
-      >
-        New Password Confirmation
-      </label>
-      <input
-        class="_settings__input_9f5ad4"
-        disabled=""
-        id="newPasswordConfirmation"
-        maxlength="72"
-        name="newPasswordConfirmation"
-        placeholder="Password: *********"
-        type="password"
-      />
-    </div>
-    <button
-      class="_settings__button_9f5ad4"
-      type="button"
-      value="email"
-    >
-      Change
-    </button>
-  </form>
+  </div>
 </DocumentFragment>
 `;

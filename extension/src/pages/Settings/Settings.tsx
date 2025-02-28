@@ -1,16 +1,12 @@
-import { EMAIL_MAX, PASSWORD_MAX, Subject, Templates, User } from "common";
-import { useContext, useState } from "react";
+import { Subject, Templates, User } from "common";
+import { MouseEvent, useContext } from "react";
 import CSSModules from "react-css-modules";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
-import { UserChangeModal } from "../../components/modals/UserChangeModal";
 import styles from "./Settings.module.css";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { emailService } from "../../services/email_service";
 import { useNotificationError } from "../../hooks/useNotificationError";
-import { Loading } from "../../components/ui/Loading";
-import { Error500 } from "../Error500";
-import { userService } from "../../services/user_service";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
@@ -19,161 +15,80 @@ import {
 export const Settings = CSSModules(
   function () {
     const { user }: { user: User } = useOutletContext();
-    const { token } = useParams();
-    const { data, failureReason, isLoading } = useQuery({
-      queryKey: ["emails", token],
-      queryFn: () => {
-        return emailService.verifyEmailToken({ token });
-      },
-      throwOnError: true,
-      staleTime: STALE_TIME,
-    });
     const { showNotificationError } = useNotificationError();
     const { showNotification } = useContext(NotificationContext);
-    const { isPending: sendEmailIsPending, mutate: sendEmailMutate } =
-      useMutation({
-        mutationFn: emailService.sendEmail,
-        onSuccess: () => {
-          toggleModal();
-        },
-        onError: showNotificationError,
-      });
+    const { isPending, mutate } = useMutation({
+      mutationFn: emailService.sendEmail,
+      onSuccess: (_, variables) => {
+        let field = "";
+        switch (variables.template) {
+          case Templates.CHANGE_EMAIL:
+            field = "email";
+            break;
+          case Templates.CHANGE_PASSWORD:
+            field = "password";
+            break;
+        }
+        showNotification(
+          NOTIFICATION_ACTIONS.SUCCESS,
+          SETTINGS_NOTIFICATION_MSGS.sendEmail(field)
+        );
+      },
+      onError: showNotificationError,
+    });
 
-    const { isPending: updateUserIsPending, mutate: updateUserMutate } =
-      useMutation({
-        mutationFn: userService.updateUser,
-        onSuccess: () => {
-          showNotification(
-            NOTIFICATION_ACTIONS.SUCCESS,
-            SETTING_NOTIFICATION_MSGS.updateUser()
-          );
-        },
-        onError: showNotificationError,
-        onSettled: () => {
-          toggleModal();
-        },
-      });
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    function handleClick() {
-      sendEmailMutate({
+    function handleClick(event: MouseEvent<HTMLInputElement>) {
+      const name = event.currentTarget.name;
+      let template = "";
+      switch (name) {
+        case "email":
+          template = Templates.CHANGE_EMAIL;
+          break;
+        case "password":
+          template = Templates.CHANGE_PASSWORD;
+          break;
+      }
+      mutate({
         email: user.email,
         subject: Subject.CHANGE_VERIFICATION,
-        template: Templates.CHANGE_VERIFICATION,
+        template,
       });
     }
 
-    function handleSubmit(formData: FormData) {
-      const newPassword = formData.get("newPassword") as string;
-      const newPasswordConfirmation = formData.get(
-        "newPasswordConfirmation"
-      ) as string;
-
-      if (newPassword !== newPasswordConfirmation) {
-        showNotification(
-          NOTIFICATION_ACTIONS.ERROR,
-          "New Password and New Password Confirmation fields do not match. Please try again."
-        );
-        return;
-      }
-
-      updateUserMutate({
-        id: user.id,
-        email: formData.get("email") as string,
-        newPassword,
-        newPasswordConfirmation,
-      });
-    }
-
-    function toggleModal() {
-      setIsModalOpen((prevValue) => !prevValue);
-    }
-
-    if (isLoading) {
-      return <Loading />;
-    }
-
-    if (failureReason) {
-      return <Error500 message={failureReason.message} />;
-    }
-
-    const json = data?.json;
-
-    const disabled = !json;
+    const disabled = isPending;
 
     return (
-      <>
-        <form styleName="settings" action={handleSubmit}>
-          <h2 styleName="settings__heading">Change Account Details</h2>
+      <div styleName="settings">
+        <h2 styleName="settings__heading">Change Account Details</h2>
+        <div styleName="settings__buttons">
           <div styleName="settings__control">
             <label styleName="settings__label" htmlFor="email">
-              Email
+              Change Email
             </label>
             <input
               id="email"
-              type="email"
+              type="button"
               name="email"
               styleName="settings__input"
-              defaultValue={user.email}
-              disabled={disabled}
-              maxLength={EMAIL_MAX}
-              required={true}
-            />
-          </div>
-          <div styleName="settings__control">
-            <label styleName="settings__label" htmlFor="newPassword">
-              New Password
-            </label>
-            <input
-              id="newPassword"
-              type="password"
-              name="newPassword"
-              styleName="settings__input"
-              placeholder="Password: *********"
-              disabled={disabled}
-              maxLength={PASSWORD_MAX}
-            />
-          </div>
-          <div styleName="settings__control">
-            <label
-              styleName="settings__label"
-              htmlFor="newPasswordConfirmation"
-            >
-              New Password Confirmation
-            </label>
-            <input
-              id="newPasswordConfirmation"
-              type="password"
-              name="newPasswordConfirmation"
-              styleName="settings__input"
-              placeholder="Password: *********"
-              disabled={disabled}
-              maxLength={PASSWORD_MAX}
-            />
-          </div>
-          {json ? (
-            <button
-              styleName="settings_button"
-              type="submit"
-              disabled={updateUserIsPending}
-            >
-              Submit
-            </button>
-          ) : (
-            <button
-              type="button"
-              styleName="settings__button"
-              value="email"
               onClick={handleClick}
-              disabled={sendEmailIsPending}
-            >
-              Change
-            </button>
-          )}
-        </form>
-        {isModalOpen && <UserChangeModal toggleModal={toggleModal} />}
-      </>
+              disabled={disabled}
+            />
+          </div>
+          <div styleName="settings__control">
+            <label styleName="settings__label" htmlFor="password">
+              Change Password
+            </label>
+            <input
+              id="password"
+              type="button"
+              name="password"
+              styleName="settings__input"
+              onClick={handleClick}
+              disabled={disabled}
+            />
+          </div>
+        </div>
+      </div>
     );
   },
   styles,
@@ -183,9 +98,8 @@ export const Settings = CSSModules(
   }
 );
 
-const STALE_TIME = 30000; // 30 seconds in milliseconds
-const SETTING_NOTIFICATION_MSGS = {
-  updateUser: () => {
-    return "You have successfully updated your account.";
+const SETTINGS_NOTIFICATION_MSGS = {
+  sendEmail: (field: string) => {
+    return `A confirmation email was sent to your email to update your ${field}.`;
   },
 };
