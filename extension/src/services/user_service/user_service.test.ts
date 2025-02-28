@@ -34,7 +34,12 @@ describe("userService", () => {
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users`,
-        options: { body: JSON.stringify(user) },
+        options: {
+          body: JSON.stringify({
+            email: user.email,
+            password: user.newPassword,
+          }),
+        },
       });
       expect(response).toEqual({
         json: { user },
