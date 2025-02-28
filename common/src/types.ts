@@ -97,8 +97,10 @@ export interface SubscriptionParams {
 }
 
 export enum Templates {
-  EMAIL_VERIFICATION = "email_verification",
-  CHANGE_VERIFICATION = "change_verification",
+  CHANGE_EMAIL = "change_email",
+  CHANGE_PASSWORD = "change_password",
+  FORGOT_PASSWORD = "forgot_password",
+  CONFIRM_EMAIL = "confirm_email",
 }
 
 export enum Subject {
@@ -132,7 +134,7 @@ interface WordReminderParams {
   auto: boolean;
   has_reminder_onload: boolean;
   is_active: boolean;
-  reminder: string;
+  reminder: AddToDate;
 }
 
 export type WordReminderDbParams = Omit<
@@ -147,7 +149,7 @@ export interface ManualWordReminderParams extends WordReminderParams {
 
 export interface AutoWordReminderParams extends WordReminderParams {
   create_now: boolean;
-  duration: string;
+  duration: AddToDate;
   word_count: number;
   has_learned_words: boolean;
   order: Order;

@@ -29,7 +29,7 @@ describe("emailService", () => {
         });
       const body = {
         email: "bob@protonmail.com",
-        template: Templates.EMAIL_VERIFICATION,
+        template: Templates.CONFIRM_EMAIL,
         subject: Subject.EMAIL_VERIFICATION,
       };
 
