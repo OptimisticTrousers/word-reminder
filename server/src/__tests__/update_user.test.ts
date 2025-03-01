@@ -941,6 +941,34 @@ describe("update_user", () => {
         });
       });
 
+      it("returns 400 status code when 'oldPassword' is provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.put("/api/users/:userId", update_user);
+        const body = {
+          oldPassword: "password1",
+        };
+
+        const response = await request(app)
+          .put(`/api/users/${user.id}`)
+          .set("Accept", "application/json")
+          .send(body);
+
+        expect(response.headers["content-type"]).toMatch(/json/);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+          errors: [
+            {
+              location: "body",
+              msg: "'oldPassword' is not required when the session user is not provided.",
+              path: "oldPassword",
+              type: "field",
+              value: body.oldPassword,
+            },
+          ],
+        });
+      });
+
       it("returns 400 status code when 'newPasswordConfirmation' is provided but not 'newPassword'", async () => {
         const app = express();
         app.use(express.json());

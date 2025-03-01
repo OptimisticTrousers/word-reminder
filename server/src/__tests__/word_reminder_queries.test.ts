@@ -13,8 +13,7 @@ describe("wordReminderQueries", () => {
   const wordReminderId1 = "1";
   const wordReminder1 = {
     user_id: sampleUser1.id,
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    reminder: "2 hours",
+    finish: new Date(Date.now() + 1000),
     is_active: true,
     has_reminder_onload: true,
   };
@@ -35,7 +34,6 @@ describe("wordReminderQueries", () => {
       expect(wordReminder).toEqual({
         id: Number(wordReminderId1),
         user_id: Number(wordReminder1.user_id),
-        reminder: wordReminder1.reminder,
         is_active: wordReminder1.is_active,
         has_reminder_onload: wordReminder1.has_reminder_onload,
         finish: wordReminder1.finish,
@@ -105,7 +103,6 @@ describe("wordReminderQueries", () => {
       expect(wordReminder).toEqual({
         id: Number(wordReminderId1),
         user_id: Number(wordReminder1.user_id),
-        reminder: wordReminder1.reminder,
         is_active: wordReminder1.is_active,
         has_reminder_onload: wordReminder1.has_reminder_onload,
         finish: wordReminder1.finish,
@@ -131,13 +128,20 @@ describe("wordReminderQueries", () => {
       });
       await wordReminderQueries.create(wordReminder1);
 
-      const wordReminder = await wordReminderQueries.update({
+      const wordReminder2 = {
         id: wordReminderId1,
-        finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        reminder: "2 hours",
+        finish: new Date(Date.now() + 1000),
+        reminder: {
+          minutes: 0,
+          hours: 1,
+          days: 0,
+          weeks: 0,
+          months: 0,
+        },
         is_active: true,
         has_reminder_onload: true,
-      });
+      };
+      const wordReminder = await wordReminderQueries.update(wordReminder2);
 
       const createdAtTimestamp = new Date(wordReminder!.created_at).getTime();
       const updatedAtTimestamp = new Date(wordReminder!.updated_at).getTime();
@@ -145,8 +149,7 @@ describe("wordReminderQueries", () => {
       expect(wordReminder).toEqual({
         id: Number(wordReminderId1),
         user_id: Number(wordReminder1.user_id),
-        finish: expect.any(Date),
-        reminder: "2 hours",
+        finish: wordReminder2.finish,
         is_active: true,
         has_reminder_onload: true,
         created_at: expect.any(Date),
@@ -164,8 +167,7 @@ describe("wordReminderQueries", () => {
 
       const wordReminder = await wordReminderQueries.update({
         id: wordReminderId1,
-        finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        reminder: "2 hours",
+        finish: new Date(Date.now() + 1000),
         is_active: true,
         has_reminder_onload: true,
       });

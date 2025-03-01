@@ -103,12 +103,21 @@ export const createPopulateDb = function (client: Client) {
       CREATE TABLE word_reminders (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         user_id INTEGER REFERENCES users(id) NOT NULL,
-        reminder TEXT NOT NULL,
         is_active BOOLEAN NOT NULL,
         has_reminder_onload BOOLEAN NOT NULL,
         finish TIMESTAMPTZ NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE reminders (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL,
+        minutes INTEGER NOT NULL, 
+        hours INTEGER NOT NULL, 
+        days INTEGER NOT NULL, 
+        weeks INTEGER NOT NULL, 
+        months INTEGER NOT NULL
       );
 
       CREATE TABLE user_words_word_reminders (

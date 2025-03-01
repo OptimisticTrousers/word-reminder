@@ -16,8 +16,14 @@ describe("validateQuery", () => {
 
   const wordReminder1 = {
     user_id: sampleUser1.id,
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    reminder: "2 hours",
+    finish: new Date(Date.now() + 1000),
+    reminder: {
+      minutes: 0,
+      hours: 1,
+      days: 0,
+      weeks: 0,
+      months: 0,
+    },
     is_active: true,
     has_reminder_onload: true,
   };

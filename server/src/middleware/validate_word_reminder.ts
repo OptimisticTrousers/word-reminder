@@ -3,6 +3,16 @@ import { body } from "express-validator";
 import { errorValidationHandler } from "./error_validation_handler";
 import { Order } from "common";
 
+const validateAddToDate = (name: string, property: string) => {
+  return body(`${name}.${property}`)
+    .notEmpty({ ignore_whitespace: true })
+    .withMessage(`'${name}.${property}' must be specified.`)
+    .bail()
+    .isInt({ gt: -1 })
+    .toInt()
+    .withMessage(`'${name}.${property}' must be a non-negative integer.`);
+};
+
 const validateOptions = [
   errorValidationHandler, // stop here if 'random' is not provided
   body("has_reminder_onload")
@@ -19,9 +29,11 @@ const validateOptions = [
     .isBoolean()
     .toBoolean()
     .withMessage("'is_active' must be a boolean."),
-  body("reminder")
-    .notEmpty({ ignore_whitespace: true })
-    .withMessage("'reminder' must be specified."),
+  validateAddToDate("reminder", "minutes"),
+  validateAddToDate("reminder", "hours"),
+  validateAddToDate("reminder", "days"),
+  validateAddToDate("reminder", "weeks"),
+  validateAddToDate("reminder", "months"),
 ];
 
 const validateManualWordReminder = [
@@ -67,9 +79,12 @@ export const validateAutoWordReminder = [
     .if((_value, { req }) => {
       return req.body.auto === true;
     })
-    .bail()
-    .notEmpty({ ignore_whitespace: true })
-    .withMessage("'duration' must be specified."),
+    .bail(),
+  validateAddToDate("duration", "minutes"),
+  validateAddToDate("duration", "hours"),
+  validateAddToDate("duration", "days"),
+  validateAddToDate("duration", "weeks"),
+  validateAddToDate("duration", "months"),
   body("has_learned_words")
     .if((_value, { req }) => {
       return req.body.auto === true;

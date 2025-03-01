@@ -107,6 +107,11 @@ describe("imageQueries", () => {
       };
       const newWord = await wordQueries.create({ json: wordJson });
 
+      await imageQueries.create({
+        ...image,
+        word_id: newWord.id,
+      });
+
       const newImage = await imageQueries.create({
         ...image,
         word_id: newWord.id,

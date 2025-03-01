@@ -8,19 +8,16 @@ export const wordReminderQueries = (function () {
   const { columns, db, getById, table } = queries;
 
   const create = async (
-    wordReminder: Omit<WordReminderDbParams, "user_words"> & {
-      user_id: string;
-    }
+    wordReminder: WordReminderDbParams
   ): Promise<WordReminder> => {
     const { rows }: QueryResult<WordReminder> = await db.query(
       `
-     INSERT INTO ${table}(user_id, reminder, is_active, has_reminder_onload, finish) 
-     VALUES ($1, $2, $3, $4, $5)
+     INSERT INTO ${table}(user_id, is_active, has_reminder_onload, finish) 
+     VALUES ($1, $2, $3, $4)
      RETURNING ${columns}
       `,
       [
         wordReminder.user_id,
-        wordReminder.reminder,
         wordReminder.is_active,
         wordReminder.has_reminder_onload,
         wordReminder.finish,
@@ -60,24 +57,19 @@ export const wordReminderQueries = (function () {
   const update = async ({
     id,
     finish,
-    reminder,
     is_active,
     has_reminder_onload,
-  }: {
+  }: Omit<WordReminderDbParams, "user_id"> & {
     id: string;
-    finish: Date;
-    reminder: string;
-    is_active: boolean;
-    has_reminder_onload: boolean;
   }): Promise<WordReminder> => {
     const { rows }: QueryResult<WordReminder> = await db.query(
       `
     UPDATE ${table}
-    SET finish = $1, reminder = $2, is_active = $3, has_reminder_onload = $4
-    WHERE id = $5
-    RETURNING ${columns}
+    SET finish = $1, is_active = $2, has_reminder_onload = $3
+    WHERE id = $4
+    RETURNING ${columns};
       `,
-      [finish, reminder, is_active, has_reminder_onload, id]
+      [finish, is_active, has_reminder_onload, id]
     );
 
     return rows[0];

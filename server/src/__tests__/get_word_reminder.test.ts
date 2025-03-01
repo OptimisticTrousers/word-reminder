@@ -21,7 +21,13 @@ describe("get_word_reminder", () => {
   const wordReminder1 = {
     id: "1",
     user_id: sampleUser1.id,
-    reminder: "2 hours",
+    reminder: {
+      minutes: 0,
+      hours: 1,
+      days: 0,
+      weeks: 0,
+      months: 0,
+    },
     is_active: true,
     has_reminder_onload: true,
     finish: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -49,6 +55,7 @@ describe("get_word_reminder", () => {
     expect(response.body).toEqual({
       wordReminder: {
         ...wordReminder1,
+        reminder: wordReminder1.reminder,
         created_at: wordReminder1.created_at.toISOString(),
         updated_at: wordReminder1.updated_at.toISOString(),
         finish: wordReminder1.finish.toISOString(),

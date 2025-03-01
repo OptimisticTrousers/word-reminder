@@ -14,8 +14,14 @@ describe("word_reminder_list", () => {
   const wordReminder1 = {
     id: "1",
     user_id: sampleUser1.id,
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    reminder: "2 hours",
+    finish: new Date(Date.now() + 1000),
+    reminder: {
+      minutes: 0,
+      hours: 1,
+      days: 0,
+      weeks: 0,
+      months: 0,
+    },
     is_active: true,
     has_reminder_onload: true,
     created_at: new Date(),
@@ -160,6 +166,7 @@ describe("word_reminder_list", () => {
         wordReminders: [
           {
             ...wordReminder1,
+            reminder: wordReminder1.reminder,
             finish: wordReminder1.finish.toISOString(),
             created_at: wordReminder1.created_at.toISOString(),
             updated_at: wordReminder1.updated_at.toISOString(),
@@ -222,6 +229,7 @@ describe("word_reminder_list", () => {
         wordReminders: [
           {
             ...wordReminder1,
+            reminder: wordReminder1.reminder,
             finish: wordReminder1.finish.toISOString(),
             created_at: wordReminder1.created_at.toISOString(),
             updated_at: wordReminder1.updated_at.toISOString(),

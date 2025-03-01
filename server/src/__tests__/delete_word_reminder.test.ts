@@ -3,6 +3,7 @@ import request from "supertest";
 
 import { delete_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
+import { reminderQueries } from "../db/reminder_queries";
 
 describe("delete_word_reminder", () => {
   const app = express();
@@ -21,7 +22,13 @@ describe("delete_word_reminder", () => {
   const wordReminder1 = {
     id: "1",
     user_id: sampleUser1.id,
-    reminder: "2 hours",
+    reminder: {
+      minutes: 0,
+      hours: 2,
+      days: 0,
+      weeks: 0,
+      months: 0,
+    },
     is_active: true,
     has_reminder_onload: true,
     finish: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -67,6 +74,15 @@ describe("delete_word_reminder", () => {
     .mockImplementation(async () => {
       return deletedUserWordsWordReminders;
     });
+  const deleteByWordReminderIdMock = jest
+    .spyOn(reminderQueries, "deleteByWordReminderId")
+    .mockImplementation(async () => {
+      return {
+        ...wordReminder1.reminder,
+        id: "1",
+        word_reminder_id: wordReminder1.id,
+      };
+    });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -80,6 +96,11 @@ describe("delete_word_reminder", () => {
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
+      reminders: {
+        ...wordReminder1.reminder,
+        id: "1",
+        word_reminder_id: wordReminder1.id,
+      },
       userWordsWordReminders: [
         {
           ...wordReminder1,
@@ -108,5 +129,7 @@ describe("delete_word_reminder", () => {
     expect(deleteAllByWordReminderIdMock).toHaveBeenCalledWith(
       wordReminder1.id
     );
+    expect(deleteByWordReminderIdMock).toHaveBeenCalledTimes(1);
+    expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder1.id);
   });
 });

@@ -120,7 +120,15 @@ export const userWordsWordRemindersQueries = (function () {
     const queryParts = [
       `
     SELECT word_reminders.id,
-           word_reminders.reminder,
+           COALESCE(
+            JSONB_BUILD_OBJECT(
+                'minutes', MAX(reminders.minutes),
+                'hours', MAX(reminders.hours),
+                'days', MAX(reminders.days),
+                'weeks', MAX(reminders.weeks),
+                'months', MAX(reminders.months)
+            ),  '{}'
+           ) AS reminder,
            word_reminders.is_active,
            word_reminders.has_reminder_onload,
            word_reminders.finish,
@@ -137,6 +145,8 @@ export const userWordsWordRemindersQueries = (function () {
     ON words.id = user_words.word_id
     JOIN word_reminders
     ON word_reminders.id = ${table}.word_reminder_id
+    JOIN reminders
+    ON reminders.word_reminder_id = ${table}.word_reminder_id
       `,
       `
     WHERE word_reminders.user_id = $1

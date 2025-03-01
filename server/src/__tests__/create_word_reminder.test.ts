@@ -6,6 +6,7 @@ import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_q
 import { userWordQueries } from "../db/user_word_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { Order } from "common";
+import { reminderQueries } from "../db/reminder_queries";
 
 describe("create_word_reminder", () => {
   const sampleUser1 = {
@@ -17,12 +18,11 @@ describe("create_word_reminder", () => {
   const wordReminder1 = {
     id: "1",
     user_id: sampleUser1.id,
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    reminder: "2 hours",
+    finish: new Date("December 17, 1995 03:24:00"),
     is_active: true,
     has_reminder_onload: true,
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: new Date("December 17, 1995 03:24:00"),
+    updated_at: new Date("December 17, 1995 03:24:00"),
   };
 
   const milieuWordId = "1";
@@ -157,6 +157,18 @@ describe("create_word_reminder", () => {
     .mockImplementation(async () => {
       return wordReminder1;
     });
+  const reminderCreateMock = jest
+    .spyOn(reminderQueries, "create")
+    .mockImplementation(async () => {
+      return {
+        minutes: 0,
+        hours: 0,
+        days: 0,
+        weeks: 1,
+        months: 0,
+        id: "1",
+      };
+    });
 
   const userWordsWordRemindersMock = jest
     .spyOn(userWordsWordRemindersQueries, "create")
@@ -179,8 +191,20 @@ describe("create_word_reminder", () => {
         word_count: 7,
         is_active: false,
         has_reminder_onload: false,
-        reminder: "1 week",
-        duration: "1 week",
+        reminder: {
+          minutes: 0,
+          hours: 0,
+          days: 0,
+          weeks: 1,
+          months: 0,
+        },
+        duration: {
+          minutes: 0,
+          hours: 0,
+          days: 0,
+          weeks: 1,
+          months: 0,
+        },
         has_learned_words: false,
         order: Order.Random,
       };
@@ -195,6 +219,7 @@ describe("create_word_reminder", () => {
       expect(response.body).toEqual({
         wordReminder: {
           ...wordReminder1,
+          reminder: { ...body.reminder, id: "1" },
           finish: wordReminder1.finish.toISOString(),
           created_at: wordReminder1.created_at.toISOString(),
           updated_at: wordReminder1.updated_at.toISOString(),
@@ -209,7 +234,6 @@ describe("create_word_reminder", () => {
       expect(wordReminderCreateMock).toHaveBeenCalledTimes(1);
       expect(wordReminderCreateMock).toHaveBeenCalledWith({
         user_id: sampleUser1.id,
-        reminder: body.reminder,
         is_active: body.is_active,
         has_reminder_onload: body.has_reminder_onload,
         finish: expect.any(Date),
@@ -227,18 +251,29 @@ describe("create_word_reminder", () => {
         user_word_id: userWord3.id,
         word_reminder_id: wordReminder1.id,
       });
+      expect(reminderCreateMock).toHaveBeenCalledTimes(1);
+      expect(reminderCreateMock).toHaveBeenCalledWith({
+        ...body.reminder,
+        word_reminder_id: wordReminder1.id,
+      });
     });
   });
 
   describe("when 'auto' is false", () => {
     it("calls the functions to create the word reminder with the user words in it", async () => {
       const body = {
-        finish: new Date(Date.now() + 1000), // make sure date comes after current date
+        finish: wordReminder1.finish,
         auto: false,
         user_words: [userWord1.id, userWord2.id, userWord3.id],
         is_active: false,
         has_reminder_onload: false,
-        reminder: "1 week",
+        reminder: {
+          minutes: 0,
+          hours: 0,
+          days: 0,
+          weeks: 1,
+          months: 0,
+        },
       };
 
       const response = await request(app)
@@ -251,6 +286,7 @@ describe("create_word_reminder", () => {
       expect(response.body).toEqual({
         wordReminder: {
           ...wordReminder1,
+          reminder: { ...body.reminder, id: "1" },
           finish: wordReminder1.finish.toISOString(),
           created_at: wordReminder1.created_at.toISOString(),
           updated_at: wordReminder1.updated_at.toISOString(),
@@ -259,7 +295,6 @@ describe("create_word_reminder", () => {
       expect(wordReminderCreateMock).toHaveBeenCalledTimes(1);
       expect(wordReminderCreateMock).toHaveBeenCalledWith({
         user_id: sampleUser1.id,
-        reminder: body.reminder,
         is_active: body.is_active,
         has_reminder_onload: body.has_reminder_onload,
         finish: body.finish.toISOString(),
@@ -275,6 +310,11 @@ describe("create_word_reminder", () => {
       });
       expect(userWordsWordRemindersMock).toHaveBeenCalledWith({
         user_word_id: userWord3.id,
+        word_reminder_id: wordReminder1.id,
+      });
+      expect(reminderCreateMock).toHaveBeenCalledTimes(1);
+      expect(reminderCreateMock).toHaveBeenCalledWith({
+        ...body.reminder,
         word_reminder_id: wordReminder1.id,
       });
     });

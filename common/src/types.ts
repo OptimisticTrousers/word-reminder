@@ -137,10 +137,13 @@ interface WordReminderParams {
   reminder: AddToDate;
 }
 
-export type WordReminderDbParams = Omit<
-  ManualWordReminderParams,
-  "user_words" | "auto"
-> & { user_id: string };
+export interface WordReminderDbParams {
+  user_id: string;
+  has_reminder_onload: boolean;
+  is_active: boolean;
+  reminder: AddToDate;
+  finish: Date;
+}
 
 export interface ManualWordReminderParams extends WordReminderParams {
   finish: Date;
