@@ -216,14 +216,14 @@ describe("userQueries", () => {
   });
 
   describe("get", () => {
-    it("returns the user by email and password", async () => {
+    it("returns the user by id and password", async () => {
       await userQueries.create({
         email: sampleUser1.email,
         password: sampleUser1.password,
       });
 
       const user = await userQueries.get({
-        email: sampleUser1.email,
+        id: sampleUser1.id,
         password: sampleUser1.password,
       });
 

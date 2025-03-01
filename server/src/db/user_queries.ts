@@ -50,19 +50,19 @@ export const userQueries = (function () {
   };
 
   const get = async ({
-    email,
+    id,
     password,
   }: {
-    email: string;
+    id: string;
     password: string;
   }): Promise<User | undefined> => {
     const { rows }: QueryResult<User> = await db.query(
       `
     SELECT ${columns}
     FROM users
-    WHERE email = $1 AND password = $2;
+    WHERE id = $1 AND password = $2;
       `,
-      [email, password]
+      [id, password]
     );
 
     return rows[0];
