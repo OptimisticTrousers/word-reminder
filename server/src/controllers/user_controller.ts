@@ -74,6 +74,14 @@ export const signup_user = [
 // @access  Private
 export const update_user = [
   // Validate and sanitize fields
+  body("confirmed")
+    .optional()
+    .notEmpty({ ignore_whitespace: true })
+    .withMessage("'confirmed' must be specified.")
+    .bail()
+    .isBoolean()
+    .toBoolean()
+    .withMessage("'confirmed' must be a boolean."),
   body("email")
     .optional()
     .trim()
@@ -174,9 +182,16 @@ export const update_user = [
 
     const sessionUser = req.user;
 
-    const { oldPassword, newPassword, email } = req.body;
+    const { confirmed, oldPassword, newPassword, email } = req.body;
 
     if (sessionUser) {
+      if (confirmed) {
+        const updatedUser = await userQueries.updateById(userId, { confirmed });
+
+        res.status(200).json({ user: updatedUser });
+        return;
+      }
+
       const oldHashedPassword = await bcrypt.hash(oldPassword, Number(SALT));
 
       const user = await userQueries.get({

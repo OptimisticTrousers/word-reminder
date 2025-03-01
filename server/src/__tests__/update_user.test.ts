@@ -192,6 +192,118 @@ describe("update_user", () => {
     });
 
     describe("validation", () => {
+      describe("confirmation", () => {
+        it("calls the functions to confirm user", async () => {
+          const app = express();
+          app.use(express.json());
+          app.use((req, res, next) => {
+            req.user = user;
+            next();
+          });
+          app.put("/api/users/:userId", update_user);
+          const body = {
+            confirmed: true,
+          };
+          const mockUpdateById = jest
+            .spyOn(userQueries, "updateById")
+            .mockResolvedValue({ ...user, confirmed: body.confirmed })
+            .mockName("updateById");
+
+          const response = await request(app)
+            .put(`/api/users/${user.id}`)
+            .set("Accept", "application/json")
+            .send(body);
+
+          expect(response.headers["content-type"]).toMatch(/json/);
+          expect(response.status).toBe(200);
+          expect(response.body).toEqual({
+            user: {
+              ...user,
+              confirmed: body.confirmed,
+              created_at: user.created_at.toISOString(),
+              updated_at: user.updated_at.toISOString(),
+            },
+          });
+          expect(mockUpdateById).toHaveBeenCalledTimes(1);
+          expect(mockUpdateById).toHaveBeenNthCalledWith(1, user.id, {
+            confirmed: body.confirmed,
+          });
+        });
+
+        it("calls the functions to confirm user even when unnecessary fields are provided", async () => {
+          const app = express();
+          app.use(express.json());
+          app.use((req, res, next) => {
+            req.user = user;
+            next();
+          });
+          app.put("/api/users/:userId", update_user);
+          const body = {
+            email: user.email,
+            oldPassword: "password1",
+            newPassword: "password2",
+            newPasswordConfirmation: "password2",
+            confirmed: true,
+          };
+          const mockUpdateById = jest
+            .spyOn(userQueries, "updateById")
+            .mockResolvedValue({ ...user, confirmed: body.confirmed })
+            .mockName("updateById");
+
+          const response = await request(app)
+            .put(`/api/users/${user.id}`)
+            .set("Accept", "application/json")
+            .send(body);
+
+          expect(response.headers["content-type"]).toMatch(/json/);
+          expect(response.status).toBe(200);
+          expect(response.body).toEqual({
+            user: {
+              ...user,
+              confirmed: body.confirmed,
+              created_at: user.created_at.toISOString(),
+              updated_at: user.updated_at.toISOString(),
+            },
+          });
+          expect(mockUpdateById).toHaveBeenCalledTimes(1);
+          expect(mockUpdateById).toHaveBeenNthCalledWith(1, user.id, {
+            confirmed: body.confirmed,
+          });
+        });
+
+        it("returns 400 status when 'confirmation' is not a boolean", async () => {
+          const app = express();
+          app.use(express.json());
+          app.use((req, res, next) => {
+            req.user = user;
+            next();
+          });
+          app.put("/api/users/:userId", update_user);
+          const body = {
+            confirmed: "not a bool",
+          };
+
+          const response = await request(app)
+            .put(`/api/users/${user.id}`)
+            .set("Accept", "application/json")
+            .send(body);
+
+          expect(response.headers["content-type"]).toMatch(/json/);
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            errors: [
+              {
+                location: "body",
+                msg: "'confirmed' must be a boolean.",
+                path: "confirmed",
+                type: "field",
+                value: body.confirmed,
+              },
+            ],
+          });
+        });
+      });
+
       describe("updating email", () => {
         it("returns 400 status code when 'email' and 'newPassword' is provided but 'oldPassword' and 'newPasswordConfirmation' is not", async () => {
           const app = express();
