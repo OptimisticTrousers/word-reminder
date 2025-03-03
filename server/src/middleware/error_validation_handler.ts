@@ -5,7 +5,7 @@ export const errorValidationHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+) => {
   // Extract validation errors from a request.
   const errors: Result<ValidationError> = validationResult(req);
 

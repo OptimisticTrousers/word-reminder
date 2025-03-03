@@ -4,8 +4,6 @@ import request from "supertest";
 
 import { wordQueries } from "../db/word_queries";
 import { validateWordId } from "../middleware/validate_word_id";
-// Import db setup and teardown functionality
-import "../db/test_populatedb";
 
 describe("validateWordId", () => {
   const message = "message";
@@ -20,6 +18,12 @@ describe("validateWordId", () => {
     })
   );
 
+  const wordId = "1";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("returns a 400 status code with the invalid word id message", async () => {
     const response = await request(app)
       .delete("/api/words/bob")
@@ -33,6 +37,12 @@ describe("validateWordId", () => {
   });
 
   it("returns a 404 status code with word not found message", async () => {
+    const mockGetById = jest
+      .spyOn(wordQueries, "getById")
+      .mockImplementation(async () => {
+        return undefined;
+      });
+
     const response = await request(app)
       .delete("/api/words/1")
       .set("Accept", "application/json");
@@ -42,6 +52,8 @@ describe("validateWordId", () => {
     expect(response.body).toEqual({
       message: "Word not found.",
     });
+    expect(mockGetById).toHaveBeenCalledTimes(1);
+    expect(mockGetById).toHaveBeenCalledWith(wordId);
   });
 
   it("calls the following request handler when the word exists and the word id is valid", async () => {
@@ -100,15 +112,21 @@ describe("validateWordId", () => {
       },
     ];
 
-    const newWord = await wordQueries.create({ json });
+    const mockGetById = jest
+      .spyOn(wordQueries, "getById")
+      .mockImplementation(async () => {
+        return { id: wordId, details: json, created_at: new Date() };
+      });
 
     const response = await request(app)
-      .delete(`/api/words/${newWord.id}`)
+      .delete(`/api/words/${wordId}`)
       .set("Accept", "application/json");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       message,
     });
+    expect(mockGetById).toHaveBeenCalledTimes(1);
+    expect(mockGetById).toHaveBeenCalledWith(wordId);
   });
 });

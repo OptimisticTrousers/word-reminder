@@ -13,7 +13,7 @@ const validateAddToDate = (name: string, property: string) => {
     .withMessage(`'${name}.${property}' must be a non-negative integer.`);
 };
 
-const validateOptions = [
+export const validateOptions = [
   errorValidationHandler, // stop here if 'random' is not provided
   body("has_reminder_onload")
     .notEmpty({ ignore_whitespace: true })
@@ -36,12 +36,8 @@ const validateOptions = [
   validateAddToDate("reminder", "months"),
 ];
 
-const validateManualWordReminder = [
+export const validateWordReminder = [
   body("finish")
-    .if((_value, { req }) => {
-      return req.body.auto === false;
-    })
-    .bail()
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'finish' must be specified.")
     .bail()
@@ -52,10 +48,6 @@ const validateManualWordReminder = [
     .isAfter()
     .withMessage("'finish' must come after the current date."),
   body("user_words")
-    .if((_value, { req }) => {
-      return req.body.auto === false;
-    })
-    .bail()
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'user_words' must be specified.")
     .bail()
@@ -64,32 +56,20 @@ const validateManualWordReminder = [
     .withMessage("'user_words' must be an array."),
 ];
 
-export const validateAuto = [
-  body("auto")
+export const validateAutoWordReminder = [
+  body("create_now")
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'auto' must be specified.")
+    .withMessage("'create_now' must be specified.")
     .bail()
     .isBoolean()
     .toBoolean()
-    .withMessage("'auto' must be a boolean."),
-];
-
-export const validateAutoWordReminder = [
-  body("duration")
-    .if((_value, { req }) => {
-      return req.body.auto === true;
-    })
-    .bail(),
+    .withMessage("'create_now' must be a boolean."),
   validateAddToDate("duration", "minutes"),
   validateAddToDate("duration", "hours"),
   validateAddToDate("duration", "days"),
   validateAddToDate("duration", "weeks"),
   validateAddToDate("duration", "months"),
   body("has_learned_words")
-    .if((_value, { req }) => {
-      return req.body.auto === true;
-    })
-    .bail()
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'has_learned_words' must be specified.")
     .bail()
@@ -97,10 +77,6 @@ export const validateAutoWordReminder = [
     .toBoolean()
     .withMessage("'has_learned_words' must be a boolean."),
   body("order")
-    .if((_value, { req }) => {
-      return req.body.auto === true;
-    })
-    .bail()
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'order' must be specified.")
     .bail()
@@ -111,19 +87,10 @@ export const validateAutoWordReminder = [
       )}.`
     ),
   body("word_count")
-    .if((_value, { req }) => {
-      return req.body.auto === true;
-    })
-    .bail()
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'word_count' must be specified.")
     .bail()
     .isInt({ gt: 0 })
     .toInt()
     .withMessage("'word_count' must be a positive integer."),
-];
-
-export const validateWordReminder = [
-  ...validateOptions,
-  ...validateManualWordReminder,
 ];

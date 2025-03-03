@@ -5,7 +5,7 @@ import request from "supertest";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import {
   validateAutoWordReminder,
-  validateAuto,
+  validateOptions,
   validateWordReminder,
 } from "../middleware/validate_word_reminder";
 import { Order } from "common";
@@ -40,113 +40,20 @@ describe("validateWordReminder", () => {
     updated_at: new Date(),
   };
 
-  const app = express();
-  app.use(express.json());
-  app.post(
-    "/api/users/:userId/wordReminders",
-    validateAuto,
-    validateWordReminder,
-    validateAutoWordReminder,
-    errorValidationHandler,
-    asyncHandler(async (req, res, next) => {
-      res.status(200).json({ message });
-    })
-  );
-
   describe("validateOptions", () => {
-    describe("auto", () => {
-      it("returns 400 status code when 'auto' is not provided", async () => {
-        const body = {
-          auto: undefined,
-          finish: new Date(Date.now() + 1000),
-          user_words: [userWord1, userWord2, userWord3],
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
-        };
-
-        const response = await request(app)
-          .post(`/api/users/${userId}/wordReminders`)
-          .set("Accept", "application/json")
-          .send(body);
-
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "body",
-              msg: "'auto' must be specified.",
-              path: "auto",
-              type: "field",
-            },
-          ],
-        });
-      });
-
-      it("returns 400 status code when 'auto' is a not a boolean", async () => {
-        const body = {
-          auto: "string",
-          finish: new Date(Date.now() + 1000),
-          user_words: [userWord1, userWord2, userWord3],
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
-        };
-
-        const response = await request(app)
-          .post(`/api/users/${userId}/wordReminders`)
-          .set("Accept", "application/json")
-          .send(body);
-
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "body",
-              msg: "'auto' must be a boolean.",
-              path: "auto",
-              type: "field",
-              value: "string",
-            },
-          ],
-        });
-      });
-    });
-
     describe("is_active", () => {
       it("returns 400 status code when 'is_active' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateOptions,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          finish: new Date(Date.now() + 1000),
-          auto: false,
-          user_words: [userWord1, userWord2, userWord3],
           is_active: undefined,
           has_reminder_onload: false,
           reminder: {
@@ -154,13 +61,6 @@ describe("validateWordReminder", () => {
             hours: 1,
             days: 0,
             weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
             months: 0,
           },
         };
@@ -185,10 +85,17 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'is_active' is not a boolean", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateOptions,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          finish: new Date(Date.now() + 1000),
-          auto: false,
-          user_words: [userWord1, userWord2, userWord3],
           is_active: "string",
           has_reminder_onload: false,
           reminder: {
@@ -196,13 +103,6 @@ describe("validateWordReminder", () => {
             hours: 1,
             days: 0,
             weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
             months: 0,
           },
         };
@@ -230,10 +130,17 @@ describe("validateWordReminder", () => {
 
     describe("has_reminder_onload", () => {
       it("returns 400 status code when 'has_reminder_onload' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateOptions,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          finish: new Date(Date.now() + 1000),
-          auto: false,
-          user_words: [userWord1, userWord2, userWord3],
           is_active: false,
           has_reminder_onload: undefined,
           reminder: {
@@ -241,13 +148,6 @@ describe("validateWordReminder", () => {
             hours: 1,
             days: 0,
             weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
             months: 0,
           },
         };
@@ -270,10 +170,17 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'has_reminder_onload' is not a boolean", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateOptions,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          finish: new Date(Date.now() + 1000),
-          auto: false,
-          user_words: [userWord1, userWord2, userWord3],
           is_active: false,
           has_reminder_onload: "string",
           reminder: {
@@ -281,13 +188,6 @@ describe("validateWordReminder", () => {
             hours: 1,
             days: 0,
             weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
             months: 0,
           },
         };
@@ -315,20 +215,20 @@ describe("validateWordReminder", () => {
 
     describe("reminder", () => {
       it("returns 400 status code when 'reminder' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateOptions,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          finish: new Date(Date.now() + 1000),
-          auto: false,
-          user_words: [userWord1, userWord2, userWord3],
           is_active: false,
           has_reminder_onload: false,
           reminder: undefined,
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
         };
 
         const response = await request(app)
@@ -375,9 +275,17 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when reminder properties are not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateOptions,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
-          word_count: 7,
           is_active: false,
           has_reminder_onload: false,
           reminder: {
@@ -387,15 +295,6 @@ describe("validateWordReminder", () => {
             weeks: undefined,
             months: undefined,
           },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
-          has_learned_words: false,
-          order: Order.Random,
         };
 
         const response = await request(app)
@@ -442,9 +341,17 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when reminder properties are not positive integers", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateOptions,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
-          word_count: 7,
           is_active: false,
           has_reminder_onload: false,
           reminder: {
@@ -454,15 +361,6 @@ describe("validateWordReminder", () => {
             weeks: -4,
             months: -5,
           },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
-          has_learned_words: false,
-          order: Order.Random,
         };
 
         const response = await request(app)
@@ -513,31 +411,59 @@ describe("validateWordReminder", () => {
         });
       });
     });
+
+    it("the next request handler is called", async () => {
+      const app = express();
+      app.use(express.json());
+      app.post(
+        "/api/users/:userId/wordReminders",
+        validateOptions,
+        errorValidationHandler,
+        asyncHandler(async (req, res, next) => {
+          res.status(200).json({ message });
+        })
+      );
+      const body = {
+        is_active: false,
+        has_reminder_onload: false,
+        reminder: {
+          minutes: 0,
+          hours: 1,
+          days: 0,
+          weeks: 0,
+          months: 0,
+        },
+      };
+
+      const response = await request(app)
+        .post(`/api/users/${userId}/wordReminders`)
+        .set("Accept", "application/json")
+        .send(body);
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        message,
+      });
+    });
   });
 
-  describe("validateManualWordReminder", () => {
+  describe("validateWordReminder", () => {
     describe("finish", () => {
       it("returns 400 status code when 'finish' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
           finish: undefined,
-          auto: false,
           user_words: [userWord1, userWord2, userWord3],
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
         };
 
         const response = await request(app)
@@ -560,26 +486,19 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'finish' is not a date", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
           finish: "string",
-          auto: false,
           user_words: [userWord1, userWord2, userWord3],
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
         };
 
         const response = await request(app)
@@ -603,27 +522,20 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'finish' is before the current date", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const finish = new Date(1);
         const body = {
           finish,
-          auto: false,
           user_words: [userWord1, userWord2, userWord3],
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
         };
 
         const response = await request(app)
@@ -649,26 +561,19 @@ describe("validateWordReminder", () => {
 
     describe("user_words", () => {
       it("returns 400 status code when 'user_words' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
           finish: new Date(Date.now() + 1000),
-          auto: false,
           user_words: undefined,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
         };
 
         const response = await request(app)
@@ -691,26 +596,19 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'user_words' is not an array", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
           finish: new Date(Date.now() + 1000),
-          auto: false,
           user_words: "string",
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
-          duration: {
-            minutes: 0,
-            hours: 0,
-            days: 0,
-            weeks: 1,
-            months: 0,
-          },
         };
 
         const response = await request(app)
@@ -733,23 +631,51 @@ describe("validateWordReminder", () => {
         });
       });
     });
+
+    it("the next request handler is called", async () => {
+      const app = express();
+      app.use(express.json());
+      app.post(
+        "/api/users/:userId/wordReminders",
+        validateWordReminder,
+        errorValidationHandler,
+        asyncHandler(async (req, res, next) => {
+          res.status(200).json({ message });
+        })
+      );
+      const body = {
+        finish: new Date(Date.now() + 1000),
+        user_words: ["1", "2"],
+      };
+
+      const response = await request(app)
+        .post(`/api/users/${userId}/wordReminders`)
+        .set("Accept", "application/json")
+        .send(body);
+
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        message,
+      });
+    });
   });
 
   describe("validateAutoWordReminder", () => {
     describe("word_count", () => {
       it("returns 400 status code when 'word_count' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
-          word_count: undefined,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
+          create_now: true,
           duration: {
             minutes: 0,
             hours: 0,
@@ -759,6 +685,7 @@ describe("validateWordReminder", () => {
           },
           has_learned_words: false,
           order: Order.Random,
+          word_count: undefined,
         };
 
         const response = await request(app)
@@ -781,18 +708,18 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'word_count' is not a number", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
-          word_count: "string",
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
+          create_now: true,
           duration: {
             minutes: 0,
             hours: 0,
@@ -802,6 +729,7 @@ describe("validateWordReminder", () => {
           },
           has_learned_words: false,
           order: Order.Random,
+          word_count: "string",
         };
 
         const response = await request(app)
@@ -827,21 +755,22 @@ describe("validateWordReminder", () => {
 
     describe("duration", () => {
       it("returns 400 status code when 'duration' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
-          word_count: 7,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
+          create_now: false,
           duration: undefined,
           has_learned_words: false,
           order: Order.Random,
+          word_count: 7,
         };
 
         const response = await request(app)
@@ -888,18 +817,19 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when duration properties are not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
+          create_now: false,
           word_count: 7,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
           duration: {
             minutes: "",
             hours: "",
@@ -960,18 +890,19 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when duration properties are not positive integers", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
+          create_now: true,
           word_count: 7,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
           duration: {
             minutes: -1,
             hours: -2,
@@ -1032,20 +963,112 @@ describe("validateWordReminder", () => {
       });
     });
 
-    describe("has_learned_words", () => {
-      it("returns 400 status code when 'has_learned_words' is not provided", async () => {
+    describe("create_now", () => {
+      it("returns 400 status code when 'create_now' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
+          create_now: undefined,
           word_count: 7,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
+          duration: {
             minutes: 0,
-            hours: 1,
+            hours: 0,
             days: 0,
-            weeks: 0,
+            weeks: 1,
             months: 0,
           },
+          has_learned_words: true,
+          order: Order.Random,
+        };
+
+        const response = await request(app)
+          .post(`/api/users/${userId}/wordReminders`)
+          .set("Accept", "application/json")
+          .send(body);
+
+        expect(response.headers["content-type"]).toMatch(/json/);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+          errors: [
+            {
+              location: "body",
+              msg: "'create_now' must be specified.",
+              path: "create_now",
+              type: "field",
+            },
+          ],
+        });
+      });
+
+      it("returns 400 status code when 'create_now' is not a boolean", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
+        const body = {
+          create_now: "string",
+          word_count: 7,
+          duration: {
+            minutes: 0,
+            hours: 0,
+            days: 0,
+            weeks: 1,
+            months: 0,
+          },
+          has_learned_words: false,
+          order: Order.Random,
+        };
+
+        const response = await request(app)
+          .post(`/api/users/${userId}/wordReminders`)
+          .set("Accept", "application/json")
+          .send(body);
+
+        expect(response.headers["content-type"]).toMatch(/json/);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+          errors: [
+            {
+              location: "body",
+              msg: "'create_now' must be a boolean.",
+              path: "create_now",
+              type: "field",
+              value: "string",
+            },
+          ],
+        });
+      });
+    });
+
+    describe("has_learned_words", () => {
+      it("returns 400 status code when 'has_learned_words' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
+        const body = {
+          create_now: true,
+          word_count: 7,
           duration: {
             minutes: 0,
             hours: 0,
@@ -1077,18 +1100,19 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'has_learned_words' is not a boolean", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
+          create_now: true,
           word_count: 7,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
           duration: {
             minutes: 0,
             hours: 0,
@@ -1123,18 +1147,19 @@ describe("validateWordReminder", () => {
 
     describe("order", () => {
       it("returns 400 status code when 'order' is not provided", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
+          create_now: true,
           word_count: 7,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
           duration: {
             minutes: 0,
             hours: 0,
@@ -1166,18 +1191,19 @@ describe("validateWordReminder", () => {
       });
 
       it("returns 400 status code when 'order' is not one of the 'Order' enum values", async () => {
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders",
+          validateAutoWordReminder,
+          errorValidationHandler,
+          asyncHandler(async (req, res, next) => {
+            res.status(200).json({ message });
+          })
+        );
         const body = {
-          auto: true,
+          create_now: true,
           word_count: 7,
-          is_active: false,
-          has_reminder_onload: false,
-          reminder: {
-            minutes: 0,
-            hours: 1,
-            days: 0,
-            weeks: 0,
-            months: 0,
-          },
           duration: {
             minutes: 0,
             hours: 0,
@@ -1211,41 +1237,42 @@ describe("validateWordReminder", () => {
         });
       });
     });
-  });
 
-  it("the next request handler is called", async () => {
-    const body = {
-      auto: true,
-      word_count: 7,
-      is_active: false,
-      has_reminder_onload: false,
-      reminder: {
-        minutes: 0,
-        hours: 1,
-        days: 0,
-        weeks: 0,
-        months: 0,
-      },
-      duration: {
-        minutes: 0,
-        hours: 0,
-        days: 0,
-        weeks: 1,
-        months: 0,
-      },
-      has_learned_words: false,
-      order: Order.Random,
-    };
+    it("the next request handler is called", async () => {
+      const app = express();
+      app.use(express.json());
+      app.post(
+        "/api/users/:userId/wordReminders",
+        validateAutoWordReminder,
+        errorValidationHandler,
+        asyncHandler(async (req, res, next) => {
+          res.status(200).json({ message });
+        })
+      );
+      const body = {
+        create_now: true,
+        word_count: 7,
+        duration: {
+          minutes: 0,
+          hours: 0,
+          days: 0,
+          weeks: 1,
+          months: 0,
+        },
+        has_learned_words: false,
+        order: Order.Random,
+      };
 
-    const response = await request(app)
-      .post(`/api/users/${userId}/wordReminders`)
-      .set("Accept", "application/json")
-      .send(body);
+      const response = await request(app)
+        .post(`/api/users/${userId}/wordReminders`)
+        .set("Accept", "application/json")
+        .send(body);
 
-    expect(response.headers["content-type"]).toMatch(/json/);
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      message,
+      expect(response.headers["content-type"]).toMatch(/json/);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        message,
+      });
     });
   });
 });
