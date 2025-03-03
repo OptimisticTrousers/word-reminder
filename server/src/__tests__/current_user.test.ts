@@ -32,7 +32,6 @@ describe("current_user", () => {
       user: {
         email: user.email,
         confirmed: false,
-        auto: false,
         id: registerResponse.body.user.id,
         created_at: registerResponse.body.user.created_at,
         updated_at: registerResponse.body.user.updated_at,

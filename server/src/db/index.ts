@@ -71,7 +71,6 @@ export const createPopulateDb = function (client: Client) {
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         email VARCHAR ( 255 ) UNIQUE NOT NULL,
         password VARCHAR ( 72 ) NOT NULL,
-        auto BOOLEAN NOT NULL DEFAULT FALSE,
         confirmed BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -110,9 +109,26 @@ export const createPopulateDb = function (client: Client) {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
 
-      CREATE TABLE reminders (
+      CREATE TABLE user_words_word_reminders (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL,
+        user_word_id INTEGER REFERENCES user_words(id) NOT NULL,
+        word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL 
+      );
+
+      CREATE TABLE auto_word_reminders (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        user_id INTEGER REFERENCES users(id) NOT NULL,
+        is_active BOOLEAN NOT NULL,
+        has_reminder_onload BOOLEAN NOT NULL,
+        has_learned_words BOOLEAN NOT NULL,
+        "order" TEXT NOT NULL,
+        word_count INTEGER NOT NULL, 
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE add_to_dates (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         minutes INTEGER NOT NULL, 
         hours INTEGER NOT NULL, 
         days INTEGER NOT NULL, 
@@ -120,10 +136,17 @@ export const createPopulateDb = function (client: Client) {
         months INTEGER NOT NULL
       );
 
-      CREATE TABLE user_words_word_reminders (
+      CREATE TABLE add_to_dates_word_reminders (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        user_word_id INTEGER REFERENCES user_words(id) NOT NULL,
-        word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL 
+        word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL,
+        reminder_id INTEGER REFERENCES add_to_dates(id) NOT NULL
+      );
+
+      CREATE TABLE add_to_dates_auto_word_reminders (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        auto_word_reminder_id INTEGER REFERENCES auto_word_reminders(id) NOT NULL,
+        reminder_id INTEGER REFERENCES add_to_dates(id) NOT NULL,
+        duration_id INTEGER REFERENCES add_to_dates(id) NOT NULL
       );
 
       CREATE TABLE subscriptions (
@@ -134,7 +157,7 @@ export const createPopulateDb = function (client: Client) {
       );
 
       CREATE TABLE tokens (
-        token TEXT PRIMARY KEY ,
+        token TEXT PRIMARY KEY,
         expires_at TIMESTAMP NOT NULL DEFAULT (NOW() + INTERVAL '30 minutes')
       );
 
@@ -158,6 +181,11 @@ export const createPopulateDb = function (client: Client) {
 
       CREATE OR REPLACE TRIGGER set_timestamp
       BEFORE UPDATE ON word_reminders
+      FOR EACH ROW
+      EXECUTE PROCEDURE trigger_set_timestamp();
+
+      CREATE OR REPLACE TRIGGER set_timestamp
+      BEFORE UPDATE ON auto_word_reminders
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
     `;

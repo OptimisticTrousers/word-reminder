@@ -113,7 +113,6 @@ describe("update_word_reminder", () => {
   it("calls the functions to update the word reminder with the user words in it", async () => {
     const body = {
       finish: wordReminder1.finish,
-      auto: false,
       user_words: [userWord1.id, userWord2.id, userWord3.id],
       is_active: false,
       has_reminder_onload: false,

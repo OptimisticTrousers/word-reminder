@@ -236,7 +236,6 @@ describe("login_user", () => {
       user: {
         id: 1,
         confirmed: false,
-        auto: false,
         email: user.email,
         created_at: expect.any(String),
         updated_at: expect.any(String),

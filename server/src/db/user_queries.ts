@@ -5,7 +5,7 @@ import { createQueries } from "./queries";
 
 export const userQueries = (function () {
   const queries = createQueries<User>(
-    ["id", "auto", "email", "confirmed", "created_at", "updated_at"],
+    ["id", "email", "confirmed", "created_at", "updated_at"],
     "users"
   );
   const { columns, db, getById, deleteById, table } = queries;

@@ -27,7 +27,6 @@ describe("signup_user", () => {
     };
     const user = {
       id: "1",
-      auto: false,
       email: body.email,
       confirmed: false,
       created_at: new Date(),

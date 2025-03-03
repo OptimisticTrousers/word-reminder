@@ -63,7 +63,6 @@ describe("validateUserId", () => {
   it("calls the following request handler when the user exists and the user id is valid", async () => {
     const user = {
       id: userId,
-      auto: true,
       email: "bob@gmail.com",
       confirmed: true,
       created_at: new Date(),
