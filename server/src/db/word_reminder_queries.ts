@@ -5,7 +5,7 @@ import { createQueries } from "./queries";
 
 export const wordReminderQueries = (function () {
   const queries = createQueries<WordReminder>(["*"], "word_reminders");
-  const { columns, db, getById, table } = queries;
+  const { columns, db, getById, deleteById, table } = queries;
 
   const create = async (
     wordReminder: WordReminderDbParams
@@ -40,28 +40,14 @@ export const wordReminderQueries = (function () {
     return rows;
   };
 
-  const deleteById = async (id: string): Promise<WordReminder> => {
-    const { rows } = await db.query(
-      `
-    DELETE 
-    FROM ${table}
-    WHERE id = $1
-    RETURNING ${columns};
-      `,
-      [id]
-    );
-
-    return rows[0];
-  };
-
-  const update = async ({
-    id,
-    finish,
-    is_active,
-    has_reminder_onload,
-  }: Omit<WordReminderDbParams, "user_id"> & {
-    id: string;
-  }): Promise<WordReminder> => {
+  const updateById = async (
+    id: string,
+    {
+      finish,
+      is_active,
+      has_reminder_onload,
+    }: Omit<WordReminderDbParams, "user_id">
+  ): Promise<WordReminder> => {
     const { rows }: QueryResult<WordReminder> = await db.query(
       `
     UPDATE ${table}
@@ -78,8 +64,8 @@ export const wordReminderQueries = (function () {
   return {
     create,
     deleteAllByUserId,
-    deleteById,
+    deleteById: deleteById.bind(queries),
     getById: getById.bind(queries),
-    update,
+    updateById,
   };
 })();

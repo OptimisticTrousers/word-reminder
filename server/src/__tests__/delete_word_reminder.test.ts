@@ -3,7 +3,8 @@ import request from "supertest";
 
 import { delete_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
-import { reminderQueries } from "../db/reminder_queries";
+import { wordReminderQueries } from "../db/word_reminder_queries";
+import { addToDatesWordRemindersQueries } from "../db/add_to_dates_word_reminders_queries";
 
 describe("delete_word_reminder", () => {
   const app = express();
@@ -69,19 +70,26 @@ describe("delete_word_reminder", () => {
     },
   ];
 
+  const reminderId = "1";
+
   const deleteAllByWordReminderIdMock = jest
     .spyOn(userWordsWordRemindersQueries, "deleteAllByWordReminderId")
     .mockImplementation(async () => {
       return deletedUserWordsWordReminders;
     });
   const deleteByWordReminderIdMock = jest
-    .spyOn(reminderQueries, "deleteByWordReminderId")
+    .spyOn(addToDatesWordRemindersQueries, "deleteByWordReminderId")
     .mockImplementation(async () => {
       return {
-        ...wordReminder1.reminder,
+        reminder_id: reminderId,
         id: "1",
         word_reminder_id: wordReminder1.id,
       };
+    });
+  const deleteByIdMock = jest
+    .spyOn(wordReminderQueries, "deleteById")
+    .mockImplementation(async () => {
+      return wordReminder1;
     });
 
   beforeEach(() => {
@@ -96,10 +104,16 @@ describe("delete_word_reminder", () => {
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      reminders: {
-        ...wordReminder1.reminder,
+      addToDateWordReminder: {
         id: "1",
         word_reminder_id: wordReminder1.id,
+        reminder_id: reminderId,
+      },
+      wordReminder: {
+        ...wordReminder1,
+        updated_at: wordReminder1.updated_at.toISOString(),
+        created_at: wordReminder1.created_at.toISOString(),
+        finish: wordReminder1.finish.toISOString(),
       },
       userWordsWordReminders: [
         {
@@ -131,5 +145,7 @@ describe("delete_word_reminder", () => {
     );
     expect(deleteByWordReminderIdMock).toHaveBeenCalledTimes(1);
     expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder1.id);
+    expect(deleteByIdMock).toHaveBeenCalledTimes(1);
+    expect(deleteByIdMock).toHaveBeenCalledWith(wordReminder1.id);
   });
 });

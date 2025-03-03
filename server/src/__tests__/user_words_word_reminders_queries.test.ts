@@ -5,7 +5,8 @@ import { wordReminderQueries } from "../db/word_reminder_queries";
 import { wordQueries } from "../db/word_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
-import { reminderQueries } from "../db/reminder_queries";
+import { addToDateQueries } from "../db/add_to_date_queries";
+import { addToDatesWordRemindersQueries } from "../db/add_to_dates_word_reminders_queries";
 
 describe("userWordsWordRemindersQueries", () => {
   const sampleUser1 = {
@@ -335,19 +336,22 @@ describe("userWordsWordRemindersQueries", () => {
         learned: false,
       });
       const newWordReminder1 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
+      const addToDate1 = await addToDateQueries.create(reminder1);
+      await addToDatesWordRemindersQueries.create({
         word_reminder_id: newWordReminder1.id,
+        reminder_id: addToDate1.id,
       });
       const newWordReminder2 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
+      const addToDate2 = await addToDateQueries.create(reminder1);
+      await addToDatesWordRemindersQueries.create({
         word_reminder_id: newWordReminder2.id,
+        reminder_id: addToDate2.id,
       });
       const newWordReminder3 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
+      const addToDate3 = await addToDateQueries.create(reminder1);
+      await addToDatesWordRemindersQueries.create({
         word_reminder_id: newWordReminder3.id,
+        reminder_id: addToDate3.id,
       });
 
       await userWordsWordRemindersQueries.create({
@@ -470,23 +474,26 @@ describe("userWordsWordRemindersQueries", () => {
         const newWordReminder1 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate1 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder1.id,
+          reminder_id: addToDate1.id,
         });
         const newWordReminder2 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate2 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder2.id,
+          reminder_id: addToDate2.id,
         });
         const newWordReminder3 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate3 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder3.id,
+          reminder_id: addToDate3.id,
         });
 
         await userWordsWordRemindersQueries.create({
@@ -607,23 +614,26 @@ describe("userWordsWordRemindersQueries", () => {
           const newWordReminder1 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate1 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder1.id,
+            reminder_id: addToDate1.id,
           });
           const newWordReminder2 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate2 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder2.id,
+            reminder_id: addToDate2.id,
           });
           const newWordReminder3 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate3 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder3.id,
+            reminder_id: addToDate3.id,
           });
 
           await userWordsWordRemindersQueries.create({
@@ -708,23 +718,26 @@ describe("userWordsWordRemindersQueries", () => {
           const newWordReminder1 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate1 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder1.id,
+            reminder_id: addToDate1.id,
           });
           const newWordReminder2 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate2 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder2.id,
+            reminder_id: addToDate2.id,
           });
           const newWordReminder3 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate3 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder3.id,
+            reminder_id: addToDate3.id,
           });
 
           await userWordsWordRemindersQueries.create({
@@ -805,16 +818,18 @@ describe("userWordsWordRemindersQueries", () => {
           const newWordReminder1 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate1 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder1.id,
+            reminder_id: addToDate1.id,
           });
           const newWordReminder2 = await wordReminderQueries.create(
             wordReminder1
           );
-          await reminderQueries.create({
-            ...reminder1,
+          const addToDate2 = await addToDateQueries.create(reminder1);
+          await addToDatesWordRemindersQueries.create({
             word_reminder_id: newWordReminder2.id,
+            reminder_id: addToDate2.id,
           });
 
           await userWordsWordRemindersQueries.create({
@@ -902,23 +917,26 @@ describe("userWordsWordRemindersQueries", () => {
         const newWordReminder1 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate1 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder1.id,
+          reminder_id: addToDate1.id,
         });
         const newWordReminder2 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate2 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder2.id,
+          reminder_id: addToDate2.id,
         });
         const newWordReminder3 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate3 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder3.id,
+          reminder_id: addToDate3.id,
         });
 
         await userWordsWordRemindersQueries.create({
@@ -1036,23 +1054,26 @@ describe("userWordsWordRemindersQueries", () => {
         const newWordReminder1 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate1 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder1.id,
+          reminder_id: addToDate1.id,
         });
         const newWordReminder2 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate2 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder2.id,
+          reminder_id: addToDate2.id,
         });
         const newWordReminder3 = await wordReminderQueries.create(
           wordReminder1
         );
-        await reminderQueries.create({
-          ...reminder1,
+        const addToDate3 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
           word_reminder_id: newWordReminder3.id,
+          reminder_id: addToDate3.id,
         });
 
         await userWordsWordRemindersQueries.create({
@@ -1085,13 +1106,13 @@ describe("userWordsWordRemindersQueries", () => {
           wordReminders: [
             {
               id: 3,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1104,13 +1125,13 @@ describe("userWordsWordRemindersQueries", () => {
             },
             {
               id: 2,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1123,13 +1144,13 @@ describe("userWordsWordRemindersQueries", () => {
             },
             {
               id: 1,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1167,21 +1188,30 @@ describe("userWordsWordRemindersQueries", () => {
           word_id: milieuWord.id,
           learned: false,
         });
-      const newWordReminder1 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
-        word_reminder_id: newWordReminder1.id,
-      });
-      const newWordReminder2 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
-        word_reminder_id: newWordReminder2.id,
-      });
-      const newWordReminder3 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
-        word_reminder_id: newWordReminder3.id,
-      });
+        const newWordReminder1 = await wordReminderQueries.create(
+          wordReminder1
+        );
+        const addToDate1 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
+          word_reminder_id: newWordReminder1.id,
+          reminder_id: addToDate1.id,
+        });
+        const newWordReminder2 = await wordReminderQueries.create(
+          wordReminder1
+        );
+        const addToDate2 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
+          word_reminder_id: newWordReminder2.id,
+          reminder_id: addToDate2.id,
+        });
+        const newWordReminder3 = await wordReminderQueries.create(
+          wordReminder1
+        );
+        const addToDate3 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
+          word_reminder_id: newWordReminder3.id,
+          reminder_id: addToDate3.id,
+        });
 
         await userWordsWordRemindersQueries.create({
           user_word_id: clemencyUserWord.id,
@@ -1213,13 +1243,13 @@ describe("userWordsWordRemindersQueries", () => {
           wordReminders: [
             {
               id: 1,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1232,13 +1262,13 @@ describe("userWordsWordRemindersQueries", () => {
             },
             {
               id: 2,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1251,13 +1281,13 @@ describe("userWordsWordRemindersQueries", () => {
             },
             {
               id: 3,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1295,21 +1325,30 @@ describe("userWordsWordRemindersQueries", () => {
           word_id: milieuWord.id,
           learned: false,
         });
-      const newWordReminder1 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
-        word_reminder_id: newWordReminder1.id,
-      });
-      const newWordReminder2 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
-        word_reminder_id: newWordReminder2.id,
-      });
-      const newWordReminder3 = await wordReminderQueries.create(wordReminder1);
-      await reminderQueries.create({
-        ...reminder1,
-        word_reminder_id: newWordReminder3.id,
-      });
+        const newWordReminder1 = await wordReminderQueries.create(
+          wordReminder1
+        );
+        const addToDate1 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
+          word_reminder_id: newWordReminder1.id,
+          reminder_id: addToDate1.id,
+        });
+        const newWordReminder2 = await wordReminderQueries.create(
+          wordReminder1
+        );
+        const addToDate2 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
+          word_reminder_id: newWordReminder2.id,
+          reminder_id: addToDate2.id,
+        });
+        const newWordReminder3 = await wordReminderQueries.create(
+          wordReminder1
+        );
+        const addToDate3 = await addToDateQueries.create(reminder1);
+        await addToDatesWordRemindersQueries.create({
+          word_reminder_id: newWordReminder3.id,
+          reminder_id: addToDate3.id,
+        });
 
         await userWordsWordRemindersQueries.create({
           user_word_id: clemencyUserWord.id,
@@ -1341,13 +1380,13 @@ describe("userWordsWordRemindersQueries", () => {
           wordReminders: [
             {
               id: 3,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1360,13 +1399,13 @@ describe("userWordsWordRemindersQueries", () => {
             },
             {
               id: 2,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,
@@ -1379,13 +1418,13 @@ describe("userWordsWordRemindersQueries", () => {
             },
             {
               id: 1,
-            reminder: {
-              minutes: reminder1.minutes,
-              hours: reminder1.hours,
-              days: reminder1.days,
-              weeks: reminder1.weeks,
-              months: reminder1.months,
-            },
+              reminder: {
+                minutes: reminder1.minutes,
+                hours: reminder1.hours,
+                days: reminder1.days,
+                weeks: reminder1.weeks,
+                months: reminder1.months,
+              },
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
               finish: wordReminder1.finish,

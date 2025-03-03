@@ -61,7 +61,8 @@ export const userWordsWordRemindersQueries = (function () {
       `
     DELETE FROM ${table}
     USING user_words
-    WHERE user_words.id = ${table}.user_word_id AND user_words.user_id = $1
+    WHERE user_words.id = ${table}.user_word_id 
+    AND user_words.user_id = $1
     RETURNING ${table}.id, user_word_id, word_reminder_id;
       `,
       [user_id]
@@ -122,11 +123,11 @@ export const userWordsWordRemindersQueries = (function () {
     SELECT word_reminders.id,
            COALESCE(
             JSONB_BUILD_OBJECT(
-                'minutes', MAX(reminders.minutes),
-                'hours', MAX(reminders.hours),
-                'days', MAX(reminders.days),
-                'weeks', MAX(reminders.weeks),
-                'months', MAX(reminders.months)
+                'minutes', MAX(add_to_dates.minutes),
+                'hours', MAX(add_to_dates.hours),
+                'days', MAX(add_to_dates.days),
+                'weeks', MAX(add_to_dates.weeks),
+                'months', MAX(add_to_dates.months)
             ),  '{}'
            ) AS reminder,
            word_reminders.is_active,
@@ -145,8 +146,10 @@ export const userWordsWordRemindersQueries = (function () {
     ON words.id = user_words.word_id
     JOIN word_reminders
     ON word_reminders.id = ${table}.word_reminder_id
-    JOIN reminders
-    ON reminders.word_reminder_id = ${table}.word_reminder_id
+    JOIN add_to_dates_word_reminders
+    ON add_to_dates_word_reminders.word_reminder_id = ${table}.word_reminder_id
+    JOIN add_to_dates
+    ON add_to_dates.id = add_to_dates_word_reminders.reminder_id
       `,
       `
     WHERE word_reminders.user_id = $1
@@ -203,5 +206,11 @@ export const userWordsWordRemindersQueries = (function () {
     return result;
   };
 
-  return { create, deleteAllByUserId, deleteAllByWordReminderId, getByUserId };
+  return {
+    create,
+    get,
+    deleteAllByUserId,
+    deleteAllByWordReminderId,
+    getByUserId,
+  };
 })();

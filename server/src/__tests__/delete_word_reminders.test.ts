@@ -4,7 +4,7 @@ import request from "supertest";
 import { delete_word_reminders } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
-import { reminderQueries } from "../db/reminder_queries";
+import { addToDatesWordRemindersQueries } from "../db/add_to_dates_word_reminders_queries";
 
 describe("delete_word_reminders", () => {
   const app = express();
@@ -59,6 +59,8 @@ describe("delete_word_reminders", () => {
     userWordsWordReminder3,
   ];
 
+  const reminderId = "1";
+
   const deleteAllByUserIdUserWordsWordRemindersMock = jest
     .spyOn(userWordsWordRemindersQueries, "deleteAllByUserId")
     .mockImplementation(async () => {
@@ -70,11 +72,11 @@ describe("delete_word_reminders", () => {
       return wordReminders;
     });
   const deleteAllByUserIdMock = jest
-    .spyOn(reminderQueries, "deleteAllByUserId")
+    .spyOn(addToDatesWordRemindersQueries, "deleteAllByUserId")
     .mockImplementation(async () => {
       return [
         {
-          ...wordReminder1.reminder,
+          reminder_id: reminderId,
           id: "1",
           word_reminder_id: wordReminder1.id,
         },
@@ -96,7 +98,7 @@ describe("delete_word_reminders", () => {
       userWordsWordReminders,
       reminders: [
         {
-          ...wordReminder1.reminder,
+          reminder_id: reminderId,
           id: "1",
           word_reminder_id: wordReminder1.id,
         },

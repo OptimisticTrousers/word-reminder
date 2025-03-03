@@ -4,7 +4,7 @@ import request from "supertest";
 import { update_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
-import { reminderQueries } from "../db/reminder_queries";
+import { addToDatesWordRemindersQueries } from "../db/add_to_dates_word_reminders_queries";
 
 describe("update_word_reminder", () => {
   const sampleUser1 = {
@@ -55,6 +55,7 @@ describe("update_word_reminder", () => {
     created_at: new Date(),
     updated_at: new Date(),
   };
+  const reminderId = "1";
   const reminder1 = {
     minutes: 0,
     hours: 2,
@@ -76,7 +77,7 @@ describe("update_word_reminder", () => {
     });
 
   const wordReminderUpdateMock = jest
-    .spyOn(wordReminderQueries, "update")
+    .spyOn(wordReminderQueries, "updateById")
     .mockImplementation(async () => {
       return wordReminder1;
     });
@@ -88,9 +89,14 @@ describe("update_word_reminder", () => {
     });
 
   const updateByWordReminderIdMock = jest
-    .spyOn(reminderQueries, "updateByWordReminderId")
+    .spyOn(addToDatesWordRemindersQueries, "updateByWordReminderId")
     .mockImplementation(async () => {
-      return { ...reminder1, id: "1", word_reminder_id: wordReminder1.id };
+      return {
+        ...reminder1,
+        id: "1",
+        word_reminder_id: wordReminder1.id,
+        reminder_id: reminderId,
+      };
     });
 
   const app = express();
@@ -124,15 +130,13 @@ describe("update_word_reminder", () => {
     expect(response.body).toEqual({
       wordReminder: {
         ...wordReminder1,
-        reminder: { ...reminder1, id: "1", word_reminder_id: "1" },
         finish: wordReminder1.finish.toISOString(),
         created_at: wordReminder1.created_at.toISOString(),
         updated_at: wordReminder1.updated_at.toISOString(),
       },
     });
     expect(wordReminderUpdateMock).toHaveBeenCalledTimes(1);
-    expect(wordReminderUpdateMock).toHaveBeenCalledWith({
-      id: wordReminder1.id,
+    expect(wordReminderUpdateMock).toHaveBeenCalledWith(wordReminder1.id, {
       is_active: body.is_active,
       has_reminder_onload: body.has_reminder_onload,
       finish: wordReminder1.finish.toISOString(),

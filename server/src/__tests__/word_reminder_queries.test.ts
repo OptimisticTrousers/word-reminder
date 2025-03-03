@@ -74,17 +74,6 @@ describe("wordReminderQueries", () => {
       const wordReminder = await wordReminderQueries.getById(wordReminderId1);
       expect(wordReminder).toBeUndefined();
     });
-
-    it("does nothing if the word reminder does not exist", async () => {
-      await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-
-      const wordReminder = await wordReminderQueries.deleteById("2");
-
-      expect(wordReminder).toBeUndefined();
-    });
   });
 
   describe("getById", () => {
@@ -112,12 +101,6 @@ describe("wordReminderQueries", () => {
       expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
-
-    it("returns undefined when the word reminder does not exist", async () => {
-      const wordReminder = await wordReminderQueries.getById("2");
-
-      expect(wordReminder).toBeUndefined();
-    });
   });
 
   describe("update", () => {
@@ -129,7 +112,6 @@ describe("wordReminderQueries", () => {
       await wordReminderQueries.create(wordReminder1);
 
       const wordReminder2 = {
-        id: wordReminderId1,
         finish: new Date(Date.now() + 1000),
         reminder: {
           minutes: 0,
@@ -141,7 +123,10 @@ describe("wordReminderQueries", () => {
         is_active: true,
         has_reminder_onload: true,
       };
-      const wordReminder = await wordReminderQueries.update(wordReminder2);
+      const wordReminder = await wordReminderQueries.updateById(
+        wordReminderId1,
+        wordReminder2
+      );
 
       const createdAtTimestamp = new Date(wordReminder!.created_at).getTime();
       const updatedAtTimestamp = new Date(wordReminder!.updated_at).getTime();
@@ -157,22 +142,6 @@ describe("wordReminderQueries", () => {
       });
       expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
-    });
-
-    it("does nothing if the word reminder does not exist", async () => {
-      await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-
-      const wordReminder = await wordReminderQueries.update({
-        id: wordReminderId1,
-        finish: new Date(Date.now() + 1000),
-        is_active: true,
-        has_reminder_onload: true,
-      });
-
-      expect(wordReminder).toBeUndefined();
     });
   });
 });

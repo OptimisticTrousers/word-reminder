@@ -4,115 +4,67 @@ import {
   Result,
   userWordsWordRemindersQueries,
 } from "../db/user_words_word_reminders_queries";
-import { userWordQueries } from "../db/user_word_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { dateAdd } from "../utils/date";
-import { UserWord } from "common";
-import { reminderQueries } from "../db/reminder_queries";
+import { addToDateQueries } from "../db/add_to_date_queries";
+import { createWordReminder } from "../utils/word_reminder";
+import { addToDatesWordRemindersQueries } from "../db/add_to_dates_word_reminders_queries";
+import { AddToDatesWordReminder } from "common";
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders
 // @access Private
-export const create_word_reminder = [
-  errorValidationHandler,
-  asyncHandler(async (req, res) => {
-    const { userId } = req.params;
-    const { is_active, has_reminder_onload, reminder, auto } = req.body;
+export const create_word_reminder = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const { is_active, has_reminder_onload, reminder, finish, user_words } =
+    req.body;
 
-    const duration = req.body.duration;
-    const has_learned_words = req.body.has_learned_words;
-    const word_count = req.body.word_count;
-    const order = req.body.order;
+  let addToReminder = dateAdd(new Date(), "minutes", reminder.minutes);
+  addToReminder = dateAdd(addToReminder, "hours", reminder.hours);
+  addToReminder = dateAdd(addToReminder, "days", reminder.days);
+  addToReminder = dateAdd(addToReminder, "weeks", reminder.weeks);
+  addToReminder = dateAdd(addToReminder, "months", reminder.months);
 
-    let addToReminder = dateAdd(new Date(), "minutes", reminder.minutes);
-    addToReminder = dateAdd(addToReminder, "hours", reminder.hours);
-    addToReminder = dateAdd(addToReminder, "days", reminder.days);
-    addToReminder = dateAdd(addToReminder, "weeks", reminder.weeks);
-    addToReminder = dateAdd(addToReminder, "months", reminder.months);
-    let newReminder;
+  const wordReminder = await createWordReminder({
+    user_id: userId,
+    is_active,
+    has_reminder_onload,
+    reminder,
+    finish,
+    user_words,
+  });
 
-    if (auto) {
-      let addToDuration = dateAdd(new Date(), "minutes", duration.minutes);
-      addToDuration = dateAdd(addToDuration, "hours", duration.hours);
-      addToDuration = dateAdd(addToDuration, "days", duration.days);
-      addToDuration = dateAdd(addToDuration, "weeks", duration.weeks);
-      addToDuration = dateAdd(addToDuration, "months", duration.months);
-      // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
-      const randomUserWords = await userWordQueries.getUserWords(userId, {
-        count: word_count,
-        learned: has_learned_words,
-        order,
-      });
-      const wordReminder = await wordReminderQueries.create({
-        user_id: userId,
-        is_active: is_active,
-        has_reminder_onload: has_reminder_onload,
-        finish: addToDuration,
-      });
-      newReminder = await reminderQueries.create({
-        ...reminder,
-        word_reminder_id: wordReminder.id,
-      });
-      randomUserWords.forEach(async (word: UserWord) => {
-        await userWordsWordRemindersQueries.create({
-          user_word_id: word.id,
-          word_reminder_id: wordReminder.id,
-        });
-      });
-
-      res.status(200).json({
-        wordReminder: {
-          ...wordReminder,
-          reminder: newReminder,
-        },
-      });
-      return;
-    }
-
-    const finish = req.body.finish;
-    const user_words = req.body.user_words;
-    const wordReminder = await wordReminderQueries.create({
-      user_id: userId,
-      is_active: is_active,
-      has_reminder_onload: has_reminder_onload,
-      finish,
-    });
-    newReminder = await reminderQueries.create({
-      ...reminder,
-      word_reminder_id: wordReminder.id,
-    });
-    user_words.forEach(async (user_word_id: string) => {
-      await userWordsWordRemindersQueries.create({
-        user_word_id: user_word_id,
-        word_reminder_id: wordReminder.id,
-      });
-    });
-
-    res.status(200).json({
-      wordReminder: {
-        ...wordReminder,
-        reminder: newReminder,
-      },
-    });
-  }),
-];
+  res.status(200).json({
+    wordReminder,
+  });
+});
 
 // @desc    Delete all of the user's word reminders
 // @route   DELETE /api/users/:userId/wordReminders
 // @access  Private
 export const delete_word_reminders = asyncHandler(async (req, res) => {
-  const userId: string = req.params.userId;
-  const deletedReminders = await reminderQueries.deleteAllByUserId(userId);
+  const { userId } = req.params;
+  const deletedAddToDateWordReminders =
+    await addToDatesWordRemindersQueries.deleteAllByUserId(userId);
+
+  deletedAddToDateWordReminders.forEach(
+    async (addToDateWordReminder: AddToDatesWordReminder) => {
+      await addToDateQueries.deleteById(addToDateWordReminder.reminder_id);
+    }
+  );
+
   const deletedUserWordsWordReminders =
     await userWordsWordRemindersQueries.deleteAllByUserId(userId);
+
   const deletedWordReminders = await wordReminderQueries.deleteAllByUserId(
     userId
   );
+
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
     wordReminders: deletedWordReminders,
-    reminders: deletedReminders,
+    reminders: deletedAddToDateWordReminders,
   });
 });
 
@@ -120,17 +72,24 @@ export const delete_word_reminders = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:userId/wordReminders/:wordReminderId
 // @access  Private
 export const delete_word_reminder = asyncHandler(async (req, res) => {
-  const wordReminderId: string = req.params.wordReminderId;
-  const deletedReminders = await reminderQueries.deleteByWordReminderId(
-    wordReminderId
-  );
+  const { wordReminderId } = req.params;
+
+  const deletedAddToDateWordReminder =
+    await addToDatesWordRemindersQueries.deleteByWordReminderId(wordReminderId);
+
   const deletedUserWordsWordReminders =
     await userWordsWordRemindersQueries.deleteAllByWordReminderId(
       wordReminderId
     );
+
+  const deletedWordReminder = await wordReminderQueries.deleteById(
+    wordReminderId
+  );
+
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
-    reminders: deletedReminders,
+    addToDateWordReminder: deletedAddToDateWordReminder,
+    wordReminder: deletedWordReminder,
   });
 });
 
@@ -138,9 +97,21 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId/wordReminders/:wordReminderId
 // @access  Private
 export const get_word_reminder = asyncHandler(async (req, res) => {
-  const wordReminderId: string = req.params.wordReminderId;
+  const { userId, wordReminderId } = req.params;
   const wordReminder = await wordReminderQueries.getById(wordReminderId);
-  res.status(200).json({ wordReminder });
+
+  const reminder = await addToDatesWordRemindersQueries.getByWordReminderId(
+    wordReminderId
+  );
+
+  const userWords = await userWordsWordRemindersQueries.get({
+    word_reminder_id: wordReminderId,
+    user_word_id: userId,
+  });
+
+  res.status(200).json({
+    wordReminder: { ...wordReminder, reminder, user_words: userWords },
+  });
 });
 
 // @desc Update a word reminder
@@ -159,19 +130,21 @@ export const update_word_reminder = [
     addToReminder = dateAdd(addToReminder, "weeks", reminder.weeks);
     addToReminder = dateAdd(addToReminder, "months", reminder.months);
 
-    const updatedReminder = await reminderQueries.updateByWordReminderId(
-      wordReminderId,
-      reminder
-    );
-    const wordReminder = await wordReminderQueries.update({
-      id: wordReminderId,
+    const wordReminder = await wordReminderQueries.updateById(wordReminderId, {
       is_active: is_active,
       has_reminder_onload: has_reminder_onload,
       finish,
     });
+
+    await addToDatesWordRemindersQueries.updateByWordReminderId(
+      wordReminderId,
+      reminder
+    );
+
     await userWordsWordRemindersQueries.deleteAllByWordReminderId(
       wordReminderId
     );
+
     user_words.forEach(async (user_word_id: string) => {
       await userWordsWordRemindersQueries.create({
         user_word_id: user_word_id,
@@ -180,10 +153,7 @@ export const update_word_reminder = [
     });
 
     res.status(200).json({
-      wordReminder: {
-        ...wordReminder,
-        reminder: updatedReminder,
-      },
+      wordReminder,
     });
   }),
 ];
