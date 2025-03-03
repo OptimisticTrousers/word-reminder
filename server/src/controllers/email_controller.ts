@@ -73,30 +73,3 @@ export const send_email = [
     res.status(200).json({ info });
   }),
 ];
-
-// @desc Verifies a token sent by email
-// @route POST /api/emails/:token
-// @access Private
-export const verify_email = asyncHandler(async (req, res) => {
-  const userId = req.params.userId;
-  const token = req.params.token;
-  const isValidToken = await tokenQueries.verify(token);
-
-  if (!isValidToken) {
-    res.status(302).redirect(`${FRONTEND_URL}/failed-verification`);
-    return;
-  }
-
-  const user = await userQueries.getById(userId);
-  if (user!.confirmed === false) {
-    await userQueries.updateById(userId, { confirmed: true });
-    res.status(302).redirect(`${FRONTEND_URL}/users/${userId}/confirmation`);
-    return;
-  }
-
-  await tokenQueries.deleteAll([token]);
-  res
-    .status(302)
-    .redirect(`${FRONTEND_URL}/users/${userId}/${FRONTEND_VERIFICATION}`);
-  return;
-});
