@@ -123,7 +123,10 @@ describe("UpdateWordReminderModal component", () => {
                   <NotificationProvider>
                     <QueryClientProvider client={queryClient}>
                       <UpdateWordReminderModal
-                        wordReminder={wordReminder}
+                        wordReminder={{
+                          ...wordReminder,
+                          reminder: { ...wordReminder.reminder, id: "1" },
+                        }}
                         searchParams={searchParams}
                         toggleModal={toggleModal}
                       />

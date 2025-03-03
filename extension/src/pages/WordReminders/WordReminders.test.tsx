@@ -100,11 +100,11 @@ describe("WordReminders component", () => {
 
   const wordReminder1 = {
     id: "1",
-    auto: false,
     has_reminder_onload: true,
     is_active: true,
     user_id: testUser.id,
     reminder: {
+      id: "1",
       minutes: 0,
       hours: 2,
       days: 0,
@@ -119,11 +119,11 @@ describe("WordReminders component", () => {
 
   const wordReminder2 = {
     id: "2",
-    auto: false,
     has_reminder_onload: true,
     is_active: true,
     user_id: testUser.id,
     reminder: {
+      id: "1",
       minutes: 0,
       hours: 2,
       days: 0,

@@ -2,6 +2,7 @@ import {
   WordReminder as IWordReminder,
   UserWord as IUserWord,
   Word,
+  AddToDate,
 } from "common";
 import CSSModules from "react-css-modules";
 
@@ -14,7 +15,10 @@ import { addToDateToString } from "../../../utils/date/date";
 
 export interface Props {
   searchParams: URLSearchParams;
-  wordReminder: IWordReminder & { user_words: (IUserWord & Word)[] };
+  wordReminder: IWordReminder & {
+    user_words: (IUserWord & Word)[];
+    reminder: AddToDate;
+  };
 }
 
 export const WordReminder = CSSModules(

@@ -164,6 +164,7 @@ describe("wordReminder component", () => {
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
       reminder: {
+        id: "1",
         minutes: 0,
         hours: 2,
         days: 0,
@@ -223,6 +224,7 @@ describe("wordReminder component", () => {
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
       reminder: {
+        id: "1",
         minutes: 0,
         hours: 0,
         days: 0,
@@ -255,6 +257,7 @@ describe("wordReminder component", () => {
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
       reminder: {
+        id: "1",
         minutes: 0,
         hours: 2,
         days: 0,
@@ -289,6 +292,7 @@ describe("wordReminder component", () => {
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
       reminder: {
+        id: "1",
         minutes: 0,
         hours: 2,
         days: 0,
@@ -324,6 +328,7 @@ describe("wordReminder component", () => {
         user_id: sampleUser1.id,
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
         reminder: {
+          id: "1",
           minutes: 0,
           hours: 2,
           days: 0,
@@ -384,6 +389,7 @@ describe("wordReminder component", () => {
       user_id: sampleUser1.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
       reminder: {
+        id: "1",
         minutes: 0,
         hours: 2,
         days: 0,

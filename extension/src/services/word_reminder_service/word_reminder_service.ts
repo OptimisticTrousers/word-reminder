@@ -1,4 +1,4 @@
-import { AutoWordReminderParams, ManualWordReminderParams } from "common";
+import { ManualWordReminderParams } from "common";
 
 import { service, Params } from "../service";
 
@@ -29,7 +29,7 @@ export const wordReminderService = (function (service) {
     body,
   }: {
     userId: string;
-    body: ManualWordReminderParams | AutoWordReminderParams;
+    body: Omit<ManualWordReminderParams, "user_id">;
   }) {
     return post({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
@@ -51,7 +51,7 @@ export const wordReminderService = (function (service) {
   }: {
     userId: string;
     wordReminderId: string;
-    body: Omit<ManualWordReminderParams, "auto">;
+    body: Omit<ManualWordReminderParams, "user_id">;
   }) {
     return put({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminderId}`,

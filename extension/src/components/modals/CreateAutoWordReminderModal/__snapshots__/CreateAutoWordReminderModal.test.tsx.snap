@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AutoCreateWordReminderModal component > renders form with all inputs 1`] = `
+exports[`CreateAutoWordReminderModal component > renders form with all inputs 1`] = `
 <DocumentFragment>
   <div>
     <h2
@@ -16,7 +16,7 @@ exports[`AutoCreateWordReminderModal component > renders form with all inputs 1`
     <div>
       <form
         action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
-        class="_modal__form_1a29e7"
+        class="_modal__form_42f588"
       >
         <fieldset
           class="_add-to-date_52612a"
@@ -237,16 +237,16 @@ exports[`AutoCreateWordReminderModal component > renders form with all inputs 1`
           </div>
         </fieldset>
         <div
-          class="_modal__control_1a29e7"
+          class="_modal__control_42f588"
         >
           <label
-            class="_modal__label_1a29e7"
+            class="_modal__label_42f588"
             for="word_count"
           >
             Word Count
           </label>
           <input
-            class="_modal__input_1a29e7"
+            class="_modal__input_42f588"
             id="word_count"
             max="99"
             name="word_count"
@@ -255,109 +255,109 @@ exports[`AutoCreateWordReminderModal component > renders form with all inputs 1`
           />
         </div>
         <fieldset
-          class="_modal__fieldset_1a29e7"
+          class="_modal__fieldset_42f588"
         >
           <legend
-            class="_modal__legend_1a29e7"
+            class="_modal__legend_42f588"
           >
             Options
           </legend>
           <div
-            class="_modal__control_1a29e7"
+            class="_modal__control_42f588"
           >
             <label
-              class="_modal__label_1a29e7"
+              class="_modal__label_42f588"
               for="create_now"
             >
               Create Now
             </label>
             <input
               checked=""
-              class="_modal__input_1a29e7"
+              class="_modal__input_42f588"
               id="create_now"
               name="create_now"
               type="checkbox"
             />
           </div>
           <div
-            class="_modal__control_1a29e7"
+            class="_modal__control_42f588"
           >
             <label
-              class="_modal__label_1a29e7"
+              class="_modal__label_42f588"
               for="is_active"
             >
               Is Active
             </label>
             <input
               checked=""
-              class="_modal__input_1a29e7"
+              class="_modal__input_42f588"
               id="is_active"
               name="is_active"
               type="checkbox"
             />
           </div>
           <div
-            class="_modal__control_1a29e7"
+            class="_modal__control_42f588"
           >
             <label
-              class="_modal__label_1a29e7"
+              class="_modal__label_42f588"
               for="has_reminder_onload"
             >
               Has Reminder Onload
             </label>
             <input
               checked=""
-              class="_modal__input_1a29e7"
+              class="_modal__input_42f588"
               id="has_reminder_onload"
               name="has_reminder_onload"
               type="checkbox"
             />
           </div>
           <div
-            class="_modal__control_1a29e7"
+            class="_modal__control_42f588"
           >
             <label
-              class="_modal__label_1a29e7"
+              class="_modal__label_42f588"
               for="has_learned_words"
             >
               Has Learned Words
             </label>
             <input
-              class="_modal__input_1a29e7"
+              class="_modal__input_42f588"
               id="has_learned_words"
               name="has_learned_words"
               type="checkbox"
             />
           </div>
           <div
-            class="_modal__control_1a29e7"
+            class="_modal__control_42f588"
           >
             <label
-              class="_modal__label_1a29e7"
+              class="_modal__label_42f588"
               for="order"
             >
               Order
             </label>
             <select
-              class="_modal__select_1a29e7"
+              class="_modal__select_42f588"
               id="order"
               name="order"
               required=""
             >
               <option
-                class="_modal__option_1a29e7"
+                class="_modal__option_42f588"
                 value="newest"
               >
                 Newest
               </option>
               <option
-                class="_modal__option_1a29e7"
+                class="_modal__option_42f588"
                 value="oldest"
               >
                 Oldest
               </option>
               <option
-                class="_modal__option_1a29e7"
+                class="_modal__option_42f588"
                 selected=""
                 value="random"
               >
@@ -367,7 +367,7 @@ exports[`AutoCreateWordReminderModal component > renders form with all inputs 1`
           </div>
         </fieldset>
         <button
-          class="_modal__button_1a29e7"
+          class="_modal__button_42f588"
           type="submit"
         >
           Create

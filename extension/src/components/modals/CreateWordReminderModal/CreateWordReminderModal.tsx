@@ -71,7 +71,6 @@ export const CreateWordReminderModal = CSSModules(
       mutate({
         userId,
         body: {
-          auto: false,
           reminder: {
             minutes: Number(formData.get("reminder-minutes") as string),
             hours: Number(formData.get("reminder-hours") as string),

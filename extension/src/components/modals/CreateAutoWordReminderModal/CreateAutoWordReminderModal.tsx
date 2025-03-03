@@ -4,15 +4,15 @@ import { useOutletContext } from "react-router-dom";
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { ToggleModal } from "../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { wordReminderService } from "../../../services/word_reminder_service";
 import { useContext } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
 } from "../../../context/Notification";
 import { ModalContainer } from "../ModalContainer";
-import styles from "./AutoCreateWordReminderModal.module.css";
+import styles from "./CreateAutoWordReminderModal.module.css";
 import { AddToDate } from "../../ui/AddToDate";
+import { autoWordReminderService } from "../../../services/auto_word_reminder_service/auto_word_reminder_service";
 
 interface Props {
   searchParams: URLSearchParams;
@@ -27,7 +27,7 @@ export const AutoCreateWordReminderModal = CSSModules(
     const { showNotificationError } = useNotificationError();
     const queryClient = useQueryClient();
     const { isPending, mutate } = useMutation({
-      mutationFn: wordReminderService.createWordReminder,
+      mutationFn: autoWordReminderService.createAutoWordReminder,
       onSuccess: () => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
@@ -49,7 +49,6 @@ export const AutoCreateWordReminderModal = CSSModules(
       mutate({
         userId,
         body: {
-          auto: true,
           reminder: {
             minutes: Number(formData.get("reminder-minutes") as string),
             hours: Number(formData.get("reminder-hours") as string),
@@ -84,8 +83,28 @@ export const AutoCreateWordReminderModal = CSSModules(
         toggleModal={toggleModal}
       >
         <form styleName="modal__form" action={handleCreate}>
-          <AddToDate legend="Reminder" disabled={false} />
-          <AddToDate legend="Duration" disabled={false} />
+          <AddToDate
+            legend="Reminder"
+            disabled={false}
+            defaultValues={{
+              minutes: 0,
+              hours: 0,
+              days: 0,
+              weeks: 0,
+              months: 0,
+            }}
+          />
+          <AddToDate
+            legend="Duration"
+            disabled={false}
+            defaultValues={{
+              minutes: 0,
+              hours: 0,
+              days: 0,
+              weeks: 0,
+              months: 0,
+            }}
+          />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="word_count">
               Word Count

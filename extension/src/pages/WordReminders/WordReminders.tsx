@@ -1,4 +1,10 @@
-import { User, WordReminder as IWordReminder, UserWord, Word } from "common";
+import {
+  User,
+  WordReminder as IWordReminder,
+  UserWord,
+  Word,
+  AddToDate,
+} from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -66,7 +72,10 @@ export const WordReminders = CSSModules(
           list={
             json &&
             json.wordReminders.map(function (
-              wordReminder: IWordReminder & { user_words: (UserWord & Word)[] }
+              wordReminder: IWordReminder & {
+                user_words: (UserWord & Word)[];
+                reminder: AddToDate;
+              }
             ) {
               return (
                 <WordReminder

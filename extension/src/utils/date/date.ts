@@ -1,6 +1,6 @@
-import { AddToDate } from "common";
+import { AddToDateParams } from "common";
 
-export function addToDateToString(addToDate: AddToDate) {
+export function addToDateToString(addToDate: AddToDateParams) {
   const intervals = [];
 
   if (addToDate.months) {

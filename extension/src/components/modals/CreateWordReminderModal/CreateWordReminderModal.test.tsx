@@ -181,7 +181,6 @@ describe("CreateWordReminderModal component", () => {
     expect(mockCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        auto: false,
         reminder: {
           minutes: 30,
           hours: 1,
@@ -257,7 +256,6 @@ describe("CreateWordReminderModal component", () => {
     expect(mockCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        auto: false,
         reminder: {
           minutes: 0,
           hours: 1,
@@ -312,7 +310,6 @@ describe("CreateWordReminderModal component", () => {
     expect(mockCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        auto: false,
         reminder: {
           minutes: 0,
           hours: 1,

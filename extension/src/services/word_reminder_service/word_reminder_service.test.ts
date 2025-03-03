@@ -1,4 +1,3 @@
-import { Order } from "common";
 import { service } from "../service";
 import { wordReminderService } from "./word_reminder_service";
 
@@ -21,7 +20,6 @@ describe("wordReminderService", () => {
 
   const wordReminderId1 = "1";
   const wordReminder1 = {
-    auto: false,
     has_reminder_onload: true,
     is_active: true,
     reminder: {
@@ -36,8 +34,6 @@ describe("wordReminderService", () => {
   };
 
   const wordReminder2 = {
-    auto: true,
-    create_now: true,
     has_reminder_onload: true,
     is_active: true,
     reminder: {
@@ -47,16 +43,8 @@ describe("wordReminderService", () => {
       weeks: 0,
       months: 0,
     },
-    duration: {
-      minutes: 0,
-      hours: 0,
-      days: 0,
-      weeks: 1,
-      months: 0,
-    },
-    word_count: 7,
-    has_learned_words: false,
-    order: Order.Random,
+    finish: new Date(Date.now() + 1000), // make sure date comes after current date
+    user_words: [],
   };
 
   describe("getWordReminderList", () => {
@@ -120,59 +108,29 @@ describe("wordReminderService", () => {
   });
 
   describe("createWordReminder", () => {
-    describe("autoCreateWordReminder", () => {
-      it("creates using the correct API endpoint with auto word reminder body", async () => {
-        const mockPost = vi
-          .spyOn(service, "post")
-          .mockImplementation(async () => {
-            return { json: { wordReminder: wordReminder1 }, status };
-          });
-
-        const response = await wordReminderService.createWordReminder({
-          userId: sampleUser1.id,
-          body: wordReminder1,
+    it("creates using the correct API endpoint with auto word reminder body", async () => {
+      const mockPost = vi
+        .spyOn(service, "post")
+        .mockImplementation(async () => {
+          return { json: { wordReminder: wordReminder1 }, status };
         });
 
-        expect(mockPost).toHaveBeenCalledTimes(1);
-        expect(mockPost).toHaveBeenCalledWith({
-          url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
-          options: {
-            body: JSON.stringify(wordReminder1),
-            credentials: "include",
-          },
-        });
-        expect(response).toEqual({
-          json: { wordReminder: wordReminder1 },
-          status,
-        });
+      const response = await wordReminderService.createWordReminder({
+        userId: sampleUser1.id,
+        body: wordReminder1,
       });
-    });
 
-    describe("manualCreateWordReminder", () => {
-      it("creates using the correct API endpoint with manual word reminder body", async () => {
-        const mockPost = vi
-          .spyOn(service, "post")
-          .mockImplementation(async () => {
-            return { json: { wordReminder: wordReminder2 }, status };
-          });
-
-        const response = await wordReminderService.createWordReminder({
-          userId: sampleUser1.id,
-          body: wordReminder2,
-        });
-
-        expect(mockPost).toHaveBeenCalledTimes(1);
-        expect(mockPost).toHaveBeenCalledWith({
-          url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
-          options: {
-            body: JSON.stringify(wordReminder2),
-            credentials: "include",
-          },
-        });
-        expect(response).toEqual({
-          json: { wordReminder: wordReminder2 },
-          status,
-        });
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith({
+        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
+        options: {
+          body: JSON.stringify(wordReminder1),
+          credentials: "include",
+        },
+      });
+      expect(response).toEqual({
+        json: { wordReminder: wordReminder1 },
+        status,
       });
     });
   });

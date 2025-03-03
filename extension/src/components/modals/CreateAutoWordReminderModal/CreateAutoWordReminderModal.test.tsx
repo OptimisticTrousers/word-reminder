@@ -2,16 +2,16 @@ import { render, screen } from "@testing-library/react";
 import { createRoutesStub, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { AutoCreateWordReminderModal } from "./AutoCreateWordReminderModal";
+import { AutoCreateWordReminderModal } from "./CreateAutoWordReminderModal";
 import userEvent from "@testing-library/user-event";
-import { wordReminderService } from "../../../services/word_reminder_service";
 import { Order } from "common";
 import { NotificationProvider } from "../../../context/Notification";
 import { Mock } from "vitest";
+import { autoWordReminderService } from "../../../services/auto_word_reminder_service/auto_word_reminder_service";
 
 vi.mock("../ModalContainer/ModalContainer");
 
-describe("AutoCreateWordReminderModal component", () => {
+describe("CreateAutoWordReminderModal component", () => {
   const testUser = {
     id: "1",
   };
@@ -56,8 +56,28 @@ describe("AutoCreateWordReminderModal component", () => {
     };
   }
 
-  const wordReminder = {
+  const autoWordReminder = {
     id: "1",
+    reminder: {
+      minutes: 30,
+      hours: 1,
+      days: 7,
+      weeks: 1,
+      months: 1,
+    },
+    create_now: false,
+    duration: {
+      minutes: 2,
+      hours: 2,
+      days: 1,
+      weeks: 3,
+      months: 2,
+    },
+    word_count: 7,
+    is_active: false,
+    has_reminder_onload: false,
+    has_learned_words: true,
+    order: Order.Oldest,
   };
 
   const status = 200;
@@ -110,11 +130,14 @@ describe("AutoCreateWordReminderModal component", () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it("calls the functions to automatically create a word reminder", async () => {
-    const mockCreateWordReminder = vi
-      .spyOn(wordReminderService, "createWordReminder")
+  it("calls the functions to automatically create an auto word reminder", async () => {
+    const mockAutoCreateWordReminder = vi
+      .spyOn(autoWordReminderService, "createAutoWordReminder")
       .mockImplementation(async () => {
-        return { json: { wordReminder }, status };
+        return {
+          json: { autoWordReminder },
+          status,
+        };
       });
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient();
@@ -171,11 +194,10 @@ describe("AutoCreateWordReminderModal component", () => {
     });
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
-    expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockCreateWordReminder).toHaveBeenCalledWith({
+    expect(mockAutoCreateWordReminder).toHaveBeenCalledTimes(1);
+    expect(mockAutoCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        auto: true,
         reminder: {
           minutes: 30,
           hours: 1,
@@ -203,8 +225,8 @@ describe("AutoCreateWordReminderModal component", () => {
   it("calls the functions to show a notification error", async () => {
     const message = "Bad Request.";
     const status = 400;
-    const mockCreateWordReminder = vi
-      .spyOn(wordReminderService, "createWordReminder")
+    const mockAutoCreateWordReminder = vi
+      .spyOn(autoWordReminderService, "createAutoWordReminder")
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
@@ -229,11 +251,10 @@ describe("AutoCreateWordReminderModal component", () => {
     expect(mockInvalidateQueries).not.toHaveBeenCalled();
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
-    expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockCreateWordReminder).toHaveBeenCalledWith({
+    expect(mockAutoCreateWordReminder).toHaveBeenCalledTimes(1);
+    expect(mockAutoCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        auto: true,
         reminder: {
           minutes: 0,
           hours: 1,
@@ -260,12 +281,12 @@ describe("AutoCreateWordReminderModal component", () => {
 
   it("disables the create button when the mutation is loading", async () => {
     const delay = 50;
-    const mockCreateWordReminder = vi
-      .spyOn(wordReminderService, "createWordReminder")
+    const mockCreateAutoWordReminder = vi
+      .spyOn(autoWordReminderService, "createAutoWordReminder")
       .mockImplementation(async () => {
         return new Promise((resolve) => {
           setTimeout(() => {
-            resolve({ json: { wordReminder }, status });
+            resolve({ json: { autoWordReminder }, status });
           }, delay);
         });
       });
@@ -290,11 +311,10 @@ describe("AutoCreateWordReminderModal component", () => {
     expect(createButton).toBeDisabled();
     expect(mockInvalidateQueries).not.toHaveBeenCalled();
     expect(mockToggleModal).not.toHaveBeenCalled();
-    expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockCreateWordReminder).toHaveBeenCalledWith({
+    expect(mockCreateAutoWordReminder).toHaveBeenCalledTimes(1);
+    expect(mockCreateAutoWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        auto: true,
         reminder: {
           minutes: 0,
           hours: 1,
@@ -320,10 +340,10 @@ describe("AutoCreateWordReminderModal component", () => {
   });
 
   it("calls the functions to close a modal", async () => {
-    const mockCreateWordReminder = vi
-      .spyOn(wordReminderService, "createWordReminder")
+    const mockCreateAutoWordReminder = vi
+      .spyOn(autoWordReminderService, "createAutoWordReminder")
       .mockImplementation(async () => {
-        return { json: { wordReminder }, status };
+        return { json: { autoWordReminder }, status };
       });
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient();
@@ -337,16 +357,16 @@ describe("AutoCreateWordReminderModal component", () => {
     expect(notification).not.toBeInTheDocument();
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
-    expect(mockCreateWordReminder).not.toHaveBeenCalled();
+    expect(mockCreateAutoWordReminder).not.toHaveBeenCalled();
     expect(mockInvalidateQueries).not.toHaveBeenCalled();
   });
 
   describe("form validation", () => {
     it("only allows the user to enter up to 99 for wordCount", async () => {
-      const mockCreateWordReminder = vi
-        .spyOn(wordReminderService, "createWordReminder")
+      const mockCreateAutoWordReminder = vi
+        .spyOn(autoWordReminderService, "createAutoWordReminder")
         .mockImplementation(async () => {
-          return { json: { wordReminder }, status };
+          return { json: { autoWordReminder }, status };
         });
       const mockToggleModal = vi.fn();
       const queryClient = new QueryClient();
@@ -366,16 +386,16 @@ describe("AutoCreateWordReminderModal component", () => {
 
       const notification = screen.queryByRole("dialog");
       expect(notification).not.toBeInTheDocument();
-      expect(mockCreateWordReminder).not.toHaveBeenCalled();
+      expect(mockCreateAutoWordReminder).not.toHaveBeenCalled();
       expect(mockToggleModal).not.toHaveBeenCalled();
       expect(mockInvalidateQueries).not.toHaveBeenCalled();
     });
 
     it("does not allow the user to submit when wordCount is empty", async () => {
-      const mockCreateWordReminder = vi
-        .spyOn(wordReminderService, "createWordReminder")
+      const mockCreateAutoWordReminder = vi
+        .spyOn(autoWordReminderService, "createAutoWordReminder")
         .mockImplementation(async () => {
-          return { json: { wordReminder }, status };
+          return { json: { autoWordReminder }, status };
         });
       const mockToggleModal = vi.fn();
       const queryClient = new QueryClient();
@@ -395,7 +415,7 @@ describe("AutoCreateWordReminderModal component", () => {
 
       const notification = screen.queryByRole("dialog");
       expect(notification).not.toBeInTheDocument();
-      expect(mockCreateWordReminder).not.toHaveBeenCalled();
+      expect(mockCreateAutoWordReminder).not.toHaveBeenCalled();
       expect(mockToggleModal).not.toHaveBeenCalled();
       expect(mockInvalidateQueries).not.toHaveBeenCalled();
     });

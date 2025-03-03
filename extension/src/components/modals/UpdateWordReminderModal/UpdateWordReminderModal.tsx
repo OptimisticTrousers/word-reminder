@@ -1,4 +1,10 @@
-import { User, UserWord, Word, WordReminder } from "common";
+import {
+  AddToDate as IAddToDate,
+  User,
+  UserWord,
+  Word,
+  WordReminder,
+} from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +25,10 @@ import { AddToDate } from "../../ui/AddToDate";
 interface Props {
   searchParams: URLSearchParams;
   toggleModal: ToggleModal;
-  wordReminder: WordReminder & { user_words: (UserWord & Word)[] };
+  wordReminder: WordReminder & {
+    user_words: (UserWord & Word)[];
+    reminder: IAddToDate;
+  };
 }
 
 export const UpdateWordReminderModal = CSSModules(

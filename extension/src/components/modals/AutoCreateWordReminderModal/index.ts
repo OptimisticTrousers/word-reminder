@@ -1,1 +1,0 @@
-export { AutoCreateWordReminderModal } from "./AutoCreateWordReminderModal";

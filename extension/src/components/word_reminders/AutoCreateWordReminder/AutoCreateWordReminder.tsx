@@ -6,7 +6,7 @@ import { ThemeContext } from "../../../context/Theme";
 import styles from "./AutoCreateWordReminder.module.css";
 import { User } from "common";
 import { useOutletContext } from "react-router-dom";
-import { AutoCreateWordReminderModal } from "../../modals/AutoCreateWordReminderModal";
+import { AutoCreateWordReminderModal } from "../../modals/CreateAutoWordReminderModal";
 
 interface Props {
   searchParams: URLSearchParams;
