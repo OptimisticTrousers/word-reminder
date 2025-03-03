@@ -21,6 +21,19 @@ exports[`Navigation component > renders two links to words and word reminders pa
     >
       Word Reminders
     </a>
+    <a
+      aria-current="false"
+      class="_navigation__link_511cb9 _false_511cb9"
+      data-discover="true"
+      href="/settings"
+    >
+      Settings
+    </a>
+    <button
+      class="_navigation__button_511cb9"
+    >
+      Log Out
+    </button>
   </nav>
 </DocumentFragment>
 `;

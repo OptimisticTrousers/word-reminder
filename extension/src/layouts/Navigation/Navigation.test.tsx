@@ -2,6 +2,9 @@ import { createRoutesStub, Outlet } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
 import { Navigation } from "./Navigation";
 import userEvent from "@testing-library/user-event";
+import { sessionService } from "../../services/session_service";
+import { NotificationProvider } from "../../context/Notification";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function UserWords() {
   return <div data-testid="userWords">user words</div>;
@@ -11,32 +14,32 @@ function WordReminders() {
   return <div data-testid="wordReminders">word reminders</div>;
 }
 
+function Settings() {
+  return <div data-testid="settings">settings</div>;
+}
+
+function Login() {
+  return <div data-testid="login">login</div>;
+}
+
 describe("Navigation component", () => {
-  it("renders two links to words and word reminders pages respectively", async () => {
-    const Stub = createRoutesStub([
-      {
-        path: "/",
-        Component: Navigation,
-      },
-    ]);
-
-    const { asFragment } = render(<Stub initialEntries={["/"]} />);
-
-    const navigation = screen.getByRole("navigation");
-    expect(navigation).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("adds the active class to the words page when on the words page", async () => {
+  function setup(initialEntry: string) {
+    const queryClient = new QueryClient();
     const Stub = createRoutesStub([
       {
         path: "/",
         Component: function () {
           return (
-            <>
-              <Navigation />
-              <Outlet />
-            </>
+            <NotificationProvider>
+              <QueryClientProvider client={queryClient}>
+                <Navigation />
+                <Outlet />
+              </QueryClientProvider>
+            </NotificationProvider>
           );
         },
         children: [
@@ -45,11 +48,28 @@ describe("Navigation component", () => {
             Component: UserWords,
           },
           { path: "/wordReminders", Component: WordReminders },
+          { path: "/settings", Component: Settings },
+          { path: "/login", Component: Login },
         ],
       },
     ]);
-    const user = userEvent.setup();
-    render(<Stub initialEntries={["/wordReminders"]} />);
+
+    return {
+      user: userEvent.setup(),
+      ...render(<Stub initialEntries={[initialEntry]} />),
+    };
+  }
+
+  it("renders two links to words and word reminders pages respectively", async () => {
+    const { asFragment } = setup("/");
+
+    const navigation = screen.getByRole("navigation");
+    expect(navigation).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("adds the active class to the words page when on the words page", async () => {
+    const { user } = setup("/wordReminders");
 
     const userWordsLink = screen.getByRole("link", {
       name: "User Words",
@@ -66,29 +86,7 @@ describe("Navigation component", () => {
   });
 
   it("adds the active class to the word reminders page when on the word reminders page", async () => {
-    const Stub = createRoutesStub([
-      {
-        path: "/",
-        Component: function () {
-          return (
-            <>
-              <Navigation />
-              <Outlet />
-            </>
-          );
-        },
-        children: [
-          {
-            path: "/userWords",
-            Component: UserWords,
-          },
-          { path: "/wordReminders", Component: WordReminders },
-        ],
-      },
-    ]);
-    const user = userEvent.setup();
-
-    render(<Stub initialEntries={["/userWords"]} />);
+    const { user } = setup("/userWords");
 
     const wordRemindersLink = screen.getByRole("link", {
       name: "Word Reminders",
@@ -102,5 +100,79 @@ describe("Navigation component", () => {
     );
     expect(wordReminders).toBeInTheDocument();
     expect(wordRemindersLink).toHaveAttribute("aria-current", "page");
+  });
+
+  it("adds the active class to the settings page when on the settings page", async () => {
+    const { user } = setup("/userWords");
+
+    const settingsLink = screen.getByRole("link", {
+      name: "Settings",
+      current: false,
+    });
+    await user.click(settingsLink);
+
+    const settings = screen.getByTestId("settings");
+    expect(settingsLink.getAttribute("class")).toContain(
+      "navigation__link--active"
+    );
+    expect(settings).toBeInTheDocument();
+    expect(settingsLink).toHaveAttribute("aria-current", "page");
+  });
+
+  it("logs out the user when the 'Log Out' button is clicked", async () => {
+    const mockLogout = vi
+      .spyOn(sessionService, "logoutUser")
+      .mockImplementation(async () => {
+        return { json: { user: { id: "1" } }, status: 200 };
+      });
+    const { user } = setup("/");
+
+    const logoutButton = screen.getByRole("button", { name: "Log Out" });
+    await user.click(logoutButton);
+
+    const login = await screen.findByTestId("login");
+    expect(login).toBeInTheDocument();
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+    expect(mockLogout).toHaveBeenCalledWith(undefined);
+  });
+
+  it("disables 'Log Out' button when mutation is pending", async () => {
+    const delay = 50;
+    const mockLogout = vi
+      .spyOn(sessionService, "logoutUser")
+      .mockImplementation(async () => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ json: { user: { id: "1" } }, status: 200 });
+          }, delay);
+        });
+      });
+    const { user } = setup("/");
+
+    const logoutButton = screen.getByRole("button", { name: "Log Out" });
+    await user.click(logoutButton);
+
+    expect(logoutButton).toBeDisabled();
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+    expect(mockLogout).toHaveBeenCalledWith(undefined);
+  });
+
+  it("shows a notification error when attempting to log out", async () => {
+    const message = "Bad Request.";
+    const status = 400;
+    const mockLogout = vi
+      .spyOn(sessionService, "logoutUser")
+      .mockImplementation(async () => {
+        return Promise.reject({ json: { message }, status });
+      });
+    const { user } = setup("/");
+
+    const logoutButton = screen.getByRole("button", { name: "Log Out" });
+    await user.click(logoutButton);
+
+    const notification = await screen.findByRole("dialog", { name: message });
+    expect(notification).toBeInTheDocument();
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+    expect(mockLogout).toHaveBeenCalledWith(undefined);
   });
 });
