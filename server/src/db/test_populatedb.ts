@@ -1,7 +1,7 @@
 import { Client } from "pg";
 import { createPopulateDb, db } from "./";
 import { variables } from "../config/variables";
-import { scheduler } from "../utils/scheduler";
+import { boss } from "./boss";
 
 const { TEST_DATABASE_URL } = variables;
 
@@ -12,7 +12,7 @@ const populateDb = createPopulateDb(
 // Standard database setup and teardown. Do not clear between each test, as state is often required to persist between tests
 beforeAll(async () => {
   await populateDb.initializeConnection();
-  await scheduler.start();
+  await boss.start();
 });
 
 beforeEach(async () => {
@@ -21,7 +21,7 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await scheduler.stop({
+  await boss.stop({
     close: true,
     graceful: true,
     timeout: 25000,
