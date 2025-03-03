@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head', {title: "Change Email"})%>
+    <link rel="stylesheet" href="/css/verify.css" />
+  </head>
+  <body>
+    <form class="form" action="/api/users/<%= userId %>" method="PUT">
+      <div class="form__control">
+        <label class="form__label" for="email">Email:</label>
+        <input class="form__input" type="email" name="email" id="email" />
+      </div>
+      <div class="form__control">
+        <label class="form__label" for="oldPassword">Old Password:</label>
+        <input
+          class="form__input"
+          type="password"
+          name="oldPassword"
+          id="oldPassword"
+        />
+      </div>
+      <button class="form__button" type="submit">Change Email</button>
+    </form>
+  </body>
+</html>

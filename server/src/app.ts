@@ -10,7 +10,8 @@ import path from "path";
 import { variables } from "./config/variables";
 import { db, sessionStore } from "./db";
 import { errorHandler } from "./middleware/error_handler";
-import { router } from "./routes/index";
+import { apiRouter } from "./routes/api";
+import { viewRouter } from "./routes/views";
 
 export const app: Express = express();
 
@@ -89,6 +90,7 @@ passport.deserializeUser(async (id: string, done) => {
   }
 });
 
-app.use("/api", router);
+app.use("/api", apiRouter);
+app.use("/", viewRouter);
 
 app.use(errorHandler);

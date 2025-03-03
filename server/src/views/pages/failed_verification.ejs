@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head', {title: "Failed Verification"})%>
+    <link rel="stylesheet" href="/css/verify.css" />
+  </head>
+  <body>
+    <div class="error">
+      <div class="error__container">
+        <img class="error__image" src="/src/public/robot.png" />
+        <h2 class="error__heading">Failed Verification</h2>
+        <hr class="error__break" />
+        <p class="error__message">
+          The link you received has expired. Please log into your WordReminder
+          account and try to perform the action you attempted again.
+        </p>
+        <a class="error__link" href="/"> Go back to the home page. </a>
+      </div>
+    </div>
+  </body>
+</html>
