@@ -5,6 +5,7 @@ interface Queries<T> {
   table: string;
   db: Db;
   getById: (id: string) => Promise<T | undefined>;
+  deleteById: (id: string) => Promise<T | undefined>;
 }
 
 const queriesProto = {
@@ -16,7 +17,20 @@ const queriesProto = {
       `
     SELECT ${this.columns}
     FROM ${this.table}
+    WHERE id = $1;
+      `,
+      [id]
+    );
+
+    return rows[0];
+  },
+
+  async deleteById<T>(this: Queries<T>, id: string): Promise<T | undefined> {
+    const { rows } = await this.db.query(
+      `
+    DELETE FROM ${this.table}
     WHERE id = $1
+    RETURNING ${this.columns};
       `,
       [id]
     );

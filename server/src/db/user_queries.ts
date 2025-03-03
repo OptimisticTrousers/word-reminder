@@ -8,7 +8,7 @@ export const userQueries = (function () {
     ["id", "auto", "email", "confirmed", "created_at", "updated_at"],
     "users"
   );
-  const { columns, db, getById, table } = queries;
+  const { columns, db, getById, deleteById, table } = queries;
 
   const create = async ({
     email,
@@ -30,20 +30,6 @@ export const userQueries = (function () {
     RETURNING ${columns};
       `,
       [email, password]
-    );
-
-    return rows[0];
-  };
-
-  const deleteById = async (id: string): Promise<User> => {
-    const { rows }: QueryResult<User> = await db.query(
-      `
-    DELETE
-    FROM ${table}
-    WHERE id = $1
-    RETURNING ${columns};
-      `,
-      [id]
     );
 
     return rows[0];
@@ -122,7 +108,7 @@ export const userQueries = (function () {
 
   return {
     create,
-    deleteById,
+    deleteById: deleteById.bind(queries),
     get,
     getById: getById.bind(queries),
     getByEmail,

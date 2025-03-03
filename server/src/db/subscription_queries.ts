@@ -7,8 +7,8 @@ export interface Subscription extends SubscriptionParams {
 }
 
 export const subscriptionQueries = (function () {
-  const { columns, db, table } = createQueries(["*"], "subscriptions");
-
+  const queries = createQueries<Subscription>(["*"], "subscriptions");
+  const { columns, db, getById, deleteById, table } = queries;
   const create = async (
     subscription: SubscriptionParams
   ): Promise<Subscription> => {
@@ -24,20 +24,6 @@ export const subscriptionQueries = (function () {
     return rows[0];
   };
 
-  const deleteById = async (id: string): Promise<Subscription> => {
-    const { rows } = await db.query(
-      `
-    DELETE
-    FROM ${table}
-    WHERE id = $1
-    RETURNING ${columns};
-      `,
-      [id]
-    );
-
-    return rows[0];
-  };
-
   const get = async (): Promise<Subscription[]> => {
     const { rows } = await db.query(
       `
@@ -48,5 +34,10 @@ export const subscriptionQueries = (function () {
     return rows;
   };
 
-  return { create, deleteById, get };
+  return {
+    create,
+    getById: getById.bind(queries),
+    deleteById: deleteById.bind(queries),
+    get,
+  };
 })();
