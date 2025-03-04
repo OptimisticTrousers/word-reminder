@@ -1,12 +1,11 @@
-import asyncHandler from "express-async-handler";
 import express from "express";
 import request from "supertest";
 import { validateToken } from "../middleware/validate_token";
 import { tokenQueries } from "../db/token_queries";
 
-describe("validate_token", () => {
-  const message = "Success.";
+const message = "Success.";
 
+describe("validate_token", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -15,24 +14,15 @@ describe("validate_token", () => {
     const token = "invalidToken";
     const app = express();
     app.use(express.json());
-    app.get(
-      "/change-password/:token",
-      validateToken,
-      asyncHandler(async (req, res, next) => {
-        res.json({ message });
-      })
-    );
-    app.get(
-      "/failed-verification",
-      asyncHandler(async (req, res, next) => {
-        res.json({ message });
-      })
-    );
+    app.get("/change-password/:token", validateToken, (req, res) => {
+      res.json({ message });
+    });
+    app.get("/failed-verification", (req, res) => {
+      res.json({ message });
+    });
     const mockVerify = jest
       .spyOn(tokenQueries, "verify")
-      .mockImplementation(async () => {
-        return false;
-      });
+      .mockResolvedValue(false);
 
     const response = await request(app).get(`/change-password/${token}`);
 
@@ -46,24 +36,15 @@ describe("validate_token", () => {
     const token = "validToken";
     const app = express();
     app.use(express.json());
-    app.get(
-      "/change-password/:token",
-      validateToken,
-      asyncHandler(async (req, res, next) => {
-        res.json({ message });
-      })
-    );
-    app.get(
-      "/failed-verification",
-      asyncHandler(async (req, res, next) => {
-        res.json({ message });
-      })
-    );
+    app.get("/change-password/:token", validateToken, (req, res) => {
+      res.json({ message });
+    });
+    app.get("/failed-verification", (req, res) => {
+      res.json({ message });
+    });
     const mockVerify = jest
       .spyOn(tokenQueries, "verify")
-      .mockImplementation(async () => {
-        return true;
-      });
+      .mockResolvedValue(true);
 
     const response = await request(app)
       .get(`/change-password/${token}`)
