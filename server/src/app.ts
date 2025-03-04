@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import cors from "cors";
-import express, { Express } from "express";
+import express from "express";
 import session from "express-session";
 import logger from "morgan";
 import passport from "passport";
@@ -13,9 +13,8 @@ import { errorHandler } from "./middleware/error_handler";
 import { apiRouter } from "./routes/api";
 import { viewRouter } from "./routes/views";
 
-export const app: Express = express();
+export const app = express();
 
-// view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
@@ -90,7 +89,7 @@ passport.deserializeUser(async (id: string, done) => {
   }
 });
 
-app.use("/api", apiRouter);
 app.use("/", viewRouter);
+app.use("/api", apiRouter);
 
 app.use(errorHandler);

@@ -1,15 +1,15 @@
 import { app } from "./app";
 import { variables } from "./config/variables";
+import { boss } from "./db/boss";
 import { notFoundHandler } from "./middleware/not_found_handler";
-import { scheduler } from "./utils/scheduler";
 
 const port = Number(variables.SERVER_PORT) || 5000;
 
-// Add the 'notFoundHandler' middleware in 'server.ts' instead of 'app.ts' to fix a bug where using this Express application in a test would cause a 'NotFoundError:' for any new test routes
+// Add the 'notFoundHandler' middleware in 'server.ts' instead of 'app.ts' to fix a bug where using this Express application in a test would cause a 'NotFoundError:' for any new test routes.
 app.use(notFoundHandler);
 
 (async () => {
-  await scheduler.start();
+  await boss.start();
 })();
 
 app.listen(port, () => console.log("Server running..."));
