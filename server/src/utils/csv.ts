@@ -1,23 +1,16 @@
-import { parse, Parser } from "csv-parse";
+import { parse } from "csv-parse";
 import { Readable } from "stream";
 import { finished } from "stream/promises";
 
 export const csv = (function () {
-  // Read and process the CSV file
-  const read = async (
-    buffer: Buffer
-  ): Promise<{
-    records: string[][];
-    error: unknown;
-    count: number;
-  }> => {
+  const read = async (buffer: Buffer) => {
     const records: string[][] = [];
-    const parser: Parser = Readable.from(buffer).pipe(
+    const parser = Readable.from(buffer).pipe(
       parse({
         delimiter: ",",
-        relax_column_count: true, // Relax column count to avoid errors with varying columns
-        skip_empty_lines: true, // Skip any empty lines in the file
-        trim: true, // Automatically trim values
+        relax_column_count: true,
+        skip_empty_lines: true,
+        trim: true,
       })
     );
 
@@ -26,8 +19,7 @@ export const csv = (function () {
     parser.on("readable", () => {
       let record: string[];
       while ((record = parser.read()) !== null) {
-        // Work with each record
-        const trimmedRecord: string[] = removeDuplicates(record);
+        const trimmedRecord = removeDuplicates(record);
         count += trimmedRecord.length;
         records.push(trimmedRecord);
       }
@@ -42,10 +34,10 @@ export const csv = (function () {
     return { records, error: null, count };
   };
 
-  const removeDuplicates = (record: string[]): string[] => {
+  const removeDuplicates = (record: string[]) => {
     const set = new Set<string>();
     for (let i = 0; i < record.length; i++) {
-      const word: string = record[i];
+      const word = record[i];
       if (word !== "") {
         set.add(word);
       }
