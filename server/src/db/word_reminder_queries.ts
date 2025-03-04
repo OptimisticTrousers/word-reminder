@@ -1,33 +1,38 @@
-import { WordReminder, WordReminderDbParams } from "common";
+import { WordReminder } from "common";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
 
 export const wordReminderQueries = (function () {
   const queries = createQueries<WordReminder>(["*"], "word_reminders");
-  const { columns, db, getById, deleteById, table } = queries;
+  const { columns, db, deleteById, getById, table } = queries;
 
-  const create = async (
-    wordReminder: WordReminderDbParams
-  ): Promise<WordReminder> => {
+  const create = async ({
+    user_id,
+    finish,
+    has_reminder_onload,
+    is_active,
+    reminder,
+  }: {
+    user_id: number;
+    finish: Date;
+    has_reminder_onload: boolean;
+    is_active: boolean;
+    reminder: string;
+  }) => {
     const { rows }: QueryResult<WordReminder> = await db.query(
       `
-     INSERT INTO ${table}(user_id, is_active, has_reminder_onload, finish) 
-     VALUES ($1, $2, $3, $4)
-     RETURNING ${columns}
+     INSERT INTO ${table}(user_id, finish, has_reminder_onload, is_active, reminder) 
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING ${columns};
       `,
-      [
-        wordReminder.user_id,
-        wordReminder.is_active,
-        wordReminder.has_reminder_onload,
-        wordReminder.finish,
-      ]
+      [user_id, finish, has_reminder_onload, is_active, reminder]
     );
 
     return rows[0];
   };
 
-  const deleteAllByUserId = async (userId: string): Promise<WordReminder[]> => {
+  const deleteByUserId = async (userId: number) => {
     const { rows }: QueryResult<WordReminder> = await db.query(
       `
     DELETE FROM ${table}
@@ -41,21 +46,27 @@ export const wordReminderQueries = (function () {
   };
 
   const updateById = async (
-    id: string,
+    id: number,
     {
       finish,
-      is_active,
       has_reminder_onload,
-    }: Omit<WordReminderDbParams, "user_id">
-  ): Promise<WordReminder> => {
+      is_active,
+      reminder,
+    }: {
+      finish: Date;
+      has_reminder_onload: boolean;
+      is_active: boolean;
+      reminder: string;
+    }
+  ) => {
     const { rows }: QueryResult<WordReminder> = await db.query(
       `
     UPDATE ${table}
-    SET finish = $1, is_active = $2, has_reminder_onload = $3
-    WHERE id = $4
+    SET finish = $2, has_reminder_onload = $3, is_active = $4, reminder = $5
+    WHERE id = $1
     RETURNING ${columns};
       `,
-      [finish, is_active, has_reminder_onload, id]
+      [id, finish, has_reminder_onload, is_active, reminder]
     );
 
     return rows[0];
@@ -63,7 +74,7 @@ export const wordReminderQueries = (function () {
 
   return {
     create,
-    deleteAllByUserId,
+    deleteByUserId,
     deleteById: deleteById.bind(queries),
     getById: getById.bind(queries),
     updateById,
