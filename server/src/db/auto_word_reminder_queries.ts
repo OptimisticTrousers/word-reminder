@@ -1,9 +1,6 @@
+import { AutoWordReminder, SortMode } from "common";
 import { QueryResult } from "pg";
-import {
-  AutoWordReminderDbParams,
-  AutoWordReminder,
-  AddToDatesAutoWordReminder,
-} from "common";
+
 import { createQueries } from "./queries";
 
 export const autoWordReminderQueries = (function () {
@@ -15,13 +12,24 @@ export const autoWordReminderQueries = (function () {
     is_active,
     has_reminder_onload,
     has_learned_words,
-    order,
+    sort_mode,
     word_count,
-  }: AutoWordReminderDbParams): Promise<AutoWordReminder> => {
+    reminder,
+    duration,
+  }: {
+    user_id: number;
+    is_active: boolean;
+    has_reminder_onload: boolean;
+    has_learned_words: boolean;
+    sort_mode: SortMode;
+    word_count: number;
+    reminder: string;
+    duration: number;
+  }) => {
     const { rows }: QueryResult<AutoWordReminder> = await db.query(
       `
-    INSERT INTO ${table}(user_id, is_active, has_reminder_onload, has_learned_words, "order", word_count)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO ${table}(user_id, is_active, has_reminder_onload, has_learned_words, sort_mode, word_count, reminder, duration)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING ${columns};
       `,
       [
@@ -29,15 +37,30 @@ export const autoWordReminderQueries = (function () {
         is_active,
         has_reminder_onload,
         has_learned_words,
-        order,
+        sort_mode,
         word_count,
+        reminder,
+        duration,
       ]
     );
 
     return rows[0];
   };
 
-  const getByUserId = async (userId: string): Promise<AutoWordReminder[]> => {
+  const deleteByUserId = async (userId: number) => {
+    const { rows }: QueryResult<AutoWordReminder> = await db.query(
+      `
+    DELETE FROM ${table}
+    WHERE ${table}.user_id = $1
+    RETURNING ${columns};
+      `,
+      [userId]
+    );
+
+    return rows[0];
+  };
+
+  const getByUserId = async (userId: number) => {
     const { rows }: QueryResult<AutoWordReminder> = await db.query(
       `
     SELECT ${columns} 
@@ -51,31 +74,41 @@ export const autoWordReminderQueries = (function () {
   };
 
   const updateById = async (
-    id: string,
+    id: number,
     {
-      user_id,
       is_active,
       has_reminder_onload,
       has_learned_words,
-      order,
+      sort_mode,
       word_count,
-    }: AutoWordReminderDbParams
-  ): Promise<AutoWordReminder> => {
+      reminder,
+      duration,
+    }: {
+      is_active: boolean;
+      has_reminder_onload: boolean;
+      has_learned_words: boolean;
+      sort_mode: SortMode;
+      word_count: number;
+      reminder: string;
+      duration: number;
+    }
+  ) => {
     const { rows }: QueryResult<AutoWordReminder> = await db.query(
       `
     UPDATE ${table}
-    SET user_id = $1, is_active = $2, has_reminder_onload = $3, has_learned_words = $4, order = $5, word_count = $6
-    WHERE id = $7
+    SET is_active = $2, has_reminder_onload = $3, has_learned_words = $4, sort_mode = $5, word_count = $6, reminder = $7, duration = $8
+    WHERE id = $1
     RETURNING ${columns};
       `,
       [
-        user_id,
+        id,
         is_active,
         has_reminder_onload,
         has_learned_words,
-        order,
+        sort_mode,
         word_count,
-        id,
+        reminder,
+        duration,
       ]
     );
 
@@ -84,9 +117,10 @@ export const autoWordReminderQueries = (function () {
 
   return {
     create,
-    getByUserId,
     deleteById: deleteById.bind(queries),
-    updateById,
+    deleteByUserId,
     getById: getById.bind(queries),
+    getByUserId,
+    updateById,
   };
 })();
