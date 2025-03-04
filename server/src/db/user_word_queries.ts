@@ -1,18 +1,7 @@
-import { Order, UserWord } from "common";
+import { Page, SortMode, UserWord } from "common";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
-
-interface Page {
-  page: number;
-  limit: number;
-}
-
-interface RandomOptions {
-  count: number;
-  learned: boolean;
-  order: Order;
-}
 
 export interface Result {
   userWords: UserWord[];
@@ -23,17 +12,17 @@ export interface Result {
 
 export const userWordQueries = (function () {
   const queries = createQueries<UserWord>(["*"], "user_words");
-  const { columns, db, getById, table } = queries;
+  const { columns, db, deleteById, getById, table } = queries;
 
   const create = async ({
     user_id,
     word_id,
     learned,
   }: {
-    user_id: string;
-    word_id: string;
+    user_id: number;
+    word_id: number;
     learned: boolean;
-  }): Promise<UserWord> => {
+  }) => {
     const existingUserWord = await get({ user_id, word_id });
 
     if (existingUserWord) {
@@ -52,27 +41,7 @@ export const userWordQueries = (function () {
     return rows[0];
   };
 
-  const remove = async ({
-    user_id,
-    word_id,
-  }: {
-    user_id: string;
-    word_id: string;
-  }): Promise<UserWord> => {
-    const { rows }: QueryResult<UserWord> = await db.query(
-      `
-    DELETE FROM ${table}
-    WHERE user_id = $1
-    AND word_id = $2
-    RETURNING ${columns};
-      `,
-      [user_id, word_id]
-    );
-
-    return rows[0];
-  };
-
-  const deleteAllByUserId = async (user_id: string): Promise<UserWord[]> => {
+  const deleteByUserId = async (user_id: number) => {
     const { rows }: QueryResult<UserWord> = await db.query(
       `
     DELETE FROM ${table}
@@ -89,8 +58,8 @@ export const userWordQueries = (function () {
     user_id,
     word_id,
   }: {
-    user_id: string;
-    word_id: string;
+    user_id: number;
+    word_id: number;
   }): Promise<UserWord | undefined> => {
     const { rows }: QueryResult<UserWord> = await db.query(
       `
@@ -105,39 +74,8 @@ export const userWordQueries = (function () {
     return rows[0];
   };
 
-  const getUserWords = async (
-    user_id: string,
-    options: RandomOptions
-  ): Promise<UserWord[]> => {
-    let orderClause = "";
-    switch (options.order) {
-      case Order.Oldest:
-        orderClause = "created_at ASC";
-        break;
-      case Order.Newest:
-        orderClause = "created_at DESC";
-        break;
-      case Order.Random:
-        orderClause = "RANDOM()";
-        break;
-    }
-
-    const { rows }: QueryResult<UserWord> = await db.query(
-      `
-    SELECT ${columns}
-    FROM ${table}
-    WHERE user_id = $1 AND learned = $2
-    ORDER BY ${orderClause}
-    LIMIT $3;
-      `,
-      [user_id, options.learned, options.count]
-    );
-
-    return rows;
-  };
-
   const getByUserId = async (
-    user_id: string,
+    user_id: number,
     options: {
       learned?: boolean;
       search?: string;
@@ -146,7 +84,7 @@ export const userWordQueries = (function () {
       page?: number;
       limit?: number;
     } = {}
-  ): Promise<Result> => {
+  ) => {
     const queryParts = [
       `
     SELECT words.*, ${table}.*
@@ -230,15 +168,54 @@ export const userWordQueries = (function () {
     return result;
   };
 
+  const getUserWords = async ({
+    user_id,
+    word_count,
+    has_learned_words,
+    sort_mode,
+  }: {
+    user_id: number;
+    word_count: number;
+    has_learned_words: boolean;
+    sort_mode: SortMode;
+  }) => {
+    let orderClause = "";
+
+    switch (sort_mode) {
+      case SortMode.Oldest:
+        orderClause = "created_at ASC";
+        break;
+      case SortMode.Newest:
+        orderClause = "created_at DESC";
+        break;
+      case SortMode.Random:
+        orderClause = "RANDOM()";
+        break;
+    }
+
+    const { rows }: QueryResult<UserWord> = await db.query(
+      `
+    SELECT ${columns}
+    FROM ${table}
+    WHERE user_id = $1 AND learned = $2
+    ORDER BY ${orderClause}
+    LIMIT $3;
+      `,
+      [user_id, has_learned_words, word_count]
+    );
+
+    return rows;
+  };
+
   const setLearned = async ({
     user_id,
     word_id,
     learned,
   }: {
-    user_id: string;
-    word_id: string;
+    user_id: number;
+    word_id: number;
     learned: boolean;
-  }): Promise<UserWord> => {
+  }) => {
     const { rows }: QueryResult<UserWord> = await db.query(
       `
     UPDATE ${table}
@@ -255,12 +232,12 @@ export const userWordQueries = (function () {
 
   return {
     create,
-    delete: remove,
-    deleteAllByUserId,
+    deleteByUserId,
     get,
     getById: getById.bind(queries),
-    getUserWords,
+    deleteById: deleteById.bind(queries),
     getByUserId,
+    getUserWords,
     setLearned,
   };
 })();

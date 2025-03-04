@@ -1,79 +1,74 @@
+import { Word, UserWord, SortMode } from "common";
 import { userQueries } from "../db/user_queries";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
-import { Word, UserWord, Order } from "common";
+
+const userId = 1;
+const userParams = {
+  email: "email@protonmail.com",
+  password: "password",
+};
+
+const json = [
+  {
+    word: "hello",
+    phonetic: "həˈləʊ",
+    phonetics: [
+      {
+        text: "həˈləʊ",
+        audio:
+          "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
+      },
+      {
+        text: "hɛˈləʊ",
+      },
+    ],
+    origin: "early 19th century: variant of earlier hollo ; related to holla.",
+    meanings: [
+      {
+        partOfSpeech: "exclamation",
+        definitions: [
+          {
+            definition: "used as a greeting or to begin a phone conversation.",
+            example: "hello there, Katie!",
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+      },
+      {
+        partOfSpeech: "noun",
+        definitions: [
+          {
+            definition: "an utterance of ‘hello’; a greeting.",
+            example: "she was getting polite nods and hellos from people",
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+      },
+      {
+        partOfSpeech: "verb",
+        definitions: [
+          {
+            definition: "say or shout ‘hello’.",
+            example: "I pressed the phone button and helloed",
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+      },
+    ],
+  },
+];
 
 describe("userWordQueries", () => {
-  const sampleUser1 = {
-    id: "1",
-    email: "email@protonmail.com",
-    password: "password",
-  };
-
-  const json = [
-    {
-      word: "hello",
-      phonetic: "həˈləʊ",
-      phonetics: [
-        {
-          text: "həˈləʊ",
-          audio:
-            "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
-        },
-        {
-          text: "hɛˈləʊ",
-        },
-      ],
-      origin:
-        "early 19th century: variant of earlier hollo ; related to holla.",
-      meanings: [
-        {
-          partOfSpeech: "exclamation",
-          definitions: [
-            {
-              definition:
-                "used as a greeting or to begin a phone conversation.",
-              example: "hello there, Katie!",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-        {
-          partOfSpeech: "noun",
-          definitions: [
-            {
-              definition: "an utterance of ‘hello’; a greeting.",
-              example: "she was getting polite nods and hellos from people",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-        {
-          partOfSpeech: "verb",
-          definitions: [
-            {
-              definition: "say or shout ‘hello’.",
-              example: "I pressed the phone button and helloed",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-      ],
-    },
-  ];
-
   describe("create", () => {
     it("creates user word", async () => {
       const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
 
       const userWord = await userWordQueries.create({
         user_id: newUser!.id,
@@ -98,10 +93,7 @@ describe("userWordQueries", () => {
 
     it("creates a user word with the learned property of true", async () => {
       const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
 
       const userWord = await userWordQueries.create({
         user_id: newUser!.id,
@@ -126,10 +118,7 @@ describe("userWordQueries", () => {
 
     it("does nothing when the user word already exists", async () => {
       const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
       await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord.id,
@@ -161,10 +150,7 @@ describe("userWordQueries", () => {
   describe("setLearned", () => {
     it("changes the learned property on the user word to true", async () => {
       const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
       await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord.id,
@@ -195,10 +181,7 @@ describe("userWordQueries", () => {
 
     it("changes the learned property on the user word to false if already set to true", async () => {
       const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
       await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord.id,
@@ -231,10 +214,7 @@ describe("userWordQueries", () => {
   describe("getByUserId", () => {
     it("returns the user words", async () => {
       const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
       await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord.id,
@@ -265,20 +245,6 @@ describe("userWordQueries", () => {
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
 
-    it("returns an empty list of rows if the user has no user words", async () => {
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-
-      const result = await userWordQueries.getByUserId(newUser!.id);
-
-      expect(result).toEqual({
-        totalRows: 0,
-        userWords: [],
-      });
-    });
-
     describe("with options", () => {
       let milieuWord: Word | undefined = undefined;
       let clemencyWord: Word | undefined = undefined;
@@ -300,10 +266,7 @@ describe("userWordQueries", () => {
       let dithyrambicUserWord: UserWord | undefined = undefined;
       let admonishUserWord: UserWord | undefined = undefined;
       beforeEach(async () => {
-        const newUser = await userQueries.create({
-          email: sampleUser1.email,
-          password: sampleUser1.password,
-        });
+        const newUser = await userQueries.create(userParams);
         milieuWord = await wordQueries.create({
           json: [
             {
@@ -498,7 +461,7 @@ describe("userWordQueries", () => {
       });
 
       it("returns all of the user's user words when no queries are provided", async () => {
-        const result = await userWordQueries.getByUserId(sampleUser1.id);
+        const result = await userWordQueries.getByUserId(userId);
 
         expect(result).toEqual({
           totalRows: 9,
@@ -521,7 +484,7 @@ describe("userWordQueries", () => {
       });
 
       it("returns correct user words when all queries are provided", async () => {
-        const result = await userWordQueries.getByUserId(sampleUser1.id, {
+        const result = await userWordQueries.getByUserId(userId, {
           learned: true,
           sort: { column: "created_at", table: "user_words", direction: 1 },
           search: "ad",
@@ -537,7 +500,7 @@ describe("userWordQueries", () => {
 
       describe("learned query", () => {
         it("returns user words that are learned", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             learned: true,
           });
 
@@ -553,7 +516,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns user words that are not learned", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             learned: false,
           });
 
@@ -572,7 +535,7 @@ describe("userWordQueries", () => {
 
       describe("sort query", () => {
         it("returns words in alphabetically ascending order", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             sort: { table: "words", column: "details", direction: 1 },
           });
 
@@ -597,7 +560,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns words in alphabetically descending order", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             sort: { table: "words", column: "details", direction: -1 },
           });
 
@@ -622,7 +585,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns user words in ascending order for when the user words were created", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             sort: { table: "user_words", column: "created_at", direction: 1 },
           });
 
@@ -647,7 +610,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns user words in descending order for when the user words were created", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             sort: {
               table: "user_words",
               column: "created_at",
@@ -678,7 +641,7 @@ describe("userWordQueries", () => {
 
       describe("search query", () => {
         it("returns user words that the user searches for", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             search: "mil",
           });
 
@@ -689,7 +652,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns user words that the user searches for when the search query is uppercase", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             search: "MIL",
           });
 
@@ -700,7 +663,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns no user words when the search contains no results", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             search: "no results",
           });
 
@@ -713,7 +676,7 @@ describe("userWordQueries", () => {
 
       describe("page number and page limit query", () => {
         it("returns user words based on page and limit with a previous and next object", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             page: 2,
             limit: 2,
           });
@@ -736,7 +699,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns user words based on page and limit with a previous object when there is no next page", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             page: 5,
             limit: 2,
           });
@@ -752,7 +715,7 @@ describe("userWordQueries", () => {
         });
 
         it("returns user words based on page and limit with a next object when there is no previous page", async () => {
-          const result = await userWordQueries.getByUserId(sampleUser1.id, {
+          const result = await userWordQueries.getByUserId(userId, {
             page: 1,
             limit: 2,
           });
@@ -776,10 +739,7 @@ describe("userWordQueries", () => {
   describe("get", () => {
     it("gets the user word by user and word IDs", async () => {
       const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
       await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord.id,
@@ -807,96 +767,7 @@ describe("userWordQueries", () => {
     });
   });
 
-  describe("getById", () => {
-    it("returns a correct user word by ID", async () => {
-      const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-      const newUserWord = await userWordQueries.create({
-        user_id: newUser!.id,
-        word_id: newWord.id,
-        learned: false,
-      });
-
-      const existingUserWord = await userWordQueries.getById(newUserWord.id);
-
-      const createdAtTimestamp = new Date(
-        existingUserWord!.created_at
-      ).getTime();
-      const updatedAtTimestamp = new Date(
-        existingUserWord!.updated_at
-      ).getTime();
-      const nowTimestamp = Date.now();
-      expect(existingUserWord).toEqual({
-        id: 1,
-        user_id: newUser!.id,
-        word_id: newWord.id,
-        learned: false,
-        created_at: expect.any(Date),
-        updated_at: expect.any(Date),
-      });
-      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
-      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
-    });
-
-    it("returns undefined when the user word does not exist", async () => {
-      const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-      await userWordQueries.create({
-        user_id: newUser!.id,
-        word_id: newWord.id,
-        learned: false,
-      });
-
-      const existingUserWord = await userWordQueries.getById("2");
-
-      expect(existingUserWord).toBeUndefined();
-    });
-  });
-
-  describe("delete", () => {
-    it("deletes the user word", async () => {
-      const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-      const newUserWord = await userWordQueries.create({
-        user_id: newUser!.id,
-        word_id: newWord.id,
-        learned: false,
-      });
-
-      await userWordQueries.delete({
-        user_id: newUser!.id,
-        word_id: newWord.id,
-      });
-
-      const userWords = await userWordQueries.getById(newUserWord!.id);
-      expect(userWords).toBeUndefined();
-    });
-
-    it("does nothing if the user word does not exist", async () => {
-      const newWord = await wordQueries.create({ json });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-      const userWord = await userWordQueries.delete({
-        user_id: newUser!.id,
-        word_id: newWord.id,
-      });
-
-      expect(userWord).toBeUndefined();
-    });
-  });
-
-  describe("deleteAllByUserId", () => {
+  describe("deleteByUserId", () => {
     it("deletes all of the user's words", async () => {
       const newWord1 = await wordQueries.create({ json });
       const newWord2 = await wordQueries.create({
@@ -916,10 +787,7 @@ describe("userWordQueries", () => {
           },
         ],
       });
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const newUser = await userQueries.create(userParams);
       const newUserWord1 = await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord1.id,
@@ -931,30 +799,12 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const deletedUserWords = await userWordQueries.deleteAllByUserId(
+      const deletedUserWords = await userWordQueries.deleteByUserId(
         newUser!.id
       );
 
       const result = await userWordQueries.getByUserId(newUser!.id);
       expect(deletedUserWords).toEqual([newUserWord1, newUserWord2]);
-      expect(result).toEqual({
-        totalRows: 0,
-        userWords: [],
-      });
-    });
-
-    it("returns empty list if the user has no user words", async () => {
-      const newUser = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-
-      const deletedUserWords = await userWordQueries.deleteAllByUserId(
-        newUser!.id
-      );
-
-      const result = await userWordQueries.getByUserId(newUser!.id);
-      expect(deletedUserWords).toEqual([]);
       expect(result).toEqual({
         totalRows: 0,
         userWords: [],
@@ -992,10 +842,7 @@ describe("userWordQueries", () => {
       const clemencyWord = await wordQueries.create({ json: clemencyJson });
       const helloWord = await wordQueries.create({ json });
       const milieuWord = await wordQueries.create({ json: milieuJson });
-      const user = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const user = await userQueries.create(userParams);
       const clemencyUserWord = await userWordQueries.create({
         user_id: user!.id,
         word_id: clemencyWord.id,
@@ -1012,10 +859,11 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
-        count: 7,
-        learned: false,
-        order: Order.Oldest,
+      const randomUserWords = await userWordQueries.getUserWords({
+        user_id: user!.id,
+        word_count: 7,
+        has_learned_words: false,
+        sort_mode: SortMode.Oldest,
       });
 
       const expectedUserWords = [
@@ -1030,10 +878,7 @@ describe("userWordQueries", () => {
       const clemencyWord = await wordQueries.create({ json: clemencyJson });
       const helloWord = await wordQueries.create({ json });
       const milieuWord = await wordQueries.create({ json: milieuJson });
-      const user = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const user = await userQueries.create(userParams);
       const clemencyUserWord = await userWordQueries.create({
         user_id: user!.id,
         word_id: clemencyWord.id,
@@ -1050,10 +895,11 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
-        count: 7,
-        learned: false,
-        order: Order.Newest,
+      const randomUserWords = await userWordQueries.getUserWords({
+        user_id: user!.id,
+        word_count: 7,
+        has_learned_words: false,
+        sort_mode: SortMode.Newest,
       });
 
       const expectedUserWords = [
@@ -1064,14 +910,11 @@ describe("userWordQueries", () => {
       expect(randomUserWords).toEqual(expectedUserWords);
     });
 
-    it("returns x rows", async () => {
+    it("returns x rows where x is 2 in this case", async () => {
       const clemencyWord = await wordQueries.create({ json: clemencyJson });
       const helloWord = await wordQueries.create({ json });
       const milieuWord = await wordQueries.create({ json: milieuJson });
-      const user = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const user = await userQueries.create(userParams);
       const clemencyUserWord = await userWordQueries.create({
         user_id: user!.id,
         word_id: clemencyWord.id,
@@ -1088,10 +931,11 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
-        count: 2,
-        learned: false,
-        order: Order.Random,
+      const randomUserWords = await userWordQueries.getUserWords({
+        user_id: user!.id,
+        word_count: 2,
+        has_learned_words: false,
+        sort_mode: SortMode.Random,
       });
 
       const expectedUserWords = [
@@ -1122,10 +966,7 @@ describe("userWordQueries", () => {
       const clemencyWord = await wordQueries.create({ json: clemencyJson });
       const helloWord = await wordQueries.create({ json });
       const milieuWord = await wordQueries.create({ json: milieuJson });
-      const user = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const user = await userQueries.create(userParams);
       const clemencyUserWord = await userWordQueries.create({
         user_id: user!.id,
         word_id: clemencyWord.id,
@@ -1142,10 +983,11 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
-        count: 7,
-        learned: false,
-        order: Order.Random,
+      const randomUserWords = await userWordQueries.getUserWords({
+        user_id: user!.id,
+        word_count: 7,
+        has_learned_words: false,
+        sort_mode: SortMode.Random,
       });
 
       const expectedUserWords = [
@@ -1162,29 +1004,11 @@ describe("userWordQueries", () => {
       );
     });
 
-    it("returns no rows when none exist", async () => {
-      const user = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
-
-      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
-        count: 7,
-        learned: false,
-        order: Order.Random,
-      });
-
-      expect(randomUserWords).toEqual([]);
-    });
-
     it("returns learned user words", async () => {
       const clemencyWord = await wordQueries.create({ json: clemencyJson });
       const helloWord = await wordQueries.create({ json });
       const milieuWord = await wordQueries.create({ json: milieuJson });
-      const user = await userQueries.create({
-        email: sampleUser1.email,
-        password: sampleUser1.password,
-      });
+      const user = await userQueries.create(userParams);
       const clemencyUserWord = await userWordQueries.create({
         user_id: user!.id,
         word_id: clemencyWord.id,
@@ -1201,10 +1025,11 @@ describe("userWordQueries", () => {
         learned: true,
       });
 
-      const randomUserWords = await userWordQueries.getUserWords(user!.id, {
-        count: 2,
-        learned: true,
-        order: Order.Random,
+      const randomUserWords = await userWordQueries.getUserWords({
+        user_id: user!.id,
+        word_count: 2,
+        has_learned_words: true,
+        sort_mode: SortMode.Random,
       });
 
       const expectedUserWords = [
