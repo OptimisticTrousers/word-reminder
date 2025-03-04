@@ -1,13 +1,13 @@
+import { Detail, Word } from "common";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
-import { Detail, Word } from "common";
 
 export const wordQueries = (function () {
   const queries = createQueries<Word>(["*"], "words");
   const { columns, db, getById, table } = queries;
 
-  const create = async ({ json }: { json: Detail[] }): Promise<Word> => {
+  const create = async ({ json }: { json: Detail[] }) => {
     const existingWord = await getByWord(json[0].word);
 
     if (existingWord) {
