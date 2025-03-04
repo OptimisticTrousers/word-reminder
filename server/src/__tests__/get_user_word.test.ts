@@ -1,54 +1,56 @@
 import express from "express";
 import request from "supertest";
 
-import { get_user_word } from "../controllers/word_controller";
+import { get_user_word } from "../controllers/user_word_controller";
 import { userWordQueries } from "../db/user_word_queries";
+import { wordQueries } from "../db/word_queries";
+
+const app = express();
+app.use(express.json());
+app.get("/api/users/:userId/userWords/:userWordId", get_user_word);
+
+const userId = 1;
+const wordId = 1;
+const userWordId = 1;
+const word = {
+  id: wordId,
+  details: [],
+};
+const userWord = {
+  id: userWordId,
+  user_id: userId,
+  word_id: wordId,
+  learned: false,
+  created_at: new Date(),
+  updated_at: new Date(),
+};
 
 describe("get_user_word", () => {
-  const app = express();
-  app.use(express.json());
-  app.get("/api/users/:userId/words/:wordId", get_user_word);
-
-  const sampleUser1 = {
-    id: "1",
-    email: "email@protonmail.com",
-    password: "password",
-  };
-
-  const wordId = "1";
-  const userWord1 = {
-    id: "1",
-    user_id: sampleUser1.id,
-    word_id: wordId,
-    learned: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
-  const mockUserWordGet = jest
-    .spyOn(userWordQueries, "get")
-    .mockImplementation(async () => {
-      return userWord1;
-    });
+  const mockUserWordGetById = jest
+    .spyOn(userWordQueries, "getById")
+    .mockResolvedValue(userWord);
+  const mockWordGetById = jest
+    .spyOn(wordQueries, "getById")
+    .mockResolvedValue(word);
 
   it("gets a user word", async () => {
     const response = await request(app).get(
-      `/api/users/${sampleUser1.id}/words/${wordId}`
+      `/api/users/${userId}/userWords/${userWordId}`
     );
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       userWord: {
-        ...userWord1,
-        created_at: userWord1.created_at.toISOString(),
-        updated_at: userWord1.updated_at.toISOString(),
+        ...userWord,
+        word,
+        created_at: userWord.created_at.toISOString(),
+        updated_at: userWord.updated_at.toISOString(),
       },
     });
-    expect(mockUserWordGet).toHaveBeenCalledTimes(1);
-    expect(mockUserWordGet).toHaveBeenCalledWith({
-      word_id: wordId,
-      user_id: sampleUser1.id,
-    });
+    expect(mockUserWordGetById).toHaveBeenCalledTimes(1);
+    expect(mockUserWordGetById).toHaveBeenCalledWith(userWordId);
+    expect(mockWordGetById).toHaveBeenCalledTimes(1);
+    expect(mockWordGetById).toHaveBeenCalledWith(wordId);
   });
 });
