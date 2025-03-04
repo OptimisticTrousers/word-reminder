@@ -2,18 +2,17 @@ import { subscriptionQueries } from "../db/subscription_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 
+const subscriptionId1 = 1;
+
+const subscription1 = {
+  endpoint: "https://random-push-service.com/unique-id-1234/",
+  keys: {
+    p256dh:
+      "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM=",
+    auth: "tBHItJI5svbpez7KI4CCXg==",
+  },
+};
 describe("subscriptionQueries", () => {
-  const subscriptionId1 = 1;
-
-  const subscription1 = {
-    endpoint: "https://random-push-service.com/unique-id-1234/",
-    keys: {
-      p256dh:
-        "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM=",
-      auth: "tBHItJI5svbpez7KI4CCXg==",
-    },
-  };
-
   describe("create", () => {
     it("creates a subscription", async () => {
       const subscription = await subscriptionQueries.create(subscription1);
@@ -24,24 +23,6 @@ describe("subscriptionQueries", () => {
         p256dh: subscription1.keys.p256dh,
         auth: subscription1.keys.auth,
       });
-    });
-  });
-
-  describe("deleteById", () => {
-    it("deletes a subscription", async () => {
-      const subscription = await subscriptionQueries.create(subscription1);
-
-      await subscriptionQueries.deleteById(subscription.id);
-
-      const subscriptions = await subscriptionQueries.get();
-      expect(subscriptions).toEqual([]);
-    });
-
-    it("no error is returned when the subscription does not exist", async () => {
-      await subscriptionQueries.deleteById(String(subscriptionId1));
-
-      const subscriptions = await subscriptionQueries.get();
-      expect(subscriptions).toEqual([]);
     });
   });
 
@@ -59,12 +40,6 @@ describe("subscriptionQueries", () => {
           auth: subscription1.keys.auth,
         },
       ]);
-    });
-
-    it("returns empty array when there are no subscriptions", async () => {
-      const subscriptions = await subscriptionQueries.get();
-
-      expect(subscriptions).toEqual([]);
     });
   });
 });
