@@ -1,20 +1,8 @@
+import { SortMode } from "common";
+import { validateCronExpression } from "cron";
 import { body } from "express-validator";
 
-import { errorValidationHandler } from "./error_validation_handler";
-import { Order } from "common";
-
-const validateAddToDate = (name: string, property: string) => {
-  return body(`${name}.${property}`)
-    .notEmpty({ ignore_whitespace: true })
-    .withMessage(`'${name}.${property}' must be specified.`)
-    .bail()
-    .isInt({ gt: -1 })
-    .toInt()
-    .withMessage(`'${name}.${property}' must be a non-negative integer.`);
-};
-
 export const validateOptions = [
-  errorValidationHandler, // stop here if 'random' is not provided
   body("has_reminder_onload")
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'has_reminder_onload' must be specified.")
@@ -29,11 +17,19 @@ export const validateOptions = [
     .isBoolean()
     .toBoolean()
     .withMessage("'is_active' must be a boolean."),
-  validateAddToDate("reminder", "minutes"),
-  validateAddToDate("reminder", "hours"),
-  validateAddToDate("reminder", "days"),
-  validateAddToDate("reminder", "weeks"),
-  validateAddToDate("reminder", "months"),
+  body("reminder")
+    .trim()
+    .escape()
+    .isLength({ min: 1 })
+    .withMessage("'reminder' must be specified.")
+    .bail()
+    .custom((value) => {
+      const validation = validateCronExpression(value);
+      if (validation.valid) {
+        return true;
+      }
+      throw new Error(validation.error?.message);
+    }),
 ];
 
 export const validateWordReminder = [
@@ -64,11 +60,13 @@ export const validateAutoWordReminder = [
     .isBoolean()
     .toBoolean()
     .withMessage("'create_now' must be a boolean."),
-  validateAddToDate("duration", "minutes"),
-  validateAddToDate("duration", "hours"),
-  validateAddToDate("duration", "days"),
-  validateAddToDate("duration", "weeks"),
-  validateAddToDate("duration", "months"),
+  body("duration")
+    .notEmpty({ ignore_whitespace: true })
+    .withMessage("'duration' must be specified.")
+    .bail()
+    .isInt({ gt: 0 })
+    .toInt()
+    .withMessage("'duration' must be a positive integer."),
   body("has_learned_words")
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'has_learned_words' must be specified.")
@@ -76,15 +74,13 @@ export const validateAutoWordReminder = [
     .isBoolean()
     .toBoolean()
     .withMessage("'has_learned_words' must be a boolean."),
-  body("order")
+  body("sort_mode")
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'order' must be specified.")
+    .withMessage("'sort_mode' must be specified.")
     .bail()
-    .custom((value) => Object.values<string>(Order).includes(value))
+    .custom((value) => Object.values<string>(SortMode).includes(value))
     .withMessage(
-      `'order' must be a value in this enum: ${Object.values(Order).filter(
-        (value) => typeof value === "string"
-      )}.`
+      `'sort_mode' must be a value in this enum: ${Object.values(SortMode)}`
     ),
   body("word_count")
     .notEmpty({ ignore_whitespace: true })
