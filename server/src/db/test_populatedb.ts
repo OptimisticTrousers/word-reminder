@@ -1,4 +1,5 @@
 import { Client } from "pg";
+
 import { createPopulateDb, db } from "./";
 import { variables } from "../config/variables";
 import { boss } from "./boss";
@@ -11,8 +12,8 @@ const populateDb = createPopulateDb(
 
 // Standard database setup and teardown. Do not clear between each test, as state is often required to persist between tests
 beforeAll(async () => {
+  await boss.stop();
   await populateDb.initializeConnection();
-  await boss.start();
 });
 
 beforeEach(async () => {
@@ -21,12 +22,6 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await boss.stop({
-    close: true,
-    graceful: true,
-    timeout: 25000,
-    wait: true,
-  });
   await populateDb.stopConnection(); // stops client connections
   await db.stopConnection(); // stops pool connection in app for integration tests
 });
