@@ -1,34 +1,51 @@
 import { Router } from "express";
 
 import {
+  confirm_account,
   change_email,
   change_password,
+  index,
   failed_verification,
   forgot_password,
-  index,
 } from "../controllers/views_controller";
-import { validateUserId } from "../middleware/validate_user_id";
+import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { validateToken } from "../middleware/validate_token";
+import { validateUserId } from "../middleware/validate_user_id";
 
 export const viewRouter = Router({ caseSensitive: true });
 
 viewRouter.get(
-  "/change-email/:userId&:token",
+  "/confirmAccount/:userId&:token",
   validateUserId,
   validateToken,
-  change_email
+  errorValidationHandler,
+  confirm_account
 );
+
 viewRouter.get(
-  "/change-password/:userId&:token",
+  "/changePassword/:userId&:token",
   validateUserId,
   validateToken,
+  errorValidationHandler,
   change_password
 );
-viewRouter.get("/failed-verification", failed_verification);
+
 viewRouter.get(
-  "/forgot-password/:userId&:token",
+  "/changeEmail/:userId&:token",
   validateUserId,
   validateToken,
+  errorValidationHandler,
+  change_email
+);
+
+viewRouter.get("/", index);
+
+viewRouter.get("/failedVerification", failed_verification);
+
+viewRouter.get(
+  "/forgotPassword/:userId&:token",
+  validateUserId,
+  validateToken,
+  errorValidationHandler,
   forgot_password
 );
-viewRouter.get("/", index);
