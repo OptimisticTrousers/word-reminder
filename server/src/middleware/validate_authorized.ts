@@ -6,11 +6,10 @@ export const validateAuthorized = (
   res: Response,
   next: NextFunction
 ) => {
-  const { userId } = req.params;
-
+  const userId = Number(req.params.userId);
   const user = req.user as User;
 
-  if (userId !== String(user.id)) {
+  if (userId !== user.id) {
     res.status(401).json({
       message: "You are not allowed to change another user's data.",
     });
