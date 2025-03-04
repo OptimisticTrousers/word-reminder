@@ -16,7 +16,7 @@ export const userQueries = (function () {
   }: {
     email: string;
     password: string;
-  }): Promise<User | null> => {
+  }) => {
     const existingUser = await getByEmail(email);
 
     if (existingUser) {
@@ -39,7 +39,7 @@ export const userQueries = (function () {
     id,
     password,
   }: {
-    id: string;
+    id: number;
     password: string;
   }): Promise<User | undefined> => {
     const { rows }: QueryResult<User> = await db.query(
@@ -68,7 +68,7 @@ export const userQueries = (function () {
   };
 
   const updateById = async (
-    id: string,
+    id: number,
     {
       confirmed,
       email,
@@ -77,7 +77,7 @@ export const userQueries = (function () {
       | { confirmed: boolean; email?: undefined; password?: undefined }
       | { confirmed?: undefined; email: string; password?: undefined }
       | { confirmed?: undefined; email?: undefined; password: string }
-  ): Promise<User> => {
+  ) => {
     let setClause = "";
     const values = [];
 
@@ -110,8 +110,8 @@ export const userQueries = (function () {
     create,
     deleteById: deleteById.bind(queries),
     get,
-    getById: getById.bind(queries),
     getByEmail,
+    getById: getById.bind(queries),
     updateById,
   };
 })();
