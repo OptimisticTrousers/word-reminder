@@ -1,16 +1,14 @@
 import { Request, Response, NextFunction } from "express";
-import { Result, ValidationError, validationResult } from "express-validator";
+import { validationResult } from "express-validator";
 
 export const errorValidationHandler = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  // Extract validation errors from a request.
-  const errors: Result<ValidationError> = validationResult(req);
+  const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    // There are errors. Send response with sanitized values/errors messages.
     res.status(400).json({ errors: errors.array() });
     return;
   }

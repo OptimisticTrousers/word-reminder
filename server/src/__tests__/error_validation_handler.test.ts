@@ -1,9 +1,8 @@
-import asyncHandler from "express-async-handler";
 import express from "express";
+import { body } from "express-validator";
 import request from "supertest";
 
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-import { body } from "express-validator";
 
 describe("errorValidationHandler", () => {
   const message = "Success!";
@@ -13,9 +12,9 @@ describe("errorValidationHandler", () => {
     "/api/users",
     body("test").notEmpty(),
     errorValidationHandler,
-    asyncHandler(async (req, res, next) => {
+    (req, res) => {
       res.status(200).json({ message });
-    })
+    }
   );
 
   it("returns 400 status code when there are validation errors", async () => {
