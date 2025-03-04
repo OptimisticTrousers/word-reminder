@@ -1,13 +1,14 @@
 import express from "express";
 import request from "supertest";
+
 import { boss } from "../db/boss";
 import { createQueue } from "../middleware/create_queue";
 
-describe("createQueue", () => {
-  const userId = "1";
-  const message = "Success.";
-  const queueName = "word-reminder-queue";
+const userId = 1;
+const message = "Success.";
+const queueName = "emails-queue";
 
+describe("createQueue", () => {
   it("creates a queue for word reminders", async () => {
     const app = express();
     app.use(express.json());
@@ -16,9 +17,9 @@ describe("createQueue", () => {
       next();
     });
     app.post(
-      "/wordReminders",
-      createQueue("word-reminder-queue"),
-      (req, res, next) => {
+      "/api/users/:userId/emails",
+      createQueue(queueName),
+      (req, res) => {
         res.status(200).json({ message });
       }
     );
@@ -27,7 +28,7 @@ describe("createQueue", () => {
       .mockImplementation(jest.fn());
 
     const response = await request(app)
-      .post("/wordReminders")
+      .post(`/api/users/${userId}/emails`)
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);
