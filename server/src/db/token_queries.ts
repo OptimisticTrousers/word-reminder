@@ -1,16 +1,11 @@
-import { TOKEN_MAX_BYTES } from "common";
+import { Token, TOKEN_MAX_BYTES } from "common";
 import crypto from "crypto";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
 
-export interface Token {
-  token: string;
-  expires_at: Date;
-}
-
 export const tokenQueries = (function () {
-  const { columns, db, table } = createQueries(["*"], "tokens");
+  const { columns, db, table } = createQueries<Token>(["*"], "tokens");
 
   const create = async () => {
     const token = crypto.randomBytes(TOKEN_MAX_BYTES).toString("hex");
@@ -26,7 +21,7 @@ export const tokenQueries = (function () {
     return rows[0];
   };
 
-  const deleteAll = async (tokens: string[]): Promise<Token[]> => {
+  const deleteAll = async (tokens: string[]) => {
     const { rows }: QueryResult<Token> = await db.query(
       `
     DELETE
@@ -45,7 +40,7 @@ export const tokenQueries = (function () {
       `
     SELECT EXISTS (
       SELECT 1
-      FROM tokens
+      FROM ${table}
       WHERE token = $1
     ) AS token_exists;
       `,
