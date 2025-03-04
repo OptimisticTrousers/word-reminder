@@ -9,5 +9,6 @@ export const isAuthenticated = (
     res.status(401).json({ message: "User is unauthenticated." });
     return;
   }
+
   next();
 };
