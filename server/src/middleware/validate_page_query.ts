@@ -3,7 +3,6 @@ import { query } from "express-validator";
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 
 export const validatePageQuery = [
-  // Validate and sanitize fields.
   query("limit")
     .optional()
     .isInt({ gt: 0 })

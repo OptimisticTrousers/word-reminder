@@ -7,165 +7,147 @@ import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { validatePageQuery } from "../middleware/validate_page_query";
 import { validateSortQuery } from "../middleware/validate_sort_query";
 
+const userId = 1;
+const wordReminder1 = {
+  user_id: userId,
+  finish: new Date(),
+  reminder: "* * * * *",
+  is_active: true,
+  has_reminder_onload: true,
+};
+const milieuJson = [
+  {
+    word: "milieu",
+    meanings: [
+      {
+        partOfSpeech: "noun",
+        definitions: [{ definition: "A person's social environment." }],
+      },
+    ],
+    phonetics: [],
+  },
+];
+const clemencyJson = [
+  {
+    word: "clemency",
+    meanings: [
+      {
+        partOfSpeech: "noun",
+        definitions: [{ definition: "Mercy; lenience." }],
+      },
+    ],
+    phonetics: [],
+  },
+];
+
+const helloJson = [
+  {
+    word: "hello",
+    phonetic: "həˈləʊ",
+    phonetics: [
+      {
+        text: "həˈləʊ",
+        audio:
+          "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
+      },
+      {
+        text: "hɛˈləʊ",
+      },
+    ],
+    origin: "early 19th century: variant of earlier hollo ; related to holla.",
+    meanings: [
+      {
+        partOfSpeech: "exclamation",
+        definitions: [
+          {
+            definition: "used as a greeting or to begin a phone conversation.",
+            example: "hello there, Katie!",
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+      },
+      {
+        partOfSpeech: "noun",
+        definitions: [
+          {
+            definition: "an utterance of ‘hello’; a greeting.",
+            example: "she was getting polite nods and hellos from people",
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+      },
+      {
+        partOfSpeech: "verb",
+        definitions: [
+          {
+            definition: "say or shout ‘hello’.",
+            example: "I pressed the phone button and helloed",
+            synonyms: [],
+            antonyms: [],
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const wordReminders = [
+  {
+    id: 1,
+    user_id: userId,
+    reminder: wordReminder1.reminder,
+    is_active: wordReminder1.is_active,
+    has_reminder_onload: wordReminder1.has_reminder_onload,
+    finish: wordReminder1.finish,
+    user_words: [
+      {
+        learned: false,
+        details: clemencyJson,
+      },
+    ],
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+  {
+    id: 2,
+    user_id: userId,
+    reminder: wordReminder1.reminder,
+    is_active: wordReminder1.is_active,
+    has_reminder_onload: wordReminder1.has_reminder_onload,
+    finish: wordReminder1.finish,
+    user_words: [
+      {
+        learned: false,
+        details: helloJson,
+      },
+    ],
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+  {
+    id: 3,
+    user_id: userId,
+    reminder: wordReminder1.reminder,
+    is_active: wordReminder1.is_active,
+    has_reminder_onload: wordReminder1.has_reminder_onload,
+    finish: wordReminder1.finish,
+    user_words: [
+      {
+        learned: false,
+        details: milieuJson,
+      },
+    ],
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+];
+
 describe("validateQuery", () => {
-  const sampleUser1 = {
-    id: "1",
-    email: "email@protonmail.com",
-    password: "password",
-  };
-
-  const wordReminder1 = {
-    user_id: sampleUser1.id,
-    finish: new Date(Date.now() + 1000),
-    reminder: {
-      minutes: 0,
-      hours: 1,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
-    is_active: true,
-    has_reminder_onload: true,
-  };
-
-  const milieuJson = [
-    {
-      word: "milieu",
-      meanings: [
-        {
-          partOfSpeech: "noun",
-          definitions: [{ definition: "A person's social environment." }],
-        },
-      ],
-      phonetics: [],
-    },
-  ];
-  const clemencyJson = [
-    {
-      word: "clemency",
-      meanings: [
-        {
-          partOfSpeech: "noun",
-          definitions: [{ definition: "Mercy; lenience." }],
-        },
-      ],
-      phonetics: [],
-    },
-  ];
-
-  const helloJson = [
-    {
-      word: "hello",
-      phonetic: "həˈləʊ",
-      phonetics: [
-        {
-          text: "həˈləʊ",
-          audio:
-            "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
-        },
-        {
-          text: "hɛˈləʊ",
-        },
-      ],
-      origin:
-        "early 19th century: variant of earlier hollo ; related to holla.",
-      meanings: [
-        {
-          partOfSpeech: "exclamation",
-          definitions: [
-            {
-              definition:
-                "used as a greeting or to begin a phone conversation.",
-              example: "hello there, Katie!",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-        {
-          partOfSpeech: "noun",
-          definitions: [
-            {
-              definition: "an utterance of ‘hello’; a greeting.",
-              example: "she was getting polite nods and hellos from people",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-        {
-          partOfSpeech: "verb",
-          definitions: [
-            {
-              definition: "say or shout ‘hello’.",
-              example: "I pressed the phone button and helloed",
-              synonyms: [],
-              antonyms: [],
-            },
-          ],
-        },
-      ],
-    },
-  ];
-
-  const wordReminders = [
-    {
-      id: "1",
-      user_id: sampleUser1.id,
-      reminder: wordReminder1.reminder,
-      is_active: wordReminder1.is_active,
-      has_reminder_onload: wordReminder1.has_reminder_onload,
-      finish: wordReminder1.finish,
-      user_words: [
-        {
-          learned: false,
-          details: clemencyJson,
-        },
-      ],
-      created_at: new Date(),
-      updated_at: new Date(),
-    },
-    {
-      id: "2",
-      user_id: sampleUser1.id,
-      reminder: wordReminder1.reminder,
-      is_active: wordReminder1.is_active,
-      has_reminder_onload: wordReminder1.has_reminder_onload,
-      finish: wordReminder1.finish,
-      user_words: [
-        {
-          learned: false,
-          details: helloJson,
-        },
-      ],
-      created_at: new Date(),
-      updated_at: new Date(),
-    },
-    {
-      id: "3",
-      user_id: sampleUser1.id,
-      reminder: wordReminder1.reminder,
-      is_active: wordReminder1.is_active,
-      has_reminder_onload: wordReminder1.has_reminder_onload,
-      finish: wordReminder1.finish,
-      user_words: [
-        {
-          learned: false,
-          details: milieuJson,
-        },
-      ],
-      created_at: new Date(),
-      updated_at: new Date(),
-    },
-  ];
-
   const getByUserIdMock = jest
     .spyOn(userWordsWordRemindersQueries, "getByUserId")
-    .mockImplementation(async () => {
-      return {
-        wordReminders,
-      };
-    });
+    .mockResolvedValue({ wordReminders });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -187,13 +169,11 @@ describe("validateQuery", () => {
         const limit = 6;
 
         const response = await request(app)
-          .get(
-            `/api/users/${sampleUser1.id}/wordReminders?page=${page}&limit=${limit}`
-          )
+          .get(`/api/users/${userId}/wordReminders?page=${page}&limit=${limit}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).toHaveBeenCalledTimes(1);
-        expect(getByUserIdMock).toHaveBeenCalledWith(sampleUser1.id, {
+        expect(getByUserIdMock).toHaveBeenCalledWith(userId, {
           page,
           limit,
         });
@@ -202,8 +182,8 @@ describe("validateQuery", () => {
         expect(response.body).toEqual({
           wordReminders: [
             {
-              id: "1",
-              user_id: "1",
+              id: 1,
+              user_id: userId,
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
@@ -218,8 +198,8 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: "2",
-              user_id: "1",
+              id: 2,
+              user_id: userId,
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
@@ -234,8 +214,8 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: "3",
-              user_id: "1",
+              id: 3,
+              user_id: userId,
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
@@ -258,7 +238,7 @@ describe("validateQuery", () => {
 
         const response = await request(app)
           .get(
-            `/api/users/${sampleUser1.id}/wordReminders?page=${undefined}&limit=${limit}`
+            `/api/users/${userId}/wordReminders?page=${undefined}&limit=${limit}`
           )
           .set("Accept", "application/json");
 
@@ -283,7 +263,7 @@ describe("validateQuery", () => {
 
         const response = await request(app)
           .get(
-            `/api/users/${sampleUser1.id}/wordReminders?page=${page}&limit=${undefined}`
+            `/api/users/${userId}/wordReminders?page=${page}&limit=${undefined}`
           )
           .set("Accept", "application/json");
 
@@ -307,7 +287,7 @@ describe("validateQuery", () => {
         const limit = 6;
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?limit=${limit}`)
+          .get(`/api/users/${userId}/wordReminders?limit=${limit}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -332,7 +312,7 @@ describe("validateQuery", () => {
         const page = 1;
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?page=${page}`)
+          .get(`/api/users/${userId}/wordReminders?page=${page}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -374,11 +354,11 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).toHaveBeenCalledTimes(1);
-        expect(getByUserIdMock).toHaveBeenCalledWith(sampleUser1.id, {
+        expect(getByUserIdMock).toHaveBeenCalledWith(userId, {
           sort: {
             table: "word_reminders",
             column: "created_at",
@@ -390,8 +370,8 @@ describe("validateQuery", () => {
         expect(response.body).toEqual({
           wordReminders: [
             {
-              id: "1",
-              user_id: "1",
+              id: 1,
+              user_id: userId,
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
@@ -406,8 +386,8 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: "2",
-              user_id: "1",
+              id: 2,
+              user_id: userId,
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
@@ -422,8 +402,8 @@ describe("validateQuery", () => {
               ],
             },
             {
-              id: "3",
-              user_id: "1",
+              id: 3,
+              user_id: userId,
               reminder: wordReminder1.reminder,
               is_active: wordReminder1.is_active,
               has_reminder_onload: wordReminder1.has_reminder_onload,
@@ -448,7 +428,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -477,7 +457,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -503,7 +483,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -531,7 +511,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -558,7 +538,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -585,7 +565,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -614,7 +594,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -652,7 +632,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();
@@ -679,7 +659,7 @@ describe("validateQuery", () => {
         });
 
         const response = await request(app)
-          .get(`/api/users/${sampleUser1.id}/wordReminders?${params}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(getByUserIdMock).not.toHaveBeenCalled();

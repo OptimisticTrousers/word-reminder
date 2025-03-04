@@ -3,7 +3,6 @@ import { query } from "express-validator";
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 
 export const validateSortQuery = [
-  // Validate and sanitize fields.
   query("column")
     .optional()
     .trim()
