@@ -78,8 +78,7 @@ export const createPopulateDb = function (client: Client) {
 
       CREATE TABLE words (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        details JSONB NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        details JSONB NOT NULL
       );
 
       CREATE TABLE images (
@@ -104,6 +103,7 @@ export const createPopulateDb = function (client: Client) {
         user_id INTEGER REFERENCES users(id) NOT NULL,
         is_active BOOLEAN NOT NULL,
         has_reminder_onload BOOLEAN NOT NULL,
+        reminder TEXT NOT NULL,
         finish TIMESTAMPTZ NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -121,32 +121,12 @@ export const createPopulateDb = function (client: Client) {
         is_active BOOLEAN NOT NULL,
         has_reminder_onload BOOLEAN NOT NULL,
         has_learned_words BOOLEAN NOT NULL,
-        "order" TEXT NOT NULL,
+        sort_mode TEXT NOT NULL,
+        reminder TEXT NOT NULL,
+        duration INTEGER NOT NULL,
         word_count INTEGER NOT NULL, 
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-
-      CREATE TABLE add_to_dates (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        minutes INTEGER NOT NULL, 
-        hours INTEGER NOT NULL, 
-        days INTEGER NOT NULL, 
-        weeks INTEGER NOT NULL, 
-        months INTEGER NOT NULL
-      );
-
-      CREATE TABLE add_to_dates_word_reminders (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        word_reminder_id INTEGER REFERENCES word_reminders(id) NOT NULL,
-        reminder_id INTEGER REFERENCES add_to_dates(id) NOT NULL
-      );
-
-      CREATE TABLE add_to_dates_auto_word_reminders (
-        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        auto_word_reminder_id INTEGER REFERENCES auto_word_reminders(id) NOT NULL,
-        reminder_id INTEGER REFERENCES add_to_dates(id) NOT NULL,
-        duration_id INTEGER REFERENCES add_to_dates(id) NOT NULL
       );
 
       CREATE TABLE subscriptions (
