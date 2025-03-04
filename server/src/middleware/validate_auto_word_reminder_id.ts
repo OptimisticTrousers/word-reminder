@@ -4,8 +4,9 @@ import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 
 export const validateAutoWordReminderId = asyncHandler(
   async (req, res, next) => {
-    const { autoWordReminderId } = req.params;
-    if (isNaN(Number(autoWordReminderId))) {
+    const autoWordReminderId = Number(req.params.autoWordReminderId);
+
+    if (isNaN(autoWordReminderId)) {
       res.status(400).json({ message: "Invalid auto word reminder ID." });
       return;
     }
@@ -13,6 +14,7 @@ export const validateAutoWordReminderId = asyncHandler(
     const autoWordReminder = await autoWordReminderQueries.getById(
       autoWordReminderId
     );
+
     if (!autoWordReminder) {
       res.status(404).json({ message: "Auto word reminder not found." });
       return;

@@ -1,31 +1,32 @@
 import express from "express";
-import asyncHandler from "express-async-handler";
 import request from "supertest";
 
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
-import { Order } from "common";
+import { SortMode } from "common";
 import { validateAutoWordReminderId } from "../middleware/validate_auto_word_reminder_id";
 
+const userId = 1;
+const autoWordReminderId = 1;
+const message = "Success.";
+
+const app = express();
+app.use(express.json());
+app.delete(
+  "/api/users/:userId/autoWordReminders/:autoWordReminderId",
+  validateAutoWordReminderId,
+  (req, res) => {
+    res.status(200).json({ message });
+  }
+);
+
 describe("validateAutoWordReminderId", () => {
-  const message = "Success.";
-
-  const app = express();
-  app.use(express.json());
-  app.delete(
-    "/autoWordReminders/:autoWordReminderId",
-    validateAutoWordReminderId,
-    asyncHandler(async (req, res, next) => {
-      res.status(200).json({ message });
-    })
-  );
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("returns a 400 status code with invalid auto word reminder id message", async () => {
     const response = await request(app)
-      .delete("/autoWordReminders/bob")
+      .delete(`/api/users/${userId}/autoWordReminders/bob`)
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);
@@ -36,15 +37,12 @@ describe("validateAutoWordReminderId", () => {
   });
 
   it("returns a 404 status code with auto word reminder not found message", async () => {
-    const autoWordReminderId = "1";
     const mockGetById = jest
       .spyOn(autoWordReminderQueries, "getById")
-      .mockImplementation(async () => {
-        return undefined;
-      });
+      .mockResolvedValue(undefined);
 
     const response = await request(app)
-      .delete(`/autoWordReminders/${autoWordReminderId}`)
+      .delete(`/api/users/${userId}/autoWordReminders/${autoWordReminderId}`)
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);
@@ -57,14 +55,15 @@ describe("validateAutoWordReminderId", () => {
   });
 
   it("calls the following request handler when the auto word reminder exists and the auto word reminder id is valid", async () => {
-    const autoWordReminderId = "1";
     const autoWordReminder = {
       id: autoWordReminderId,
-      user_id: "1",
+      user_id: userId,
       is_active: true,
       has_reminder_onload: true,
       has_learned_words: false,
-      order: Order.Newest,
+      reminder: "* * * * *",
+      duration: 3600000,
+      sort_mode: SortMode.Newest,
       word_count: 7,
       created_at: new Date(),
       updated_at: new Date(),
@@ -72,12 +71,10 @@ describe("validateAutoWordReminderId", () => {
 
     const mockGetById = jest
       .spyOn(autoWordReminderQueries, "getById")
-      .mockImplementation(async () => {
-        return autoWordReminder;
-      });
+      .mockResolvedValue(autoWordReminder);
 
     const response = await request(app)
-      .delete(`/autoWordReminders/${autoWordReminderId}`)
+      .delete(`/api/users/${userId}/autoWordReminders/${autoWordReminderId}`)
       .set("Accept", "application/json");
 
     expect(response.status).toBe(200);
