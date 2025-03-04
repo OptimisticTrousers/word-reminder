@@ -1,7 +1,7 @@
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
-import { Image, ImageParams } from "common";
+import { Image } from "common";
 
 export const imageQueries = (function () {
   const queries = createQueries<Image>(["*"], "images");
@@ -11,9 +11,13 @@ export const imageQueries = (function () {
     url,
     descriptionurl,
     comment,
-    title,
     word_id,
-  }: ImageParams): Promise<Image> => {
+  }: {
+    url: string;
+    descriptionurl: string;
+    comment: string;
+    word_id: number;
+  }) => {
     const existingImage = await getByUrl(url);
 
     if (existingImage) {
@@ -26,13 +30,13 @@ export const imageQueries = (function () {
     VALUES ($1, $2, $3, $4)
     RETURNING ${columns};
       `,
-      [url, descriptionurl, comment ?? title, word_id]
+      [url, descriptionurl, comment, word_id]
     );
 
     return rows[0];
   };
 
-  const getByWordId = async (word_id: string): Promise<Image[] | undefined> => {
+  const getByWordId = async (word_id: number) => {
     const { rows }: QueryResult<Image> = await db.query(
       `
     SELECT ${columns}
