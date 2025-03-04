@@ -11,21 +11,18 @@ const {
 
 jest.mock("nodemailer");
 
-const sendMailMock = jest.fn();
-const createTransporterMock = nodemailer.createTransport as jest.Mock;
-createTransporterMock.mockReturnValue({ sendMail: sendMailMock });
+const mockNodemailer = jest.mocked(nodemailer);
 
 describe("email", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+  it("calls the functions to create a transport when initialized", async () => {
+    const mockCreateTransporter = jest.spyOn(mockNodemailer, "createTransport");
 
-  it("calls the functions to create a transport in the constructor", async () => {
     await jest.isolateModulesAsync(async () => {
       await import("../utils/email");
     });
-    expect(createTransporterMock).toHaveBeenCalledTimes(1);
-    expect(createTransporterMock).toHaveBeenCalledWith({
+
+    expect(mockCreateTransporter).toHaveBeenCalledTimes(1);
+    expect(mockCreateTransporter).toHaveBeenCalledWith({
       host: PROTON_SMTP_SERVER,
       port: Number(PROTON_SMTP_PORT),
       secure: false, // It actually uses STARTTLS, there are no shared keys
@@ -37,7 +34,12 @@ describe("email", () => {
   });
 
   it("calls the functions to send an email", async () => {
+    const mockSendMail = jest.fn();
+    jest
+      .spyOn(mockNodemailer, "createTransport")
+      .mockReturnValue({ sendMail: mockSendMail });
     const { email } = await import("../utils/email");
+
     const emailData = {
       userId: "1",
       to: "bob@protonmail.com",
@@ -46,8 +48,8 @@ describe("email", () => {
     };
     await email.sendMail(emailData);
 
-    expect(sendMailMock).toHaveBeenCalledTimes(1);
-    expect(sendMailMock).toHaveBeenCalledWith({
+    expect(mockSendMail).toHaveBeenCalledTimes(1);
+    expect(mockSendMail).toHaveBeenCalledWith({
       from: PROTON_SMTP_USER,
       to: emailData.to,
       subject: emailData.subject,
