@@ -1,33 +1,59 @@
+import express, { NextFunction, Request, Response } from "express";
 import request from "supertest";
 
-import { app } from "../app";
-// Import db setup and teardown functionality
-import "../db/test_populatedb";
+import { logout_user } from "../controllers/session_controller";
 
 describe("logout_user", () => {
-  it("logs out correctly", async () => {
-    const user = {
-      email: "email@protonmail.com",
-      password: "password",
-    };
-    // Simulate register
-    await request(app)
-      .post("/api/users")
-      .set("Accept", "application/json")
-      .send(user);
-    const loginResponse = await request(app)
-      .post("/api/sessions")
-      .set("Accept", "application/json")
-      .send(user);
-
-    const cookie = loginResponse.headers["set-cookie"];
-
+  it("calls the functions to logout", async () => {
+    let capturedCallback: Function = function () {};
+    const mockLogout = jest.fn().mockImplementation((callback) => {
+      callback();
+      capturedCallback = callback;
+    });
+    const app = express();
+    app.use(express.json());
+    app.delete(
+      "/api/sessions",
+      (req: Request, res: Response, next: NextFunction) => {
+        req.logout = mockLogout;
+        next();
+      },
+      logout_user
+    );
     const response = await request(app)
       .delete("/api/sessions")
-      .set("Cookie", cookie)
       .set("Accept", "application/json");
 
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+    expect(mockLogout).toHaveBeenCalledWith(capturedCallback);
     expect(response.status).toBe(204);
+    expect(response.body).toEqual({});
+  });
+
+  it("calls logout callback with error when there is an error", async () => {
+    const error = new Error("logout failed");
+    let capturedCallback: Function = function () {};
+    const mockLogout = jest.fn().mockImplementation((callback) => {
+      callback(error);
+      capturedCallback = callback;
+    });
+    const app = express();
+    app.use(express.json());
+    app.delete(
+      "/api/sessions",
+      (req: Request, res: Response, next: NextFunction) => {
+        req.logout = mockLogout;
+        next();
+      },
+      logout_user
+    );
+    const response = await request(app)
+      .delete("/api/sessions")
+      .set("Accept", "application/json");
+
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+    expect(mockLogout).toHaveBeenCalledWith(capturedCallback);
+    expect(response.status).toBe(500);
     expect(response.body).toEqual({});
   });
 });

@@ -1,40 +1,43 @@
+import express, { NextFunction, Request, Response } from "express";
 import request from "supertest";
 
-import { app } from "../app";
-// Import db setup and teardown functionality
-import "../db/test_populatedb";
+import { current_user } from "../controllers/session_controller";
+
+const user = {
+  id: 1,
+  confirmed: true,
+  email: "email@protonmail.com",
+  password: "password",
+  created_at: new Date(),
+  updated_at: new Date(),
+};
+
+const app = express();
+app.use(express.json());
+app.get(
+  "/api/sessions",
+  (req: Request, res: Response, next: NextFunction) => {
+    req.user = user;
+    next();
+  },
+  current_user
+);
 
 describe("current_user", () => {
   it("returns user when the user is logged in", async () => {
-    const user = {
-      email: "email@protonmail.com",
-      password: "password",
-    };
-    const registerResponse = await request(app)
-      .post("/api/users")
-      .set("Accept", "application/json")
-      .send(user);
-    const loginResponse = await request(app)
-      .post("/api/sessions")
-      .set("Accept", "application/json")
-      .send(user);
-
-    const cookie = loginResponse.headers["set-cookie"];
-
     const response = await request(app)
       .get("/api/sessions")
-      .set("Cookie", cookie)
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       user: {
+        id: user.id,
+        confirmed: user.confirmed,
         email: user.email,
-        confirmed: false,
-        id: registerResponse.body.user.id,
-        created_at: registerResponse.body.user.created_at,
-        updated_at: registerResponse.body.user.updated_at,
+        created_at: user.created_at.toISOString(),
+        updated_at: user.updated_at.toISOString(),
       },
     });
   });
