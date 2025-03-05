@@ -145,7 +145,7 @@ const wordReminders = [
 ];
 
 describe("validateQuery", () => {
-  const getByUserIdMock = jest
+  const mockGetByUserId = jest
     .spyOn(userWordsWordRemindersQueries, "getByUserId")
     .mockResolvedValue({ wordReminders });
 
@@ -172,8 +172,8 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?page=${page}&limit=${limit}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).toHaveBeenCalledTimes(1);
-        expect(getByUserIdMock).toHaveBeenCalledWith(userId, {
+        expect(mockGetByUserId).toHaveBeenCalledTimes(1);
+        expect(mockGetByUserId).toHaveBeenCalledWith(userId, {
           page,
           limit,
         });
@@ -242,7 +242,7 @@ describe("validateQuery", () => {
           )
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -267,7 +267,7 @@ describe("validateQuery", () => {
           )
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -290,7 +290,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?limit=${limit}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -315,7 +315,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?page=${page}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -357,8 +357,8 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).toHaveBeenCalledTimes(1);
-        expect(getByUserIdMock).toHaveBeenCalledWith(userId, {
+        expect(mockGetByUserId).toHaveBeenCalledTimes(1);
+        expect(mockGetByUserId).toHaveBeenCalledWith(userId, {
           sort: {
             table: "word_reminders",
             column: "created_at",
@@ -431,7 +431,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -460,7 +460,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -486,7 +486,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -514,7 +514,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -541,7 +541,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -568,7 +568,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -597,7 +597,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -635,7 +635,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -662,7 +662,7 @@ describe("validateQuery", () => {
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(getByUserIdMock).not.toHaveBeenCalled();
+        expect(mockGetByUserId).not.toHaveBeenCalled();
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
