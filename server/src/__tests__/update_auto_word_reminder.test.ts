@@ -82,7 +82,10 @@ const queueName = `${userId}-auto-word-reminder-queue`;
 
 const app = express();
 app.use(express.json());
-app.put("/api/users/:userId/autoWordReminders/:autoWordReminderId", update_auto_word_reminder);
+app.put(
+  "/api/users/:userId/autoWordReminders/:autoWordReminderId",
+  update_auto_word_reminder
+);
 
 describe("update_auto_word_reminder", () => {
   beforeEach(() => {
@@ -109,7 +112,7 @@ describe("update_auto_word_reminder", () => {
       const mockSendAfter = jest
         .spyOn(boss, "sendAfter")
         .mockImplementation(jest.fn());
-      let capturedCallback: any = async function (jobs: Job<unknown>[]) {};
+      let capturedCallback: any;
       const mockWork = jest
         .spyOn(boss, "work")
         .mockImplementation(async (queueName, callback) => {
@@ -212,7 +215,7 @@ describe("update_auto_word_reminder", () => {
       const mockSendAfter = jest
         .spyOn(boss, "sendAfter")
         .mockImplementation(jest.fn());
-      let capturedCallback: any = async function (jobs: Job<unknown>[]) {};
+      let capturedCallback: any;
       const mockWork = jest
         .spyOn(boss, "work")
         .mockImplementation(async (queueName, callback) => {

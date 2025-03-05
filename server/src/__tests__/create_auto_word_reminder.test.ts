@@ -107,7 +107,7 @@ describe("create_auto_word_reminder", () => {
       const mockSendAfter = jest
         .spyOn(boss, "sendAfter")
         .mockImplementation(jest.fn());
-      let capturedCallback: any = async function (jobs: Job<unknown>[]) {};
+      let capturedCallback: any;
       const mockWork = jest
         .spyOn(boss, "work")
         .mockImplementation(async (queueName, callback) => {
@@ -197,7 +197,7 @@ describe("create_auto_word_reminder", () => {
       const mockSendAfter = jest
         .spyOn(boss, "sendAfter")
         .mockImplementation(jest.fn());
-      let capturedCallback: any = async function (jobs: Job<unknown>[]) {};
+      let capturedCallback: any;
       const mockWork = jest
         .spyOn(boss, "work")
         .mockImplementation(async (queueName, callback) => {
