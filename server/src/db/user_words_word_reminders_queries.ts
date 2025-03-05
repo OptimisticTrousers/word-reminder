@@ -108,10 +108,15 @@ export const userWordsWordRemindersQueries = (function () {
            word_reminders.has_reminder_onload,
            word_reminders.is_active,
            word_reminders.reminder,
+           word_reminders.created_at,
+           word_reminders.updated_at,
            JSON_AGG(
             JSON_BUILD_OBJECT(
               'learned', user_words.learned,
-              'details', words.details
+              'created_at', user_words.created_at,
+              'updated_at', user_words.updated_at,
+              'details', words.details,
+              'id', user_words.id
             )
            ) AS user_words
     FROM ${table}
@@ -150,10 +155,15 @@ export const userWordsWordRemindersQueries = (function () {
            word_reminders.has_reminder_onload,
            word_reminders.is_active,
            word_reminders.reminder,
+           word_reminders.created_at,
+           word_reminders.updated_at,
            JSON_AGG(
             JSON_BUILD_OBJECT(
               'learned', user_words.learned,
-              'details', words.details
+              'created_at', user_words.created_at,
+              'updated_at', user_words.updated_at,
+              'details', words.details,
+              'id', user_words.id
             )
            ) AS user_words
     FROM ${table}
