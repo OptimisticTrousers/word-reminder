@@ -223,7 +223,7 @@ describe("http", () => {
     },
   ];
 
-  const fetchMock = jest
+  const mockFetch = jest
     .spyOn(global, "fetch")
     .mockImplementation(
       jest.fn(() =>
@@ -232,7 +232,7 @@ describe("http", () => {
     );
 
   beforeEach(() => {
-    fetchMock.mockClear();
+    mockFetch.mockClear();
   });
 
   describe("invalid url", () => {
@@ -267,8 +267,8 @@ describe("http", () => {
 
       const response = await http.get({ url });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -285,8 +285,8 @@ describe("http", () => {
 
       const response = await http.post({ url });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -303,8 +303,8 @@ describe("http", () => {
 
       const response = await http.put({ url });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -321,8 +321,8 @@ describe("http", () => {
 
       const response = await http.remove({ url });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -346,8 +346,8 @@ describe("http", () => {
         },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -376,8 +376,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -405,8 +405,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -437,8 +437,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -466,8 +466,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -492,8 +492,8 @@ describe("http", () => {
         },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(new URL(url), {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -516,8 +516,8 @@ describe("http", () => {
         params: { partOfSpeech: "noun" },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "GET",
@@ -540,8 +540,8 @@ describe("http", () => {
         params: { partOfSpeech: "noun" },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "POST",
@@ -564,8 +564,8 @@ describe("http", () => {
         params: { partOfSpeech: "noun" },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "PUT",
@@ -588,8 +588,8 @@ describe("http", () => {
         params: { partOfSpeech: "noun" },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "DELETE",
@@ -617,8 +617,8 @@ describe("http", () => {
         },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "GET",
@@ -650,8 +650,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "POST",
@@ -682,8 +682,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "POST",
@@ -717,8 +717,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "PUT",
@@ -749,8 +749,8 @@ describe("http", () => {
           },
         });
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock).toHaveBeenCalledWith(
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch).toHaveBeenCalledWith(
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "PUT",
@@ -779,8 +779,8 @@ describe("http", () => {
         },
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "DELETE",
