@@ -1,18 +1,7 @@
+import { Detail, Page, UserWordsWordReminders, WordReminder } from "common";
 import { QueryResult } from "pg";
 
 import { createQueries } from "./queries";
-import { WordReminder } from "common";
-
-interface Page {
-  page: number;
-  limit: number;
-}
-
-interface UserWordsWordReminders {
-  id: string;
-  user_word_id: string;
-  word_reminder_id: string;
-}
 
 export interface Result {
   wordReminders: WordReminder[];
@@ -21,19 +10,24 @@ export interface Result {
 }
 
 export const userWordsWordRemindersQueries = (function () {
-  const { columns, db, table } = createQueries(
-    ["*"],
-    "user_words_word_reminders"
+  const tableName = "user_words_word_reminders";
+  const { columns, db, table } = createQueries<UserWordsWordReminders>(
+    [
+      `${tableName}.id`,
+      `${tableName}.user_word_id`,
+      `${tableName}.word_reminder_id`,
+    ],
+    tableName
   );
 
   const create = async ({
     user_word_id,
     word_reminder_id,
   }: {
-    user_word_id: string;
-    word_reminder_id: string;
-  }): Promise<UserWordsWordReminders> => {
-    const existingUserWordsWordReminders: UserWordsWordReminders = await get({
+    user_word_id: number;
+    word_reminder_id: number;
+  }) => {
+    const existingUserWordsWordReminders = await get({
       user_word_id,
       word_reminder_id,
     });
@@ -54,16 +48,14 @@ export const userWordsWordRemindersQueries = (function () {
     return rows[0];
   };
 
-  const deleteAllByUserId = async (
-    user_id: string
-  ): Promise<UserWordsWordReminders[]> => {
+  const deleteByUserId = async (user_id: number) => {
     const { rows }: QueryResult<UserWordsWordReminders> = await db.query(
       `
     DELETE FROM ${table}
     USING user_words
     WHERE user_words.id = ${table}.user_word_id 
     AND user_words.user_id = $1
-    RETURNING ${table}.id, user_word_id, word_reminder_id;
+    RETURNING ${columns};
       `,
       [user_id]
     );
@@ -71,15 +63,14 @@ export const userWordsWordRemindersQueries = (function () {
     return rows;
   };
 
-  const deleteAllByWordReminderId = async (
-    word_reminder_id: string
-  ): Promise<UserWordsWordReminders[]> => {
+  const deleteByWordReminderId = async (word_reminder_id: number) => {
     const { rows }: QueryResult<UserWordsWordReminders> = await db.query(
       `
     DELETE FROM ${table}
     USING word_reminders
-    WHERE word_reminder_id = word_reminders.id AND word_reminder_id = $1
-    RETURNING user_words_word_reminders.id, user_word_id, word_reminder_id;
+    WHERE word_reminder_id = word_reminders.id 
+    AND word_reminder_id = $1
+    RETURNING ${columns};
       `,
       [word_reminder_id]
     );
@@ -91,9 +82,9 @@ export const userWordsWordRemindersQueries = (function () {
     user_word_id,
     word_reminder_id,
   }: {
-    user_word_id: string;
-    word_reminder_id: string;
-  }): Promise<UserWordsWordReminders> => {
+    user_word_id: number;
+    word_reminder_id: number;
+  }) => {
     const { rows }: QueryResult<UserWordsWordReminders> = await db.query(
       `
     SELECT * FROM user_words_word_reminders
@@ -105,34 +96,18 @@ export const userWordsWordRemindersQueries = (function () {
     return rows[0];
   };
 
-  const getByUserId = async (
-    user_id: string,
-    options: {
-      page?: number;
-      limit?: number;
-      // direction refers to whether the column should be sorted in ascending (1) or descending (-1) order
-      sort?: { table: string; direction: number; column: string };
-    } = {}
-  ): Promise<Result> => {
-    const page: number = options.page || 1;
-    const limit: number = options.limit || 8;
-    const startIndex = (page - 1) * limit;
-
-    const queryParts = [
+  const getByWordReminderId = async (wordReminderId: number) => {
+    const {
+      rows,
+    }: QueryResult<
+      WordReminder & { user_words: { details: Detail[]; learned: boolean }[] }
+    > = await db.query(
       `
     SELECT word_reminders.id,
-           COALESCE(
-            JSONB_BUILD_OBJECT(
-                'minutes', MAX(add_to_dates.minutes),
-                'hours', MAX(add_to_dates.hours),
-                'days', MAX(add_to_dates.days),
-                'weeks', MAX(add_to_dates.weeks),
-                'months', MAX(add_to_dates.months)
-            ),  '{}'
-           ) AS reminder,
-           word_reminders.is_active,
-           word_reminders.has_reminder_onload,
            word_reminders.finish,
+           word_reminders.has_reminder_onload,
+           word_reminders.is_active,
+           word_reminders.reminder,
            JSON_AGG(
             JSON_BUILD_OBJECT(
               'learned', user_words.learned,
@@ -146,10 +121,48 @@ export const userWordsWordRemindersQueries = (function () {
     ON words.id = user_words.word_id
     JOIN word_reminders
     ON word_reminders.id = ${table}.word_reminder_id
-    JOIN add_to_dates_word_reminders
-    ON add_to_dates_word_reminders.word_reminder_id = ${table}.word_reminder_id
-    JOIN add_to_dates
-    ON add_to_dates.id = add_to_dates_word_reminders.reminder_id
+    WHERE word_reminders.id = $1
+    GROUP BY word_reminders.id;
+      `,
+      [wordReminderId]
+    );
+
+    return rows[0];
+  };
+
+  const getByUserId = async (
+    user_id: number,
+    options: {
+      page?: number;
+      limit?: number;
+      // direction refers to whether the column should be sorted in ascending (1) or descending (-1) order
+      sort?: { table: string; direction: number; column: string };
+    } = {}
+  ) => {
+    const page = options.page || 1;
+    const limit = options.limit || 8;
+    const startIndex = (page - 1) * limit;
+
+    const queryParts = [
+      `
+    SELECT word_reminders.id,
+           word_reminders.finish,
+           word_reminders.has_reminder_onload,
+           word_reminders.is_active,
+           word_reminders.reminder,
+           JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'learned', user_words.learned,
+              'details', words.details
+            )
+           ) AS user_words
+    FROM ${table}
+    JOIN user_words 
+    ON user_words.id = ${table}.user_word_id
+    JOIN words
+    ON words.id = user_words.word_id
+    JOIN word_reminders
+    ON word_reminders.id = ${table}.word_reminder_id
       `,
       `
     WHERE word_reminders.user_id = $1
@@ -170,11 +183,12 @@ export const userWordsWordRemindersQueries = (function () {
     // Pagination
     queryParts.push(`LIMIT $2 OFFSET $3;`);
 
-    const query: string = queryParts.join(" ");
-    const { rows }: QueryResult<WordReminder> = await db.query(
-      query,
-      queryParams
-    );
+    const query = queryParts.join(" ");
+    const {
+      rows,
+    }: QueryResult<
+      WordReminder & { user_words: { details: Detail[]; learned: boolean } }
+    > = await db.query(query, queryParams);
 
     // Total Rows Calculation
     const totalQuery = `
@@ -208,9 +222,9 @@ export const userWordsWordRemindersQueries = (function () {
 
   return {
     create,
-    get,
-    deleteAllByUserId,
-    deleteAllByWordReminderId,
+    deleteByUserId,
+    deleteByWordReminderId,
+    getByWordReminderId,
     getByUserId,
   };
 })();
