@@ -80,7 +80,7 @@ export const validateAutoWordReminder = [
     .bail()
     .custom((value) => Object.values<string>(SortMode).includes(value))
     .withMessage(
-      `'sort_mode' must be a value in this enum: ${Object.values(SortMode)}`
+      `'sort_mode' must be a value in this enum: ${Object.values(SortMode)}.`
     ),
   body("word_count")
     .notEmpty({ ignore_whitespace: true })

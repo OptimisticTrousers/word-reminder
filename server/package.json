@@ -21,6 +21,7 @@
     "common": "file:../common",
     "connect-pg-simple": "^10.0.0",
     "cors": "^2.8.5",
+    "cron": "^4.1.0",
     "csv-parse": "^5.5.6",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
