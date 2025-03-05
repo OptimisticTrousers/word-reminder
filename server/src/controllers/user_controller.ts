@@ -1,28 +1,30 @@
+import { User } from "common";
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
-import { body, check } from "express-validator";
+import { body, validationResult } from "express-validator";
 
 import { variables } from "../config/variables";
+import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { EMAIL_MAX, PASSWORD_MAX, userQueries } from "../db/user_queries";
 import { userWordQueries } from "../db/user_word_queries";
+import { wordReminderQueries } from "../db/word_reminder_queries";
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-import { emailExists } from "../utils/email_exists";
-import { User } from "common";
+import { emailDoesNotExist } from "../utils/email_does_not_exist";
 
 const { SALT } = variables;
 
 // @desc    Delete single user
 // @route   DELETE /api/users/:userId
 // @access  Private
-export const delete_user = asyncHandler(
-  async (req, _res, next): Promise<void> => {
-    const userId: string = req.params.userId;
-    await userWordQueries.deleteAllByUserId(userId);
-    await userQueries.deleteById(userId);
-    next();
-  }
-);
+export const delete_user = asyncHandler(async (req, _res, next) => {
+  const userId = Number(req.params.userId);
+  await userWordQueries.deleteByUserId(userId);
+  await wordReminderQueries.deleteByUserId(userId);
+  await autoWordReminderQueries.deleteByUserId(userId);
+  await userQueries.deleteById(userId);
+  next();
+});
 
 // @desc    Register new user
 // @route   POST /api/users
@@ -41,7 +43,9 @@ export const signup_user = [
     .isEmail()
     .withMessage(`'email' must be a valid email.`)
     .bail()
-    .custom(emailExists),
+    .custom((value) => {
+      return emailDoesNotExist(value);
+    }),
   body("password")
     .trim()
     .escape()
@@ -53,12 +57,8 @@ export const signup_user = [
       `'password' cannot be greater than ${PASSWORD_MAX} characters.`
     ),
   errorValidationHandler,
-  // Process request after validation and sanitization.
-  asyncHandler(async (req, res): Promise<void> => {
-    const hashedPassword: string = await bcrypt.hash(
-      req.body.password,
-      Number(SALT)
-    );
+  asyncHandler(async (req, res) => {
+    const hashedPassword = await bcrypt.hash(req.body.password, Number(SALT));
 
     const user: User | null = await userQueries.create({
       email: req.body.email,
@@ -77,29 +77,31 @@ export const update_user = [
   body("confirmed")
     .optional()
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'confirmed' must be specified.")
+    .withMessage("confirmed must be specified.")
     .bail()
     .isBoolean()
     .toBoolean()
-    .withMessage("'confirmed' must be a boolean."),
+    .withMessage("confirmed must be a boolean."),
   body("email")
     .optional()
     .trim()
     .escape()
     .isLength({ min: 1 })
-    .withMessage("'email' must be specified.")
+    .withMessage("email must be specified.")
     .bail()
     .isLength({ max: EMAIL_MAX })
-    .withMessage(`'email' cannot be greater than ${EMAIL_MAX} characters.`)
+    .withMessage(`email cannot be greater than ${EMAIL_MAX} characters.`)
     .bail()
     .isEmail()
-    .withMessage(`'email' must be a valid email.`)
+    .withMessage(`email must be a valid email.`)
     .bail()
-    .custom(emailExists)
+    .custom((value) => {
+      return emailDoesNotExist(value);
+    })
     .custom((_, { req }) => {
       if (!req.body.oldPassword) {
         throw new CustomBadRequestError(
-          "'oldPassword' is required when updating 'email'."
+          "oldPassword is required when updating email."
         );
       }
       return true;
@@ -109,11 +111,11 @@ export const update_user = [
     .trim()
     .escape()
     .isLength({ min: 1 })
-    .withMessage("'oldPassword' must be specified.")
+    .withMessage("oldPassword must be specified.")
     .custom((_, { req }) => {
       if (!req.user) {
         throw new CustomBadRequestError(
-          "'oldPassword' is not required when the session user is not provided."
+          "oldPassword is not required when the session user is not provided."
         );
       }
       if (
@@ -122,7 +124,7 @@ export const update_user = [
         !req.body.newPasswordConfirmation
       ) {
         throw new CustomBadRequestError(
-          "'oldPassword' requires 'email' or 'newPassword' and 'newPasswordConfirmation' to be provided."
+          "oldPassword requires email or newPassword and newPasswordConfirmation to be provided."
         );
       }
       return true;
@@ -133,22 +135,22 @@ export const update_user = [
     .escape()
     .isLength({ max: PASSWORD_MAX })
     .withMessage(
-      `'newPassword' cannot be greater than ${PASSWORD_MAX} characters.`
+      `newPassword cannot be greater than ${PASSWORD_MAX} characters.`
     )
     .custom((value, { req }) => {
       if (value && !req.body.newPasswordConfirmation) {
         throw new CustomBadRequestError(
-          "'newPassword' requires 'newPasswordConfirmation' to be provided."
+          "newPassword requires newPasswordConfirmation to be provided."
         );
       }
       if (value !== req.body.newPasswordConfirmation) {
         throw new CustomBadRequestError(
-          "'newPassword' and 'newPasswordConfirmation' must be equal."
+          "newPassword and newPasswordConfirmation must be equal."
         );
       }
       if (req.user && !req.body.oldPassword) {
         throw new CustomBadRequestError(
-          "'oldPassword' is required when updating 'password'."
+          "oldPassword is required when updating password."
         );
       }
       return true;
@@ -159,13 +161,13 @@ export const update_user = [
     .escape()
     .isLength({ max: PASSWORD_MAX })
     .withMessage(
-      `'newPasswordConfirmation' cannot be greater than ${PASSWORD_MAX} characters.`
+      `newPasswordConfirmation cannot be greater than ${PASSWORD_MAX} characters.`
     )
     .bail()
     .custom((value, { req }) => {
       if (value && !req.body.newPassword) {
         throw new CustomBadRequestError(
-          "'newPasswordConfirmation' requires 'newPassword' to be provided."
+          "newPasswordConfirmation requires newPassword to be provided."
         );
       }
       return true;
@@ -176,9 +178,18 @@ export const update_user = [
     }
     return true;
   }),
-  errorValidationHandler,
   asyncHandler(async (req, res) => {
-    const { userId } = req.params;
+    const userId = Number(req.params.userId);
+    const token = req.params.token;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.render("pages/error", {
+        errors: errors.array(),
+      });
+      return;
+    }
 
     const sessionUser = req.user;
 
@@ -186,9 +197,11 @@ export const update_user = [
 
     if (sessionUser) {
       if (confirmed) {
-        const updatedUser = await userQueries.updateById(userId, { confirmed });
+        await userQueries.updateById(userId, { confirmed });
 
-        res.status(200).json({ user: updatedUser });
+        res.render("pages/success", {
+          message: "You have successfully confirmed your account!",
+        });
         return;
       }
 
@@ -199,28 +212,43 @@ export const update_user = [
         password: oldHashedPassword,
       });
 
-      if (!user) {
-        res
-          .status(400)
-          .json({ message: "You typed your old password incorrectly." });
+      const message = "You typed your old password incorrectly. Try again.";
+      if (!user && newPassword) {
+        res.render("pages/change_password", {
+          userId,
+          message,
+          token,
+        });
+        return;
+      }
+
+      if (!user && email) {
+        res.render("pages/change_email", {
+          userId,
+          message,
+          token,
+        });
         return;
       }
 
       if (email) {
-        const updatedUser = await userQueries.updateById(userId, { email });
+        await userQueries.updateById(userId, { email });
 
-        res.status(200).json({ user: updatedUser });
+        res.render("pages/success", {
+          message: "You have successfully updated your email!",
+        });
         return;
       }
     }
 
     const newHashedPassword = await bcrypt.hash(newPassword, Number(SALT));
 
-    // Get the user to be updated
-    const updatedUser = await userQueries.updateById(userId, {
+    await userQueries.updateById(userId, {
       password: newHashedPassword,
     });
 
-    res.status(200).json({ user: updatedUser });
+    res.render("pages/success", {
+      message: "You have successfully updated your password!",
+    });
   }),
 ];

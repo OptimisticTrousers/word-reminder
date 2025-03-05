@@ -5,39 +5,35 @@ import request from "supertest";
 import { signup_user } from "../controllers/user_controller";
 import { userQueries } from "../db/user_queries";
 import { variables } from "../config/variables";
-import { emailExists } from "../utils/email_exists";
+import { emailDoesNotExist } from "../utils/email_does_not_exist";
 
 const { SALT } = variables;
 
-jest.mock("../utils/email_exists", () => ({
-  emailExists: jest.fn().mockImplementation(async () => {
-    return undefined;
-  }),
+jest.mock("../utils/email_does_not_exist", () => ({
+  emailDoesNotExist: jest.fn().mockReturnValue(true),
 }));
 
-describe("signup_user", () => {
-  const app = express();
-  app.use(express.json());
-  app.post("/api/users", signup_user);
+const app = express();
+app.use(express.json());
+app.post("/api/users", signup_user);
 
+describe("signup_user", () => {
   it("creates user with hashed password and returns message after user signs up", async () => {
     const body = {
       email: "email@protonmail.com",
       password: "password",
     };
     const user = {
-      id: "1",
+      id: 1,
       email: body.email,
       confirmed: false,
       created_at: new Date(),
       updated_at: new Date(),
     };
     const hashSpy = jest.spyOn(bcrypt, "hash");
-    const createUserMock = jest
+    const mockCreateUser = jest
       .spyOn(userQueries, "create")
-      .mockImplementation(async () => {
-        return user;
-      });
+      .mockResolvedValue(user);
 
     const response = await request(app)
       .post("/api/users")
@@ -53,11 +49,12 @@ describe("signup_user", () => {
         updated_at: user.updated_at.toISOString(),
       },
     });
-    expect(emailExists).toHaveBeenCalledTimes(1);
+    expect(emailDoesNotExist).toHaveBeenCalledTimes(1);
+    expect(emailDoesNotExist).toHaveBeenCalledWith(user.email);
     expect(hashSpy).toHaveBeenCalledTimes(1);
     expect(hashSpy).toHaveBeenCalledWith(body.password, Number(SALT));
-    expect(createUserMock).toHaveBeenCalledTimes(1);
-    expect(createUserMock).toHaveBeenCalledWith({
+    expect(mockCreateUser).toHaveBeenCalledTimes(1);
+    expect(mockCreateUser).toHaveBeenCalledWith({
       email: body.email,
       password: expect.any(String),
     });
