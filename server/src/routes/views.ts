@@ -1,7 +1,6 @@
 import { Router } from "express";
 
 import {
-  confirm_account,
   change_email,
   change_password,
   index,
@@ -14,13 +13,7 @@ import { validateUserId } from "../middleware/validate_user_id";
 
 export const viewRouter = Router({ caseSensitive: true });
 
-viewRouter.get(
-  "/confirmAccount/:userId&:token",
-  validateUserId,
-  validateToken,
-  errorValidationHandler,
-  confirm_account
-);
+viewRouter.get("/", index);
 
 viewRouter.get(
   "/changePassword/:userId&:token",
@@ -37,8 +30,6 @@ viewRouter.get(
   errorValidationHandler,
   change_email
 );
-
-viewRouter.get("/", index);
 
 viewRouter.get("/failedVerification", failed_verification);
 

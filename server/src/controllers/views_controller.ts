@@ -1,30 +1,40 @@
-import asyncHandler from "express-async-handler";
+import { Template } from "common";
+import { Request, Response } from "express";
 
-export const change_email = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
-  res.render("pages/change_email", {
+export const change_password = (req: Request, res: Response) => {
+  const { userId, token } = req.params;
+
+  res.render(`pages/${Template.CHANGE_PASSWORD}`, {
     userId,
+    token,
+    message: undefined
   });
-});
+};
 
-export const change_password = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
-  res.render("pages/change_password", {
+export const change_email = (req: Request, res: Response) => {
+  const { userId, token } = req.params;
+
+  res.render(`pages/${Template.CHANGE_EMAIL}`, {
     userId,
+    token,
+    message: undefined
   });
-});
+};
 
-export const failed_verification = asyncHandler(async (req, res, next) => {
+export const failed_verification = (req: Request, res: Response) => {
   res.render("pages/failed_verification");
-});
+};
 
-export const forgot_password = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
-  res.render("pages/forgot_password", {
+export const forgot_password = (req: Request, res: Response) => {
+  const { userId, token } = req.params;
+
+  res.render(`pages/${Template.FORGOT_PASSWORD}`, {
     userId,
+    token,
+    message: undefined
   });
-});
+};
 
-export const index = asyncHandler(async (req, res, next) => {
+export const index = (req: Request, res: Response) => {
   res.render("pages/index");
-});
+};

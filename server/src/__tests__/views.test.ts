@@ -1,6 +1,7 @@
+import { Template } from "common";
 import express from "express";
-import request from "supertest";
 import path from "path";
+import request from "supertest";
 
 import {
   change_email,
@@ -10,19 +11,19 @@ import {
   index,
 } from "../controllers/views_controller";
 
-describe("views", () => {
-  const userId = "1";
+const userId = 1;
+const token = "token";
 
-  describe("change_email", () => {
-    it("calls the functions to render 'change_email' template", async () => {
+describe("views", () => {
+  describe(`${Template.CHANGE_PASSWORD}`, () => {
+    it(`calls the functions to render '${Template.CHANGE_PASSWORD}' template`, async () => {
       const app = express();
-      // view engine setup
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
-      app.get("/change-email/:userId", change_email);
+      app.get("/changePassword/:userId&:token", change_password);
 
       const response = await request(app)
-        .get(`/change-email/${userId}`)
+        .get(`/changePassword/${userId}&${token}`)
         .set("Accept", "text/html");
 
       expect(response.headers["content-type"]).toMatch(/html/);
@@ -30,16 +31,15 @@ describe("views", () => {
     });
   });
 
-  describe("change_password", () => {
-    it("calls the functions to render 'change_password' template", async () => {
+  describe(`${Template.CHANGE_EMAIL}`, () => {
+    it(`calls the functions to render '${Template.CHANGE_EMAIL}' template`, async () => {
       const app = express();
-      // view engine setup
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
-      app.get("/change-password/:userId", change_password);
+      app.get("/changeEmail/:userId&:token", change_email);
 
       const response = await request(app)
-        .get(`/change-password/${userId}`)
+        .get(`/changeEmail/${userId}&${token}`)
         .set("Accept", "text/html");
 
       expect(response.headers["content-type"]).toMatch(/html/);
@@ -50,13 +50,12 @@ describe("views", () => {
   describe("failed_verification", () => {
     it("calls the functions to render 'failed_verification' template", async () => {
       const app = express();
-      // view engine setup
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
-      app.get("/failed-verification", failed_verification);
+      app.get("/failedVerification", failed_verification);
 
       const response = await request(app)
-        .get("/failed-verification")
+        .get("/failedVerification")
         .set("Accept", "text/html");
 
       expect(response.headers["content-type"]).toMatch(/html/);
@@ -64,16 +63,15 @@ describe("views", () => {
     });
   });
 
-  describe("forgot_password", () => {
-    it("calls the functions to render 'forgot_password' template", async () => {
+  describe(`${Template.FORGOT_PASSWORD}`, () => {
+    it(`calls the functions to render '${Template.FORGOT_PASSWORD}' template`, async () => {
       const app = express();
-      // view engine setup
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
-      app.get("/forgot-password/:userId", forgot_password);
+      app.get("/forgotPassword/:userId&:token", forgot_password);
 
       const response = await request(app)
-        .get(`/forgot-password/${userId}`)
+        .get(`/forgotPassword/${userId}&${token}`)
         .set("Accept", "text/html");
 
       expect(response.headers["content-type"]).toMatch(/html/);
@@ -82,16 +80,13 @@ describe("views", () => {
   });
 
   describe("index", () => {
-    it("calls the functions to render 'change_email' template", async () => {
+    it("calls the functions to render home page", async () => {
       const app = express();
-      // view engine setup
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
-      app.get("/index", index);
+      app.get("/", index);
 
-      const response = await request(app)
-        .get("/index")
-        .set("Accept", "text/html");
+      const response = await request(app).get("/").set("Accept", "text/html");
 
       expect(response.headers["content-type"]).toMatch(/html/);
       expect(response.status).toBe(200);
