@@ -37,7 +37,7 @@ describe("validate_token", () => {
     const app = express();
     app.use(express.json());
     app.get("/change-password/:token", validateToken, (req, res) => {
-      res.json({ message });
+      res.json({ token: res.locals.token });
     });
     app.get("/failed-verification", (req, res) => {
       res.json({ message });
@@ -53,7 +53,7 @@ describe("validate_token", () => {
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      message,
+      token: token,
     });
     expect(mockVerify).toHaveBeenCalledTimes(1);
     expect(mockVerify).toHaveBeenCalledWith(token);

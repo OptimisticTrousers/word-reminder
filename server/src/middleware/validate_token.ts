@@ -7,10 +7,13 @@ export const validateToken = asyncHandler(async (req, res, next) => {
 
   const isValidToken = await tokenQueries.verify(token);
 
+
   if (!isValidToken) {
     res.redirect(303, "/failed-verification");
     return;
   }
+
+  res.locals.token = token;
 
   next();
 });
