@@ -5,23 +5,13 @@ import { word_reminder_list } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 
 describe("word_reminder_list", () => {
-  const sampleUser1 = {
-    id: "1",
-    email: "email@protonmail.com",
-    password: "password",
-  };
+  const userId = 1;
 
-  const wordReminder1 = {
-    id: "1",
-    user_id: sampleUser1.id,
+  const wordReminder = {
+    id: 1,
+    user_id: userId,
     finish: new Date(Date.now() + 1000),
-    reminder: {
-      minutes: 0,
-      hours: 1,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
+    reminder: "* * * * *",
     is_active: true,
     has_reminder_onload: true,
     created_at: new Date(),
@@ -112,27 +102,27 @@ describe("word_reminder_list", () => {
     {
       learned: false,
       details: clemencyJson,
-      id: "1",
-      word_id: "1",
-      user_id: sampleUser1.id,
+      id: 1,
+      word_id: 1,
+      user_id: userId,
       created_at: new Date(),
       updated_at: new Date(),
     },
     {
       learned: false,
       details: helloJson,
-      id: "2",
-      word_id: "2",
-      user_id: sampleUser1.id,
+      id: 2,
+      word_id: 2,
+      user_id: userId,
       created_at: new Date(),
       updated_at: new Date(),
     },
     {
       learned: false,
       details: milieuJson,
-      id: "3",
-      word_id: "3",
-      user_id: sampleUser1.id,
+      id: 3,
+      word_id: 3,
+      user_id: userId,
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -148,16 +138,16 @@ describe("word_reminder_list", () => {
 
   describe("no query", () => {
     it("calls the functions to get the user's words with none of the query options", async () => {
-      const getByUserIdMock = jest
+      const mockGetByUserId = jest
         .spyOn(userWordsWordRemindersQueries, "getByUserId")
         .mockImplementation(async () => {
           return {
-            wordReminders: [{ ...wordReminder1, user_words: userWords }],
+            wordReminders: [{ ...wordReminder, user_words: userWords }],
           };
         });
 
       const response = await request(app)
-        .get(`/api/users/${sampleUser1.id}/wordReminders`)
+        .get(`/api/users/${userId}/wordReminders`)
         .set("Accept", "application/json");
 
       expect(response.headers["content-type"]).toMatch(/json/);
@@ -165,11 +155,11 @@ describe("word_reminder_list", () => {
       expect(response.body).toEqual({
         wordReminders: [
           {
-            ...wordReminder1,
-            reminder: wordReminder1.reminder,
-            finish: wordReminder1.finish.toISOString(),
-            created_at: wordReminder1.created_at.toISOString(),
-            updated_at: wordReminder1.updated_at.toISOString(),
+            ...wordReminder,
+            reminder: wordReminder.reminder,
+            finish: wordReminder.finish.toISOString(),
+            created_at: wordReminder.created_at.toISOString(),
+            updated_at: wordReminder.updated_at.toISOString(),
             user_words: [
               {
                 ...userWords[0],
@@ -190,20 +180,20 @@ describe("word_reminder_list", () => {
           },
         ],
       });
-      expect(getByUserIdMock).toHaveBeenCalledTimes(1);
-      expect(getByUserIdMock).toHaveBeenCalledWith(sampleUser1.id, {});
+      expect(mockGetByUserId).toHaveBeenCalledTimes(1);
+      expect(mockGetByUserId).toHaveBeenCalledWith(userId, {});
     });
   });
 
   describe("page number and page limit query", () => {
     it("calls the functions to get the user's worth with the page number and page limit query", async () => {
-      const getByUserIdMock = jest
+      const mockGetByUserId = jest
         .spyOn(userWordsWordRemindersQueries, "getByUserId")
         .mockImplementation(async () => {
           return {
             wordReminders: [
               {
-                ...wordReminder1,
+                ...wordReminder,
                 user_words: userWords,
               },
             ],
@@ -218,9 +208,7 @@ describe("word_reminder_list", () => {
       const limit = 2;
 
       const response = await request(app)
-        .get(
-          `/api/users/${sampleUser1.id}/wordReminders?page=${page}&limit=${limit}`
-        )
+        .get(`/api/users/${userId}/wordReminders?page=${page}&limit=${limit}`)
         .set("Accept", "application/json");
 
       expect(response.headers["content-type"]).toMatch(/json/);
@@ -228,11 +216,11 @@ describe("word_reminder_list", () => {
       expect(response.body).toEqual({
         wordReminders: [
           {
-            ...wordReminder1,
-            reminder: wordReminder1.reminder,
-            finish: wordReminder1.finish.toISOString(),
-            created_at: wordReminder1.created_at.toISOString(),
-            updated_at: wordReminder1.updated_at.toISOString(),
+            ...wordReminder,
+            reminder: wordReminder.reminder,
+            finish: wordReminder.finish.toISOString(),
+            created_at: wordReminder.created_at.toISOString(),
+            updated_at: wordReminder.updated_at.toISOString(),
             user_words: [
               {
                 ...userWords[0],
@@ -257,8 +245,8 @@ describe("word_reminder_list", () => {
           limit: 2,
         },
       });
-      expect(getByUserIdMock).toHaveBeenCalledTimes(1);
-      expect(getByUserIdMock).toHaveBeenCalledWith(sampleUser1.id, {
+      expect(mockGetByUserId).toHaveBeenCalledTimes(1);
+      expect(mockGetByUserId).toHaveBeenCalledWith(userId, {
         page,
         limit,
       });
