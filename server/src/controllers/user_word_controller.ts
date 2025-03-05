@@ -91,18 +91,20 @@ export const create_user_word = [
           url: API_ENDPOINTS.images(word),
         });
 
-        // 4 images maximum for each word
-        const pages = Object.values(imagesJson.query.pages);
-        const maximum = Math.min(pages.length, 4);
-        for (let i = 0; i < maximum; i++) {
-          const page = pages[i];
-          const image = {
-            url: page.imageinfo[0].url,
-            descriptionurl: page.imageinfo[0].descriptionurl,
-            comment: page.imageinfo[0].comment ?? page.title,
-            word_id: newWord.id,
-          };
-          await imageQueries.create(image);
+        if (imagesJson.query) {
+          // 4 images maximum for each word
+          const pages = Object.values(imagesJson.query.pages);
+          const maximum = Math.min(pages.length, 4);
+          for (let i = 0; i < maximum; i++) {
+            const page = pages[i];
+            const image = {
+              url: page.imageinfo[0].url,
+              descriptionurl: page.imageinfo[0].descriptionurl,
+              comment: page.imageinfo[0].comment ?? page.title,
+              word_id: newWord.id,
+            };
+            await imageQueries.create(image);
+          }
         }
 
         const userWord: UserWord = await userWordQueries.create({
@@ -171,17 +173,19 @@ export const create_user_word = [
     });
 
     // 4 images maximum for each word
-    const pages = Object.values(imagesJson.query.pages);
-    const maximum = Math.min(pages.length, 4);
-    for (let i = 0; i < maximum; i++) {
-      const page = pages[i];
-      const image = {
-        url: page.imageinfo[0].url,
-        descriptionurl: page.imageinfo[0].descriptionurl,
-        comment: page.imageinfo[0].comment ?? page.title,
-        word_id: newWord.id,
-      };
-      await imageQueries.create(image);
+    if (imagesJson.query) {
+      const pages = Object.values(imagesJson.query.pages);
+      const maximum = Math.min(pages.length, 4);
+      for (let i = 0; i < maximum; i++) {
+        const page = pages[i];
+        const image = {
+          url: page.imageinfo[0].url,
+          descriptionurl: page.imageinfo[0].descriptionurl,
+          comment: page.imageinfo[0].comment ?? page.title,
+          word_id: newWord.id,
+        };
+        await imageQueries.create(image);
+      }
     }
 
     await userWordQueries.create({
