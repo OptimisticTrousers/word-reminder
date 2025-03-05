@@ -35,7 +35,7 @@ const imagesResponse = {
         title: "File:GNOME Video icon 2019.svg",
         imageinfo: [
           {
-            comment: "User created page with UploadWizard",
+            comment: undefined,
             url: "https://upload.wikimedia.org/wikipedia/commons/c/c3/GNOME_Video_icon_2019.svg",
             descriptionurl:
               "https://commons.wikimedia.org/wiki/File:GNOME_Video_icon_2019.svg",
