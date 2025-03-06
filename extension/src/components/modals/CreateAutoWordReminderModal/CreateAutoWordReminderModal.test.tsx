@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { AutoCreateWordReminderModal } from "./CreateAutoWordReminderModal";
 import userEvent from "@testing-library/user-event";
-import { Order } from "common";
+import { SortMode } from "common";
 import { NotificationProvider } from "../../../context/Notification";
 import { Mock } from "vitest";
 import { autoWordReminderService } from "../../../services/auto_word_reminder_service/auto_word_reminder_service";
@@ -23,7 +23,6 @@ describe("CreateAutoWordReminderModal component", () => {
     toggleModal: Mock;
     queryClient: QueryClient;
   }) {
-    const searchParams = new URLSearchParams();
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -37,10 +36,7 @@ describe("CreateAutoWordReminderModal component", () => {
               return (
                 <NotificationProvider>
                   <QueryClientProvider client={queryClient}>
-                    <AutoCreateWordReminderModal
-                      searchParams={searchParams}
-                      toggleModal={toggleModal}
-                    />
+                    <AutoCreateWordReminderModal toggleModal={toggleModal} />
                   </QueryClientProvider>
                 </NotificationProvider>
               );
@@ -58,26 +54,14 @@ describe("CreateAutoWordReminderModal component", () => {
 
   const autoWordReminder = {
     id: "1",
-    reminder: {
-      minutes: 30,
-      hours: 1,
-      days: 7,
-      weeks: 1,
-      months: 1,
-    },
+    reminder: "* * * * *",
     create_now: false,
-    duration: {
-      minutes: 2,
-      hours: 2,
-      days: 1,
-      weeks: 3,
-      months: 2,
-    },
+    duration: 36000000,
     word_count: 7,
     is_active: false,
     has_reminder_onload: false,
     has_learned_words: true,
-    order: Order.Oldest,
+    sort_mode: SortMode.Oldest,
   };
 
   const status = 200;
@@ -106,13 +90,11 @@ describe("CreateAutoWordReminderModal component", () => {
     const hasLearnedWords = screen.getByLabelText("Has Learned Words", {
       selector: "input",
     });
-    const order = screen.getByLabelText("Order", { selector: "select" });
+    const sortMode = screen.getByLabelText("Sort Mode", { selector: "select" });
     const notification = screen.queryByRole("dialog");
     const modalHeading = screen.getByTestId("modal-heading");
     expect(modalHeading).toBeInTheDocument();
-    expect(modalHeading).toHaveTextContent(
-      "Automatically Create Word Reminder"
-    );
+    expect(modalHeading).toHaveTextContent("Create Auto Word Reminder");
     expect(notification).not.toBeInTheDocument();
     expect(reminder).toBeInTheDocument();
     expect(duration).toBeInTheDocument();
@@ -125,12 +107,12 @@ describe("CreateAutoWordReminderModal component", () => {
     expect(hasReminderOnload).toBeChecked();
     expect(hasLearnedWords).toBeInTheDocument();
     expect(hasLearnedWords).not.toBeChecked();
-    expect(order).toBeInTheDocument();
-    expect(order).toHaveValue(Order.Random);
+    expect(sortMode).toBeInTheDocument();
+    expect(sortMode).toHaveValue(SortMode.Random);
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it("calls the functions to automatically create an auto word reminder", async () => {
+  it("calls the functions to create an auto word reminder", async () => {
     const mockAutoCreateWordReminder = vi
       .spyOn(autoWordReminderService, "createAutoWordReminder")
       .mockImplementation(async () => {
@@ -143,12 +125,11 @@ describe("CreateAutoWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const [reminderMinutes, durationMinutes] =
-      screen.getAllByLabelText("Minutes");
-    const [reminderHours, durationHours] = screen.getAllByLabelText("Hours");
-    const [reminderDays, durationDays] = screen.getAllByLabelText("Days");
-    const [reminderWeeks, durationWeeks] = screen.getAllByLabelText("Weeks");
-    const [reminderMonths, durationMonths] = screen.getAllByLabelText("Months");
+    const durationMinutes = screen.getByLabelText("Minutes");
+    const durationHours = screen.getByLabelText("Hours");
+    const durationDays = screen.getByLabelText("Days");
+    const durationWeeks = screen.getByLabelText("Weeks");
+    const reminder = screen.getByLabelText("Reminder");
     const wordCount = screen.getByLabelText("Word Count", {
       selector: "input",
     });
@@ -163,24 +144,19 @@ describe("CreateAutoWordReminderModal component", () => {
     const hasLearnedWords = screen.getByLabelText("Has Learned Words", {
       selector: "input",
     });
-    const order = screen.getByLabelText("Order", { selector: "select" });
+    const sortMode = screen.getByLabelText("Sort Mode", { selector: "select" });
 
-    await user.type(reminderMinutes, "30");
-    await user.type(reminderHours, "1");
-    await user.type(reminderDays, "7");
-    await user.type(reminderWeeks, "1");
-    await user.type(reminderMonths, "1");
+    await user.type(reminder, "* * * * *");
     await user.type(durationMinutes, "2");
     await user.type(durationHours, "2");
     await user.type(durationDays, "1");
     await user.type(durationWeeks, "3");
-    await user.type(durationMonths, "2");
     await user.type(wordCount, "7");
     await user.click(createNow);
     await user.click(isActive);
     await user.click(hasReminderOnload);
     await user.click(hasLearnedWords);
-    await user.selectOptions(order, Order.Oldest);
+    await user.selectOptions(sortMode, SortMode.Oldest);
     await user.click(createButton);
 
     const notification = screen.getByRole("dialog", {
@@ -189,7 +165,7 @@ describe("CreateAutoWordReminderModal component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
+      queryKey: ["autoWordReminders"],
       exact: true,
     });
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
@@ -198,26 +174,14 @@ describe("CreateAutoWordReminderModal component", () => {
     expect(mockAutoCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        reminder: {
-          minutes: 30,
-          hours: 1,
-          days: 7,
-          weeks: 1,
-          months: 1,
-        },
+        reminder: "* * * * *",
         create_now: false,
-        duration: {
-          minutes: 2,
-          hours: 2,
-          days: 1,
-          weeks: 3,
-          months: 2,
-        },
+        duration: 1908120000, // 3 weeks, 1 day, 2 hours, 2 minutes in ms
         word_count: 7,
         is_active: false,
         has_reminder_onload: false,
         has_learned_words: true,
-        order: Order.Oldest,
+        sort_mode: SortMode.Oldest,
       },
     });
   });
@@ -234,14 +198,14 @@ describe("CreateAutoWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const [reminderHours] = screen.getAllByLabelText("Hours");
-    const [, durationWeeks] = screen.getAllByLabelText("Weeks");
+    const reminder = screen.getByLabelText("Reminder");
+    const durationWeeks = screen.getByLabelText("Weeks");
     const wordCount = screen.getByLabelText("Word Count", {
       selector: "input",
     });
     const createButton = screen.getByRole("button", { name: "Create" });
 
-    await user.type(reminderHours, "1");
+    await user.type(reminder, "* * * * *");
     await user.type(durationWeeks, "2");
     await user.type(wordCount, "7");
     await user.click(createButton);
@@ -255,26 +219,14 @@ describe("CreateAutoWordReminderModal component", () => {
     expect(mockAutoCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        reminder: {
-          minutes: 0,
-          hours: 1,
-          days: 0,
-          weeks: 0,
-          months: 0,
-        },
-        duration: {
-          minutes: 0,
-          hours: 0,
-          days: 0,
-          weeks: 2,
-          months: 0,
-        },
+        reminder: "* * * * *",
+        duration: 1209600000, // 2 weeks in ms
         create_now: true,
         word_count: 7,
         is_active: true,
         has_reminder_onload: true,
         has_learned_words: false,
-        order: Order.Random,
+        sort_mode: SortMode.Random,
       },
     });
   });
@@ -294,14 +246,14 @@ describe("CreateAutoWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const [reminderHours] = screen.getAllByLabelText("Hours");
-    const [, durationWeeks] = screen.getAllByLabelText("Weeks");
+    const reminder = screen.getByLabelText("Reminder");
+    const durationWeeks = screen.getByLabelText("Weeks");
     const wordCount = screen.getByLabelText("Word Count", {
       selector: "input",
     });
     const createButton = screen.getByRole("button", { name: "Create" });
 
-    await user.type(reminderHours, "1");
+    await user.type(reminder, "* * * * *");
     await user.type(durationWeeks, "2");
     await user.type(wordCount, "7");
     await user.click(createButton);
@@ -315,26 +267,14 @@ describe("CreateAutoWordReminderModal component", () => {
     expect(mockCreateAutoWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
       body: {
-        reminder: {
-          minutes: 0,
-          hours: 1,
-          days: 0,
-          weeks: 0,
-          months: 0,
-        },
-        duration: {
-          minutes: 0,
-          hours: 0,
-          days: 0,
-          weeks: 2,
-          months: 0,
-        },
+        reminder: "* * * * *",
+        duration: 1209600000, // 2 weeks in ms
         word_count: 7,
         is_active: true,
         create_now: true,
         has_reminder_onload: true,
         has_learned_words: false,
-        order: Order.Random,
+        sort_mode: SortMode.Random,
       },
     });
   });
@@ -372,15 +312,15 @@ describe("CreateAutoWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const [reminderHours] = screen.getAllByLabelText("Hours");
-      const [, durationWeeks] = screen.getAllByLabelText("Weeks");
+      const reminder = screen.getByLabelText("Reminder");
+      const durationWeeks = screen.getByLabelText("Weeks");
       const wordCount = screen.getByLabelText("Word Count", {
         selector: "input",
       });
       const createButton = screen.getByRole("button", { name: "Create" });
 
-      await user.type(reminderHours, "1 hours");
-      await user.type(durationWeeks, "2 weeks");
+      await user.type(reminder, "* * * * *");
+      await user.type(durationWeeks, "2");
       await user.type(wordCount, "100");
       await user.click(createButton);
 
@@ -401,15 +341,15 @@ describe("CreateAutoWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const [reminderHours] = screen.getAllByLabelText("Hours");
-      const [, durationWeeks] = screen.getAllByLabelText("Weeks");
+      const reminder = screen.getByLabelText("Reminder");
+      const durationWeeks = screen.getByLabelText("Weeks");
       const wordCount = screen.getByLabelText("Word Count", {
         selector: "input",
       });
       const createButton = screen.getByRole("button", { name: "Create" });
 
-      await user.type(reminderHours, "1 hour");
-      await user.type(durationWeeks, "2 weeks");
+      await user.type(reminder, "* * * * *");
+      await user.type(durationWeeks, "2");
       await user.clear(wordCount);
       await user.click(createButton);
 

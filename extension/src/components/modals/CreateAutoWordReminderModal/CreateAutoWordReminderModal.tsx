@@ -1,28 +1,30 @@
-import { Order, User } from "common";
+import { SortMode, User } from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { ToggleModal } from "../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
 } from "../../../context/Notification";
 import { ModalContainer } from "../ModalContainer";
 import styles from "./CreateAutoWordReminderModal.module.css";
-import { AddToDate } from "../../ui/AddToDate";
+import { Duration } from "../../ui/Duration";
 import { autoWordReminderService } from "../../../services/auto_word_reminder_service/auto_word_reminder_service";
+import { Reminder } from "../../ui/Reminder";
+import { unitsToMs } from "../../../utils/date/date";
 
 interface Props {
-  searchParams: URLSearchParams;
   toggleModal: ToggleModal;
 }
 
 export const AutoCreateWordReminderModal = CSSModules(
-  function ({ searchParams, toggleModal }: Props) {
+  function ({ toggleModal }: Props) {
+    const [reminder, setReminder] = useState("");
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
     const queryClient = useQueryClient();
@@ -31,11 +33,10 @@ export const AutoCreateWordReminderModal = CSSModules(
       onSuccess: () => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
-          AUTO_CREATE_WORD_REMINDER_NOTIFICATION_MSGS.autoCreateWordReminder()
+          CREATE_AUTO_WORD_REMINDER_NOTIFICATION_MSGS.createAutoWordReminder()
         );
-        const searchParamsObject = Object.fromEntries(searchParams);
         queryClient.invalidateQueries({
-          queryKey: ["wordReminders", searchParamsObject],
+          queryKey: ["autoWordReminders"],
           exact: true,
         });
       },
@@ -45,25 +46,23 @@ export const AutoCreateWordReminderModal = CSSModules(
       },
     });
 
+    function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
+      setReminder(event.target.value);
+    }
+
     function handleCreate(formData: FormData) {
+      const time = {
+        minutes: Number(formData.get("minutes") as string),
+        hours: Number(formData.get("hours") as string),
+        days: Number(formData.get("days") as string),
+        weeks: Number(formData.get("weeks") as string),
+      };
       mutate({
         userId,
         body: {
-          reminder: {
-            minutes: Number(formData.get("reminder-minutes") as string),
-            hours: Number(formData.get("reminder-hours") as string),
-            days: Number(formData.get("reminder-days") as string),
-            weeks: Number(formData.get("reminder-weeks") as string),
-            months: Number(formData.get("reminder-months") as string),
-          },
+          reminder: formData.get("reminder") as string,
           create_now: Boolean(formData.get("create_now") as string),
-          duration: {
-            minutes: Number(formData.get("duration-minutes") as string),
-            hours: Number(formData.get("duration-hours") as string),
-            days: Number(formData.get("duration-days") as string),
-            weeks: Number(formData.get("duration-weeks") as string),
-            months: Number(formData.get("duration-months") as string),
-          },
+          duration: unitsToMs(time),
           word_count: Number(formData.get("word_count") as string),
           is_active: Boolean(formData.get("is_active") as string),
           has_reminder_onload: Boolean(
@@ -72,38 +71,25 @@ export const AutoCreateWordReminderModal = CSSModules(
           has_learned_words: Boolean(
             formData.get("has_learned_words") as string
           ),
-          order: formData.get("order") as Order,
+          sort_mode: formData.get("sort_mode") as SortMode,
         },
       });
     }
 
     return (
       <ModalContainer
-        title="Automatically Create Word Reminder"
+        title="Create Auto Word Reminder"
         toggleModal={toggleModal}
       >
         <form styleName="modal__form" action={handleCreate}>
-          <AddToDate
-            legend="Reminder"
+          <Reminder
             disabled={false}
-            defaultValues={{
-              minutes: 0,
-              hours: 0,
-              days: 0,
-              weeks: 0,
-              months: 0,
-            }}
+            value={reminder}
+            handleChange={handleReminderChange}
           />
-          <AddToDate
-            legend="Duration"
+          <Duration
             disabled={false}
-            defaultValues={{
-              minutes: 0,
-              hours: 0,
-              days: 0,
-              weeks: 0,
-              months: 0,
-            }}
+            defaultValues={{ minutes: 0, hours: 0, days: 0, weeks: 0 }}
           />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="word_count">
@@ -168,23 +154,23 @@ export const AutoCreateWordReminderModal = CSSModules(
               />
             </div>
             <div styleName="modal__control">
-              <label styleName="modal__label" htmlFor="order">
-                Order
+              <label styleName="modal__label" htmlFor="sort_mode">
+                Sort Mode
               </label>
               <select
                 styleName="modal__select"
-                name="order"
-                id="order"
+                name="sort_mode"
+                id="sort_mode"
                 required
-                defaultValue={Order.Random}
+                defaultValue={SortMode.Random}
               >
-                <option styleName="modal__option" value={Order.Newest}>
+                <option styleName="modal__option" value={SortMode.Newest}>
                   Newest
                 </option>
-                <option styleName="modal__option" value={Order.Oldest}>
+                <option styleName="modal__option" value={SortMode.Oldest}>
                   Oldest
                 </option>
-                <option styleName="modal__option" value={Order.Random}>
+                <option styleName="modal__option" value={SortMode.Random}>
                   Random
                 </option>
               </select>
@@ -201,8 +187,8 @@ export const AutoCreateWordReminderModal = CSSModules(
   { allowMultiple: true, handleNotFoundStyleName: "log" }
 );
 
-const AUTO_CREATE_WORD_REMINDER_NOTIFICATION_MSGS = {
-  autoCreateWordReminder: () => {
+const CREATE_AUTO_WORD_REMINDER_NOTIFICATION_MSGS = {
+  createAutoWordReminder: () => {
     return "Word reminders will now be created automatically!";
   },
 };

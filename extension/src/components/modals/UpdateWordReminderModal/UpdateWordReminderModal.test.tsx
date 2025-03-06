@@ -5,20 +5,20 @@ import { wordReminderService } from "../../../services/word_reminder_service";
 import { NotificationProvider } from "../../../context/Notification";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UpdateWordReminderModal } from "./UpdateWordReminderModal";
-import { wordService } from "../../../services/word_service";
+import { userWordService } from "../../../services/user_word_service";
 import { ErrorBoundary } from "../../ErrorBoundary/ErrorBoundary";
 import { Mock } from "vitest";
-import { UserWord, Word } from "common";
+import { Detail } from "common";
 
 vi.mock("../../ErrorBoundary/ErrorBoundary");
 vi.mock("../ModalContainer/ModalContainer");
 
 describe("UpdateWordReminderModal component", () => {
   const testUser = {
-    id: "1",
+    id: 1,
   };
   const word1 = {
-    id: "1",
+    id: 1,
     details: [
       {
         word: "hello",
@@ -46,7 +46,7 @@ describe("UpdateWordReminderModal component", () => {
     created_at: new Date(),
   };
   const word2 = {
-    id: "2",
+    id: 2,
     details: [
       {
         word: "clemency",
@@ -63,7 +63,7 @@ describe("UpdateWordReminderModal component", () => {
   };
 
   const userWord1 = {
-    id: "1",
+    id: 1,
     user_id: testUser.id,
     word_id: word1.id,
     details: word1.details,
@@ -73,7 +73,7 @@ describe("UpdateWordReminderModal component", () => {
   };
 
   const userWord2 = {
-    id: "2",
+    id: 2,
     user_id: testUser.id,
     word_id: word2.id,
     details: word2.details,
@@ -83,19 +83,28 @@ describe("UpdateWordReminderModal component", () => {
   };
 
   const wordReminder = {
-    id: "1",
+    id: 1,
     has_reminder_onload: false,
     is_active: false,
     user_id: testUser.id,
-    reminder: {
-      minutes: 0,
-      hours: 2,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
+    reminder: "* * * * *",
     finish: new Date("2025-02-08"),
-    user_words: [userWord1, userWord2],
+    user_words: [
+      {
+        learned: userWord1.learned,
+        created_at: userWord1.created_at,
+        updated_at: userWord1.updated_at,
+        details: word1.details,
+        id: userWord1.id,
+      },
+      {
+        learned: userWord2.learned,
+        created_at: userWord2.created_at,
+        updated_at: userWord2.updated_at,
+        details: word2.details,
+        id: userWord2.id,
+      },
+    ],
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -123,10 +132,7 @@ describe("UpdateWordReminderModal component", () => {
                   <NotificationProvider>
                     <QueryClientProvider client={queryClient}>
                       <UpdateWordReminderModal
-                        wordReminder={{
-                          ...wordReminder,
-                          reminder: { ...wordReminder.reminder, id: "1" },
-                        }}
+                        wordReminder={wordReminder}
                         searchParams={searchParams}
                         toggleModal={toggleModal}
                       />
@@ -153,9 +159,11 @@ describe("UpdateWordReminderModal component", () => {
   });
 
   it("renders the form with all inputs", async () => {
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return { json: { userWords: [userWord1, userWord2] }, status };
-    });
+    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+      async () => {
+        return { json: { user_words: [userWord1, userWord2] }, status };
+      }
+    );
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient();
 
@@ -171,9 +179,17 @@ describe("UpdateWordReminderModal component", () => {
     });
     const userWords = screen.getByDisplayValue(
       String(
-        wordReminder.user_words.map((userWord: UserWord & Word) => {
-          return userWord.details[0].word;
-        })
+        wordReminder.user_words.map(
+          (userWord: {
+            learned: boolean;
+            created_at: Date;
+            updated_at: Date;
+            details: Detail[];
+            id: number;
+          }) => {
+            return userWord.details[0].word;
+          }
+        )
       )
     );
     const userWordOption1 = await screen.findByText(userWord1.details[0].word);
@@ -196,9 +212,11 @@ describe("UpdateWordReminderModal component", () => {
   });
 
   it("calls the functions to update a word reminder", async () => {
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return { json: { userWords: [userWord1, userWord2] }, status };
-    });
+    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+      async () => {
+        return { json: { user_words: [userWord1, userWord2] }, status };
+      }
+    );
     const mockUpdateWordReminder = vi
       .spyOn(wordReminderService, "updateWordReminder")
       .mockImplementation(async () => {
@@ -208,11 +226,7 @@ describe("UpdateWordReminderModal component", () => {
     const queryClient = new QueryClient();
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const minutes = screen.getByLabelText("Minutes");
-    const hours = screen.getByLabelText("Hours");
-    const days = screen.getByLabelText("Days");
-    const weeks = screen.getByLabelText("Weeks");
-    const months = screen.getByLabelText("Months");
+    const reminder = screen.getByLabelText("Reminder");
     const finish = screen.getByDisplayValue(
       wordReminder.finish.toISOString().split("T")[0]
     );
@@ -222,23 +236,23 @@ describe("UpdateWordReminderModal component", () => {
     });
     const userWords = await screen.findByDisplayValue(
       String(
-        wordReminder.user_words.map((userWord: UserWord & Word) => {
-          return userWord.details[0].word;
-        })
+        wordReminder.user_words.map(
+          (userWord: {
+            learned: boolean;
+            created_at: Date;
+            updated_at: Date;
+            details: Detail[];
+            id: number;
+          }) => {
+            return userWord.details[0].word;
+          }
+        )
       )
     );
     const updateButton = screen.getByRole("button", { name: "Update" });
 
-    await user.clear(minutes);
-    await user.clear(hours);
-    await user.clear(days);
-    await user.clear(weeks);
-    await user.clear(months);
-    await user.type(minutes, "30");
-    await user.type(hours, "1");
-    await user.type(days, "7");
-    await user.type(weeks, "1");
-    await user.type(months, "1");
+    await user.clear(reminder);
+    await user.type(reminder, "* * * * *");
     await user.clear(finish);
     await user.type(finish, "2025-02-10");
     await user.clear(userWords);
@@ -255,18 +269,12 @@ describe("UpdateWordReminderModal component", () => {
     expect(mockToggleModal).toHaveBeenCalledWith();
     expect(mockUpdateWordReminder).toHaveBeenCalledTimes(1);
     expect(mockUpdateWordReminder).toHaveBeenCalledWith({
-      userId: testUser.id,
-      wordReminderId: wordReminder.id,
+      userId: String(testUser.id),
+      wordReminderId: String(wordReminder.id),
       body: {
-        reminder: {
-          minutes: 30,
-          hours: 1,
-          days: 7,
-          weeks: 1,
-          months: 1,
-        },
+        reminder: "* * * * *",
         finish: new Date("2025-02-10"),
-        user_words: [userWord1.id],
+        user_word_ids: [String(userWord1.id)],
         is_active: !wordReminder.is_active,
         has_reminder_onload: !wordReminder.has_reminder_onload,
       },
@@ -279,9 +287,11 @@ describe("UpdateWordReminderModal component", () => {
   });
 
   it("throws an error when the getWordList query fails", async () => {
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return { json: { message: new Error("Error Message.") }, status };
-    });
+    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+      async () => {
+        return { json: { message: new Error("Error Message.") }, status };
+      }
+    );
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient();
 
@@ -294,9 +304,11 @@ describe("UpdateWordReminderModal component", () => {
   it("calls the functions to show a notification error", async () => {
     const message = "Bad Request.";
     const status = 400;
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return { json: { userWords: [userWord1, userWord2] }, status };
-    });
+    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+      async () => {
+        return { json: { user_words: [userWord1, userWord2] }, status };
+      }
+    );
     const mockUpdateWordReminder = vi
       .spyOn(wordReminderService, "updateWordReminder")
       .mockImplementation(async () => {
@@ -316,12 +328,12 @@ describe("UpdateWordReminderModal component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockUpdateWordReminder).toHaveBeenCalledTimes(1);
     expect(mockUpdateWordReminder).toHaveBeenCalledWith({
-      userId: testUser.id,
-      wordReminderId: wordReminder.id,
+      userId: String(testUser.id),
+      wordReminderId: String(wordReminder.id),
       body: {
-        reminder: wordReminder.reminder,
+        reminder: "* * * * *",
         finish: wordReminder.finish,
-        user_words: [userWord1.id, userWord2.id],
+        user_word_ids: [String(userWord1.id), String(userWord2.id)],
         is_active: wordReminder.is_active,
         has_reminder_onload: wordReminder.has_reminder_onload,
       },
@@ -332,9 +344,11 @@ describe("UpdateWordReminderModal component", () => {
   });
 
   it("disables the update button when the mutation is loading", async () => {
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return { json: { userWords: [userWord1, userWord2] }, status };
-    });
+    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+      async () => {
+        return { json: { user_words: [userWord1, userWord2] }, status };
+      }
+    );
     const mockUpdateWordReminder = vi
       .spyOn(wordReminderService, "updateWordReminder")
       .mockImplementation(async () => {
@@ -356,12 +370,12 @@ describe("UpdateWordReminderModal component", () => {
     expect(updateButton).toBeDisabled();
     expect(mockUpdateWordReminder).toHaveBeenCalledTimes(1);
     expect(mockUpdateWordReminder).toHaveBeenCalledWith({
-      userId: testUser.id,
-      wordReminderId: wordReminder.id,
+      userId: String(testUser.id),
+      wordReminderId: String(wordReminder.id),
       body: {
-        reminder: wordReminder.reminder,
+        reminder: "* * * * *",
         finish: wordReminder.finish,
-        user_words: [userWord1.id, userWord2.id],
+        user_word_ids: [String(userWord1.id), String(userWord2.id)],
         is_active: wordReminder.is_active,
         has_reminder_onload: wordReminder.has_reminder_onload,
       },
@@ -397,12 +411,14 @@ describe("UpdateWordReminderModal component", () => {
 
   describe("form validation", () => {
     it("does not allow user to submit without the reminder field", async () => {
-      vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-        return {
-          json: { userWords: [userWord1, userWord2] },
-          status,
-        };
-      });
+      vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+        async () => {
+          return {
+            json: { user_words: [userWord1, userWord2] },
+            status,
+          };
+        }
+      );
       const mockUpdateWordReminder = vi
         .spyOn(wordReminderService, "updateWordReminder")
         .mockImplementation(async () => {
@@ -412,28 +428,27 @@ describe("UpdateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const minutes = screen.getByLabelText("Minutes");
-      const hours = screen.getByLabelText("Hours");
-      const days = screen.getByLabelText("Days");
-      const weeks = screen.getByLabelText("Weeks");
-      const months = screen.getByLabelText("Months");
+      const reminder = screen.getByLabelText("Reminder");
       const finish = screen.getByDisplayValue(
         wordReminder.finish.toISOString().split("T")[0]
       );
       const userWords = screen.getByDisplayValue(
         String(
-          wordReminder.user_words.map((userWord: UserWord & Word) => {
-            return userWord.details[0].word;
-          })
+          wordReminder.user_words.map(
+            (userWord: {
+              learned: boolean;
+              created_at: Date;
+              details: Detail[];
+              id: number;
+            }) => {
+              return userWord.details[0].word;
+            }
+          )
         )
       );
       const updateButton = screen.getByRole("button", { name: "Update" });
 
-      await user.clear(minutes);
-      await user.clear(hours);
-      await user.clear(days);
-      await user.clear(weeks);
-      await user.clear(months);
+      await user.clear(reminder);
       await user.type(finish, "2025-02-04");
       await user.type(userWords, `${userWord1.details[0].word}`);
       await user.click(updateButton);
@@ -446,12 +461,14 @@ describe("UpdateWordReminderModal component", () => {
     });
 
     it("does not allow user to submit without the userWords field", async () => {
-      vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-        return {
-          json: { userWords: [userWord1, userWord2] },
-          status,
-        };
-      });
+      vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+        async () => {
+          return {
+            json: { user_words: [userWord1, userWord2] },
+            status,
+          };
+        }
+      );
       const mockUpdateWordReminder = vi
         .spyOn(wordReminderService, "updateWordReminder")
         .mockImplementation(async () => {
@@ -461,20 +478,28 @@ describe("UpdateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const hours = screen.getByLabelText("Hours");
+      const reminder = screen.getByLabelText("Reminder");
       const finish = screen.getByDisplayValue(
         wordReminder.finish.toISOString().split("T")[0]
       );
       const userWords = screen.getByDisplayValue(
         String(
-          wordReminder.user_words.map((userWord: UserWord & Word) => {
-            return userWord.details[0].word;
-          })
+          wordReminder.user_words.map(
+            (userWord: {
+              learned: boolean;
+              created_at: Date;
+              updated_at: Date;
+              details: Detail[];
+              id: number;
+            }) => {
+              return userWord.details[0].word;
+            }
+          )
         )
       );
       const updateButton = screen.getByRole("button", { name: "Update" });
 
-      await user.type(hours, "1");
+      await user.type(reminder, "* * * * *");
       await user.type(finish, "2025-02-04");
       await user.clear(userWords);
       await user.click(updateButton);
@@ -487,12 +512,14 @@ describe("UpdateWordReminderModal component", () => {
     });
 
     it("does not allow user to submit without the finish field", async () => {
-      vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-        return {
-          json: { userWords: [userWord1, userWord2] },
-          status,
-        };
-      });
+      vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+        async () => {
+          return {
+            json: { user_words: [userWord1, userWord2] },
+            status,
+          };
+        }
+      );
       const mockUpdateWordReminder = vi
         .spyOn(wordReminderService, "updateWordReminder")
         .mockImplementation(async () => {
@@ -502,20 +529,28 @@ describe("UpdateWordReminderModal component", () => {
       const queryClient = new QueryClient();
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-      const hours = screen.getByLabelText("Hours");
+      const reminder = screen.getByLabelText("Reminder");
       const finish = screen.getByDisplayValue(
         wordReminder.finish.toISOString().split("T")[0]
       );
       const userWords = screen.getByDisplayValue(
         String(
-          wordReminder.user_words.map((userWord: UserWord & Word) => {
-            return userWord.details[0].word;
-          })
+          wordReminder.user_words.map(
+            (userWord: {
+              learned: boolean;
+              created_at: Date;
+              updated_at: Date;
+              details: Detail[];
+              id: number;
+            }) => {
+              return userWord.details[0].word;
+            }
+          )
         )
       );
       const updateButton = screen.getByRole("button", { name: "Update" });
 
-      await user.type(hours, "1");
+      await user.type(reminder, "* * * * *");
       await user.clear(finish);
       await user.type(userWords, `${userWord1.details[0].word}`);
       await user.click(updateButton);

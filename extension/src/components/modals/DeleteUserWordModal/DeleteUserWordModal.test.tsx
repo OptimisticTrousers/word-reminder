@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import { DeleteUserWordModal } from "./DeleteUserWordModal";
 import * as hooks from "../../../hooks/useNotificationError";
-import { wordService } from "../../../services/word_service";
+import { userWordService } from "../../../services/user_word_service";
 
 describe("DeleteUserWordReminderModal component", () => {
   const json = {
@@ -24,7 +24,7 @@ describe("DeleteUserWordReminderModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      wordId: "1",
+      userWordId: "1",
     };
     const queryClient = new QueryClient();
     const Stub = createRoutesStub([
@@ -65,7 +65,7 @@ describe("DeleteUserWordReminderModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      wordId: "1",
+      userWordId: "1",
     };
     const Stub = createRoutesStub([
       {
@@ -89,7 +89,7 @@ describe("DeleteUserWordReminderModal component", () => {
     ]);
     const status = 200;
     const mockDeleteUserWord = vi
-      .spyOn(wordService, "deleteUserWord")
+      .spyOn(userWordService, "deleteUserWord")
       .mockImplementation(async () => {
         return { json, status };
       });
@@ -102,7 +102,7 @@ describe("DeleteUserWordReminderModal component", () => {
     expect(mockDeleteUserWord).toHaveBeenCalledTimes(1);
     expect(mockDeleteUserWord).toHaveBeenCalledWith({
       userId: testUser.id,
-      wordId: props.wordId,
+      userWordId: props.userWordId,
     });
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
@@ -113,7 +113,7 @@ describe("DeleteUserWordReminderModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      wordId: "1",
+      userWordId: "1",
     };
     const Stub = createRoutesStub([
       {
@@ -138,7 +138,7 @@ describe("DeleteUserWordReminderModal component", () => {
     const status = 200;
     const message = "Error Message.";
     const mockDeleteUserWord = vi
-      .spyOn(wordService, "deleteUserWord")
+      .spyOn(userWordService, "deleteUserWord")
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
@@ -155,7 +155,7 @@ describe("DeleteUserWordReminderModal component", () => {
     expect(mockDeleteUserWord).toHaveBeenCalledTimes(1);
     expect(mockDeleteUserWord).toHaveBeenCalledWith({
       userId: testUser.id,
-      wordId: props.wordId,
+      userWordId: props.userWordId,
     });
     expect(mockShowNotificationError).toHaveBeenCalledTimes(1);
     expect(mockShowNotificationError).toHaveBeenCalledWith({
@@ -171,7 +171,7 @@ describe("DeleteUserWordReminderModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      wordId: "1",
+      userWordId: "1",
     };
     const Stub = createRoutesStub([
       {
@@ -196,7 +196,7 @@ describe("DeleteUserWordReminderModal component", () => {
     const status = 200;
     const delay = 50;
     const mockDeleteUserWord = vi
-      .spyOn(wordService, "deleteUserWord")
+      .spyOn(userWordService, "deleteUserWord")
       .mockImplementation(async () => {
         return new Promise((resolve) => {
           setTimeout(() => {
@@ -215,7 +215,7 @@ describe("DeleteUserWordReminderModal component", () => {
     expect(mockDeleteUserWord).toHaveBeenCalledTimes(1);
     expect(mockDeleteUserWord).toHaveBeenCalledWith({
       userId: testUser.id,
-      wordId: props.wordId,
+      userWordId: props.userWordId,
     });
   });
 
@@ -223,7 +223,7 @@ describe("DeleteUserWordReminderModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      wordId: "1",
+      userWordId: "1",
     };
     const user = userEvent.setup();
     const queryClient = new QueryClient();

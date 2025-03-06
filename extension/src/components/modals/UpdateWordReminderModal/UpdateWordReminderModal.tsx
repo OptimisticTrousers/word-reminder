@@ -1,18 +1,12 @@
-import {
-  AddToDate as IAddToDate,
-  User,
-  UserWord,
-  Word,
-  WordReminder,
-} from "common";
+import { Detail, User, WordReminder } from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ModalContainer } from "../ModalContainer";
-import { wordService } from "../../../services/word_service";
+import { userWordService } from "../../../services/user_word_service";
 import styles from "./UpdateWordReminderModal.module.css";
-import { useContext } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
@@ -20,21 +14,27 @@ import {
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { wordReminderService } from "../../../services/word_reminder_service";
 import { ToggleModal } from "../types";
-import { AddToDate } from "../../ui/AddToDate";
+import { Reminder } from "../../ui/Reminder";
 
 interface Props {
   searchParams: URLSearchParams;
   toggleModal: ToggleModal;
   wordReminder: WordReminder & {
-    user_words: (UserWord & Word)[];
-    reminder: IAddToDate;
+    user_words: {
+      learned: boolean;
+      created_at: Date;
+      updated_at: Date;
+      details: Detail[];
+      id: number;
+    }[];
   };
 }
 
 export const UpdateWordReminderModal = CSSModules(
   function ({ searchParams, toggleModal, wordReminder }: Props) {
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const [reminder, setReminder] = useState(wordReminder.reminder);
+    const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const queryClient = useQueryClient();
     const { showNotificationError } = useNotificationError();
@@ -42,7 +42,10 @@ export const UpdateWordReminderModal = CSSModules(
       queryKey: ["userWords"],
       queryFn: async () => {
         const params = new URLSearchParams();
-        return wordService.getWordList(userId, Object.fromEntries(params));
+        return userWordService.getUserWordList({
+          userId,
+          params: Object.fromEntries(params),
+        });
       },
       throwOnError: true,
     });
@@ -65,11 +68,23 @@ export const UpdateWordReminderModal = CSSModules(
       },
     });
 
+    function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
+      setReminder(event.target.value);
+    }
+
     function handleUpdate(formData: FormData) {
       const userWordToIds: { [key: string]: string } = {};
-      data?.json.userWords.forEach((userWord: UserWord & Word) => {
-        userWordToIds[userWord.details[0].word] = userWord.id;
-      });
+      data?.json.user_words.forEach(
+        (user_word: {
+          learned: boolean;
+          created_at: Date;
+          updated_at: Date;
+          details: Detail[];
+          id: number;
+        }) => {
+          userWordToIds[user_word.details[0].word] = String(user_word.id);
+        }
+      );
 
       const userWords = formData.get("user_words") as string;
       const userWordIds = userWords.split(",").map((userWord: string) => {
@@ -78,40 +93,26 @@ export const UpdateWordReminderModal = CSSModules(
 
       mutate({
         userId,
-        wordReminderId: wordReminder.id,
+        wordReminderId: String(wordReminder.id),
         body: {
-          reminder: {
-            minutes: Number(formData.get("reminder-minutes") as string),
-            hours: Number(formData.get("reminder-hours") as string),
-            days: Number(formData.get("reminder-days") as string),
-            weeks: Number(formData.get("reminder-weeks") as string),
-            months: Number(formData.get("reminder-months") as string),
-          },
+          reminder: formData.get("reminder") as string,
           finish: new Date(formData.get("finish") as string),
           is_active: Boolean(formData.get("is_active") as string),
           has_reminder_onload: Boolean(
             formData.get("has_reminder_onload") as string
           ),
-          user_words: userWordIds,
+          user_word_ids: userWordIds,
         },
       });
     }
 
-    const { minutes, hours, days, weeks, months } = wordReminder.reminder;
-
     return (
       <ModalContainer title="Update Word Reminder" toggleModal={toggleModal}>
         <form styleName="modal__form" action={handleUpdate}>
-          <AddToDate
-            legend="Reminder"
+          <Reminder
             disabled={false}
-            defaultValues={{
-              minutes,
-              hours,
-              days,
-              weeks,
-              months,
-            }}
+            value={reminder}
+            handleChange={handleReminderChange}
           />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="finish">
@@ -142,24 +143,40 @@ export const UpdateWordReminderModal = CSSModules(
               size={64}
               placeholder="Separate words with a comma."
               defaultValue={String(
-                wordReminder.user_words.map((userWord: UserWord & Word) => {
-                  return userWord.details[0].word;
-                })
+                wordReminder.user_words.map(
+                  (user_word: {
+                    learned: boolean;
+                    created_at: Date;
+                    updated_at: Date;
+                    details: Detail[];
+                    id: number;
+                  }) => {
+                    return user_word.details[0].word;
+                  }
+                )
               )}
             />
             <datalist id="words">
-              {data?.json.userWords.map((userWord: UserWord & Word) => {
-                const word = userWord.details[0].word;
-                return (
-                  <option
-                    key={userWord.id}
-                    styleName="modal__option"
-                    value={word}
-                  >
-                    {word}
-                  </option>
-                );
-              })}
+              {data?.json.user_words.map(
+                (user_word: {
+                  learned: boolean;
+                  created_at: Date;
+                  updated_at: Date;
+                  id: number;
+                  details: Detail[];
+                }) => {
+                  const word = user_word.details[0].word;
+                  return (
+                    <option
+                      key={user_word.id}
+                      styleName="modal__option"
+                      value={word}
+                    >
+                      {word}
+                    </option>
+                  );
+                }
+              )}
             </datalist>
           </div>
           <fieldset styleName="modal__fieldset">

@@ -1,12 +1,12 @@
-import { User, UserWord, Word } from "common";
+import { Detail, User } from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ModalContainer } from "../ModalContainer";
-import { wordService } from "../../../services/word_service";
+import { userWordService } from "../../../services/user_word_service";
 import styles from "./CreateWordReminderModal.module.css";
-import { useContext } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
@@ -14,7 +14,7 @@ import {
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { wordReminderService } from "../../../services/word_reminder_service";
 import { ToggleModal } from "../types";
-import { AddToDate } from "../../ui/AddToDate";
+import { Reminder } from "../../ui/Reminder";
 
 interface Props {
   searchParams: URLSearchParams;
@@ -24,17 +24,18 @@ interface Props {
 export const CreateWordReminderModal = CSSModules(
   function ({ toggleModal, searchParams }: Props) {
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const [reminder, setReminder] = useState("");
+    const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
     const queryClient = useQueryClient();
     const { data } = useQuery({
-      queryKey: ["userWords"],
+      queryKey: ["wordReminders"],
       queryFn: async () => {
-        return wordService.getWordList(
+        return userWordService.getUserWordList({
           userId,
-          Object.fromEntries(new URLSearchParams())
-        );
+          params: Object.fromEntries(new URLSearchParams()),
+        });
       },
       throwOnError: true,
     });
@@ -57,11 +58,23 @@ export const CreateWordReminderModal = CSSModules(
       },
     });
 
+    function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
+      setReminder(event.target.value);
+    }
+
     function handleCreate(formData: FormData) {
       const userWordToIds: { [key: string]: string } = {};
-      data?.json.userWords.forEach((userWord: UserWord & Word) => {
-        userWordToIds[userWord.details[0].word] = userWord.id;
-      });
+      data?.json.user_words.forEach(
+        (user_word: {
+          learned: boolean;
+          created_at: Date;
+          updated_at: Date;
+          details: Detail[];
+          id: string;
+        }) => {
+          userWordToIds[user_word.details[0].word] = user_word.id;
+        }
+      );
 
       const userWords = formData.get("user_words") as string;
       const userWordIds = userWords.split(",").map((userWord: string) => {
@@ -71,19 +84,13 @@ export const CreateWordReminderModal = CSSModules(
       mutate({
         userId,
         body: {
-          reminder: {
-            minutes: Number(formData.get("reminder-minutes") as string),
-            hours: Number(formData.get("reminder-hours") as string),
-            days: Number(formData.get("reminder-days") as string),
-            weeks: Number(formData.get("reminder-weeks") as string),
-            months: Number(formData.get("reminder-months") as string),
-          },
+          reminder: formData.get("reminder") as string,
           finish: new Date(formData.get("finish") as string),
           is_active: Boolean(formData.get("is_active") as string),
           has_reminder_onload: Boolean(
             formData.get("has_reminder_onload") as string
           ),
-          user_words: userWordIds,
+          user_word_ids: userWordIds,
         },
       });
     }
@@ -91,16 +98,10 @@ export const CreateWordReminderModal = CSSModules(
     return (
       <ModalContainer title="Create Word Reminder" toggleModal={toggleModal}>
         <form styleName="modal__form" action={handleCreate}>
-          <AddToDate
-            legend="Reminder"
+          <Reminder
             disabled={false}
-            defaultValues={{
-              minutes: 0,
-              hours: 0,
-              days: 0,
-              weeks: 0,
-              months: 0,
-            }}
+            value={reminder}
+            handleChange={handleReminderChange}
           />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="finish">
@@ -129,18 +130,26 @@ export const CreateWordReminderModal = CSSModules(
               placeholder="Separate words with a comma."
             />
             <datalist id="words">
-              {data?.json.userWords.map((userWord: UserWord & Word) => {
-                const word = userWord.details[0].word;
-                return (
-                  <option
-                    key={userWord.id}
-                    styleName="modal__option"
-                    value={word}
-                  >
-                    {word}
-                  </option>
-                );
-              })}
+              {data?.json.user_words.map(
+                (user_word: {
+                  learned: boolean;
+                  created_at: Date;
+                  updated_at: Date;
+                  id: number;
+                  details: Detail[];
+                }) => {
+                  const word = user_word.details[0].word;
+                  return (
+                    <option
+                      key={user_word.id}
+                      styleName="modal__option"
+                      value={word}
+                    >
+                      {word}
+                    </option>
+                  );
+                }
+              )}
             </datalist>
           </div>
           <fieldset styleName="modal__fieldset">

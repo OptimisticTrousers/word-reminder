@@ -23,7 +23,7 @@ interface Props {
 export const DeleteWordReminderModal = CSSModules(
   function ({ toggleModal, wordReminderId }: Props) {
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
     const { isPending, mutate } = useMutation({

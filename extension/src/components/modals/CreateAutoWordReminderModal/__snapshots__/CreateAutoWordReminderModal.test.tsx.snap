@@ -6,7 +6,7 @@ exports[`CreateAutoWordReminderModal component > renders form with all inputs 1`
     <h2
       data-testid="modal-heading"
     >
-      Automatically Create Word Reminder
+      Create Auto Word Reminder
     </h2>
     <button
       aria-label="Close modal"
@@ -18,218 +18,108 @@ exports[`CreateAutoWordReminderModal component > renders form with all inputs 1`
         action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
         class="_modal__form_42f588"
       >
-        <fieldset
-          class="_add-to-date_52612a"
+        <div
+          class="_reminder_a2fc7e"
         >
-          <legend
-            class="_add-to-date__fieldset_52612a"
+          <p
+            class="_reminder__description_a2fc7e"
+          />
+          <label
+            class="_reminder__label_a2fc7e"
           >
             Reminder
-          </legend>
-          <div
-            class="_add-to-date__control_52612a"
-          >
-            <label
-              class="_add-to-date__label_52612a"
-              for="reminder-minutes"
-            >
-              Minutes
-            </label>
             <input
-              class="_add-to-date__input_52612a"
-              id="reminder-minutes"
-              max="60"
-              min="0"
-              name="reminder-minutes"
+              class="_reminder__input_a2fc7e"
+              name="reminder"
               required=""
-              type="number"
-              value="0"
+              type="text"
+              value=""
             />
-          </div>
-          <div
-            class="_add-to-date__control_52612a"
-          >
-            <label
-              class="_add-to-date__label_52612a"
-              for="reminder-hours"
-            >
-              Hours
-            </label>
-            <input
-              class="_add-to-date__input_52612a"
-              id="reminder-hours"
-              max="24"
-              min="0"
-              name="reminder-hours"
-              required=""
-              type="number"
-              value="0"
-            />
-          </div>
-          <div
-            class="_add-to-date__control_52612a"
-          >
-            <label
-              class="_add-to-date__label_52612a"
-              for="reminder-days"
-            >
-              Days
-            </label>
-            <input
-              class="_add-to-date__input_52612a"
-              id="reminder-days"
-              max="31"
-              min="0"
-              name="reminder-days"
-              required=""
-              type="number"
-              value="0"
-            />
-          </div>
-          <div
-            class="_add-to-date__control_52612a"
-          >
-            <label
-              class="_add-to-date__label_52612a"
-              for="reminder-weeks"
-            >
-              Weeks
-            </label>
-            <input
-              class="_add-to-date__input_52612a"
-              id="reminder-weeks"
-              max="52"
-              min="0"
-              name="reminder-weeks"
-              required=""
-              type="number"
-              value="0"
-            />
-          </div>
-          <div
-            class="_add-to-date__control_52612a"
-          >
-            <label
-              class="_add-to-date__label_52612a"
-              for="reminder-months"
-            >
-              Months
-            </label>
-            <input
-              class="_add-to-date__input_52612a"
-              id="reminder-months"
-              max="12"
-              min="0"
-              name="reminder-months"
-              required=""
-              type="number"
-              value="0"
-            />
-          </div>
-        </fieldset>
+          </label>
+        </div>
         <fieldset
-          class="_add-to-date_52612a"
+          class="_duration_03697c"
         >
           <legend
-            class="_add-to-date__fieldset_52612a"
+            class="_duration__legend_03697c"
           >
             Duration
           </legend>
           <div
-            class="_add-to-date__control_52612a"
+            class="_duration__control_03697c"
           >
             <label
-              class="_add-to-date__label_52612a"
-              for="duration-minutes"
+              class="_duration__label_03697c"
+              for="minutes"
             >
               Minutes
             </label>
             <input
-              class="_add-to-date__input_52612a"
-              id="duration-minutes"
-              max="60"
+              class="_duration__input_03697c"
+              id="minutes"
+              max="59"
               min="0"
-              name="duration-minutes"
+              name="minutes"
               required=""
               type="number"
               value="0"
             />
           </div>
           <div
-            class="_add-to-date__control_52612a"
+            class="_duration__control_03697c"
           >
             <label
-              class="_add-to-date__label_52612a"
-              for="duration-hours"
+              class="_duration__label_03697c"
+              for="hours"
             >
               Hours
             </label>
             <input
-              class="_add-to-date__input_52612a"
-              id="duration-hours"
-              max="24"
+              class="_duration__input_03697c"
+              id="hours"
+              max="23"
               min="0"
-              name="duration-hours"
+              name="hours"
               required=""
               type="number"
               value="0"
             />
           </div>
           <div
-            class="_add-to-date__control_52612a"
+            class="_duration__control_03697c"
           >
             <label
-              class="_add-to-date__label_52612a"
-              for="duration-days"
+              class="_duration__label_03697c"
+              for="days"
             >
               Days
             </label>
             <input
-              class="_add-to-date__input_52612a"
-              id="duration-days"
-              max="31"
+              class="_duration__input_03697c"
+              id="days"
+              max="30"
               min="0"
-              name="duration-days"
+              name="days"
               required=""
               type="number"
               value="0"
             />
           </div>
           <div
-            class="_add-to-date__control_52612a"
+            class="_duration__control_03697c"
           >
             <label
-              class="_add-to-date__label_52612a"
-              for="duration-weeks"
+              class="_duration__label_03697c"
+              for="weeks"
             >
               Weeks
             </label>
             <input
-              class="_add-to-date__input_52612a"
-              id="duration-weeks"
-              max="52"
+              class="_duration__input_03697c"
+              id="weeks"
+              max="51"
               min="0"
-              name="duration-weeks"
-              required=""
-              type="number"
-              value="0"
-            />
-          </div>
-          <div
-            class="_add-to-date__control_52612a"
-          >
-            <label
-              class="_add-to-date__label_52612a"
-              for="duration-months"
-            >
-              Months
-            </label>
-            <input
-              class="_add-to-date__input_52612a"
-              id="duration-months"
-              max="12"
-              min="0"
-              name="duration-months"
+              name="weeks"
               required=""
               type="number"
               value="0"
@@ -334,14 +224,14 @@ exports[`CreateAutoWordReminderModal component > renders form with all inputs 1`
           >
             <label
               class="_modal__label_42f588"
-              for="order"
+              for="sort_mode"
             >
-              Order
+              Sort Mode
             </label>
             <select
               class="_modal__select_42f588"
-              id="order"
-              name="order"
+              id="sort_mode"
+              name="sort_mode"
               required=""
             >
               <option

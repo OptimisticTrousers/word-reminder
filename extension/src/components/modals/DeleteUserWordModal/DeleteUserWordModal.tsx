@@ -11,21 +11,21 @@ import {
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { ModalContainer } from "../ModalContainer";
 import { ErrorResponse } from "../../../types";
-import { wordService } from "../../../services/word_service";
 import styles from "./DeleteUserWordModal.module.css";
 import { ToggleModal } from "../types";
+import { userWordService } from "../../../services/user_word_service";
 
 interface Props {
   toggleModal: ToggleModal;
-  wordId: string;
+  userWordId: string;
 }
 
 export const DeleteUserWordModal = CSSModules(
-  function ({ toggleModal, wordId }: Props) {
+  function ({ toggleModal, userWordId }: Props) {
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
     const { isPending, mutate } = useMutation({
-      mutationFn: wordService.deleteUserWord,
+      mutationFn: userWordService.deleteUserWord,
       onSuccess: () => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
@@ -40,10 +40,10 @@ export const DeleteUserWordModal = CSSModules(
       },
     });
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const userId = String(user.id);
 
     function handleDelete() {
-      mutate({ userId, wordId });
+      mutate({ userId, userWordId });
     }
 
     function handleCancel() {
