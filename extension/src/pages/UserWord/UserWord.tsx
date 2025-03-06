@@ -5,7 +5,8 @@ import {
   Phonetic,
   User,
   UserWord as IUserWord,
-  Word as IWord,
+  Word,
+  Image,
 } from "common";
 import { Play } from "lucide-react";
 import CSSModules from "react-css-modules";
@@ -14,20 +15,23 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Loading } from "../../components/ui/Loading";
 import { Error500 } from "../Error500";
-import { wordService } from "../../services/word_service";
+import { userWordService } from "../../services/user_word_service";
 import styles from "./UserWord.module.css";
 import { ImageCarousel } from "../../components/ui/ImageCarousel";
 
 export const UserWord = CSSModules(
   function () {
     const { user }: { user: User } = useOutletContext();
-    const { wordId } = useParams();
-    const userId = user.id;
+    const { userWordId } = useParams();
+    const userId = String(user.id);
 
     const { data, isLoading, failureReason } = useQuery({
-      queryKey: ["words", wordId],
+      queryKey: ["userWords", userWordId],
       queryFn: () => {
-        return wordService.getUserWord(userId, wordId as string);
+        return userWordService.getUserWord({
+          userId,
+          userWordId: String(userWordId),
+        });
       },
     });
 
@@ -45,8 +49,9 @@ export const UserWord = CSSModules(
     }
 
     const json = data?.json;
-    const userWord: (IUserWord & IWord) | undefined = json?.userWord;
-    const details = userWord?.details;
+    const userWord: (IUserWord & { word: Word; images: Image[] }) | undefined =
+      json?.userWord;
+    const details = userWord?.word.details;
     const images = userWord?.images ?? [];
 
     return (

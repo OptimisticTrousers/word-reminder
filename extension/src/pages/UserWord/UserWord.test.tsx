@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { wordService } from "../../services/word_service";
+import { userWordService } from "../../services/user_word_service";
 import { UserWord } from "./UserWord";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub, Outlet } from "react-router-dom";
@@ -22,7 +22,7 @@ describe("UserWord component", () => {
   const testUser = {
     id: "1",
   };
-  const wordId = "1";
+  const userWordId = "1";
   const status = 200;
   const created_at = new Date("2020-05-12T23:50:21.817Z");
 
@@ -37,7 +37,7 @@ describe("UserWord component", () => {
         },
         children: [
           {
-            path: "/words/:wordId",
+            path: "/userWords/:userWordId",
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
@@ -52,7 +52,7 @@ describe("UserWord component", () => {
 
     return {
       user: userEvent.setup(),
-      ...render(<Stub initialEntries={[`/words/${wordId}`]} />),
+      ...render(<Stub initialEntries={[`/userWords/${userWordId}`]} />),
     };
   }
 
@@ -69,60 +69,63 @@ describe("UserWord component", () => {
           { src: "/image1", caption: "Image 1" },
           { src: "/image2", caption: "Image 2" },
         ],
-        details: [
-          {
-            word: "word",
-            phonetic: "/wɜːd/",
-            origin: "The foundation of a language.",
-            phonetics: [
-              {
-                text: "/wɜːd/",
-                audio: "",
-              },
-              {
-                text: "/wɝd/",
-                audio:
-                  "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
-                sourceUrl:
-                  "https://commons.wikimedia.org/w/index.php?curid=1197728",
-                license: {
-                  name: "BY-SA 3.0",
-                  url: "https://creativecommons.org/licenses/by-sa/3.0",
+        word: {
+          details: [
+            {
+              word: "word",
+              phonetic: "/wɜːd/",
+              origin: "The foundation of a language.",
+              phonetics: [
+                {
+                  text: "/wɜːd/",
+                  audio: "",
                 },
-              },
-            ],
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [
-                  {
-                    definition: "News; tidings (used without an article).",
-                    synonyms: [],
-                    antonyms: [],
-                    example: "Have you had any word from John yet?",
+                {
+                  text: "/wɝd/",
+                  audio:
+                    "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+                  sourceUrl:
+                    "https://commons.wikimedia.org/w/index.php?curid=1197728",
+                  license: {
+                    name: "BY-SA 3.0",
+                    url: "https://creativecommons.org/licenses/by-sa/3.0",
                   },
-                  {
-                    definition: "A promise; an oath or guarantee.",
-                    synonyms: ["promise"],
-                    antonyms: ["false promise"],
-                    example: "I give you my word that I will be there on time.",
-                  },
-                ],
-                synonyms: ["Bible", "Logos", "vocable"],
-                antonyms: [],
+                },
+              ],
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition: "News; tidings (used without an article).",
+                      synonyms: [],
+                      antonyms: [],
+                      example: "Have you had any word from John yet?",
+                    },
+                    {
+                      definition: "A promise; an oath or guarantee.",
+                      synonyms: ["promise"],
+                      antonyms: ["false promise"],
+                      example:
+                        "I give you my word that I will be there on time.",
+                    },
+                  ],
+                  synonyms: ["Bible", "Logos", "vocable"],
+                  antonyms: [],
+                },
+              ],
+              license: {
+                name: "CC BY-SA 3.0",
+                url: "https://creativecommons.org/licenses/by-sa/3.0",
               },
-            ],
-            license: {
-              name: "CC BY-SA 3.0",
-              url: "https://creativecommons.org/licenses/by-sa/3.0",
+              sourceUrls: ["https://en.wiktionary.org/wiki/word"],
             },
-            sourceUrls: ["https://en.wiktionary.org/wiki/word"],
-          },
-        ],
+          ],
+        },
       },
     };
     const mockGetUserWord = vi
-      .spyOn(wordService, "getUserWord")
+      .spyOn(userWordService, "getUserWord")
       .mockImplementation(async () => {
         return { json, status };
       });
@@ -192,7 +195,10 @@ describe("UserWord component", () => {
     expect(loading).not.toBeInTheDocument();
     expect(error).not.toBeInTheDocument();
     expect(mockGetUserWord).toHaveBeenCalledTimes(1);
-    expect(mockGetUserWord).toHaveBeenCalledWith(testUser.id, wordId);
+    expect(mockGetUserWord).toHaveBeenCalledWith({
+      userId: testUser.id,
+      userWordId,
+    });
     expect(asFragment()).toMatchSnapshot();
   });
 
@@ -202,37 +208,39 @@ describe("UserWord component", () => {
         userWord: {
           created_at,
           learned: true,
-          details: [
-            {
-              word: "word",
-              meanings: [
-                {
-                  partOfSpeech: "noun",
-                  definitions: [
-                    {
-                      definition: "News; tidings (used without an article).",
-                      synonyms: [],
-                      antonyms: [],
-                      example: "Have you had any word from John yet?",
-                    },
-                    {
-                      definition: "A promise; an oath or guarantee.",
-                      synonyms: ["promise"],
-                      antonyms: ["false promise"],
-                      example:
-                        "I give you my word that I will be there on time.",
-                    },
-                  ],
-                  synonyms: ["Bible", "Logos", "vocable"],
-                  antonyms: [],
-                },
-              ],
-            },
-          ],
           images: [],
+          word: {
+            details: [
+              {
+                word: "word",
+                meanings: [
+                  {
+                    partOfSpeech: "noun",
+                    definitions: [
+                      {
+                        definition: "News; tidings (used without an article).",
+                        synonyms: [],
+                        antonyms: [],
+                        example: "Have you had any word from John yet?",
+                      },
+                      {
+                        definition: "A promise; an oath or guarantee.",
+                        synonyms: ["promise"],
+                        antonyms: ["false promise"],
+                        example:
+                          "I give you my word that I will be there on time.",
+                      },
+                    ],
+                    synonyms: ["Bible", "Logos", "vocable"],
+                    antonyms: [],
+                  },
+                ],
+              },
+            ],
+          },
         },
       };
-      vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+      vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
         return { json, status };
       });
 
@@ -247,37 +255,39 @@ describe("UserWord component", () => {
         userWord: {
           created_at,
           learned: false,
-          details: [
-            {
-              word: "word",
-              meanings: [
-                {
-                  partOfSpeech: "noun",
-                  definitions: [
-                    {
-                      definition: "News; tidings (used without an article).",
-                      synonyms: [],
-                      antonyms: [],
-                      example: "Have you had any word from John yet?",
-                    },
-                    {
-                      definition: "A promise; an oath or guarantee.",
-                      synonyms: ["promise"],
-                      antonyms: ["false promise"],
-                      example:
-                        "I give you my word that I will be there on time.",
-                    },
-                  ],
-                  synonyms: ["Bible", "Logos", "vocable"],
-                  antonyms: [],
-                },
-              ],
-            },
-          ],
           images: [],
+          word: {
+            details: [
+              {
+                word: "word",
+                meanings: [
+                  {
+                    partOfSpeech: "noun",
+                    definitions: [
+                      {
+                        definition: "News; tidings (used without an article).",
+                        synonyms: [],
+                        antonyms: [],
+                        example: "Have you had any word from John yet?",
+                      },
+                      {
+                        definition: "A promise; an oath or guarantee.",
+                        synonyms: ["promise"],
+                        antonyms: ["false promise"],
+                        example:
+                          "I give you my word that I will be there on time.",
+                      },
+                    ],
+                    synonyms: ["Bible", "Logos", "vocable"],
+                    antonyms: [],
+                  },
+                ],
+              },
+            ],
+          },
         },
       };
-      vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+      vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
         return { json, status };
       });
       setup();
@@ -341,7 +351,7 @@ describe("UserWord component", () => {
           ],
         },
       };
-      vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+      vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
         return { json, status };
       });
 
@@ -386,7 +396,7 @@ describe("UserWord component", () => {
           },
         ],
       };
-      vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+      vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
         return { json, status };
       });
 
@@ -433,7 +443,7 @@ describe("UserWord component", () => {
           ],
         },
       };
-      vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+      vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
         return { json, status };
       });
 
@@ -480,7 +490,7 @@ describe("UserWord component", () => {
         ],
       },
     };
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return { json, status };
     });
 
@@ -541,7 +551,7 @@ describe("UserWord component", () => {
         ],
       },
     };
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return { json, status };
     });
 
@@ -559,37 +569,40 @@ describe("UserWord component", () => {
         created_at,
         learned: false,
         images: [],
-        details: [
-          {
-            id: "1",
-            word: "word",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [
-                  {
-                    definition: "News; tidings (used without an article).",
-                    synonyms: [],
-                    antonyms: [""],
-                    example: "Have you had any word from John yet?",
-                  },
-                  {
-                    definition: "A promise; an oath or guarantee.",
-                    synonyms: ["promise"],
-                    antonyms: ["false promise"],
-                    example: "I give you my word that I will be there on time.",
-                  },
-                ],
-                synonyms: ["Bible", "Logos", "vocable"],
-                antonyms: [],
-              },
-            ],
-            sourceUrls: ["https://en.wiktionary.org/wiki/word"],
-          },
-        ],
+        word: {
+          details: [
+            {
+              id: "1",
+              word: "word",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition: "News; tidings (used without an article).",
+                      synonyms: [],
+                      antonyms: [""],
+                      example: "Have you had any word from John yet?",
+                    },
+                    {
+                      definition: "A promise; an oath or guarantee.",
+                      synonyms: ["promise"],
+                      antonyms: ["false promise"],
+                      example:
+                        "I give you my word that I will be there on time.",
+                    },
+                  ],
+                  synonyms: ["Bible", "Logos", "vocable"],
+                  antonyms: [],
+                },
+              ],
+              sourceUrls: ["https://en.wiktionary.org/wiki/word"],
+            },
+          ],
+        },
       },
     };
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return { json, status };
     });
 
@@ -616,41 +629,44 @@ describe("UserWord component", () => {
         created_at,
         learned: false,
         images: [],
-        details: [
-          {
-            id: "1",
-            word: "word",
-            origin: "The foundation of a language.",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [
-                  {
-                    definition: "News; tidings (used without an article).",
-                    synonyms: [],
-                    antonyms: [""],
-                    example: "Have you had any word from John yet?",
-                  },
-                  {
-                    definition: "A promise; an oath or guarantee.",
-                    synonyms: ["promise"],
-                    antonyms: ["false promise"],
-                    example: "I give you my word that I will be there on time.",
-                  },
-                ],
-                synonyms: ["Bible", "Logos", "vocable"],
-                antonyms: [],
+        word: {
+          details: [
+            {
+              id: "1",
+              word: "word",
+              origin: "The foundation of a language.",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition: "News; tidings (used without an article).",
+                      synonyms: [],
+                      antonyms: [""],
+                      example: "Have you had any word from John yet?",
+                    },
+                    {
+                      definition: "A promise; an oath or guarantee.",
+                      synonyms: ["promise"],
+                      antonyms: ["false promise"],
+                      example:
+                        "I give you my word that I will be there on time.",
+                    },
+                  ],
+                  synonyms: ["Bible", "Logos", "vocable"],
+                  antonyms: [],
+                },
+              ],
+              license: {
+                name: "CC BY-SA 3.0",
+                url: "https://creativecommons.org/licenses/by-sa/3.0",
               },
-            ],
-            license: {
-              name: "CC BY-SA 3.0",
-              url: "https://creativecommons.org/licenses/by-sa/3.0",
             },
-          },
-        ],
+          ],
+        },
       },
     };
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return { json, status };
     });
 
@@ -673,36 +689,39 @@ describe("UserWord component", () => {
         created_at,
         learned: false,
         images: [],
-        details: [
-          {
-            id: "1",
-            word: "word",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [
-                  {
-                    definition: "News; tidings (used without an article).",
-                    synonyms: [],
-                    antonyms: [""],
-                    example: "Have you had any word from John yet?",
-                  },
-                  {
-                    definition: "A promise; an oath or guarantee.",
-                    synonyms: ["promise"],
-                    antonyms: ["false promise"],
-                    example: "I give you my word that I will be there on time.",
-                  },
-                ],
-                synonyms: ["Bible", "Logos", "vocable"],
-                antonyms: [],
-              },
-            ],
-          },
-        ],
+        word: {
+          details: [
+            {
+              id: "1",
+              word: "word",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition: "News; tidings (used without an article).",
+                      synonyms: [],
+                      antonyms: [""],
+                      example: "Have you had any word from John yet?",
+                    },
+                    {
+                      definition: "A promise; an oath or guarantee.",
+                      synonyms: ["promise"],
+                      antonyms: ["false promise"],
+                      example:
+                        "I give you my word that I will be there on time.",
+                    },
+                  ],
+                  synonyms: ["Bible", "Logos", "vocable"],
+                  antonyms: [],
+                },
+              ],
+            },
+          ],
+        },
       },
     };
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return { json, status };
     });
 
@@ -718,54 +737,57 @@ describe("UserWord component", () => {
         created_at,
         learned: false,
         images: [],
-        details: [
-          {
-            id: "1",
-            word: "word",
-            phonetic: "/wɜːd/",
-            phonetics: [
-              {
-                text: "/wɜːd/",
-                audio: "",
-              },
-              {
-                text: "/wɝd/",
-                audio:
-                  "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
-                sourceUrl:
-                  "https://commons.wikimedia.org/w/index.php?curid=1197728",
-                license: {
-                  name: "BY-SA 3.0",
-                  url: "https://creativecommons.org/licenses/by-sa/3.0",
+        word: {
+          details: [
+            {
+              id: "1",
+              word: "word",
+              phonetic: "/wɜːd/",
+              phonetics: [
+                {
+                  text: "/wɜːd/",
+                  audio: "",
                 },
-              },
-            ],
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [
-                  {
-                    definition: "News; tidings (used without an article).",
-                    synonyms: [],
-                    antonyms: [""],
-                    example: "Have you had any word from John yet?",
+                {
+                  text: "/wɝd/",
+                  audio:
+                    "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+                  sourceUrl:
+                    "https://commons.wikimedia.org/w/index.php?curid=1197728",
+                  license: {
+                    name: "BY-SA 3.0",
+                    url: "https://creativecommons.org/licenses/by-sa/3.0",
                   },
-                  {
-                    definition: "A promise; an oath or guarantee.",
-                    synonyms: ["promise"],
-                    antonyms: ["false promise"],
-                    example: "I give you my word that I will be there on time.",
-                  },
-                ],
-                synonyms: ["Bible", "Logos", "vocable"],
-                antonyms: [],
-              },
-            ],
-          },
-        ],
+                },
+              ],
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition: "News; tidings (used without an article).",
+                      synonyms: [],
+                      antonyms: [""],
+                      example: "Have you had any word from John yet?",
+                    },
+                    {
+                      definition: "A promise; an oath or guarantee.",
+                      synonyms: ["promise"],
+                      antonyms: ["false promise"],
+                      example:
+                        "I give you my word that I will be there on time.",
+                    },
+                  ],
+                  synonyms: ["Bible", "Logos", "vocable"],
+                  antonyms: [],
+                },
+              ],
+            },
+          ],
+        },
       },
     };
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return { json, status };
     });
     const mockPlay = vi.fn();
@@ -797,39 +819,42 @@ describe("UserWord component", () => {
         created_at,
         learned: false,
         images: [],
-        details: [
-          {
-            id: "1",
-            word: "word",
-            phonetic: "/wɜːd/",
-            origin: "The foundation of a language.",
-            meanings: [
-              {
-                partOfSpeech: "noun",
-                definitions: [
-                  {
-                    definition: "News; tidings (used without an article).",
-                    synonyms: [],
-                    antonyms: [],
-                    example: "Have you had any word from John yet?",
-                  },
-                  {
-                    definition: "A promise; an oath or guarantee.",
-                    synonyms: ["promise"],
-                    antonyms: ["false promise"],
-                    example: "I give you my word that I will be there on time.",
-                  },
-                ],
-                synonyms: ["Bible", "Logos", "vocable"],
-                antonyms: [],
-              },
-            ],
-          },
-        ],
+        word: {
+          details: [
+            {
+              id: "1",
+              word: "word",
+              phonetic: "/wɜːd/",
+              origin: "The foundation of a language.",
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition: "News; tidings (used without an article).",
+                      synonyms: [],
+                      antonyms: [],
+                      example: "Have you had any word from John yet?",
+                    },
+                    {
+                      definition: "A promise; an oath or guarantee.",
+                      synonyms: ["promise"],
+                      antonyms: ["false promise"],
+                      example:
+                        "I give you my word that I will be there on time.",
+                    },
+                  ],
+                  synonyms: ["Bible", "Logos", "vocable"],
+                  antonyms: [],
+                },
+              ],
+            },
+          ],
+        },
       },
     };
     const delay = 50;
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve({ json, status });
@@ -845,7 +870,7 @@ describe("UserWord component", () => {
 
   it("returns error 500 page when there is an error", async () => {
     const message = "Server Error.";
-    vi.spyOn(wordService, "getUserWord").mockImplementation(async () => {
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
       return Promise.reject({ message, status: 500 });
     });
 
