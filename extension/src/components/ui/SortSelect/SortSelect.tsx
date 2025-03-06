@@ -10,7 +10,7 @@ interface Props {
 export const SortSelect = CSSModules(
   function ({ disabled, required }: Props) {
     return (
-      <div styleName="sort">
+      <fieldset styleName="sort">
         <label styleName="sort__label">
           Sort by:
           <select
@@ -30,7 +30,7 @@ export const SortSelect = CSSModules(
             </option>
           </select>
         </label>
-      </div>
+      </fieldset>
     );
   },
   styles,
