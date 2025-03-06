@@ -10,6 +10,7 @@ import { boss } from "../db/boss";
 import { tokenQueries } from "../db/token_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { email } from "../utils/email";
+import { userQueries } from "../db/user_queries";
 
 // @desc Sends an email
 // @route POST /api/emails
@@ -41,7 +42,7 @@ export const send_email = [
     ),
   errorValidationHandler,
   asyncHandler(async (req, res) => {
-    const { userId } = req.params;
+    let userId = req.params.userId;
     const { template, subject } = req.body;
 
     const emailTemplate = await readFile(
@@ -49,6 +50,13 @@ export const send_email = [
       "utf-8"
     );
     const token = await tokenQueries.create();
+    if (isNaN(Number(userId))) {
+      console.log("hello");
+      const user = await userQueries.getByEmail(req.body.email);
+      if (user) {
+        userId = String(user.id);
+      }
+    }
     const html = ejs.render(emailTemplate, {
       url: `/${template}/${userId}&${token.token}`,
     });

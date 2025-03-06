@@ -79,9 +79,12 @@ describe("ForgotPassword component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: testUser.email,
-      subject: Subject.FORGOT_PASSWORD,
-      template: Template.FORGOT_PASSWORD,
+      userId: undefined,
+      body: {
+        email: testUser.email,
+        subject: Subject.FORGOT_PASSWORD,
+        template: Template.FORGOT_PASSWORD,
+      },
     });
   });
 

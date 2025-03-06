@@ -30,9 +30,12 @@ export const ForgotPassword = CSSModules(
       const email = formData.get("email") as string;
       emailRef.current = email;
       mutate({
-        email,
-        subject: Subject.FORGOT_PASSWORD,
-        template: Template.FORGOT_PASSWORD,
+        userId: undefined,
+        body: {
+          email,
+          subject: Subject.FORGOT_PASSWORD,
+          template: Template.FORGOT_PASSWORD,
+        },
       });
     }
 

@@ -59,10 +59,10 @@ describe("WordReminder component", () => {
 
     expect(asFragment()).toMatchSnapshot();
     expect(mockGetWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockGetWordReminder).toHaveBeenCalledWith(
-      testUser.id,
-      testWordReminder.id
-    );
+    expect(mockGetWordReminder).toHaveBeenCalledWith({
+      userId: testUser.id,
+      wordReminderId: testWordReminder.id,
+    });
   });
 
   it("renders error message when there is an error", async () => {
@@ -81,10 +81,10 @@ describe("WordReminder component", () => {
     expect(loading).not.toBeInTheDocument();
     expect(wordReminder).not.toBeInTheDocument();
     expect(mockGetWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockGetWordReminder).toHaveBeenCalledWith(
-      testUser.id,
-      testWordReminder.id
-    );
+    expect(mockGetWordReminder).toHaveBeenCalledWith({
+      userId: testUser.id,
+      wordReminderId: testWordReminder.id,
+    });
   });
 
   it("renders loading component when query is loading", async () => {
@@ -103,10 +103,10 @@ describe("WordReminder component", () => {
     expect(loading).toBeInTheDocument();
     expect(wordReminder).not.toBeInTheDocument();
     expect(mockGetWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockGetWordReminder).toHaveBeenCalledWith(
-      testUser.id,
-      testWordReminder.id
-    );
+    expect(mockGetWordReminder).toHaveBeenCalledWith({
+      userId: testUser.id,
+      wordReminderId: testWordReminder.id,
+    });
   });
 
   it("renders data when fetch was successful", async () => {
@@ -125,9 +125,9 @@ describe("WordReminder component", () => {
     expect(loading).not.toBeInTheDocument();
     expect(wordReminder).toBeInTheDocument();
     expect(mockGetWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockGetWordReminder).toHaveBeenCalledWith(
-      testUser.id,
-      testWordReminder.id
-    );
+    expect(mockGetWordReminder).toHaveBeenCalledWith({
+      userId: testUser.id,
+      wordReminderId: testWordReminder.id,
+    });
   });
 });

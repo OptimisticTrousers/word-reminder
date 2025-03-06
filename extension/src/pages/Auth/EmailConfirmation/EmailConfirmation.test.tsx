@@ -5,7 +5,7 @@ import { emailService } from "../../../services/email_service";
 import { EmailConfirmation } from "./EmailConfirmation";
 import { Subject, Template } from "common";
 import { NotificationProvider } from "../../../context/Notification";
-import { MemoryRouter } from "react-router-dom";
+import { createRoutesStub, Outlet } from "react-router-dom";
 
 vi.mock("../../../components/ui/Loading/Loading");
 
@@ -19,20 +19,38 @@ describe("EmailConfirmation component", () => {
       "Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email",
   };
 
+  const user = {
+    id: "1",
+  };
+
   const status = 200;
 
   function setup() {
     const queryClient = new QueryClient();
+    const Stub = createRoutesStub([
+      {
+        path: "/",
+        Component: function () {
+          return <Outlet context={{ user }} />;
+        },
+        children: [
+          {
+            path: "/confirmation",
+            Component: function () {
+              return (
+                <NotificationProvider>
+                  <QueryClientProvider client={queryClient}>
+                    <EmailConfirmation email={email} />
+                  </QueryClientProvider>
+                </NotificationProvider>
+              );
+            },
+          },
+        ],
+      },
+    ]);
 
-    return render(
-      <NotificationProvider>
-        <QueryClientProvider client={queryClient}>
-          <MemoryRouter>
-            <EmailConfirmation email={email} />
-          </MemoryRouter>
-        </QueryClientProvider>
-      </NotificationProvider>
-    );
+    return render(<Stub initialEntries={["/confirmation"]} />);
   }
 
   beforeEach(() => {
@@ -61,9 +79,12 @@ describe("EmailConfirmation component", () => {
     expect(message).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: email,
-      subject: Subject.CONFIRM_ACCOUNT,
-      template: Template.CONFIRM_ACCOUNT,
+      userId: user.id,
+      body: {
+        email,
+        subject: Subject.CONFIRM_ACCOUNT,
+        template: Template.CONFIRM_ACCOUNT,
+      },
     });
     expect(asFragment()).toMatchSnapshot();
   });
@@ -86,9 +107,12 @@ describe("EmailConfirmation component", () => {
     expect(loading).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: email,
-      subject: Subject.CONFIRM_ACCOUNT,
-      template: Template.CONFIRM_ACCOUNT,
+      userId: user.id,
+      body: {
+        email,
+        subject: Subject.CONFIRM_ACCOUNT,
+        template: Template.CONFIRM_ACCOUNT,
+      },
     });
   });
 
@@ -107,9 +131,12 @@ describe("EmailConfirmation component", () => {
     expect(error).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: email,
-      subject: Subject.CONFIRM_ACCOUNT,
-      template: Template.CONFIRM_ACCOUNT,
+      userId: user.id,
+      body: {
+        email,
+        subject: Subject.CONFIRM_ACCOUNT,
+        template: Template.CONFIRM_ACCOUNT,
+      },
     });
   });
 });

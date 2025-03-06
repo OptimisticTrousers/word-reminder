@@ -1,4 +1,4 @@
-import { Subject, Template } from "common";
+import { Subject, Template, User } from "common";
 import CSSModules from "react-css-modules";
 import { useQuery } from "@tanstack/react-query";
 
@@ -6,6 +6,7 @@ import { emailService } from "../../../services/email_service";
 import styles from "./EmailConfirmation.module.css";
 import { Loading } from "../../../components/ui/Loading";
 import { Error500 } from "../../Error500";
+import { useOutletContext } from "react-router-dom";
 
 interface Props {
   email: string;
@@ -13,13 +14,18 @@ interface Props {
 
 export const EmailConfirmation = CSSModules(
   function ({ email }: Props) {
+    const { user }: { user: User } = useOutletContext();
+    const userId = String(user.id);
     const { isLoading, failureReason } = useQuery({
       queryKey: ["emails"],
       queryFn: () => {
         return emailService.sendEmail({
-          email: email,
-          subject: Subject.CONFIRM_ACCOUNT,
-          template: Template.CONFIRM_ACCOUNT,
+          userId,
+          body: {
+            email: email,
+            subject: Subject.CONFIRM_ACCOUNT,
+            template: Template.CONFIRM_ACCOUNT,
+          },
         });
       },
     });

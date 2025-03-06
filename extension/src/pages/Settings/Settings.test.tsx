@@ -91,9 +91,12 @@ describe("Settings component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: testUser.email,
-      subject: Subject.CHANGE_EMAIL,
-      template: Template.CHANGE_EMAIL,
+      userId: testUser.id,
+      body: {
+        email: testUser.email,
+        subject: Subject.CHANGE_EMAIL,
+        template: Template.CHANGE_EMAIL,
+      },
     });
   });
 
@@ -116,9 +119,12 @@ describe("Settings component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: testUser.email,
-      subject: Subject.CHANGE_PASSWORD,
-      template: Template.CHANGE_PASSWORD,
+      userId: testUser.id,
+      body: {
+        email: testUser.email,
+        subject: Subject.CHANGE_PASSWORD,
+        template: Template.CHANGE_PASSWORD,
+      },
     });
   });
 
@@ -141,9 +147,12 @@ describe("Settings component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: testUser.email,
-      subject: Subject.CHANGE_EMAIL,
-      template: Template.CHANGE_EMAIL,
+      userId: testUser.id,
+      body: {
+        email: testUser.email,
+        subject: Subject.CHANGE_EMAIL,
+        template: Template.CHANGE_EMAIL,
+      },
     });
   });
 
@@ -166,9 +175,12 @@ describe("Settings component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      email: testUser.email,
-      subject: Subject.CHANGE_PASSWORD,
-      template: Template.CHANGE_PASSWORD,
+      userId: testUser.id,
+      body: {
+        email: testUser.email,
+        subject: Subject.CHANGE_PASSWORD,
+        template: Template.CHANGE_PASSWORD,
+      },
     });
   });
 });

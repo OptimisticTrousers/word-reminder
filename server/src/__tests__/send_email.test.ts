@@ -11,8 +11,16 @@ import { boss } from "../db/boss";
 import { tokenQueries } from "../db/token_queries";
 import { email } from "../utils/email";
 import { Subject, Template } from "common";
+import { userQueries } from "../db/user_queries";
 
 const userId = 1;
+const user = {
+  id: userId,
+  email: "bob@gmail.com",
+  confirmed: true,
+  created_at: new Date(),
+  updated_at: new Date(),
+};
 const queueName = `${userId}-email-queue`;
 
 const app = express();
@@ -92,7 +100,7 @@ describe("send_email", () => {
 
   it("returns 400 status code when the 'subject' is not provided", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: Template.CHANGE_PASSWORD,
       subject: undefined,
     };
@@ -118,7 +126,7 @@ describe("send_email", () => {
 
   it("returns 400 status code when the 'template' is not provided", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: undefined,
       subject: Subject.CHANGE_PASSWORD,
     };
@@ -144,7 +152,7 @@ describe("send_email", () => {
 
   it("returns 400 status code when the 'template' is not in the 'Template' enum", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: "invalid-template",
       subject: Subject.CHANGE_PASSWORD,
     };
@@ -173,7 +181,7 @@ describe("send_email", () => {
 
   it("returns 400 status code when the 'subject' is not in the Subject' enum", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: Template.FORGOT_PASSWORD,
       subject: "invalid-subject",
     };
@@ -229,7 +237,7 @@ describe("send_email", () => {
 
   it("calls the functions to send email with 'confirm_account' template", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: Template.CONFIRM_ACCOUNT,
       subject: Subject.CONFIRM_ACCOUNT,
     };
@@ -272,7 +280,7 @@ describe("send_email", () => {
 
   it("calls the functions to send email with 'change_password' template", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: Template.CHANGE_PASSWORD,
       subject: Subject.CHANGE_PASSWORD,
     };
@@ -315,7 +323,7 @@ describe("send_email", () => {
 
   it("calls the functions to send email with 'change_email' template", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: Template.CHANGE_EMAIL,
       subject: Subject.CHANGE_EMAIL,
     };
@@ -356,9 +364,9 @@ describe("send_email", () => {
     expect(mockDeleteAll).toHaveBeenCalledWith(["token1", "token2"]);
   });
 
-  it("calls the functions to send email with 'forgot_password' template", async () => {
+  it("calls the functions to send email with 'forgot_password' template when userId is undefined", async () => {
     const body = {
-      email: "bob@protonmail.com",
+      email: user.email,
       template: Template.FORGOT_PASSWORD,
       subject: Subject.FORGOT_PASSWORD,
     };
@@ -366,9 +374,12 @@ describe("send_email", () => {
       path.join(__dirname, "..", "views", "emails", `${body.template}.ejs`),
       "utf-8"
     );
+    const mockGetByEmail = jest
+      .spyOn(userQueries, "getByEmail")
+      .mockResolvedValue(user);
 
     const response = await request(app)
-      .post(`/api/users/${userId}/emails`)
+      .post(`/api/users/${undefined}/emails`)
       .set("Accept", "application/json")
       .send(body);
     await capturedCallback(mockJobs);
@@ -376,6 +387,8 @@ describe("send_email", () => {
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ info });
+    expect(mockGetByEmail).toHaveBeenCalledTimes(1);
+    expect(mockGetByEmail).toHaveBeenCalledWith(user.email);
     expect(mockCreate).toHaveBeenCalledTimes(1);
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);

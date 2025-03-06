@@ -12,6 +12,8 @@ describe("emailService", () => {
     vi.clearAllMocks();
   });
 
+  const userId = "1";
+
   describe("sendEmail", async () => {
     it("calls the functions at the correct API endpoint with body", async () => {
       const info = {
@@ -33,11 +35,11 @@ describe("emailService", () => {
         subject: Subject.CONFIRM_ACCOUNT,
       };
 
-      const response = await emailService.sendEmail(body);
+      const response = await emailService.sendEmail({ userId, body });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/emails`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/emails`,
         options: { body: JSON.stringify(body), credentials: "include" },
       });
       expect(response).toEqual({ json: { info }, status });

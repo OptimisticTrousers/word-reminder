@@ -15,13 +15,14 @@ import {
 export const Settings = CSSModules(
   function () {
     const { user }: { user: User } = useOutletContext();
+    const userId = String(user.id);
     const { showNotificationError } = useNotificationError();
     const { showNotification } = useContext(NotificationContext);
     const { isPending, mutate } = useMutation({
       mutationFn: emailService.sendEmail,
       onSuccess: (_, variables) => {
         let field = "";
-        switch (variables.template) {
+        switch (variables.body.template) {
           case Template.CHANGE_EMAIL:
             field = "email";
             break;
@@ -52,9 +53,12 @@ export const Settings = CSSModules(
           break;
       }
       mutate({
-        email: user.email,
-        subject,
-        template,
+        userId,
+        body: {
+          email: user.email,
+          subject,
+          template,
+        },
       });
     }
 
