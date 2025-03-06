@@ -18,17 +18,16 @@ function Settings() {
   return <div data-testid="settings">settings</div>;
 }
 
-function Login() {
-  return <div data-testid="login">login</div>;
-}
-
 describe("Navigation component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
   function setup(initialEntry: string) {
-    const queryClient = new QueryClient();
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -49,7 +48,6 @@ describe("Navigation component", () => {
           },
           { path: "/wordReminders", Component: WordReminders },
           { path: "/settings", Component: Settings },
-          { path: "/login", Component: Login },
         ],
       },
     ]);
@@ -120,6 +118,7 @@ describe("Navigation component", () => {
   });
 
   it("logs out the user when the 'Log Out' button is clicked", async () => {
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const mockLogout = vi
       .spyOn(sessionService, "logoutUser")
       .mockImplementation(async () => {
@@ -130,10 +129,13 @@ describe("Navigation component", () => {
     const logoutButton = screen.getByRole("button", { name: "Log Out" });
     await user.click(logoutButton);
 
-    const login = await screen.findByTestId("login");
-    expect(login).toBeInTheDocument();
     expect(mockLogout).toHaveBeenCalledTimes(1);
     expect(mockLogout).toHaveBeenCalledWith(undefined);
+    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["sessions"],
+      exact: true,
+    });
   });
 
   it("disables 'Log Out' button when mutation is pending", async () => {

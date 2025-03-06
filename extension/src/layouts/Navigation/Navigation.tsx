@@ -1,20 +1,20 @@
 import CSSModules from "react-css-modules";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import styles from "./Navigation.module.css";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { sessionService } from "../../services/session_service";
 import { useNotificationError } from "../../hooks/useNotificationError";
 
 export const Navigation = CSSModules(
   function () {
     const { pathname } = useLocation();
-    const navigate = useNavigate();
     const { showNotificationError } = useNotificationError();
+    const queryClient = useQueryClient();
     const { isPending, mutate } = useMutation({
       mutationFn: sessionService.logoutUser,
       onSuccess: () => {
-        navigate("/login");
+        queryClient.invalidateQueries({ queryKey: ["sessions"], exact: true });
       },
       onError: showNotificationError,
     });

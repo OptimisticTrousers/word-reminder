@@ -83,8 +83,103 @@ exports[`Login component > calls the functions to login, show notification, and 
       </div>
     </div>
   </div>
-  <button>
-    Current URL: /userWords
-  </button>
+  <section
+    class="_auth_340faf _auth--login_340faf"
+  >
+    <div
+      class="_auth__hero_340faf"
+    >
+      <h2
+        class="_auth__heading_340faf"
+      >
+        Word Storer
+      </h2>
+      <p
+        class="_auth__description_340faf"
+      >
+        Log in or create a new account to start storing your words.
+      </p>
+    </div>
+    <form
+      action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
+      class="_auth__form_340faf"
+    >
+      <div
+        class="_auth__control_340faf"
+      >
+        <label
+          class="_auth__label_340faf"
+          for="email"
+        >
+          Email 
+          <span
+            class="_auth__required_340faf"
+          >
+            (required)
+          </span>
+        </label>
+        <input
+          class="_auth__input_340faf"
+          id="email"
+          maxlength="255"
+          name="email"
+          required=""
+          type="email"
+        />
+      </div>
+      <div
+        class="_auth__control_340faf"
+      >
+        <label
+          class="_auth__label_340faf"
+          for="password"
+        >
+          Password 
+          <span
+            class="_auth__required_340faf"
+          >
+            (required)
+          </span>
+        </label>
+        <input
+          class="_auth__input_340faf"
+          id="password"
+          maxlength="72"
+          name="password"
+          required=""
+          type="password"
+        />
+      </div>
+      <button
+        class="_auth__button_340faf"
+        type="submit"
+      >
+        Login
+      </button>
+    </form>
+    <p
+      class="_auth__redirect_340faf"
+    >
+      New around here? 
+      <a
+        class="_auth_link_340faf"
+        data-discover="true"
+        href="/register"
+      >
+        Create account
+      </a>
+    </p>
+    <p
+      class="_auth__redirect_340faf"
+    >
+      <a
+        class="_auth_link_340faf"
+        data-discover="true"
+        href="/forgotPassword"
+      >
+        Forgot Password?
+      </a>
+    </p>
+  </section>
 </DocumentFragment>
 `;

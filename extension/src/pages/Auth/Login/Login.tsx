@@ -1,8 +1,8 @@
 import { EMAIL_MAX, PASSWORD_MAX, User } from "common";
 import { useContext } from "react";
 import CSSModules from "react-css-modules";
-import { useNavigate, Link } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AUTH_NOTIFICATION_MSGS } from "../constants";
 import {
@@ -18,7 +18,7 @@ export const Login = CSSModules(
   function () {
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
-    const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const { status, mutate } = useMutation({
       mutationFn: sessionService.loginUser,
@@ -27,7 +27,7 @@ export const Login = CSSModules(
           NOTIFICATION_ACTIONS.SUCCESS,
           LOGIN_AUTH_NOTIFICATION_MSGS.login(response.json.user.email)
         );
-        navigate("/userWords");
+        queryClient.invalidateQueries({ queryKey: ["sessions"], exact: true });
       },
       onError: showNotificationError,
     });
