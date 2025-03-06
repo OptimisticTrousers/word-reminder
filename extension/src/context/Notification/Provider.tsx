@@ -66,7 +66,7 @@ export function NotificationProvider({ children }: Props) {
   }
 
   function showNotification(type: string, message: string): void {
-    const delay = 500;
+    const delay = 5000;
 
     dispatch({ type, payload: { message } });
 

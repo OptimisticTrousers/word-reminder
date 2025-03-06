@@ -1,8 +1,11 @@
-import { CircleCheck, X } from "lucide-react";
+import { CircleCheck, CircleX, X } from "lucide-react";
 import { useContext } from "react";
 import CSSModules from "react-css-modules";
 
-import { NotificationContext } from "../../../context/Notification";
+import {
+  NOTIFICATION_ACTIONS,
+  NotificationContext,
+} from "../../../context/Notification";
 import styles from "./Notification.module.css";
 
 export const Notification = CSSModules(
@@ -21,7 +24,17 @@ export const Notification = CSSModules(
       >
         <div styleName="notification__flex">
           <div styleName="notification__item">
-            <CircleCheck styleName="notification__icon notification__icon--circle" />
+            {type === NOTIFICATION_ACTIONS.SUCCESS ? (
+              <CircleCheck
+                data-testid="check-icon"
+                styleName="notification__icon notification__icon--circle"
+              />
+            ) : (
+              <CircleX
+                data-testid="x-icon"
+                styleName="notification__icon notification__icon--circle"
+              />
+            )}
           </div>
           <div styleName="notification__box">
             <span id="notification-message" styleName="notification__message">

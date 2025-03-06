@@ -14,7 +14,8 @@ exports[`Notification component > renders notification with error class 1`] = `
         class="_notification__item_120862"
       >
         <svg
-          class="lucide lucide-circle-check _notification__icon_120862 _notification__icon--circle_120862"
+          class="lucide lucide-circle-x _notification__icon_120862 _notification__icon--circle_120862"
+          data-testid="x-icon"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -31,7 +32,10 @@ exports[`Notification component > renders notification with error class 1`] = `
             r="10"
           />
           <path
-            d="m9 12 2 2 4-4"
+            d="m15 9-6 6"
+          />
+          <path
+            d="m9 9 6 6"
           />
         </svg>
       </div>
@@ -101,6 +105,7 @@ exports[`Notification component > renders notification with success class 1`] = 
       >
         <svg
           class="lucide lucide-circle-check _notification__icon_120862 _notification__icon--circle_120862"
+          data-testid="check-icon"
           fill="none"
           height="24"
           stroke="currentColor"

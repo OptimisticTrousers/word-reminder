@@ -32,6 +32,8 @@ describe("Notification component", () => {
 
     const notification = screen.getByRole("dialog");
     const message = screen.getByText(props.message);
+    const checkIcon = screen.getByTestId("check-icon");
+    expect(checkIcon).toBeInTheDocument();
     expect(mockDismissNotification).toHaveBeenCalledTimes(1);
     expect(mockDismissNotification).toHaveBeenCalledWith();
     expect(message).toBeInTheDocument();
@@ -65,6 +67,8 @@ describe("Notification component", () => {
 
     const notification = screen.getByRole("dialog");
     const message = screen.getByText(props.message);
+    const xIcon = screen.getByTestId("x-icon");
+    expect(xIcon).toBeInTheDocument();
     expect(mockDismissNotification).toHaveBeenCalledTimes(1);
     expect(mockDismissNotification).toHaveBeenCalledWith();
     expect(message).toBeInTheDocument();
