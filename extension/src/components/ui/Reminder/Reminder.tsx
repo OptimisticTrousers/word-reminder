@@ -30,6 +30,7 @@ export const Reminder = CSSModules(
             disabled={disabled}
             onChange={handleChange}
             value={value}
+            placeholder="Enter a valid cron expression (ie. * * * * * or */5 * * * *)"
           />
         </label>
       </div>

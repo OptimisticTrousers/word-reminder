@@ -33,6 +33,7 @@ exports[`UpdateAutoWordReminderModal component > renders form with all inputs 1`
             <input
               class="_reminder__input_a2fc7e"
               name="reminder"
+              placeholder="Enter a valid cron expression (ie. * * * * * or */5 * * * *)"
               required=""
               type="text"
               value="* * * * *"
