@@ -1,4 +1,3 @@
-import { AuthParams } from "common";
 import { service } from "../service";
 
 export const sessionService = (function (service) {
@@ -22,11 +21,11 @@ export const sessionService = (function (service) {
     });
   }
 
-  function loginUser(auth: AuthParams) {
+  function loginUser(body: { email: string; password: string }) {
     return post({
       url: `${VITE_API_DOMAIN}/sessions`,
       options: {
-        body: JSON.stringify(auth),
+        body: JSON.stringify(body),
       },
     });
   }

@@ -1,11 +1,15 @@
-import { ManualWordReminderParams } from "common";
-
 import { service, Params } from "../service";
 
 export const wordReminderService = (function (service) {
   const { get, post, put, remove, VITE_API_DOMAIN } = service;
 
-  function getWordReminderList(userId: string, params: Params) {
+  function getWordReminderList({
+    userId,
+    params,
+  }: {
+    userId: string;
+    params: Params;
+  }) {
     return get({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
       params,
@@ -15,7 +19,13 @@ export const wordReminderService = (function (service) {
     });
   }
 
-  function getWordReminder(userId: string, wordReminderId: string) {
+  function getWordReminder({
+    userId,
+    wordReminderId,
+  }: {
+    userId: string;
+    wordReminderId: string;
+  }) {
     return get({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminderId}`,
       options: {
@@ -29,7 +39,13 @@ export const wordReminderService = (function (service) {
     body,
   }: {
     userId: string;
-    body: Omit<ManualWordReminderParams, "user_id">;
+    body: {
+      is_active: boolean;
+      has_reminder_onload: boolean;
+      reminder: string;
+      finish: Date;
+      user_word_ids: string[];
+    };
   }) {
     return post({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
@@ -37,7 +53,7 @@ export const wordReminderService = (function (service) {
     });
   }
 
-  function deleteWordReminders(userId: string) {
+  function deleteWordReminders({ userId }: { userId: string }) {
     return remove({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
       options: { credentials: "include" },
@@ -51,7 +67,13 @@ export const wordReminderService = (function (service) {
   }: {
     userId: string;
     wordReminderId: string;
-    body: Omit<ManualWordReminderParams, "user_id">;
+    body: {
+      is_active: boolean;
+      has_reminder_onload: boolean;
+      reminder: string;
+      finish: Date;
+      user_word_ids: string[];
+    };
   }) {
     return put({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminderId}`,

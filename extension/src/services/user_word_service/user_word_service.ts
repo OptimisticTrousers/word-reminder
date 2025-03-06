@@ -1,9 +1,15 @@
 import { service, Params } from "../service";
 
-export const wordService = (function (service) {
+export const userWordService = (function (service) {
   const { get, post, remove, VITE_API_DOMAIN } = service;
 
-  function getWordList(userId: string, params: Params) {
+  function getUserWordList({
+    userId,
+    params,
+  }: {
+    userId: string;
+    params: Params;
+  }) {
     return get({
       url: `${VITE_API_DOMAIN}/users/${userId}/words`,
       params,
@@ -11,14 +17,20 @@ export const wordService = (function (service) {
     });
   }
 
-  function getUserWord(userId: string, wordId: string) {
+  function getUserWord({
+    userId,
+    userWordId,
+  }: {
+    userId: string;
+    userWordId: string;
+  }) {
     return get({
-      url: `${VITE_API_DOMAIN}/users/${userId}/words/${wordId}`,
+      url: `${VITE_API_DOMAIN}/users/${userId}/words/${userWordId}`,
       options: { credentials: "include" },
     });
   }
 
-  function createWord({
+  function createUserWord({
     userId,
     formData,
   }: {
@@ -36,16 +48,16 @@ export const wordService = (function (service) {
 
   function deleteUserWord({
     userId,
-    wordId,
+    userWordId,
   }: {
     userId: string;
-    wordId: string;
+    userWordId: string;
   }) {
     return remove({
-      url: `${VITE_API_DOMAIN}/users/${userId}/${wordId}`,
+      url: `${VITE_API_DOMAIN}/users/${userId}/userWords/${userWordId}`,
       options: { credentials: "include" },
     });
   }
 
-  return { getWordList, getUserWord, createWord, deleteUserWord };
+  return { getUserWordList, getUserWord, createUserWord, deleteUserWord };
 })(service);

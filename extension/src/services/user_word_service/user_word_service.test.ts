@@ -1,5 +1,5 @@
 import { service } from "../service";
-import { wordService } from "./word_service";
+import { userWordService } from "./user_word_service";
 
 const { VITE_API_DOMAIN } = service;
 
@@ -8,7 +8,7 @@ vi.mock("../service");
 describe("wordService", () => {
   const userId = "1";
 
-  const wordId = "1";
+  const userWordId = "1";
 
   const json = [
     {
@@ -68,11 +68,14 @@ describe("wordService", () => {
         return { json, status };
       });
 
-      const response = await wordService.getUserWord(userId, wordId);
+      const response = await userWordService.getUserWord({
+        userId,
+        userWordId,
+      });
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${userId}/words/${wordId}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/words/${userWordId}`,
         options: { credentials: "include" },
       });
       expect(response).toEqual({
@@ -82,7 +85,7 @@ describe("wordService", () => {
     });
   });
 
-  describe("getWordList", () => {
+  describe("getUserWordList", () => {
     it("gets using the correct API endpoint with params", async () => {
       const params = new URLSearchParams({
         column: "created_at",
@@ -93,7 +96,10 @@ describe("wordService", () => {
         return { json, status };
       });
 
-      const response = await wordService.getWordList(userId, paramsObject);
+      const response = await userWordService.getUserWordList({
+        userId,
+        params: paramsObject,
+      });
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
@@ -108,7 +114,7 @@ describe("wordService", () => {
     });
   });
 
-  describe("createWord", () => {
+  describe("createUserWord", () => {
     it("creates using the correct API endpoint with word body", async () => {
       const word = json[0].word;
       const mockPost = vi
@@ -119,7 +125,10 @@ describe("wordService", () => {
       const formData = new FormData();
       formData.append("word", word);
 
-      const response = await wordService.createWord({ userId, formData });
+      const response = await userWordService.createUserWord({
+        userId,
+        formData,
+      });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
@@ -142,11 +151,14 @@ describe("wordService", () => {
           return { json, status };
         });
 
-      const response = await wordService.deleteUserWord({ userId, wordId });
+      const response = await userWordService.deleteUserWord({
+        userId,
+        userWordId,
+      });
 
       expect(mockRemove).toHaveBeenCalledTimes(1);
       expect(mockRemove).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${userId}/${wordId}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/userWords/${userWordId}`,
         options: { credentials: "include" },
       });
       expect(response).toEqual({

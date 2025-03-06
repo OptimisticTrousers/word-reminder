@@ -1,6 +1,7 @@
-import { Order } from "common";
-import { service } from "../service";
+import { SortMode } from "common";
+
 import { autoWordReminderService } from "./auto_word_reminder_service";
+import { service } from "../service";
 
 vi.mock("../service");
 
@@ -13,33 +14,17 @@ describe("autoWordReminderService", () => {
 
   const status = 200;
 
-  const sampleUser1 = {
-    id: "1",
-    email: "email@protonmail.com",
-    password: "password",
-  };
+  const userId = "1";
 
   const autoWordReminderParams = {
     create_now: true,
     has_reminder_onload: true,
     is_active: true,
-    reminder: {
-      minutes: 0,
-      hours: 2,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
-    duration: {
-      minutes: 0,
-      hours: 0,
-      days: 0,
-      weeks: 1,
-      months: 0,
-    },
+    reminder: "* * * * *",
+    duration: 360000,
     word_count: 7,
     has_learned_words: false,
-    order: Order.Random,
+    sort_mode: SortMode.Random,
   };
 
   const autoWordReminder = {
@@ -47,7 +32,7 @@ describe("autoWordReminderService", () => {
     ...autoWordReminderParams,
   };
 
-  describe("getAutoWordReminder", () => {
+  describe("getAutoWordReminderByUserId", () => {
     it("gets using the correct API endpoint with query params", async () => {
       const mockGet = vi.spyOn(service, "get").mockImplementation(async () => {
         return {
@@ -56,13 +41,13 @@ describe("autoWordReminderService", () => {
         };
       });
 
-      const response = await autoWordReminderService.getAutoWordReminder(
-        sampleUser1.id
-      );
+      const response = await autoWordReminderService.getAutoWordReminder({
+        userId,
+      });
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/autoWordReminders`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/autoWordReminders`,
         options: { credentials: "include" },
       });
       expect(response).toEqual({
@@ -81,13 +66,13 @@ describe("autoWordReminderService", () => {
         });
 
       const response = await autoWordReminderService.createAutoWordReminder({
-        userId: sampleUser1.id,
+        userId,
         body: autoWordReminderParams,
       });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/autoWordReminders`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/autoWordReminders`,
         options: {
           body: JSON.stringify(autoWordReminderParams),
           credentials: "include",
@@ -112,13 +97,13 @@ describe("autoWordReminderService", () => {
         });
 
       const response = await autoWordReminderService.deleteAutoWordReminder({
-        userId: sampleUser1.id,
+        userId,
         autoWordReminderId: autoWordReminder.id,
       });
 
       expect(mockRemove).toHaveBeenCalledTimes(1);
       expect(mockRemove).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/autoWordReminders/${autoWordReminder.id}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/autoWordReminders/${autoWordReminder.id}`,
         options: { credentials: "include" },
       });
       expect(response).toEqual({
@@ -135,14 +120,14 @@ describe("autoWordReminderService", () => {
       });
 
       const response = await autoWordReminderService.updateAutoWordReminder({
-        userId: sampleUser1.id,
+        userId,
         autoWordReminderId: autoWordReminder.id,
         body: autoWordReminderParams,
       });
 
       expect(mockPut).toHaveBeenCalledTimes(1);
       expect(mockPut).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/autoWordReminders/${autoWordReminder.id}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/autoWordReminders/${autoWordReminder.id}`,
         options: {
           body: JSON.stringify(autoWordReminderParams),
           credentials: "include",

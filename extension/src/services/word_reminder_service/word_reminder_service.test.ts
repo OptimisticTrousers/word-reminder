@@ -12,39 +12,24 @@ describe("wordReminderService", () => {
 
   const status = 200;
 
-  const sampleUser1 = {
-    id: "1",
-    email: "email@protonmail.com",
-    password: "password",
-  };
+  const userId = "1";
 
-  const wordReminderId1 = "1";
   const wordReminder1 = {
+    id: "1",
     has_reminder_onload: true,
+    reminder: "* * * * *",
     is_active: true,
-    reminder: {
-      minutes: 0,
-      hours: 2,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    user_words: [],
+    finish: new Date(Date.now() + 1000),
+    user_word_ids: [],
   };
 
   const wordReminder2 = {
+    id: "2",
     has_reminder_onload: true,
     is_active: true,
-    reminder: {
-      minutes: 0,
-      hours: 2,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
-    user_words: [],
+    reminder: "* * * * *",
+    finish: new Date(Date.now() + 1000),
+    user_word_ids: [],
   };
 
   describe("getWordReminderList", () => {
@@ -61,14 +46,14 @@ describe("wordReminderService", () => {
         };
       });
 
-      const response = await wordReminderService.getWordReminderList(
-        sampleUser1.id,
-        paramsObject
-      );
+      const response = await wordReminderService.getWordReminderList({
+        userId,
+        params: paramsObject,
+      });
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
         params: paramsObject,
         options: { credentials: "include" },
       });
@@ -88,14 +73,14 @@ describe("wordReminderService", () => {
         };
       });
 
-      const response = await wordReminderService.getWordReminder(
-        sampleUser1.id,
-        wordReminderId1
-      );
+      const response = await wordReminderService.getWordReminder({
+        userId,
+        wordReminderId: wordReminder1.id,
+      });
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminder1.id}`,
         options: {
           credentials: "include",
         },
@@ -116,13 +101,13 @@ describe("wordReminderService", () => {
         });
 
       const response = await wordReminderService.createWordReminder({
-        userId: sampleUser1.id,
+        userId,
         body: wordReminder1,
       });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
         options: {
           body: JSON.stringify(wordReminder1),
           credentials: "include",
@@ -146,13 +131,13 @@ describe("wordReminderService", () => {
           };
         });
 
-      const response = await wordReminderService.deleteWordReminders(
-        sampleUser1.id
-      );
+      const response = await wordReminderService.deleteWordReminders({
+        userId,
+      });
 
       expect(mockRemove).toHaveBeenCalledTimes(1);
       expect(mockRemove).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
         options: { credentials: "include" },
       });
       expect(response).toEqual({
@@ -169,14 +154,14 @@ describe("wordReminderService", () => {
       });
 
       const response = await wordReminderService.updateWordReminder({
-        userId: sampleUser1.id,
-        wordReminderId: wordReminderId1,
+        userId,
+        wordReminderId: wordReminder1.id,
         body: wordReminder1,
       });
 
       expect(mockPut).toHaveBeenCalledTimes(1);
       expect(mockPut).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminder1.id}`,
         options: {
           body: JSON.stringify(wordReminder1),
           credentials: "include",
@@ -198,13 +183,13 @@ describe("wordReminderService", () => {
         });
 
       const response = await wordReminderService.deleteWordReminder({
-        userId: sampleUser1.id,
-        wordReminderId: wordReminderId1,
+        userId,
+        wordReminderId: wordReminder1.id,
       });
 
       expect(mockRemove).toHaveBeenCalledTimes(1);
       expect(mockRemove).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${sampleUser1.id}/wordReminders/${wordReminderId1}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminder1.id}`,
         options: { credentials: "include" },
       });
       expect(response).toEqual({

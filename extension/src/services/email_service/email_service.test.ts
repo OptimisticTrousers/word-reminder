@@ -1,4 +1,4 @@
-import { Templates, Subject } from "common";
+import { Subject, Template } from "common";
 
 import { service } from "../service";
 import { emailService } from "./email_service";
@@ -29,8 +29,8 @@ describe("emailService", () => {
         });
       const body = {
         email: "bob@protonmail.com",
-        template: Templates.CONFIRM_EMAIL,
-        subject: Subject.EMAIL_VERIFICATION,
+        template: Template.CONFIRM_ACCOUNT,
+        subject: Subject.CONFIRM_ACCOUNT,
       };
 
       const response = await emailService.sendEmail(body);
@@ -41,36 +41,6 @@ describe("emailService", () => {
         options: { body: JSON.stringify(body), credentials: "include" },
       });
       expect(response).toEqual({ json: { info }, status });
-    });
-  });
-
-  describe("verifyEmailCode", async () => {
-    it("calls the functions at the correct API endpoint with body", async () => {
-      const message = "Code has been verified";
-      const status = 200;
-      const mockPost = vi
-        .spyOn(service, "post")
-        .mockImplementation(async () => {
-          return {
-            json: { message },
-            status,
-          };
-        });
-      const body = {
-        token: "sometoken",
-      };
-
-      const response = await emailService.verifyEmailToken(body);
-
-      expect(mockPost).toHaveBeenCalledTimes(1);
-      expect(mockPost).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/emails`,
-        options: { body: JSON.stringify(body), credentials: "include" },
-      });
-      expect(response).toEqual({
-        json: { message },
-        status,
-      });
     });
   });
 });

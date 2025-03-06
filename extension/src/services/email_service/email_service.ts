@@ -1,13 +1,11 @@
+import { Subject, Template } from "common";
+
 import { service } from "../service";
 
 interface SendEmailBody {
   email: string;
-  subject: string;
-  template: string;
-}
-
-interface VerifyEmailTokenBody {
-  token: string | undefined;
+  subject: Subject;
+  template: Template;
 }
 
 export const emailService = (function (service) {
@@ -23,15 +21,5 @@ export const emailService = (function (service) {
     });
   }
 
-  function verifyEmailToken(body: VerifyEmailTokenBody) {
-    return post({
-      url: `${VITE_API_DOMAIN}/emails`,
-      options: {
-        body: JSON.stringify(body),
-        credentials: "include",
-      },
-    });
-  }
-
-  return { sendEmail, verifyEmailToken };
+  return { sendEmail };
 })(service);

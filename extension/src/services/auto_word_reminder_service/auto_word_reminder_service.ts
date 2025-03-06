@@ -1,11 +1,11 @@
-import { AutoWordReminderParams } from "common";
+import { SortMode } from "common";
 
 import { service } from "../service";
 
 export const autoWordReminderService = (function (service) {
   const { get, post, put, remove, VITE_API_DOMAIN } = service;
 
-  function getAutoWordReminder(userId: string) {
+  function getAutoWordReminder({ userId }: { userId: string }) {
     return get({
       url: `${VITE_API_DOMAIN}/users/${userId}/autoWordReminders`,
       options: {
@@ -19,7 +19,16 @@ export const autoWordReminderService = (function (service) {
     body,
   }: {
     userId: string;
-    body: Omit<AutoWordReminderParams, "user_id">;
+    body: {
+      is_active: boolean;
+      create_now: boolean;
+      has_reminder_onload: boolean;
+      reminder: string;
+      duration: number;
+      word_count: number;
+      sort_mode: SortMode;
+      has_learned_words: boolean;
+    };
   }) {
     return post({
       url: `${VITE_API_DOMAIN}/users/${userId}/autoWordReminders`,
@@ -34,7 +43,16 @@ export const autoWordReminderService = (function (service) {
   }: {
     userId: string;
     autoWordReminderId: string;
-    body: Omit<AutoWordReminderParams, "user_id">;
+    body: {
+      is_active: boolean;
+      create_now: boolean;
+      has_reminder_onload: boolean;
+      reminder: string;
+      duration: number;
+      word_count: number;
+      sort_mode: SortMode;
+      has_learned_words: boolean;
+    };
   }) {
     return put({
       url: `${VITE_API_DOMAIN}/users/${userId}/autoWordReminders/${autoWordReminderId}`,
