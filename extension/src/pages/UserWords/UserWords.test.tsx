@@ -153,7 +153,6 @@ describe("UserWords component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    setTimeout(() => {}, 0);
   });
 
   describe("word creation", () => {
@@ -207,10 +206,10 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
-        expect(mockInvalidateQueries).toHaveBeenCalledTimes(1)
+        expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
         expect(mockInvalidateQueries).toHaveBeenCalledWith({
           queryKey: [
-            "words",
+            "userWords",
             Object.fromEntries(
               new URLSearchParams({
                 page: "1",
@@ -306,7 +305,7 @@ describe("UserWords component", () => {
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
         formData.append("userId", String(testUser.id));
-        const message = "Unauthenticated.";
+        const message = "User is unauthenticated.";
         const status = 401;
         const mockWordServiceCreateWord = vi
           .spyOn(userWordService, "createUserWord")
@@ -543,7 +542,7 @@ describe("UserWords component", () => {
           formData.append("word", "");
           formData.append("csv", csvFile);
           formData.append("userId", String(testUser.id));
-          const message = "Unauthenticated.";
+          const message = "User is unauthenticated.";
           const status = 401;
           const mockWordServiceCreateWord = vi
             .spyOn(userWordService, "createUserWord")

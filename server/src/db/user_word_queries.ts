@@ -4,7 +4,7 @@ import { QueryResult } from "pg";
 import { createQueries } from "./queries";
 
 export interface Result {
-  user_words: UserWord[];
+  userWords: UserWord[];
   previous?: Page;
   next?: Page;
   totalRows: number;
@@ -148,7 +148,7 @@ export const userWordQueries = (function () {
       queryParams
     );
 
-    let result: Result = { user_words: rows, totalRows };
+    let result: Result = { userWords: rows, totalRows };
 
     if (startIndex > 0) {
       result.previous = {

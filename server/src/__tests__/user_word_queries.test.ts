@@ -223,13 +223,13 @@ describe("userWordQueries", () => {
 
       const result = await userWordQueries.getByUserId(newUser!.id);
 
-      const userWord = result.user_words[0];
+      const userWord = result.userWords[0];
       const createdAtTimestamp = new Date(userWord!.created_at).getTime();
       const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(result).toEqual({
         totalRows: 1,
-        user_words: [
+        userWords: [
           {
             id: 1,
             details: json,
@@ -469,7 +469,7 @@ describe("userWordQueries", () => {
             page: 2,
             limit: 8, // default limit
           },
-          user_words: [
+          userWords: [
             { ...milieuWord, ...milieuUserWord },
             { ...clemencyWord, ...clemencyUserWord },
             { ...concomitantlyWord, ...concomitantlyUserWord },
@@ -494,7 +494,7 @@ describe("userWordQueries", () => {
 
         expect(result).toEqual({
           totalRows: 1,
-          user_words: [{ ...admonitionWord, ...admonitionUserWord }],
+          userWords: [{ ...admonitionWord, ...admonitionUserWord }],
         });
       });
 
@@ -506,7 +506,7 @@ describe("userWordQueries", () => {
 
           expect(result).toEqual({
             totalRows: 4,
-            user_words: [
+            userWords: [
               { ...clemencyWord, ...clemencyUserWord },
               { ...sanguineWord, ...sanguineUserWord },
               { ...admonitionWord, ...admonitionUserWord },
@@ -522,7 +522,7 @@ describe("userWordQueries", () => {
 
           expect(result).toEqual({
             totalRows: 5,
-            user_words: [
+            userWords: [
               { ...milieuWord, ...milieuUserWord },
               { ...concomitantlyWord, ...concomitantlyUserWord },
               { ...expropriationWord, ...expropriationUserWord },
@@ -545,7 +545,7 @@ describe("userWordQueries", () => {
               page: 2,
               limit: 8, // default limit
             },
-            user_words: [
+            userWords: [
               { ...admonishWord, ...admonishUserWord },
               { ...admonitionWord, ...admonitionUserWord },
               { ...clemencyWord, ...clemencyUserWord },
@@ -570,7 +570,7 @@ describe("userWordQueries", () => {
               page: 2,
               limit: 8, // default limit
             },
-            user_words: [
+            userWords: [
               { ...sanguineWord, ...sanguineUserWord },
               { ...milieuWord, ...milieuUserWord },
               { ...ignobleWord, ...ignobleUserWord },
@@ -595,7 +595,7 @@ describe("userWordQueries", () => {
               page: 2,
               limit: 8, // default limit
             },
-            user_words: [
+            userWords: [
               { ...milieuWord, ...milieuUserWord },
               { ...clemencyWord, ...clemencyUserWord },
               { ...concomitantlyWord, ...concomitantlyUserWord },
@@ -624,7 +624,7 @@ describe("userWordQueries", () => {
               limit: 8,
               page: 2,
             },
-            user_words: [
+            userWords: [
               { ...admonishWord, ...admonishUserWord },
               { ...dithyrambicWord, ...dithyrambicUserWord },
               { ...ignobleWord, ...ignobleUserWord },
@@ -647,7 +647,7 @@ describe("userWordQueries", () => {
 
           expect(result).toEqual({
             totalRows: 1,
-            user_words: [{ ...milieuWord, ...milieuUserWord }],
+            userWords: [{ ...milieuWord, ...milieuUserWord }],
           });
         });
 
@@ -658,7 +658,7 @@ describe("userWordQueries", () => {
 
           expect(result).toEqual({
             totalRows: 1,
-            user_words: [{ ...milieuWord, ...milieuUserWord }],
+            userWords: [{ ...milieuWord, ...milieuUserWord }],
           });
         });
 
@@ -669,7 +669,7 @@ describe("userWordQueries", () => {
 
           expect(result).toEqual({
             totalRows: 0,
-            user_words: [],
+            userWords: [],
           });
         });
       });
@@ -691,7 +691,7 @@ describe("userWordQueries", () => {
               page: 1,
               limit: 2,
             },
-            user_words: [
+            userWords: [
               { ...concomitantlyWord, ...concomitantlyUserWord },
               { ...sanguineWord, ...sanguineUserWord },
             ],
@@ -710,7 +710,7 @@ describe("userWordQueries", () => {
               page: 4,
               limit: 2,
             },
-            user_words: [{ ...admonishWord, ...admonishUserWord }],
+            userWords: [{ ...admonishWord, ...admonishUserWord }],
           });
         });
 
@@ -726,7 +726,7 @@ describe("userWordQueries", () => {
               page: 2,
               limit: 2,
             },
-            user_words: [
+            userWords: [
               { ...milieuWord, ...milieuUserWord },
               { ...clemencyWord, ...clemencyUserWord },
             ],
@@ -807,7 +807,7 @@ describe("userWordQueries", () => {
       expect(deletedUserWords).toEqual([newUserWord1, newUserWord2]);
       expect(result).toEqual({
         totalRows: 0,
-        user_words: [],
+        userWords: [],
       });
     });
   });

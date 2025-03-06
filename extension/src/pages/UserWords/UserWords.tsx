@@ -46,7 +46,7 @@ export const UserWords = CSSModules(
     const searchParamsObject = Object.fromEntries(searchParams);
 
     const { data, error, isLoading, isSuccess } = useQuery({
-      queryKey: ["words", searchParamsObject],
+      queryKey: ["userWords", searchParamsObject],
       placeholderData: keepPreviousData,
       queryFn: () => {
         return userWordService.getUserWordList({
@@ -79,7 +79,7 @@ export const UserWords = CSSModules(
           );
         }
         queryClient.invalidateQueries({
-          queryKey: ["words", searchParamsObject],
+          queryKey: ["userWords", searchParamsObject],
           exact: true,
         });
       },
