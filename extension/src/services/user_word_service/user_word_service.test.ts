@@ -75,7 +75,7 @@ describe("wordService", () => {
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${userId}/words/${userWordId}`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/userWords/${userWordId}`,
         options: { credentials: "include" },
       });
       expect(response).toEqual({
@@ -103,7 +103,7 @@ describe("wordService", () => {
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${userId}/words`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/userWords`,
         params: paramsObject,
         options: { credentials: "include" },
       });
@@ -132,7 +132,7 @@ describe("wordService", () => {
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/users/${userId}/words`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/userWords`,
         options: { body: formData, credentials: "include" },
         params: undefined,
       });

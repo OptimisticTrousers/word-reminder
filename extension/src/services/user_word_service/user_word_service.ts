@@ -11,7 +11,7 @@ export const userWordService = (function (service) {
     params: Params;
   }) {
     return get({
-      url: `${VITE_API_DOMAIN}/users/${userId}/words`,
+      url: `${VITE_API_DOMAIN}/users/${userId}/userWords`,
       params,
       options: { credentials: "include" },
     });
@@ -25,7 +25,7 @@ export const userWordService = (function (service) {
     userWordId: string;
   }) {
     return get({
-      url: `${VITE_API_DOMAIN}/users/${userId}/words/${userWordId}`,
+      url: `${VITE_API_DOMAIN}/users/${userId}/userWords/${userWordId}`,
       options: { credentials: "include" },
     });
   }
@@ -38,7 +38,7 @@ export const userWordService = (function (service) {
     formData: FormData;
   }) {
     return post({
-      url: `${VITE_API_DOMAIN}/users/${userId}/words`,
+      url: `${VITE_API_DOMAIN}/users/${userId}/userWords`,
       options: {
         body: formData,
         credentials: "include",
