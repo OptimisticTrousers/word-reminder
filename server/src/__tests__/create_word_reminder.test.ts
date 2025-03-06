@@ -21,40 +21,7 @@ describe("create_word_reminder", () => {
     updated_at: new Date(),
   };
 
-  const wordId1 = 1;
-
-  const wordId2 = 2;
-
-  const wordId3 = 3;
-
-  const userWord1 = {
-    id: 1,
-    user_id: userId,
-    word_id: wordId1,
-    learned: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
-  const userWord2 = {
-    id: 2,
-    user_id: userId,
-    word_id: wordId2,
-    learned: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
-  const userWord3 = {
-    id: 3,
-    user_id: userId,
-    word_id: wordId3,
-    learned: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
-  const user_words = [userWord1, userWord2, userWord3];
+  const user_word_ids = [1, 2, 3];
 
   const mockCreateWordReminder = jest
     .spyOn(wordReminders, "createWordReminder")
@@ -77,7 +44,7 @@ describe("create_word_reminder", () => {
       has_reminder_onload: wordReminderParams.has_reminder_onload,
       finish: wordReminderParams.finish,
       reminder: wordReminderParams.reminder,
-      user_words,
+      user_word_ids,
     };
 
     const response = await request(app)
@@ -100,7 +67,7 @@ describe("create_word_reminder", () => {
       user_id: userId,
       is_active: body.is_active,
       has_reminder_onload: body.has_reminder_onload,
-      user_word_ids: [userWord1.id, userWord2.id, userWord3.id],
+      user_word_ids,
       reminder: body.reminder,
       finish: body.finish.toISOString(),
     });

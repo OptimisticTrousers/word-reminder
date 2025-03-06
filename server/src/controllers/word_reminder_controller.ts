@@ -15,12 +15,8 @@ import { userWordQueries } from "../db/user_word_queries";
 // @access Private
 export const create_word_reminder = asyncHandler(async (req, res) => {
   const userId = Number(req.params.userId);
-  const { is_active, has_reminder_onload, reminder, finish, user_words } =
+  const { is_active, has_reminder_onload, reminder, finish, user_word_ids } =
     req.body;
-
-  const user_word_ids = user_words.map((user_word: UserWord) => {
-    return user_word.id;
-  });
 
   const wordReminder = await createWordReminder({
     user_id: userId,
@@ -93,7 +89,7 @@ export const update_word_reminder = [
   errorValidationHandler,
   asyncHandler(async (req, res) => {
     const wordReminderId = Number(req.params.wordReminderId);
-    const { is_active, has_reminder_onload, reminder, finish, user_words } =
+    const { is_active, has_reminder_onload, reminder, finish, user_word_ids } =
       req.body;
 
     const wordReminder = await wordReminderQueries.updateById(wordReminderId, {
@@ -101,10 +97,6 @@ export const update_word_reminder = [
       reminder,
       has_reminder_onload,
       finish,
-    });
-
-    const user_word_ids = user_words.map((user_word: UserWord) => {
-      return user_word.id;
     });
 
     user_word_ids.forEach(async (user_word_id: number) => {

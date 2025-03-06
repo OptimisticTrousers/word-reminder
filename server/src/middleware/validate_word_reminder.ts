@@ -43,13 +43,13 @@ export const validateWordReminder = [
     .bail()
     .isAfter()
     .withMessage("'finish' must come after the current date."),
-  body("user_words")
+  body("user_word_ids")
     .notEmpty({ ignore_whitespace: true })
-    .withMessage("'user_words' must be specified.")
+    .withMessage("'user_word_ids' must be specified.")
     .bail()
     .isArray()
     .toArray()
-    .withMessage("'user_words' must be an array."),
+    .withMessage("'user_word_ids' must be an array."),
 ];
 
 export const validateAutoWordReminder = [

@@ -50,6 +50,8 @@ describe("update_word_reminder", () => {
     updated_at: new Date(),
   };
 
+  const user_word_ids = [userWord1.id, userWord2.id, userWord3.id];
+
   const userWordsWordReminders1 = {
     id: 1,
     user_word_id: userWord1.id,
@@ -90,7 +92,7 @@ describe("update_word_reminder", () => {
   it("calls the functions to update the word reminder with the user words in it", async () => {
     const body = {
       finish: wordReminder.finish,
-      user_words: [userWord1, userWord2, userWord3],
+      user_word_ids,
       is_active: wordReminder.is_active,
       has_reminder_onload: wordReminder.has_reminder_onload,
       reminder: wordReminder.reminder,

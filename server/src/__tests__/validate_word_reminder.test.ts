@@ -309,7 +309,7 @@ describe("validateWordReminder", () => {
         );
         const body = {
           finish: undefined,
-          user_words: [userWord1, userWord2, userWord3],
+          user_word_ids: [userWord1.id, userWord2.id, userWord3.id],
         };
 
         const response = await request(app)
@@ -344,7 +344,7 @@ describe("validateWordReminder", () => {
         );
         const body = {
           finish: "string",
-          user_words: [userWord1, userWord2, userWord3],
+          user_word_ids: [userWord1.id, userWord2.id, userWord3.id],
         };
 
         const response = await request(app)
@@ -381,7 +381,7 @@ describe("validateWordReminder", () => {
         const finish = new Date(1);
         const body = {
           finish,
-          user_words: [userWord1, userWord2, userWord3],
+          user_word_ids: [userWord1.id, userWord2.id, userWord3.id],
         };
 
         const response = await request(app)
@@ -433,8 +433,8 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'user_words' must be specified.",
-              path: "user_words",
+              msg: "'user_word_ids' must be specified.",
+              path: "user_word_ids",
               type: "field",
             },
           ],
@@ -454,7 +454,7 @@ describe("validateWordReminder", () => {
         );
         const body = {
           finish: new Date(Date.now() + 1000),
-          user_words: "string",
+          user_word_ids: "string",
         };
 
         const response = await request(app)
@@ -468,8 +468,8 @@ describe("validateWordReminder", () => {
           errors: [
             {
               location: "body",
-              msg: "'user_words' must be an array.",
-              path: "user_words",
+              msg: "'user_word_ids' must be an array.",
+              path: "user_word_ids",
               type: "field",
               value: "string",
             },
@@ -491,7 +491,7 @@ describe("validateWordReminder", () => {
       );
       const body = {
         finish: new Date(Date.now() + 1000),
-        user_words: ["1", "2"],
+        user_word_ids: [1, 2],
       };
 
       const response = await request(app)
