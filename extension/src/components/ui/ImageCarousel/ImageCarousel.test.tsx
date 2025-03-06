@@ -9,16 +9,22 @@ import userEvent from "@testing-library/user-event";
 describe("ImageCarousel component", () => {
   const images = [
     {
+      id: 1,
+      word_id: 1,
       url: laRocherDeBaumeImage,
       descriptionurl: "/descriptionurl1",
       comment: "La Rocher De La Baume",
     },
     {
+      id: 2,
+      word_id: 1,
       url: legoImage,
       descriptionurl: "/descriptionurl2",
       comment: "Crowd Lego Staff",
     },
     {
+      id: 3,
+      word_id: 1,
       url: selfParkingSignImage,
       descriptionurl: "/descriptionurl3",
       comment: "UFO Parking Sign",
