@@ -12,15 +12,15 @@ import { Error500 } from "../Error500";
 export const WordReminder = CSSModules(
   function () {
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const userId = String(user.id);
     const { wordReminderId } = useParams();
     const { data, failureReason, isLoading } = useQuery({
       queryKey: ["wordReminders", wordReminderId],
       queryFn: () => {
-        return wordReminderService.getWordReminder(
+        return wordReminderService.getWordReminder({
           userId,
-          String(wordReminderId)
-        );
+          wordReminderId: String(wordReminderId),
+        });
       },
       staleTime: STALE_TIME,
     });

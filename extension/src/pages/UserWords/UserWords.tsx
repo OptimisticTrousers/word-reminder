@@ -17,7 +17,7 @@ import {
   NotificationContext,
 } from "../../context/Notification";
 import { useNotificationError } from "../../hooks/useNotificationError";
-import { wordService } from "../../services/word_service/word_service";
+import { userWordService } from "../../services/user_word_service";
 import { ErrorResponse } from "../../types";
 import { download } from "../../utils/download";
 import styles from "./UserWords.module.css";
@@ -29,7 +29,7 @@ export const UserWords = CSSModules(
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const userId = String(user.id);
     const inputRef = useRef(null);
     const submitButtonRef = useRef(null);
     useContextMenu({ inputRef, submitButtonRef });
@@ -49,7 +49,10 @@ export const UserWords = CSSModules(
       queryKey: ["words", searchParamsObject],
       placeholderData: keepPreviousData,
       queryFn: () => {
-        return wordService.getWordList(userId, searchParamsObject);
+        return userWordService.getUserWordList({
+          userId,
+          params: searchParamsObject,
+        });
       },
       staleTime: STALE_TIME,
     });
@@ -60,7 +63,7 @@ export const UserWords = CSSModules(
       onMutate: (data) => {
         return { formData: data.formData };
       },
-      mutationFn: wordService.createWord,
+      mutationFn: userWordService.createUserWord,
       onSuccess: (_response, _variables, context) => {
         const formData = context.formData;
         const word = formData.get("word") as string;
@@ -89,9 +92,9 @@ export const UserWords = CSSModules(
 
     async function handleExport(event: MouseEvent<HTMLInputElement>) {
       event.preventDefault();
-      const { json } = await wordService.getWordList(
+      const { json } = await userWordService.getUserWordList({
         userId,
-        Object.fromEntries(
+        params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: data?.json.totalRows,
@@ -100,8 +103,8 @@ export const UserWords = CSSModules(
             column: "",
             direction: "",
           })
-        )
-      );
+        ),
+      });
       const words = json.userWords.map(
         (userWord: IUserWord & { word: string }) => {
           return userWord.word;
@@ -130,7 +133,7 @@ export const UserWords = CSSModules(
         );
         return;
       }
-      mutate({ userId, formData });
+      mutate({ userId, formData: formData });
     }
 
     function handleFile(event: ChangeEvent<HTMLInputElement>) {

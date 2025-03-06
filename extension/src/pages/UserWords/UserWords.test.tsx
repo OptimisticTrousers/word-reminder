@@ -7,7 +7,7 @@ import userEvent from "@testing-library/user-event";
 import { AUTH_NOTIFICATION_MSGS } from "../Auth/constants";
 import { Props } from "../../components/ui/PaginatedList";
 import { NotificationProvider } from "../../context/Notification";
-import { wordService } from "../../services/word_service/word_service";
+import { userWordService } from "../../services/user_word_service";
 import { UserWords } from "./UserWords";
 import * as utils from "../../utils/download";
 import * as hooks from "../../hooks/useContextMenu";
@@ -31,7 +31,7 @@ vi.mock("../../components/words/UserWord", function () {
 describe("UserWords component", () => {
   const json = [
     {
-      id: "1",
+      id: 1,
       word: "word",
     },
   ];
@@ -45,7 +45,7 @@ describe("UserWords component", () => {
   });
 
   function setup() {
-    const path = "/words";
+    const path = "/userWords";
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -82,11 +82,11 @@ describe("UserWords component", () => {
   const PAGINATION_LIMIT = "10";
 
   const testUser = {
-    id: "1",
+    id: 1,
   };
 
   const word1 = {
-    id: "1",
+    id: 1,
     details: [
       {
         word: "hello",
@@ -115,7 +115,7 @@ describe("UserWords component", () => {
   };
 
   const word2 = {
-    id: "2",
+    id: 2,
     details: [
       {
         word: "clemency",
@@ -132,8 +132,8 @@ describe("UserWords component", () => {
   };
 
   const userWord1 = {
-    id: "1",
-    user_id: testUser.id,
+    id: 1,
+    user_id: String(testUser.id),
     word_id: word1.id,
     details: word1.details,
     learned: false,
@@ -142,8 +142,8 @@ describe("UserWords component", () => {
   };
 
   const userWord2 = {
-    id: "2",
-    user_id: testUser.id,
+    id: 2,
+    user_id: String(testUser.id),
     word_id: word2.id,
     details: word2.details,
     learned: false,
@@ -158,20 +158,22 @@ describe("UserWords component", () => {
 
   describe("word creation", () => {
     beforeEach(() => {
-      vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-        return {
-          json: {
-            userWords: json,
-            totalRows: 1,
-            previous: {
-              page: 1,
-              limit: PAGINATION_LIMIT,
+      vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+        async () => {
+          return {
+            json: {
+              userWords: json,
+              totalRows: 1,
+              previous: {
+                page: 1,
+                limit: PAGINATION_LIMIT,
+              },
+              next: { page: 3, limit: PAGINATION_LIMIT },
             },
-            next: { page: 3, limit: PAGINATION_LIMIT },
-          },
-          status: 200,
-        };
-      });
+            status: 200,
+          };
+        }
+      );
     });
 
     describe("text word creation", () => {
@@ -180,10 +182,10 @@ describe("UserWords component", () => {
         const word = json[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
-        formData.append("userId", testUser.id);
+        formData.append("userId", String(testUser.id));
         const status = 200;
         const mockWordServiceCreateWord = vi
-          .spyOn(wordService, "createWord")
+          .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
             return { json: { word: json[0] }, status };
           });
@@ -223,7 +225,7 @@ describe("UserWords component", () => {
         });
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
-          userId: testUser.id,
+          userId: String(testUser.id),
           formData,
         });
         expect(notification).toBeInTheDocument();
@@ -234,11 +236,11 @@ describe("UserWords component", () => {
         const word = json[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
-        formData.append("userId", testUser.id);
+        formData.append("userId", String(testUser.id));
         const message = "Bad Request.";
         const status = 400;
         const mockWordServiceCreateWord = vi
-          .spyOn(wordService, "createWord")
+          .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
             return Promise.reject({ json: { message }, status });
           });
@@ -258,7 +260,7 @@ describe("UserWords component", () => {
         });
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
-          userId: testUser.id,
+          userId: String(testUser.id),
           formData,
         });
         expect(notification).toBeInTheDocument();
@@ -267,7 +269,7 @@ describe("UserWords component", () => {
       it("shows notification that the file size is too big", async () => {
         const status = 200;
         const mockWordServiceCreateWord = vi
-          .spyOn(wordService, "createWord")
+          .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
             return { json: { word: json[0] }, status };
           });
@@ -302,11 +304,11 @@ describe("UserWords component", () => {
         const word = json[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
-        formData.append("userId", testUser.id);
+        formData.append("userId", String(testUser.id));
         const message = "Unauthenticated.";
         const status = 401;
         const mockWordServiceCreateWord = vi
-          .spyOn(wordService, "createWord")
+          .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
             return Promise.reject({ json: { message }, status });
           });
@@ -326,7 +328,7 @@ describe("UserWords component", () => {
         });
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
-          userId: testUser.id,
+          userId: String(testUser.id),
           formData,
         });
         expect(notification).toBeInTheDocument();
@@ -337,10 +339,10 @@ describe("UserWords component", () => {
         const formData = new FormData();
         formData.append("word", word.slice(0, -1));
         formData.append("csv", new File([""], ""));
-        formData.append("userId", testUser.id);
+        formData.append("userId", String(testUser.id));
         const status = 200;
         const mockWordServiceCreate = vi
-          .spyOn(wordService, "createWord")
+          .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
             return { json: { word: json[0] }, status };
           });
@@ -360,7 +362,7 @@ describe("UserWords component", () => {
         });
         expect(mockWordServiceCreate).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreate).toHaveBeenCalledWith({
-          userId: testUser.id,
+          userId: String(testUser.id),
           formData,
         });
         expect(notification).toBeInTheDocument();
@@ -374,7 +376,7 @@ describe("UserWords component", () => {
           const totalRows = "1";
           const status = 200;
           const mockWordServiceGetUserWords = vi
-            .spyOn(wordService, "getWordList")
+            .spyOn(userWordService, "getUserWordList")
             .mockImplementation(async () => {
               return {
                 json: {
@@ -394,17 +396,17 @@ describe("UserWords component", () => {
           await user.click(exportWordsButton);
 
           expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(
-            testUser.id,
-            {
+          expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+            userId: String(testUser.id),
+            params: {
               page: "1",
               limit: totalRows,
               search: "",
               learned: "",
               column: "",
               direction: "",
-            }
-          );
+            },
+          });
           expect(mockDownload).toHaveBeenCalledTimes(1);
           expect(mockDownload).toHaveBeenCalledWith({
             data: "export,word",
@@ -422,11 +424,11 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", csvFile);
-          formData.append("userId", testUser.id);
+          formData.append("userId", String(testUser.id));
           const { user } = setup();
           const status = 200;
           const mockWordServiceCreate = vi
-            .spyOn(wordService, "createWord")
+            .spyOn(userWordService, "createUserWord")
             .mockImplementation(async () => {
               return { json: { message: "1 word has been created." }, status };
             });
@@ -445,7 +447,7 @@ describe("UserWords component", () => {
           expect(notification).toBeInTheDocument();
           expect(mockWordServiceCreate).toHaveBeenCalledTimes(1);
           expect(mockWordServiceCreate).toHaveBeenCalledWith({
-            userId: testUser.id,
+            userId: String(testUser.id),
             formData,
           });
           expect(importWordsInput.files?.[0]).toBe(csvFile);
@@ -460,10 +462,10 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", notACsvFile);
-          formData.append("userId", testUser.id);
+          formData.append("userId", String(testUser.id));
           const status = 200;
           const mockWordServiceCreate = vi
-            .spyOn(wordService, "createWord")
+            .spyOn(userWordService, "createUserWord")
             .mockImplementation(async () => {
               return { json, status };
             });
@@ -496,11 +498,11 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", csvFile);
-          formData.append("userId", testUser.id);
+          formData.append("userId", String(testUser.id));
           const message = "Bad Request.";
           const status = 400;
           const mockWordServiceCreateWord = vi
-            .spyOn(wordService, "createWord")
+            .spyOn(userWordService, "createUserWord")
             .mockImplementation(async () => {
               return Promise.reject({ json: { message }, status });
             });
@@ -523,7 +525,7 @@ describe("UserWords component", () => {
           });
           expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
           expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
-            userId: testUser.id,
+            userId: String(testUser.id),
             formData,
           });
           expect(notification).toBeInTheDocument();
@@ -539,11 +541,11 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", csvFile);
-          formData.append("userId", testUser.id);
+          formData.append("userId", String(testUser.id));
           const message = "Unauthenticated.";
           const status = 401;
           const mockWordServiceCreateWord = vi
-            .spyOn(wordService, "createWord")
+            .spyOn(userWordService, "createUserWord")
             .mockImplementation(async () => {
               return Promise.reject({ json: { message }, status });
             });
@@ -566,7 +568,7 @@ describe("UserWords component", () => {
           });
           expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
           expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
-            userId: testUser.id,
+            userId: String(testUser.id),
             formData,
           });
           expect(notification).toBeInTheDocument();
@@ -582,10 +584,10 @@ describe("UserWords component", () => {
       const word = "";
       formData.append("word", word);
       formData.append("csv", new File([""], ""));
-      formData.append("userId", testUser.id);
+      formData.append("userId", String(testUser.id));
       const status = 200;
       const mockWordServiceCreateWord = vi
-        .spyOn(wordService, "createWord")
+        .spyOn(userWordService, "createUserWord")
         .mockImplementation(async () => {
           return { json: { word: json[0] }, status };
         });
@@ -608,11 +610,11 @@ describe("UserWords component", () => {
       const word = json[0].word;
       formData.append("word", word);
       formData.append("csv", new File([""], ""));
-      formData.append("userId", testUser.id);
+      formData.append("userId", String(testUser.id));
       const delay = 50;
       const status = 200;
       const mockWordServiceCreateWord = vi
-        .spyOn(wordService, "createWord")
+        .spyOn(userWordService, "createUserWord")
         .mockImplementation(async () => {
           return new Promise((resolve) => {
             setTimeout(() => {
@@ -640,7 +642,7 @@ describe("UserWords component", () => {
       expect(addButton).toBeDisabled();
       expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
       expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
-        userId: testUser.id,
+        userId: String(testUser.id),
         formData,
       });
     });
@@ -651,9 +653,11 @@ describe("UserWords component", () => {
       it("error response", async () => {
         const message = "Bad Request.";
         const status = 400;
-        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-          return Promise.reject({ json: { message }, status });
-        });
+        vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+          async () => {
+            return Promise.reject({ json: { message }, status });
+          }
+        );
 
         setup();
 
@@ -675,24 +679,26 @@ describe("UserWords component", () => {
       it("loading response", async () => {
         const status = 200;
         const delay = 50;
-        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-          return new Promise((resolve) => {
-            setTimeout(() => {
-              resolve({
-                json: {
-                  userWords: json,
-                  totalRows: 1,
-                  previous: {
-                    page: 1,
-                    limit: PAGINATION_LIMIT,
+        vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+          async () => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve({
+                  json: {
+                    userWords: json,
+                    totalRows: 1,
+                    previous: {
+                      page: 1,
+                      limit: PAGINATION_LIMIT,
+                    },
+                    next: { page: 3, limit: PAGINATION_LIMIT },
                   },
-                  next: { page: 3, limit: PAGINATION_LIMIT },
-                },
-                status,
-              });
-            }, delay);
-          });
-        });
+                  status,
+                });
+              }, delay);
+            });
+          }
+        );
 
         setup();
 
@@ -713,20 +719,22 @@ describe("UserWords component", () => {
 
       it("success response", async () => {
         const status = 200;
-        vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-          return {
-            json: {
-              userWords: json,
-              totalRows: 1,
-              previous: {
-                page: 1,
-                limit: PAGINATION_LIMIT,
+        vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+          async () => {
+            return {
+              json: {
+                userWords: json,
+                totalRows: 1,
+                previous: {
+                  page: 1,
+                  limit: PAGINATION_LIMIT,
+                },
+                next: { page: 3, limit: PAGINATION_LIMIT },
               },
-              next: { page: 3, limit: PAGINATION_LIMIT },
-            },
-            status,
-          };
-        });
+              status,
+            };
+          }
+        );
 
         setup();
 
@@ -750,7 +758,7 @@ describe("UserWords component", () => {
       it("calls the functions to make a search query", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
+          .spyOn(userWordService, "getUserWordList")
           .mockImplementation(async () => {
             return { json: { userWords: json, totalRows: 1 }, status };
           });
@@ -765,13 +773,16 @@ describe("UserWords component", () => {
         await user.click(filterButton);
 
         expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search,
-          learned: "",
-          column: "",
-          direction: "",
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search,
+            learned: "",
+            column: "",
+            direction: "",
+          },
         });
       });
     });
@@ -780,7 +791,7 @@ describe("UserWords component", () => {
       it("does not call the functions to filter by featured because it is the default option", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
+          .spyOn(userWordService, "getUserWordList")
           .mockImplementation(async () => {
             return { json: { userWords: json, totalRows: 1 }, status };
           });
@@ -799,7 +810,7 @@ describe("UserWords component", () => {
       it("calls the functions to sort by newest based on 'created_at' field", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
+          .spyOn(userWordService, "getUserWordList")
           .mockImplementation(async () => {
             return { json: { userWords: json, totalRows: 1 }, status };
           });
@@ -813,20 +824,23 @@ describe("UserWords component", () => {
         await user.click(filterButton);
 
         expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "",
-          column: "created_at",
-          direction: "1",
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: "created_at",
+            direction: "1",
+          },
         });
       });
 
       it("calls the functions to sort by oldest based on 'created_at' field", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
+          .spyOn(userWordService, "getUserWordList")
           .mockImplementation(async () => {
             return { json: { userWords: json, totalRows: 1 }, status };
           });
@@ -840,13 +854,16 @@ describe("UserWords component", () => {
         await user.click(filterButton);
 
         expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "",
-          column: "created_at",
-          direction: "-1",
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: "created_at",
+            direction: "-1",
+          },
         });
       });
     });
@@ -855,7 +872,7 @@ describe("UserWords component", () => {
       it("does calls the functions to sort based on any words because it is the default", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
+          .spyOn(userWordService, "getUserWordList")
           .mockImplementation(async () => {
             return { json: { userWords: json, totalRows: 1 }, status };
           });
@@ -874,7 +891,7 @@ describe("UserWords component", () => {
       it("calls the functions to sort based on learned words", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
+          .spyOn(userWordService, "getUserWordList")
           .mockImplementation(async () => {
             return { json: { userWords: json, totalRows: 1 }, status };
           });
@@ -888,20 +905,23 @@ describe("UserWords component", () => {
         await user.click(filterButton);
 
         expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "true",
-          column: "",
-          direction: "",
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "true",
+            column: "",
+            direction: "",
+          },
         });
       });
 
       it("calls the functions to sort based on unlearned words", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
-          .spyOn(wordService, "getWordList")
+          .spyOn(userWordService, "getUserWordList")
           .mockImplementation(async () => {
             return { json: { userWords: json, totalRows: 1 }, status };
           });
@@ -915,13 +935,16 @@ describe("UserWords component", () => {
         await user.click(filterButton);
 
         expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith(testUser.id, {
-          page: "1",
-          limit: PAGINATION_LIMIT,
-          search: "",
-          learned: "false",
-          column: "",
-          direction: "",
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "false",
+            column: "",
+            direction: "",
+          },
         });
       });
     });
@@ -929,9 +952,11 @@ describe("UserWords component", () => {
 
   it("renders two forms that have fields for creating a text word, importing a csv file of words, searching words, sorting words, filtering words, and add word input is focused", async () => {
     const status = 200;
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return { json: { userWords: json, totalRows: 1 }, status };
-    });
+    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+      async () => {
+        return { json: { userWords: json, totalRows: 1 }, status };
+      }
+    );
     const { asFragment } = setup();
 
     const wordInput = await screen.findByLabelText("Word", {
@@ -961,9 +986,11 @@ describe("UserWords component", () => {
       }
     );
     const status = 200;
-    vi.spyOn(wordService, "getWordList").mockImplementation(async () => {
-      return { json: { userWords: json, totalRows: 1 }, status };
-    });
+    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
+      async () => {
+        return { json: { userWords: json, totalRows: 1 }, status };
+      }
+    );
 
     setup();
 

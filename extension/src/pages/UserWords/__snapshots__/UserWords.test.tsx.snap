@@ -132,7 +132,7 @@ exports[`UserWords component > renders two forms that have fields for creating a
               />
             </label>
           </div>
-          <div
+          <fieldset
             class="_sort_7b9046"
           >
             <label
@@ -163,7 +163,7 @@ exports[`UserWords component > renders two forms that have fields for creating a
                 </option>
               </select>
             </label>
-          </div>
+          </fieldset>
           <div
             class="_words__control_727679"
           >
