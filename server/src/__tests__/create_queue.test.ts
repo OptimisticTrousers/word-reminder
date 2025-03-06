@@ -12,10 +12,6 @@ describe("createQueue", () => {
   it("creates a queue for word reminders", async () => {
     const app = express();
     app.use(express.json());
-    app.use((req, res, next) => {
-      req.user = { id: userId };
-      next();
-    });
     app.post(
       "/api/users/:userId/emails",
       createQueue(queueName),
@@ -35,6 +31,6 @@ describe("createQueue", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message });
     expect(mockCreateQueue).toHaveBeenCalledTimes(1);
-    expect(mockCreateQueue).toHaveBeenCalledWith(`${userId}-${queueName}`);
+    expect(mockCreateQueue).toHaveBeenCalledWith(queueName);
   });
 });

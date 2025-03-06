@@ -56,4 +56,4 @@ userRouter.use(
   autoWordReminderRouter
 );
 
-userRouter.use("/:userId/emails", createQueue("email-queue"), emailRouter);
+userRouter.use("/:userId/emails", emailRouter);

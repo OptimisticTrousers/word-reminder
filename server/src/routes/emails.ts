@@ -1,7 +1,9 @@
 import { Router } from "express";
 
 import { send_email } from "../controllers/email_controller";
+import { createQueue } from "../middleware/create_queue";
 
 export const emailRouter = Router({ caseSensitive: true });
 
-emailRouter.route("/emails").post(send_email);
+createQueue("email-queue");
+emailRouter.route("/").post(send_email);

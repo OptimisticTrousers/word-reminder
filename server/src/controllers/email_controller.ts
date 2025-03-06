@@ -13,7 +13,7 @@ import { email } from "../utils/email";
 import { userQueries } from "../db/user_queries";
 
 // @desc Sends an email
-// @route POST /api/emails
+// @route POST /api/users/:userId/emails
 // @access Private
 export const send_email = [
   body("email")
