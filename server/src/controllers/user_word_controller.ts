@@ -217,8 +217,9 @@ export const get_user_word = asyncHandler(async (req, res) => {
 
   const userWord = await userWordQueries.getById(userWordId);
   const word = await wordQueries.getById(userWord!.word_id);
+  const images = await imageQueries.getByWordId(userWord!.word_id);
 
-  res.status(200).json({ userWord: { ...userWord, word } });
+  res.status(200).json({ userWord: { ...userWord, word, images } });
 });
 
 // @desc    Get all words

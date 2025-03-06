@@ -4,6 +4,7 @@ import request from "supertest";
 import { get_user_word } from "../controllers/user_word_controller";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
+import { imageQueries } from "../db/image_queries";
 
 const app = express();
 app.use(express.json());
@@ -25,6 +26,16 @@ const userWord = {
   updated_at: new Date(),
 };
 
+const images = [
+  {
+    id: 1,
+    word_id: wordId,
+    url: "/url",
+    descriptionurl: "/descriptionurl",
+    comment: "comment",
+  },
+];
+
 describe("get_user_word", () => {
   const mockUserWordGetById = jest
     .spyOn(userWordQueries, "getById")
@@ -32,6 +43,9 @@ describe("get_user_word", () => {
   const mockWordGetById = jest
     .spyOn(wordQueries, "getById")
     .mockResolvedValue(word);
+  const mockGetByWordId = jest
+    .spyOn(imageQueries, "getByWordId")
+    .mockResolvedValue(images);
 
   it("gets a user word", async () => {
     const response = await request(app).get(
@@ -44,6 +58,7 @@ describe("get_user_word", () => {
       userWord: {
         ...userWord,
         word,
+        images,
         created_at: userWord.created_at.toISOString(),
         updated_at: userWord.updated_at.toISOString(),
       },
@@ -52,5 +67,8 @@ describe("get_user_word", () => {
     expect(mockUserWordGetById).toHaveBeenCalledWith(userWordId);
     expect(mockWordGetById).toHaveBeenCalledTimes(1);
     expect(mockWordGetById).toHaveBeenCalledWith(wordId);
+    expect(mockGetByWordId).toHaveBeenCalledTimes(1);
+    expect(mockUserWordGetById).toHaveBeenCalledTimes(1);
+    expect(mockUserWordGetById).toHaveBeenCalledWith(wordId);
   });
 });
