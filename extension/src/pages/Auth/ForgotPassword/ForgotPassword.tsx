@@ -9,6 +9,7 @@ import {
   NotificationContext,
   NOTIFICATION_ACTIONS,
 } from "../../../context/Notification";
+import { Link } from "react-router-dom";
 
 export const ForgotPassword = CSSModules(
   function () {
@@ -71,6 +72,9 @@ export const ForgotPassword = CSSModules(
             Send verification email
           </button>
         </form>
+        <Link styleName="enter-email__link" to="/login">
+          Go back to login
+        </Link>
       </div>
     );
   },

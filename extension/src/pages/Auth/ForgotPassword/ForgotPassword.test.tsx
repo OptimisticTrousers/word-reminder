@@ -54,6 +54,8 @@ describe("ForgotPassword component", () => {
     const description = screen.getByText(
       "Enter your email address and we'll send you a link to reset your password."
     );
+    const link = screen.getByRole("link", { name: "Go back to login" });
+    expect(link).toBeInTheDocument();
     expect(emailInput).toBeInTheDocument();
     expect(submitButton).toBeInTheDocument();
     expect(heading).toBeInTheDocument();
