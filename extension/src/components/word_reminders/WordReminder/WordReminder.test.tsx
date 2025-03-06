@@ -3,7 +3,6 @@ import { render, screen } from "@testing-library/react";
 import { WordReminder } from "./WordReminder";
 import { Mock } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { addToDateToString } from "../../../utils/date/date";
 
 vi.mock("../../modals/UpdateWordReminderModal", () => {
   return {
@@ -38,13 +37,13 @@ vi.mock("../../words/UserWord", () => {
 });
 
 describe("wordReminder component", () => {
-  const sampleUser1 = {
-    id: "1",
+  const testUser = {
+    id: 1,
     email: "email@protonmail.com",
     password: "password",
   };
 
-  const milieuWordId = "1";
+  const milieuWordId = 1;
   const milieuJson = [
     {
       word: "milieu",
@@ -58,7 +57,7 @@ describe("wordReminder component", () => {
     },
   ];
 
-  const clemencyWordId = "2";
+  const clemencyWordId = 2;
   const clemencyJson = [
     {
       word: "clemency",
@@ -72,7 +71,7 @@ describe("wordReminder component", () => {
     },
   ];
 
-  const helloWordId = "3";
+  const helloWordId = 3;
   const helloJson = [
     {
       word: "hello",
@@ -127,8 +126,8 @@ describe("wordReminder component", () => {
   ];
 
   const userWord1 = {
-    id: "1",
-    user_id: sampleUser1.id,
+    id: 1,
+    user_id: testUser.id,
     word_id: helloWordId,
     details: helloJson,
     learned: false,
@@ -137,8 +136,8 @@ describe("wordReminder component", () => {
   };
 
   const userWord2 = {
-    id: "2",
-    user_id: sampleUser1.id,
+    id: 2,
+    user_id: testUser.id,
     word_id: clemencyWordId,
     details: clemencyJson,
     learned: false,
@@ -147,8 +146,8 @@ describe("wordReminder component", () => {
   };
 
   const userWord3 = {
-    id: "3",
-    user_id: sampleUser1.id,
+    id: 3,
+    user_id: testUser.id,
     word_id: milieuWordId,
     details: milieuJson,
     learned: false,
@@ -160,17 +159,10 @@ describe("wordReminder component", () => {
 
   it("renders the word reminder", async () => {
     const wordReminder = {
-      id: "1",
-      user_id: sampleUser1.id,
+      id: 1,
+      user_id: testUser.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: {
-        id: "1",
-        minutes: 0,
-        hours: 2,
-        days: 0,
-        weeks: 0,
-        months: 0,
-      },
+      reminder: "*/2 * * * *",
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -186,11 +178,7 @@ describe("wordReminder component", () => {
     );
 
     const id = screen.getByText(wordReminder.id);
-    const reminder = screen.getByText(
-      `This word reminder will remind you of these words ${addToDateToString(
-        wordReminder.reminder
-      )}.`
-    );
+    const reminder = screen.getByText("Reminder: Every 2 minutes");
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"
     );
@@ -218,19 +206,12 @@ describe("wordReminder component", () => {
     expect(asFragment());
   });
 
-  it("renders that the word reminder will not remind if the reminder is set to zero values", async () => {
+  it("renders that the word reminder will not remind if the reminder is set to an invalid cron", async () => {
     const wordReminder = {
-      id: "1",
-      user_id: sampleUser1.id,
+      id: 1,
+      user_id: testUser.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: {
-        id: "1",
-        minutes: 0,
-        hours: 0,
-        days: 0,
-        weeks: 0,
-        months: 0,
-      },
+      reminder: "invalid cron",
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -246,24 +227,17 @@ describe("wordReminder component", () => {
     );
 
     const reminder = screen.getByText(
-      `This word reminder will not remind you of these words.`
+      "Reminder: An error occurred when generating the expression description. Check the cron expression syntax."
     );
     expect(reminder).toBeInTheDocument();
   });
 
   it("opens update modal when use clicks on update button", async () => {
     const wordReminder = {
-      id: "1",
-      user_id: sampleUser1.id,
+      id: 1,
+      user_id: testUser.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: {
-        id: "1",
-        minutes: 0,
-        hours: 2,
-        days: 0,
-        weeks: 0,
-        months: 0,
-      },
+      reminder: "* * * * *",
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -288,17 +262,10 @@ describe("wordReminder component", () => {
 
   it("opens delete modal when use clicks on delete button", async () => {
     const wordReminder = {
-      id: "1",
-      user_id: sampleUser1.id,
+      id: 1,
+      user_id: testUser.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: {
-        id: "1",
-        minutes: 0,
-        hours: 2,
-        days: 0,
-        weeks: 0,
-        months: 0,
-      },
+      reminder: "* * * * *",
       is_active: false,
       has_reminder_onload: false,
       created_at: new Date(),
@@ -324,17 +291,10 @@ describe("wordReminder component", () => {
   describe("isActive", () => {
     it("renders that the word reminder is active when true", async () => {
       const wordReminder = {
-        id: "1",
-        user_id: sampleUser1.id,
+        id: 1,
+        user_id: testUser.id,
         finish: new Date(Date.now() + 1000), // make sure date comes after current date
-        reminder: {
-          id: "1",
-          minutes: 0,
-          hours: 2,
-          days: 0,
-          weeks: 0,
-          months: 0,
-        },
+        reminder: "*/2 * * * *",
         is_active: true,
         has_reminder_onload: false,
         created_at: new Date(),
@@ -350,11 +310,7 @@ describe("wordReminder component", () => {
       );
 
       const id = screen.getByText(wordReminder.id);
-      const reminder = screen.getByText(
-        `This word reminder will remind you of these words ${addToDateToString(
-          wordReminder.reminder
-        )}.`
-      );
+      const reminder = screen.getByText("Reminder: Every 2 minutes");
       const isActive = screen.getByText(
         "Active (whether the word reminder will actively remind you of the words in it): Yes"
       );
@@ -385,17 +341,10 @@ describe("wordReminder component", () => {
 
   it("renders that the word reminder will remind the user of the words in it when the user's browser is started when true", async () => {
     const wordReminder = {
-      id: "1",
-      user_id: sampleUser1.id,
+      id: 1,
+      user_id: testUser.id,
       finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: {
-        id: "1",
-        minutes: 0,
-        hours: 2,
-        days: 0,
-        weeks: 0,
-        months: 0,
-      },
+      reminder: "*/2 * * * *",
       is_active: false,
       has_reminder_onload: true,
       created_at: new Date(),
@@ -411,11 +360,7 @@ describe("wordReminder component", () => {
     );
 
     const id = screen.getByText(wordReminder.id);
-    const reminder = screen.getByText(
-      `This word reminder will remind you of these words ${addToDateToString(
-        wordReminder.reminder
-      )}.`
-    );
+    const reminder = screen.getByText("Reminder: Every 2 minutes");
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"
     );

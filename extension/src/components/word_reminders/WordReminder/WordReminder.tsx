@@ -1,23 +1,23 @@
-import {
-  WordReminder as IWordReminder,
-  UserWord as IUserWord,
-  Word,
-  AddToDate,
-} from "common";
+import { WordReminder as IWordReminder, Detail } from "common";
+import cronstrue from "cronstrue";
+import { useState } from "react";
 import CSSModules from "react-css-modules";
 
+import { DeleteWordReminderModal } from "../../modals/DeleteWordReminderModal";
 import { UpdateWordReminderModal } from "../../modals/UpdateWordReminderModal";
 import { UserWord } from "../../words/UserWord";
 import styles from "./WordReminder.module.css";
-import { useState } from "react";
-import { DeleteWordReminderModal } from "../../modals/DeleteWordReminderModal";
-import { addToDateToString } from "../../../utils/date/date";
 
 export interface Props {
   searchParams: URLSearchParams;
   wordReminder: IWordReminder & {
-    user_words: (IUserWord & Word)[];
-    reminder: AddToDate;
+    user_words: {
+      learned: boolean;
+      created_at: Date;
+      updated_at: Date;
+      details: Detail[];
+      id: number;
+    }[];
   };
 }
 
@@ -34,17 +34,15 @@ export const WordReminder = CSSModules(
       setIsDeleteModalOpen((prevIsDeleteModalOpen) => !prevIsDeleteModalOpen);
     }
 
-    const reminder = addToDateToString(wordReminder.reminder);
+    const reminder = cronstrue.toString(wordReminder.reminder, {
+      throwExceptionOnParseError: false,
+    });
 
     return (
       <>
         <div styleName="word-reminder">
           <div styleName="word-reminder__id">{wordReminder.id}</div>
-          <div styleName="word-reminder__reminder">
-            {reminder
-              ? `This word reminder will remind you of these words ${reminder}.`
-              : "This word reminder will not remind you of these words."}
-          </div>
+          <div styleName="word-reminder__reminder">Reminder: {reminder}</div>
           <div styleName="word-reminder__is-active">
             Active (whether the word reminder will actively remind you of the
             words in it): {wordReminder.is_active ? "Yes" : "No"}
@@ -80,9 +78,20 @@ export const WordReminder = CSSModules(
             </button>
           </div>
           <ul styleName="word-reminder__user-words">
-            {wordReminder.user_words.map((userWord: IUserWord & Word) => {
-              return <UserWord key={userWord.id} {...userWord} />;
-            })}
+            {wordReminder.user_words.map(
+              (
+                user_word: {
+                  details: Detail[];
+                  learned: boolean;
+                  created_at: Date;
+                  updated_at: Date;
+                  id: number;
+                },
+                index: number
+              ) => {
+                return <UserWord key={index} {...user_word} />;
+              }
+            )}
           </ul>
         </div>
         {isUpdateModalOpen && (
@@ -94,7 +103,7 @@ export const WordReminder = CSSModules(
         )}
         {isDeleteModalOpen && (
           <DeleteWordReminderModal
-            wordReminderId={wordReminder.id}
+            wordReminderId={String(wordReminder.id)}
             toggleModal={toggleDeleteModal}
           />
         )}
