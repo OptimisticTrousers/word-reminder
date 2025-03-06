@@ -1,4 +1,4 @@
-import { Subject, Templates, User } from "common";
+import { Subject, Template, User } from "common";
 import { MouseEvent, useContext } from "react";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
@@ -22,10 +22,10 @@ export const Settings = CSSModules(
       onSuccess: (_, variables) => {
         let field = "";
         switch (variables.template) {
-          case Templates.CHANGE_EMAIL:
+          case Template.CHANGE_EMAIL:
             field = "email";
             break;
-          case Templates.CHANGE_PASSWORD:
+          case Template.CHANGE_PASSWORD:
             field = "password";
             break;
         }
@@ -39,18 +39,21 @@ export const Settings = CSSModules(
 
     function handleClick(event: MouseEvent<HTMLInputElement>) {
       const name = event.currentTarget.name;
-      let template = "";
+      let template = Template.CHANGE_EMAIL;
+      let subject = Subject.CHANGE_EMAIL;
       switch (name) {
         case "email":
-          template = Templates.CHANGE_EMAIL;
+          subject = Subject.CHANGE_EMAIL;
+          template = Template.CHANGE_EMAIL;
           break;
         case "password":
-          template = Templates.CHANGE_PASSWORD;
+          subject = Subject.CHANGE_PASSWORD;
+          template = Template.CHANGE_PASSWORD;
           break;
       }
       mutate({
         email: user.email,
-        subject: Subject.CHANGE_VERIFICATION,
+        subject,
         template,
       });
     }

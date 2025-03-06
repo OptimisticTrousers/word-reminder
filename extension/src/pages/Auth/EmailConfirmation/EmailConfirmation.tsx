@@ -1,4 +1,4 @@
-import { Subject, Templates } from "common";
+import { Subject, Template } from "common";
 import CSSModules from "react-css-modules";
 import { useQuery } from "@tanstack/react-query";
 
@@ -18,8 +18,8 @@ export const EmailConfirmation = CSSModules(
       queryFn: () => {
         return emailService.sendEmail({
           email: email,
-          subject: Subject.CHANGE_VERIFICATION,
-          template: Templates.CONFIRM_EMAIL,
+          subject: Subject.CONFIRM_ACCOUNT,
+          template: Template.CONFIRM_ACCOUNT,
         });
       },
     });

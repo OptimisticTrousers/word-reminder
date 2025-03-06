@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { ForgotPassword } from "./ForgotPassword";
 import userEvent from "@testing-library/user-event";
 import { emailService } from "../../../services/email_service";
-import { Subject, Templates } from "common";
+import { Subject, Template } from "common";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NotificationProvider } from "../../../context/Notification";
@@ -80,8 +80,8 @@ describe("ForgotPassword component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: testUser.email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.FORGOT_PASSWORD,
+      subject: Subject.FORGOT_PASSWORD,
+      template: Template.FORGOT_PASSWORD,
     });
   });
 

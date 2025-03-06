@@ -3,7 +3,7 @@ import { Settings } from "./Settings";
 import { createRoutesStub, Outlet } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { emailService } from "../../services/email_service";
-import { Subject, Templates } from "common";
+import { Subject, Template } from "common";
 import { NotificationProvider } from "../../context/Notification";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -92,8 +92,8 @@ describe("Settings component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: testUser.email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.CHANGE_EMAIL,
+      subject: Subject.CHANGE_EMAIL,
+      template: Template.CHANGE_EMAIL,
     });
   });
 
@@ -117,8 +117,8 @@ describe("Settings component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: testUser.email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.CHANGE_PASSWORD,
+      subject: Subject.CHANGE_PASSWORD,
+      template: Template.CHANGE_PASSWORD,
     });
   });
 
@@ -142,8 +142,8 @@ describe("Settings component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: testUser.email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.CHANGE_EMAIL,
+      subject: Subject.CHANGE_EMAIL,
+      template: Template.CHANGE_EMAIL,
     });
   });
 
@@ -167,8 +167,8 @@ describe("Settings component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: testUser.email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.CHANGE_PASSWORD,
+      subject: Subject.CHANGE_PASSWORD,
+      template: Template.CHANGE_PASSWORD,
     });
   });
 });

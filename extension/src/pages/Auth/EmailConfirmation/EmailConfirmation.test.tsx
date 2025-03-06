@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { emailService } from "../../../services/email_service";
 import { EmailConfirmation } from "./EmailConfirmation";
-import { Subject, Templates } from "common";
+import { Subject, Template } from "common";
 import { NotificationProvider } from "../../../context/Notification";
 import { MemoryRouter } from "react-router-dom";
 
@@ -62,8 +62,8 @@ describe("EmailConfirmation component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.CONFIRM_EMAIL,
+      subject: Subject.CONFIRM_ACCOUNT,
+      template: Template.CONFIRM_ACCOUNT,
     });
     expect(asFragment()).toMatchSnapshot();
   });
@@ -87,8 +87,8 @@ describe("EmailConfirmation component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.CONFIRM_EMAIL,
+      subject: Subject.CONFIRM_ACCOUNT,
+      template: Template.CONFIRM_ACCOUNT,
     });
   });
 
@@ -108,8 +108,8 @@ describe("EmailConfirmation component", () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
       email: email,
-      subject: Subject.CHANGE_VERIFICATION,
-      template: Templates.CONFIRM_EMAIL,
+      subject: Subject.CONFIRM_ACCOUNT,
+      template: Template.CONFIRM_ACCOUNT,
     });
   });
 });

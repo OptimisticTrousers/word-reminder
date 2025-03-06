@@ -1,6 +1,6 @@
 import CSSModules from "react-css-modules";
 import styles from "./ForgotPassword.module.css";
-import { EMAIL_MAX, Subject, Templates } from "common";
+import { EMAIL_MAX, Subject, Template } from "common";
 import { useMutation } from "@tanstack/react-query";
 import { emailService } from "../../../services/email_service";
 import { useNotificationError } from "../../../hooks/useNotificationError";
@@ -31,8 +31,8 @@ export const ForgotPassword = CSSModules(
       emailRef.current = email;
       mutate({
         email,
-        subject: Subject.CHANGE_VERIFICATION,
-        template: Templates.FORGOT_PASSWORD,
+        subject: Subject.FORGOT_PASSWORD,
+        template: Template.FORGOT_PASSWORD,
       });
     }
 
