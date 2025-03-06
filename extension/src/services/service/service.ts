@@ -17,7 +17,6 @@ export const service = (function () {
     params?: Params;
     options?: RequestInit;
   }) {
-    console.log(url)
     const response = await get({ url, params, options });
     if (response.status !== 200 && response.status !== 401) {
       return Promise.reject(response);
@@ -34,7 +33,6 @@ export const service = (function () {
     params?: Params;
     options?: RequestInit;
   }) {
-    console.log(url)
     const response = await post({ url, params, options });
     if (response.status !== 200) {
       return Promise.reject(response);
@@ -51,7 +49,6 @@ export const service = (function () {
     params?: Params;
     options?: RequestInit;
   }) {
-    console.log(url)
     const response = await put({ url, params, options });
     if (response.status !== 200 && response.status !== 401) {
       return Promise.reject(response);
@@ -68,7 +65,6 @@ export const service = (function () {
     params?: Params;
     options?: RequestInit;
   }) {
-    console.log(url)
     const response = await remove({ url, params, options });
     if (response.status !== 200) {
       return Promise.reject(response);

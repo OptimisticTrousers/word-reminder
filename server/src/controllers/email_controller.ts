@@ -51,7 +51,6 @@ export const send_email = [
     );
     const token = await tokenQueries.create();
     if (isNaN(Number(userId))) {
-      console.log("hello");
       const user = await userQueries.getByEmail(req.body.email);
       if (user) {
         userId = String(user.id);

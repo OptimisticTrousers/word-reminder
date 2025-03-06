@@ -20,7 +20,7 @@ describe("user_word_list", () => {
     .spyOn(userWordQueries, "getByUserId")
     .mockResolvedValue({
       totalRows: 1,
-      userWords: [userWord],
+      user_words: [userWord],
     });
 
   const app = express();
@@ -43,7 +43,7 @@ describe("user_word_list", () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         totalRows: 1,
-        userWords: [
+        user_words: [
           {
             ...userWord,
             created_at: userWord.created_at.toISOString(),
@@ -88,7 +88,7 @@ describe("user_word_list", () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         totalRows: 1,
-        userWords: [
+        user_words: [
           {
             ...userWord,
             created_at: userWord.created_at.toISOString(),
@@ -113,7 +113,7 @@ describe("user_word_list", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        userWords: [
+        user_words: [
           {
             ...userWord,
             created_at: userWord.created_at.toISOString(),
@@ -164,7 +164,7 @@ describe("user_word_list", () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         totalRows: 1,
-        userWords: [
+        user_words: [
           {
             ...userWord,
             created_at: userWord.created_at.toISOString(),
