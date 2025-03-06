@@ -78,7 +78,9 @@ describe("UpdateAutoWordReminderModal component", () => {
 
   it("renders form with all inputs", async () => {
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const { asFragment } = setup({ toggleModal: mockToggleModal, queryClient });
 
     const reminder = screen.getByText("Reminder");
@@ -128,7 +130,9 @@ describe("UpdateAutoWordReminderModal component", () => {
         };
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const reminder = screen.getByLabelText("Reminder");
@@ -208,7 +212,9 @@ describe("UpdateAutoWordReminderModal component", () => {
         return Promise.reject({ json: { message }, status });
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const updateButton = screen.getByRole("button", { name: "Update" });
@@ -249,7 +255,9 @@ describe("UpdateAutoWordReminderModal component", () => {
         });
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const updateButton = screen.getByRole("button", { name: "Update" });
@@ -285,7 +293,9 @@ describe("UpdateAutoWordReminderModal component", () => {
         return { json: { autoWordReminder }, status };
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
 
@@ -308,7 +318,9 @@ describe("UpdateAutoWordReminderModal component", () => {
           return { json: { autoWordReminder }, status };
         });
       const mockToggleModal = vi.fn();
-      const queryClient = new QueryClient();
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const wordCount = screen.getByLabelText("Word Count", {
@@ -334,7 +346,9 @@ describe("UpdateAutoWordReminderModal component", () => {
           return { json: { autoWordReminder }, status };
         });
       const mockToggleModal = vi.fn();
-      const queryClient = new QueryClient();
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const wordCount = screen.getByLabelText("Word Count", {

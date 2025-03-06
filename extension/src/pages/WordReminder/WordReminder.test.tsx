@@ -16,7 +16,9 @@ describe("WordReminder component", () => {
   const testWordReminder = { id: "1" };
 
   function setup() {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const Stub = createRoutesStub([
       {
         path: "/",

@@ -26,7 +26,9 @@ describe("EmailConfirmation component", () => {
   const status = 200;
 
   function setup() {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const Stub = createRoutesStub([
       {
         path: "/",

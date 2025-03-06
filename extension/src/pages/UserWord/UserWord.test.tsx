@@ -27,7 +27,9 @@ describe("UserWord component", () => {
   const created_at = new Date("2020-05-12T23:50:21.817Z");
 
   function setup() {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
     const Stub = createRoutesStub([
       {

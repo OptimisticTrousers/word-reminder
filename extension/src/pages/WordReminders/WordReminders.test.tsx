@@ -131,7 +131,9 @@ describe("WordReminders component", () => {
   const searchParams = new URLSearchParams();
 
   function setup() {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const Stub = createRoutesStub([
       {
         path: "/",

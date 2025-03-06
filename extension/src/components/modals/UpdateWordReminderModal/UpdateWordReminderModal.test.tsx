@@ -165,7 +165,9 @@ describe("UpdateWordReminderModal component", () => {
       }
     );
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
     const { asFragment } = setup({ toggleModal: mockToggleModal, queryClient });
 
@@ -223,7 +225,9 @@ describe("UpdateWordReminderModal component", () => {
         return { json: { wordReminder }, status };
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const reminder = screen.getByLabelText("Reminder");
@@ -293,7 +297,9 @@ describe("UpdateWordReminderModal component", () => {
       }
     );
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
     setup({ toggleModal: mockToggleModal, queryClient });
 
@@ -315,7 +321,9 @@ describe("UpdateWordReminderModal component", () => {
         return Promise.reject({ json: { message }, status });
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const updateButton = screen.getByRole("button", { name: "Update" });
@@ -360,7 +368,9 @@ describe("UpdateWordReminderModal component", () => {
         });
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
     const updateButton = screen.getByRole("button", { name: "Update" });
@@ -394,7 +404,9 @@ describe("UpdateWordReminderModal component", () => {
         return { json: { wordReminder }, status };
       });
     const mockToggleModal = vi.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
 
@@ -425,7 +437,9 @@ describe("UpdateWordReminderModal component", () => {
           return { json: { wordReminder }, status };
         });
       const mockToggleModal = vi.fn();
-      const queryClient = new QueryClient();
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder");
@@ -475,7 +489,9 @@ describe("UpdateWordReminderModal component", () => {
           return { json: { wordReminder }, status };
         });
       const mockToggleModal = vi.fn();
-      const queryClient = new QueryClient();
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder");
@@ -526,7 +542,9 @@ describe("UpdateWordReminderModal component", () => {
           return { json: { wordReminder }, status };
         });
       const mockToggleModal = vi.fn();
-      const queryClient = new QueryClient();
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
       const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
       const { user } = setup({ toggleModal: mockToggleModal, queryClient });
       const reminder = screen.getByLabelText("Reminder");

@@ -9,7 +9,9 @@ import { NotificationProvider } from "../../../context/Notification";
 
 describe("ForgotPassword component", () => {
   function setup() {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
     return render(
       <NotificationProvider>

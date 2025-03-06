@@ -207,6 +207,7 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
+        expect(mockInvalidateQueries).toHaveBeenCalledTimes(1)
         expect(mockInvalidateQueries).toHaveBeenCalledWith({
           queryKey: [
             "words",

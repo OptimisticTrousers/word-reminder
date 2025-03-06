@@ -26,7 +26,9 @@ describe("DeleteAutoWordReminderModal component", () => {
       toggleModal: mockToggleModal,
       autoWordReminderId: "1",
     };
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -60,7 +62,9 @@ describe("DeleteAutoWordReminderModal component", () => {
   });
 
   it("calls the functions to delete a word", async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
@@ -108,7 +112,9 @@ describe("DeleteAutoWordReminderModal component", () => {
   });
 
   it("calls the functions to show a notification error", async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
@@ -166,7 +172,9 @@ describe("DeleteAutoWordReminderModal component", () => {
   });
 
   it("disables the delete button when the mutation is loading", async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
@@ -225,7 +233,9 @@ describe("DeleteAutoWordReminderModal component", () => {
       autoWordReminderId: "1",
     };
     const user = userEvent.setup();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
     const Stub = createRoutesStub([
       {
         path: "/",
