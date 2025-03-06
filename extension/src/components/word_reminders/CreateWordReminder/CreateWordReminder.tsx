@@ -12,17 +12,17 @@ interface Props {
 
 export const CreateWordReminder = CSSModules(
   function ({ searchParams }: Props) {
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { theme } = useContext(ThemeContext);
 
     const toggleModal = () => {
-      setIsModalVisible((prevValue) => !prevValue);
+      setIsModalOpen((prevValue) => !prevValue);
     };
 
     return (
       <>
-        {isModalVisible && (
+        {isModalOpen && (
           <CreateWordReminderModal
             searchParams={searchParams}
             toggleModal={toggleModal}
