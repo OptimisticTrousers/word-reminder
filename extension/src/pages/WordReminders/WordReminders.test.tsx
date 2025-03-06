@@ -29,11 +29,11 @@ vi.mock("../../components/word_reminders/WordReminder/WordReminder");
 
 describe("WordReminders component", () => {
   const testUser = {
-    id: "1",
+    id: 1,
   };
 
   const word1 = {
-    id: "1",
+    id: 1,
     details: [
       {
         word: "hello",
@@ -62,7 +62,7 @@ describe("WordReminders component", () => {
   };
 
   const word2 = {
-    id: "2",
+    id: 2,
     details: [
       {
         word: "clemency",
@@ -79,7 +79,7 @@ describe("WordReminders component", () => {
   };
 
   const userWord1 = {
-    id: "1",
+    id: 1,
     user_id: testUser.id,
     word_id: word1.id,
     details: word1.details,
@@ -89,7 +89,7 @@ describe("WordReminders component", () => {
   };
 
   const userWord2 = {
-    id: "2",
+    id: 2,
     user_id: testUser.id,
     word_id: word2.id,
     details: word2.details,
@@ -99,38 +99,24 @@ describe("WordReminders component", () => {
   };
 
   const wordReminder1 = {
-    id: "1",
+    id: 1,
     has_reminder_onload: true,
     is_active: true,
     user_id: testUser.id,
-    reminder: {
-      id: "1",
-      minutes: 0,
-      hours: 2,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
+    reminder: "* * * * *",
+    finish: new Date(Date.now() + 1000),
     user_words: [userWord1, userWord2],
     created_at: new Date(),
     updated_at: new Date(),
   };
 
   const wordReminder2 = {
-    id: "2",
+    id: 2,
     has_reminder_onload: true,
     is_active: true,
     user_id: testUser.id,
-    reminder: {
-      id: "1",
-      minutes: 0,
-      hours: 2,
-      days: 0,
-      weeks: 0,
-      months: 0,
-    },
-    finish: new Date(Date.now() + 1000), // make sure date comes after current date
+    reminder: "* * * * *",
+    finish: new Date(Date.now() + 1000),
     user_words: [userWord1, userWord2],
     created_at: new Date(),
     updated_at: new Date(),
@@ -225,11 +211,14 @@ describe("WordReminders component", () => {
     expect(autoCreateWordReminder).toBeInTheDocument();
     expect(createWordReminder).toBeInTheDocument();
     expect(mockGetWordReminderList).toHaveBeenCalledTimes(1);
-    expect(mockGetWordReminderList).toHaveBeenCalledWith(testUser.id, {
-      page: "1",
-      limit: "10",
-      column: "",
-      direction: "",
+    expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      userId: String(testUser.id),
+      params: {
+        page: "1",
+        limit: "10",
+        column: "",
+        direction: "",
+      },
     });
     expect(asFragment()).toMatchSnapshot();
   });
@@ -259,17 +248,17 @@ describe("WordReminders component", () => {
       await user.click(button);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(1);
-      expect(mockGetWordReminderList).toHaveBeenCalledWith(
-        testUser.id,
-        Object.fromEntries(
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
             column: "",
             direction: "",
           })
-        )
-      );
+        ),
+      });
     });
 
     it("allows the user to sort by newest", async () => {
@@ -296,30 +285,28 @@ describe("WordReminders component", () => {
       await user.click(button);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
-      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(
-        1,
-        testUser.id,
-        Object.fromEntries(
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
             column: "",
             direction: "",
           })
-        )
-      );
-      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(
-        2,
-        testUser.id,
-        Object.fromEntries(
+        ),
+      });
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
             column: "created_at",
             direction: "1",
           })
-        )
-      );
+        ),
+      });
     });
 
     it("allows the user to sort by oldest", async () => {
@@ -346,30 +333,28 @@ describe("WordReminders component", () => {
       await user.click(button);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
-      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(
-        1,
-        testUser.id,
-        Object.fromEntries(
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
             column: "",
             direction: "",
           })
-        )
-      );
-      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(
-        2,
-        testUser.id,
-        Object.fromEntries(
+        ),
+      });
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
             column: "created_at",
             direction: "-1",
           })
-        )
-      );
+        ),
+      });
     });
   });
 });

@@ -1,10 +1,4 @@
-import {
-  User,
-  WordReminder as IWordReminder,
-  UserWord,
-  Word,
-  AddToDate,
-} from "common";
+import { User, WordReminder as IWordReminder, Detail } from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -20,7 +14,7 @@ import { AutoCreateWordReminder } from "../../components/word_reminders/AutoCrea
 export const WordReminders = CSSModules(
   function () {
     const { user }: { user: User } = useOutletContext();
-    const userId = user.id;
+    const userId = String(user.id);
     const [searchParams, setSearchParams] = useSearchParams({
       page: "1",
       limit: PAGINATION_LIMIT,
@@ -32,10 +26,10 @@ export const WordReminders = CSSModules(
       queryKey: ["wordReminders", searchParamsObject],
       placeholderData: keepPreviousData,
       queryFn: () => {
-        return wordReminderService.getWordReminderList(
+        return wordReminderService.getWordReminderList({
           userId,
-          searchParamsObject
-        );
+          params: searchParamsObject,
+        });
       },
       staleTime: STALE_TIME,
     });
@@ -58,7 +52,7 @@ export const WordReminders = CSSModules(
 
     return (
       <div styleName="words-reminder">
-        <AutoCreateWordReminder searchParams={searchParams} />
+        <AutoCreateWordReminder />
         <CreateWordReminder searchParams={searchParams} />
         <form styleName="word-reminder__form" action={handleQuery}>
           <SortSelect disabled={false} required={true} />
@@ -73,8 +67,13 @@ export const WordReminders = CSSModules(
             json &&
             json.wordReminders.map(function (
               wordReminder: IWordReminder & {
-                user_words: (UserWord & Word)[];
-                reminder: AddToDate;
+                user_words: {
+                  details: Detail[];
+                  learned: boolean;
+                  created_at: Date;
+                  updated_at: Date;
+                  id: number;
+                }[];
               }
             ) {
               return (

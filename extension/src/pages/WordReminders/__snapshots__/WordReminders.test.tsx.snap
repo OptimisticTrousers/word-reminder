@@ -15,7 +15,7 @@ exports[`WordReminders component > renders the form that allows user to filter t
       action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
       class="_word-reminder__form_928901"
     >
-      <div
+      <fieldset
         class="_sort_7b9046"
       >
         <label
@@ -47,7 +47,7 @@ exports[`WordReminders component > renders the form that allows user to filter t
             </option>
           </select>
         </label>
-      </div>
+      </fieldset>
       <button
         class="_word-reminder__button_928901"
         type="submit"
