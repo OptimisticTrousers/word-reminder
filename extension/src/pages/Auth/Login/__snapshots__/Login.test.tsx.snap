@@ -15,6 +15,7 @@ exports[`Login component > calls the functions to login, show notification, and 
       >
         <svg
           class="lucide lucide-circle-check _notification__icon_120862 _notification__icon--circle_120862"
+          data-testid="check-icon"
           fill="none"
           height="24"
           stroke="currentColor"
