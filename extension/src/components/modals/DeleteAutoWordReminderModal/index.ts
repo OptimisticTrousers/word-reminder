@@ -1,0 +1,1 @@
+export { DeleteAutoWordReminderModal } from "./DeleteAutoWordReminderModal";
