@@ -11,7 +11,22 @@ exports[`UserWord component > it opens the accordion 1`] = `
       <p
         class="_word__name_a41cd7"
       >
-        exemplary
+        Word: exemplary
+      </p>
+      <p
+        class="_word__name_a41cd7"
+      >
+        Created At: 12/17/1995, 3:24:00 AM
+      </p>
+      <p
+        class="_word__name_a41cd7"
+      >
+        Updated At: 12/17/1995, 3:24:00 AM
+      </p>
+      <p
+        class="_word__name_a41cd7"
+      >
+        Learned: 
       </p>
       <div
         class="_word__divider_a41cd7"

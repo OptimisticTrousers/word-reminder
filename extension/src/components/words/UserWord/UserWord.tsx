@@ -1,4 +1,4 @@
-import { UserWord as IUserWord, Word as IWord } from "common";
+import { Detail } from "common";
 import { Info, Trash } from "lucide-react";
 import { useState } from "react";
 import CSSModules from "react-css-modules";
@@ -9,7 +9,19 @@ import { CondensedWord } from "../CondensedWord";
 import styles from "./UserWord.module.css";
 
 export const UserWord = CSSModules(
-  function (props: IUserWord & IWord) {
+  function ({
+    learned,
+    created_at,
+    updated_at,
+    details,
+    id,
+  }: {
+    learned: boolean;
+    created_at: Date;
+    updated_at: Date;
+    details: Detail[];
+    id: number;
+  }) {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,7 +37,14 @@ export const UserWord = CSSModules(
       <>
         <div styleName="user-word">
           <article styleName="user-word__word word">
-            <p styleName="word__name">{props.details[0].word}</p>
+            <p styleName="word__name">Word: {details[0].word}</p>
+            <p styleName="word__name">
+              Created At: {created_at.toLocaleString()}
+            </p>
+            <p styleName="word__name">
+              Updated At: {updated_at.toLocaleString()}
+            </p>
+            <p styleName="word__name">Learned: {learned}</p>
             <div styleName="word__divider"></div>
             <div styleName="word__buttons">
               <h3 styleName="word__heading">
@@ -51,7 +70,7 @@ export const UserWord = CSSModules(
                   <Trash styleName="word__icon" />
                 </button>
               </h3>
-              <Link to={`/userWords/${props.id}`}>More Word Details</Link>
+              <Link to={`/userWords/${id}`}>More Word Details</Link>
             </div>
           </article>
           {isAccordionOpen && (
@@ -63,14 +82,14 @@ export const UserWord = CSSModules(
               role="region"
               aria-labelledby="accordion-button"
             >
-              <CondensedWord {...props} />
+              <CondensedWord details={details} />
             </div>
           )}
         </div>
         {isModalOpen && (
           <DeleteUserWordModal
             toggleModal={toggleModal}
-            wordId={props.word_id}
+            userWordId={String(id)}
           />
         )}
       </>

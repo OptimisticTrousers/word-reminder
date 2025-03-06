@@ -26,9 +26,9 @@ vi.mock("../../modals/DeleteUserWordModal", () => {
 });
 
 const props = {
-  id: "1",
-  word_id: "1",
-  user_id: "1",
+  id: 1,
+  word_id: 1,
+  user_id: 1,
   learned: false,
   updated_at: new Date("December 17, 1995 03:24:00"),
   created_at: new Date("December 17, 1995 03:24:00"),
@@ -43,7 +43,17 @@ describe("UserWord component", () => {
       </MemoryRouter>
     );
 
+    const word = screen.getByText("Word: exemplary");
+    const createdAt = screen.getByText(
+      `Created At: ${props.created_at.toLocaleString()}`
+    );
+    const updatedAt = screen.getByText(
+      `Updated At: ${props.updated_at.toLocaleString()}`
+    );
     const details = screen.queryByTestId("details");
+    expect(word).toBeInTheDocument();
+    expect(createdAt).toBeInTheDocument();
+    expect(updatedAt).toBeInTheDocument();
     expect(details).not.toBeInTheDocument();
   });
 
@@ -79,6 +89,16 @@ describe("UserWord component", () => {
 
     const details = screen.getByTestId("details");
     expect(details).toHaveTextContent(JSON.stringify(props.details));
+    const word = screen.getByText("Word: exemplary");
+    const createdAt = screen.getByText(
+      `Created At: ${props.created_at.toLocaleString()}`
+    );
+    const updatedAt = screen.getByText(
+      `Updated At: ${props.updated_at.toLocaleString()}`
+    );
+    expect(word).toBeInTheDocument();
+    expect(createdAt).toBeInTheDocument();
+    expect(updatedAt).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 
