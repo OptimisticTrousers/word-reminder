@@ -4,19 +4,20 @@ import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 
 export const validateSortQuery = [
   query("column")
-    .optional()
+    .optional({ values: "falsy" })
     .trim()
     .escape()
     .notEmpty()
     .withMessage("'column' must be a non-empty string."),
   query("direction")
-    .optional()
+    .optional({ values: "falsy" })
     .trim()
     .escape()
     .isInt()
     .withMessage("'direction' must be a positive integer."),
   query("table")
-    .optional()
+    .optional({ values: "falsy" })
+    .trim()
     .trim()
     .escape()
     .notEmpty()
