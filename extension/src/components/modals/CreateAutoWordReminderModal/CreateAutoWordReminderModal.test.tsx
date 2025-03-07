@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { createRoutesStub, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { AutoCreateWordReminderModal } from "./CreateAutoWordReminderModal";
+import { CreateAutoWordReminderModal } from "./CreateAutoWordReminderModal";
 import userEvent from "@testing-library/user-event";
 import { SortMode } from "common";
 import { NotificationProvider } from "../../../context/Notification";
@@ -36,7 +36,7 @@ describe("CreateAutoWordReminderModal component", () => {
               return (
                 <NotificationProvider>
                   <QueryClientProvider client={queryClient}>
-                    <AutoCreateWordReminderModal toggleModal={toggleModal} />
+                    <CreateAutoWordReminderModal toggleModal={toggleModal} />
                   </QueryClientProvider>
                 </NotificationProvider>
               );

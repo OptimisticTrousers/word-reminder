@@ -20,7 +20,7 @@ interface Props {
   toggleModal: ToggleModal;
 }
 
-export const AutoCreateWordReminderModal = CSSModules(
+export const CreateAutoWordReminderModal = CSSModules(
   function ({ toggleModal }: Props) {
     const [reminder, setReminder] = useState("");
     const { user }: { user: User } = useOutletContext();

@@ -1,5 +1,128 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AutoCreateWordReminder component > auto > renders toggled button 1`] = `[Function]`;
+exports[`AutoCreateWordReminder component > when the auto word reminder does exist > renders the auto word reminder 1`] = `
+<DocumentFragment>
+  <section
+    class="_auto-word-reminder_f00845"
+  >
+    <div
+      class="_auto-word-reminder__id_f00845"
+    >
+      ID: 1
+    </div>
+    <div
+      class="_auto-word-reminder__reminder_f00845"
+    >
+      Reminder: Every 5 minutes
+    </div>
+    <div
+      class="_auto-word-reminder__duration_f00845"
+    >
+      Weeks: 0, Days: 0, Hours: 1, Minutes: 0
+    </div>
+    <div
+      class="_auto-word-reminder__is-active_f00845"
+    >
+      Active (whether the word reminder will actively remind you of the words in it): Yes
+    </div>
+    <div
+      class="_auto-word-reminder__has_reminder_onload_f00845"
+    >
+      Has Reminder Onload (reminds you of these words when you open your browser): Yes
+    </div>
+    <div
+      class="_auto-word-reminder__has_learned_words_f00845"
+    >
+      Has Learned (whether to include words that you have already learned): Yes
+    </div>
+    <div
+      class="_auto-word-reminder__has-reminder-onload_f00845"
+    >
+      Sort Mode (determines sort mode): newest
+    </div>
+    <div
+      class="_auto-word-reminder__has-reminder-onload_f00845"
+    >
+      Word Count (how many words to include): 7
+    </div>
+    <div
+      class="_auto-word-reminder__created_at_f00845"
+    >
+      This auto word reminder was created on 12/17/1995, 3:24:00 AM
+    </div>
+    <div
+      class="_auto-word-reminder__updated_at_f00845"
+    >
+      This auto word reminder was updated on 12/17/1995, 3:24:00 AM
+    </div>
+    <div
+      class="_auto-word-reminder__buttons_f00845"
+    >
+      <button
+        class="_auto-word-reminder__button_f00845"
+      >
+        Update
+      </button>
+      <button
+        class="_auto-word-reminder__button_f00845"
+      >
+        Delete
+      </button>
+    </div>
+  </section>
+</DocumentFragment>
+`;
 
-exports[`AutoCreateWordReminder component > auto > renders untoggled button 1`] = `[Function]`;
+exports[`AutoCreateWordReminder component > when the auto word reminder does not exist > renders the button to create the 'AutoCreateWordReminder' 1`] = `
+<DocumentFragment>
+  <button
+    aria-haspopup="dialog"
+    aria-labelledby="title"
+    class="_create_f00845"
+  >
+    <div
+      class="_create__container_f00845"
+    >
+      <svg
+        class="lucide lucide-circle-plus _create__icon_f00845"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
+        <path
+          d="M8 12h8"
+        />
+        <path
+          d="M12 8v8"
+        />
+      </svg>
+      <div
+        class="_create__text_f00845"
+      >
+        <h2
+          class="_create__title_f00845"
+          id="title"
+        >
+          Create Auto Word Reminder
+        </h2>
+        <p
+          class="_create__description_f00845"
+        >
+          Automatically create word reminder on an interval to remember words you come across in your readings. Set it and forget it.
+        </p>
+      </div>
+    </div>
+  </button>
+</DocumentFragment>
+`;
