@@ -113,7 +113,7 @@ describe("UserWord component", () => {
                     },
                   ],
                   synonyms: ["Bible", "Logos", "vocable"],
-                  antonyms: [],
+                  antonyms: ["silence"],
                 },
               ],
               license: {
@@ -161,6 +161,7 @@ describe("UserWord component", () => {
     const synonym3 = screen.getByText("Logos");
     const synonym4 = screen.getByText("vocable");
     const antonym1 = screen.getByText("false promise");
+    const antonym2 = screen.getByText("silence");
     const wordLicenseName = screen.getByText("CC BY-SA 3.0");
     const wordLicenseUrl = screen.getByRole("link", {
       name: "Word License",
@@ -189,6 +190,7 @@ describe("UserWord component", () => {
     expect(synonym3).toBeInTheDocument();
     expect(synonym4).toBeInTheDocument();
     expect(antonym1).toBeInTheDocument();
+    expect(antonym2).toBeInTheDocument();
     expect(wordLicenseName).toBeInTheDocument();
     expect(wordLicenseUrl).toBeInTheDocument();
     expect(wordSourceUrl).toBeInTheDocument();
@@ -685,7 +687,7 @@ describe("UserWord component", () => {
     expect(wordSourceUrl).not.toBeInTheDocument();
   });
 
-  it("does not render images are not available", async () => {
+  it("does not render images when not available", async () => {
     const json = {
       userWord: {
         created_at,
@@ -729,8 +731,10 @@ describe("UserWord component", () => {
 
     setup();
 
-    const images = screen.queryAllByRole("img");
-    expect(images).toHaveLength(0);
+    const imageCarousel = await screen.findByTestId("image-carousel");
+    expect(imageCarousel).toHaveTextContent(
+      String({ image: [], hasAutoScroll: false })
+    );
   });
 
   it("plays audio to pronounce word when available", async () => {

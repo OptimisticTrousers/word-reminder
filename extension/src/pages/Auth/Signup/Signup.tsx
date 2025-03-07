@@ -23,10 +23,7 @@ export const Signup = CSSModules(
 
     const { status, mutate } = useMutation({
       mutationFn: async (data: { email: string; password: string }) => {
-        const response = await userService.signupUser(data);
-        if (response.status !== 200) {
-          return response;
-        }
+        await userService.signupUser(data);
         return sessionService.loginUser(data);
       },
       onSuccess: (response: Response & { json: { user: User } }) => {
