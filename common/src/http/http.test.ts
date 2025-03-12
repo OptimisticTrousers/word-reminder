@@ -270,9 +270,6 @@ describe("http", () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
       expect(response).toEqual({
         json,
@@ -288,9 +285,6 @@ describe("http", () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
       expect(response).toEqual({
         json,
@@ -306,9 +300,6 @@ describe("http", () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
       expect(response).toEqual({
         json,
@@ -324,9 +315,6 @@ describe("http", () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
       expect(response).toEqual({
         json,
@@ -349,9 +337,6 @@ describe("http", () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
       });
       expect(response).toEqual({
@@ -379,9 +364,6 @@ describe("http", () => {
         expect(mockFetch).toHaveBeenCalledTimes(1);
         expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           credentials: "include",
           body,
         });
@@ -408,9 +390,6 @@ describe("http", () => {
         expect(mockFetch).toHaveBeenCalledTimes(1);
         expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           credentials: "include",
           body: formData,
         });
@@ -440,9 +419,6 @@ describe("http", () => {
         expect(mockFetch).toHaveBeenCalledTimes(1);
         expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
           credentials: "include",
           body,
         });
@@ -469,9 +445,6 @@ describe("http", () => {
         expect(mockFetch).toHaveBeenCalledTimes(1);
         expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
           credentials: "include",
           body: formData,
         });
@@ -495,9 +468,6 @@ describe("http", () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith(new URL(url), {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
       });
       expect(response).toEqual({
@@ -545,9 +515,6 @@ describe("http", () => {
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
       expect(response).toEqual({
@@ -569,9 +536,6 @@ describe("http", () => {
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
       expect(response).toEqual({
@@ -593,9 +557,6 @@ describe("http", () => {
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
       expect(response).toEqual({
@@ -622,9 +583,6 @@ describe("http", () => {
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
           credentials: "include",
         }
       );
@@ -655,9 +613,6 @@ describe("http", () => {
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
             credentials: "include",
             body,
           }
@@ -687,9 +642,6 @@ describe("http", () => {
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
             credentials: "include",
             body: formData,
           }
@@ -722,9 +674,6 @@ describe("http", () => {
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
             credentials: "include",
             body,
           }
@@ -754,9 +703,6 @@ describe("http", () => {
           new URL(`${url}?partOfSpeech=noun`),
           {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
             credentials: "include",
             body: formData,
           }
@@ -784,9 +730,6 @@ describe("http", () => {
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
           credentials: "include",
         }
       );

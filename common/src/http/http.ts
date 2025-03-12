@@ -20,9 +20,6 @@ export const http = (function () {
 
     const response: Response = await fetch(input, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-      },
       ...options,
     });
 
