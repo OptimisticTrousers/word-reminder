@@ -153,13 +153,13 @@ exports[`UserWords component > renders two forms that have fields for creating a
                   class="_sort__option_7b9046"
                   value="1"
                 >
-                  Newest
+                  Oldest
                 </option>
                 <option
                   class="_sort__option_7b9046"
                   value="-1"
                 >
-                  Oldest
+                  Newest
                 </option>
               </select>
             </label>

@@ -821,7 +821,7 @@ describe("UserWords component", () => {
             learned: "",
             column: "created_at",
             table: "user_words",
-            direction: "1",
+            direction: "-1",
           },
         });
       });
@@ -852,7 +852,7 @@ describe("UserWords component", () => {
             learned: "",
             column: "created_at",
             table: "user_words",
-            direction: "-1",
+            direction: "1",
           },
         });
       });

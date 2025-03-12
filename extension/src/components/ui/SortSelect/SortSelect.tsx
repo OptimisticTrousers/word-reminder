@@ -23,10 +23,10 @@ export const SortSelect = CSSModules(
               Featured
             </option>
             <option styleName="sort__option" value="1">
-              Newest
+              Oldest
             </option>
             <option styleName="sort__option" value="-1">
-              Oldest
+              Newest
             </option>
           </select>
         </label>
