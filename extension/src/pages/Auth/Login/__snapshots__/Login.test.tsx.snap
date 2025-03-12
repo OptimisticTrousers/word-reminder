@@ -165,7 +165,7 @@ exports[`Login component > calls the functions to login, show notification, and 
       <a
         class="_auth_link_340faf"
         data-discover="true"
-        href="/register"
+        href="/signup"
       >
         Create account
       </a>

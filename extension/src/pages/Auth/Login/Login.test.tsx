@@ -87,7 +87,7 @@ describe("Login component", () => {
     setup();
     const link = screen.getByRole("link", { name: "Create account" });
 
-    expect(link).toHaveAttribute("href", "/register");
+    expect(link).toHaveAttribute("href", "/signup");
   });
 
   it("shows correct link when user forgets their password", async () => {
@@ -252,6 +252,7 @@ describe("Login component", () => {
       const loginButton = screen.getByRole("button", { name: "Login" });
       await user.click(loginButton);
 
+      expect(loginButton).toHaveTextContent("Logging in...");
       expect(emailInput).toBeDisabled();
       expect(passwordInput).toBeDisabled();
       expect(loginButton).toBeDisabled();

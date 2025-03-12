@@ -79,12 +79,12 @@ export const Login = CSSModules(
             />
           </div>
           <button styleName="auth__button" type="submit" disabled={disabled}>
-            Login
+            {disabled ? "Logging in..." : "Login"}
           </button>
         </form>
         <p styleName="auth__redirect">
           New around here?{" "}
-          <Link styleName="auth_link" to="/register">
+          <Link styleName="auth_link" to="/signup">
             Create account
           </Link>
         </p>

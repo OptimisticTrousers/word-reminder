@@ -292,6 +292,7 @@ describe("Signup component", () => {
       const signupButton = screen.getByRole("button", { name: "Signup" });
       await user.click(signupButton);
 
+      expect(signupButton).toHaveTextContent("Signing up...");
       expect(emailInput).toBeDisabled();
       expect(passwordInput).toBeDisabled();
       expect(signupButton).toBeDisabled();

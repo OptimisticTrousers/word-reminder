@@ -63,7 +63,7 @@ export const Signup = CSSModules(
             </p>
             <h3 styleName="auth__title">Create account</h3>
             <button styleName="auth__button" type="submit" disabled={disabled}>
-              Signup
+              {disabled ? "Signing up..." : "Signup"}
             </button>
           </nav>
           <div styleName="auth__control">
