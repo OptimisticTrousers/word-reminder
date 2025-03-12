@@ -10,6 +10,7 @@ import { UserWords } from "../pages/UserWords";
 import { WordReminder } from "../pages/WordReminder";
 import { WordReminders } from "../pages/WordReminders";
 import { ForgotPassword } from "../pages/Auth/ForgotPassword";
+import { EmailConfirmation } from "../pages/Auth/EmailConfirmation";
 
 export function routes(user: User | undefined) {
   return [
@@ -29,6 +30,15 @@ export function routes(user: User | undefined) {
       path: "/",
       element: user ? <App user={user} /> : <Navigate to="/login" />,
       children: [
+        {
+          path: "confirmation",
+          element:
+            user && user.confirmed ? (
+              <Navigate to="/userWords" />
+            ) : (
+              <EmailConfirmation />
+            ),
+        },
         { path: "userWords", element: <UserWords /> },
         { path: "userWords/:userWordId", element: <UserWord /> },
         { path: "wordReminders", element: <WordReminders /> },

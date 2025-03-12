@@ -8,12 +8,8 @@ import { Loading } from "../../../components/ui/Loading";
 import { Error500 } from "../../Error500";
 import { useOutletContext } from "react-router-dom";
 
-interface Props {
-  email: string;
-}
-
 export const EmailConfirmation = CSSModules(
-  function ({ email }: Props) {
+  function () {
     const { user }: { user: User } = useOutletContext();
     const userId = String(user.id);
     const { isLoading, failureReason } = useQuery({
@@ -22,7 +18,7 @@ export const EmailConfirmation = CSSModules(
         return emailService.sendEmail({
           userId,
           body: {
-            email: email,
+            email: user.email,
             subject: Subject.CONFIRM_ACCOUNT,
             template: Template.CONFIRM_ACCOUNT,
           },
@@ -43,7 +39,7 @@ export const EmailConfirmation = CSSModules(
         <h2 styleName="email-confirmation__heading">Check your email</h2>
         <p styleName="email-confirmation__message">
           Follow the link in the email sent to
-          <span styleName="email-confirmation__bold"> {email} </span>
+          <span styleName="email-confirmation__bold"> {user.email} </span>
           and continue creating your account.
         </p>
       </div>

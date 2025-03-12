@@ -87,8 +87,8 @@ vi.mock("../pages/Settings", function () {
 
 vi.mock("../pages/Auth/EmailConfirmation", () => {
   return {
-    EmailConfirmation: function ({ email }: { email: string }) {
-      return <div data-testid="email-confirmation">{email}</div>;
+    EmailConfirmation: function () {
+      return <div data-testid="email-confirmation"></div>;
     },
   };
 });
@@ -223,9 +223,11 @@ describe("Router component", () => {
             return { json: { user: { ...user, confirmed: false } }, status };
           });
 
-        setup({ initialRoute: "/userWords" });
+        setup({ initialRoute: "/confirmation" });
 
-        const emailConfirmationEmail = await screen.findByText(user.email);
+        const emailConfirmationEmail = await screen.findByTestId(
+          "email-confirmation"
+        );
         expect(emailConfirmationEmail).toBeInTheDocument();
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();

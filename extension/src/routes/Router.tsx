@@ -6,7 +6,6 @@ import { Error500 } from "../pages/Error500";
 import { sessionService } from "../services/session_service";
 import { routes } from "./routes";
 import { ErrorResponse } from "../types";
-import { EmailConfirmation } from "../pages/Auth/EmailConfirmation";
 
 export function Router() {
   const { data, error, isError, isLoading } = useQuery({
@@ -27,10 +26,6 @@ export function Router() {
     return (
       <Error500 message={(error as unknown as ErrorResponse).json.message} />
     );
-  }
-
-  if (user && user.confirmed === false) {
-    return <EmailConfirmation email={user.email} />;
   }
 
   return routing;

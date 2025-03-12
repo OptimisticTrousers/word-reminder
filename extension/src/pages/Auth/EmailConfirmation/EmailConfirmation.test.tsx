@@ -12,8 +12,6 @@ vi.mock("../../../components/ui/Loading/Loading");
 vi.mock("../../Error500/Error500");
 
 describe("EmailConfirmation component", () => {
-  const email = "bob@gmail.com";
-
   const info = {
     message:
       "Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email",
@@ -21,6 +19,7 @@ describe("EmailConfirmation component", () => {
 
   const user = {
     id: "1",
+    email: "bob@gmail.com",
   };
 
   const status = 200;
@@ -42,7 +41,7 @@ describe("EmailConfirmation component", () => {
               return (
                 <NotificationProvider>
                   <QueryClientProvider client={queryClient}>
-                    <EmailConfirmation email={email} />
+                    <EmailConfirmation />
                   </QueryClientProvider>
                 </NotificationProvider>
               );
@@ -74,7 +73,7 @@ describe("EmailConfirmation component", () => {
     const message = screen.getByText((_, element) => {
       return (
         element?.textContent ===
-        `Follow the link in the email sent to ${email} and continue creating your account.`
+        `Follow the link in the email sent to ${user.email} and continue creating your account.`
       );
     });
     expect(heading).toBeInTheDocument();
@@ -83,7 +82,7 @@ describe("EmailConfirmation component", () => {
     expect(mockSendEmail).toHaveBeenCalledWith({
       userId: user.id,
       body: {
-        email,
+        email: user.email,
         subject: Subject.CONFIRM_ACCOUNT,
         template: Template.CONFIRM_ACCOUNT,
       },
@@ -111,7 +110,7 @@ describe("EmailConfirmation component", () => {
     expect(mockSendEmail).toHaveBeenCalledWith({
       userId: user.id,
       body: {
-        email,
+        email: user.email,
         subject: Subject.CONFIRM_ACCOUNT,
         template: Template.CONFIRM_ACCOUNT,
       },
@@ -135,7 +134,7 @@ describe("EmailConfirmation component", () => {
     expect(mockSendEmail).toHaveBeenCalledWith({
       userId: user.id,
       body: {
-        email,
+        email: user.email,
         subject: Subject.CONFIRM_ACCOUNT,
         template: Template.CONFIRM_ACCOUNT,
       },
