@@ -208,20 +208,7 @@ describe("UserWords component", () => {
         });
         expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
         expect(mockInvalidateQueries).toHaveBeenCalledWith({
-          queryKey: [
-            "userWords",
-            Object.fromEntries(
-              new URLSearchParams({
-                page: "1",
-                limit: PAGINATION_LIMIT,
-                search: "",
-                learned: "",
-                column: "",
-                direction: "",
-              })
-            ),
-          ],
-          exact: true,
+          queryKey: ["userWords"],
         });
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({

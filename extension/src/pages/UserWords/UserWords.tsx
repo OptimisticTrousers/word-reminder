@@ -79,8 +79,7 @@ export const UserWords = CSSModules(
           );
         }
         queryClient.invalidateQueries({
-          queryKey: ["userWords", searchParamsObject],
-          exact: true,
+          queryKey: ["userWords"],
         });
       },
       onError: (response: ErrorResponse) => {
