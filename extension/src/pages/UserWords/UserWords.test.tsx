@@ -32,7 +32,11 @@ describe("UserWords component", () => {
   const json = [
     {
       id: 1,
-      word: "word",
+      details: [
+        {
+          word: "word",
+        },
+      ],
     },
   ];
 
@@ -178,7 +182,7 @@ describe("UserWords component", () => {
     describe("text word creation", () => {
       it("calls the functions to create a word", async () => {
         const formData = new FormData();
-        const word = json[0].word;
+        const word = json[0].details[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
         formData.append("userId", String(testUser.id));
@@ -220,7 +224,7 @@ describe("UserWords component", () => {
 
       it("shows generic notification that there was an error", async () => {
         const formData = new FormData();
-        const word = json[0].word;
+        const word = json[0].details[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
         formData.append("userId", String(testUser.id));
@@ -288,7 +292,7 @@ describe("UserWords component", () => {
 
       it("shows notification notification that the user is unauthenticated", async () => {
         const formData = new FormData();
-        const word = json[0].word;
+        const word = json[0].details[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
         formData.append("userId", String(testUser.id));
@@ -367,7 +371,10 @@ describe("UserWords component", () => {
             .mockImplementation(async () => {
               return {
                 json: {
-                  userWords: [{ word: "export" }, { word: "word" }],
+                  userWords: [
+                    { details: [{ word: "export" }] },
+                    { details: [{ word: "word" }] },
+                  ],
                   totalRows,
                 },
                 status,
@@ -391,6 +398,7 @@ describe("UserWords component", () => {
               search: "",
               learned: "",
               column: "",
+              table: "user_words",
               direction: "",
             },
           });
@@ -594,7 +602,7 @@ describe("UserWords component", () => {
 
     it("disables add button and all inputs when the mutation is pending", async () => {
       const formData = new FormData();
-      const word = json[0].word;
+      const word = json[0].details[0].word;
       formData.append("word", word);
       formData.append("csv", new File([""], ""));
       formData.append("userId", String(testUser.id));

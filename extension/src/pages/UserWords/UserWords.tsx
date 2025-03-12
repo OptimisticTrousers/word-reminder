@@ -1,4 +1,4 @@
-import { User, UserWord as IUserWord, Word as IWord } from "common";
+import { User, UserWord as IUserWord, Word as IWord, Detail } from "common";
 import { Download, Import } from "lucide-react";
 import { ChangeEvent, MouseEvent, useContext, useRef, useState } from "react";
 import CSSModules from "react-css-modules";
@@ -101,13 +101,14 @@ export const UserWords = CSSModules(
             search: "",
             learned: "",
             column: "",
+            table: "user_words",
             direction: "",
           })
         ),
       });
       const words = json.userWords.map(
-        (userWord: IUserWord & { word: string }) => {
-          return userWord.word;
+        (userWord: IUserWord & { details: Detail[] }) => {
+          return userWord.details[0].word;
         }
       );
       download({
