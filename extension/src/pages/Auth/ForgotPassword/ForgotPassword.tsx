@@ -69,7 +69,9 @@ export const ForgotPassword = CSSModules(
             type="submit"
             disabled={disabled}
           >
-            Send verification email
+            {disabled
+              ? "Sending verification email..."
+              : "Send verification email"}
           </button>
         </form>
         <Link styleName="enter-email__link" to="/login">

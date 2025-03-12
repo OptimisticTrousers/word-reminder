@@ -92,6 +92,29 @@ describe("ForgotPassword component", () => {
     });
   });
 
+  it("disables button to send verification email while it is loading", async () => {
+    const delay = 50;
+    vi.spyOn(emailService, "sendEmail").mockImplementation(async () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ json: { info }, status });
+        }, delay);
+      });
+    });
+    setup();
+    const user = userEvent.setup();
+
+    const emailInput = screen.getByLabelText("Email");
+    await user.type(emailInput, testUser.email);
+    const submitButton = screen.getByRole("button", {
+      name: "Send verification email",
+    });
+    await user.click(submitButton);
+
+    expect(submitButton).toHaveTextContent("Sending verification email...");
+    expect(submitButton).toBeDisabled();
+  });
+
   describe("form validation", () => {
     it("does not allow the user to send verification email when the email field is empty", async () => {
       const mockSendEmail = vi
