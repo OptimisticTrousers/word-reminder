@@ -768,6 +768,7 @@ describe("UserWords component", () => {
             search,
             learned: "",
             column: "",
+            table: "user_words",
             direction: "",
           },
         });
@@ -819,6 +820,7 @@ describe("UserWords component", () => {
             search: "",
             learned: "",
             column: "created_at",
+            table: "user_words",
             direction: "1",
           },
         });
@@ -849,6 +851,7 @@ describe("UserWords component", () => {
             search: "",
             learned: "",
             column: "created_at",
+            table: "user_words",
             direction: "-1",
           },
         });
@@ -899,6 +902,7 @@ describe("UserWords component", () => {
             limit: PAGINATION_LIMIT,
             search: "",
             learned: "true",
+            table: "user_words",
             column: "",
             direction: "",
           },
@@ -930,6 +934,7 @@ describe("UserWords component", () => {
             search: "",
             learned: "false",
             column: "",
+            table: "user_words",
             direction: "",
           },
         });

@@ -38,6 +38,7 @@ export const UserWords = CSSModules(
       page: "1",
       limit: PAGINATION_LIMIT,
       search: "",
+      table: "user_words",
       learned: "",
       column: "",
       direction: "",
