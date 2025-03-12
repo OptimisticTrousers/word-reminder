@@ -228,11 +228,11 @@ export const get_user_word = asyncHandler(async (req, res) => {
 // @access  Private
 export const user_word_list = [
   query("learned")
-    .optional()
+    .optional({ values: "falsy" })
     .isBoolean()
     .withMessage("'learned' must be a boolean."),
   query("search")
-    .optional()
+    .optional({ values: "falsy" })
     .trim()
     .escape()
     .notEmpty()
