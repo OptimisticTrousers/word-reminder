@@ -2,7 +2,7 @@ import { User } from "common";
 import { useContext } from "react";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   NotificationContext,
@@ -24,6 +24,7 @@ export const DeleteUserWordModal = CSSModules(
   function ({ toggleModal, userWordId }: Props) {
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
+    const queryClient = useQueryClient();
     const { isPending, mutate } = useMutation({
       mutationFn: userWordService.deleteUserWord,
       onSuccess: () => {
@@ -31,6 +32,9 @@ export const DeleteUserWordModal = CSSModules(
           NOTIFICATION_ACTIONS.SUCCESS,
           USER_WORD_NOTIFICATION_MSGS.deleteUserWord()
         );
+        queryClient.invalidateQueries({
+          queryKey: ["userWords"],
+        });
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);
