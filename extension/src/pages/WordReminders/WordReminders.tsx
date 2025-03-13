@@ -18,6 +18,7 @@ export const WordReminders = CSSModules(
     const [searchParams, setSearchParams] = useSearchParams({
       page: "1",
       limit: PAGINATION_LIMIT,
+      table: "word_reminders",
       column: "",
       direction: "",
     });

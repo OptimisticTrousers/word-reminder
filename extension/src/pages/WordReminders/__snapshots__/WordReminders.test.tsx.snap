@@ -37,13 +37,13 @@ exports[`WordReminders component > renders the form that allows user to filter t
               class="_sort__option_7b9046"
               value="1"
             >
-              Newest
+              Oldest
             </option>
             <option
               class="_sort__option_7b9046"
               value="-1"
             >
-              Oldest
+              Newest
             </option>
           </select>
         </label>

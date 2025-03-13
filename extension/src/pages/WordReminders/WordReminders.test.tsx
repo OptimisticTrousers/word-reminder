@@ -220,6 +220,7 @@ describe("WordReminders component", () => {
         limit: "10",
         column: "",
         direction: "",
+        table: "word_reminders",
       },
     });
     expect(asFragment()).toMatchSnapshot();
@@ -258,6 +259,7 @@ describe("WordReminders component", () => {
             limit: PAGINATION_LIMIT,
             column: "",
             direction: "",
+            table: "word_reminders",
           })
         ),
       });
@@ -295,6 +297,7 @@ describe("WordReminders component", () => {
             limit: PAGINATION_LIMIT,
             column: "",
             direction: "",
+            table: "word_reminders",
           })
         ),
       });
@@ -305,7 +308,8 @@ describe("WordReminders component", () => {
             page: "1",
             limit: PAGINATION_LIMIT,
             column: "created_at",
-            direction: "1",
+            direction: "-1",
+            table: "word_reminders",
           })
         ),
       });
@@ -343,6 +347,7 @@ describe("WordReminders component", () => {
             limit: PAGINATION_LIMIT,
             column: "",
             direction: "",
+            table: "word_reminders",
           })
         ),
       });
@@ -353,7 +358,8 @@ describe("WordReminders component", () => {
             page: "1",
             limit: PAGINATION_LIMIT,
             column: "created_at",
-            direction: "-1",
+            table: "word_reminders",
+            direction: "1",
           })
         ),
       });

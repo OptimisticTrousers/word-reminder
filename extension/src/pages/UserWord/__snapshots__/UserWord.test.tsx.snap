@@ -226,7 +226,13 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
             </h3>
             <ul
               class="_word__definitions_063118"
-            />
+            >
+              <li
+                class="_word__antonym_063118"
+              >
+                silence
+              </li>
+            </ul>
           </div>
           <div
             class="_word__license_063118"
