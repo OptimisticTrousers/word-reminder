@@ -3,311 +3,315 @@
 exports[`CondensedWord > renders meanings with part of speech, definitions, examples only 1`] = `
 <DocumentFragment>
   <div
-    class="_word_09a47a"
+    class="_words_09a47a"
   >
     <div
-      class="_word__top_09a47a"
+      class="_word_09a47a"
     >
       <div
-        class="_word__title_09a47a"
+        class="_word__top_09a47a"
       >
-        <p
-          class="_word__phonetic_09a47a"
+        <div
+          class="_word__title_09a47a"
         >
-          /wɜːd/
-        </p>
-        <ul
-          class="_word__phonetics_09a47a"
-        >
-          <li
+          <p
             class="_word__phonetic_09a47a"
           >
-            <p
-              class="_word__text_09a47a"
-            >
-              /wɜːd/
-            </p>
-          </li>
-          <li
-            class="_word__phonetic_09a47a"
+            /wɜːd/
+          </p>
+          <ul
+            class="_word__phonetics_09a47a"
           >
-            <p
-              class="_word__text_09a47a"
+            <li
+              class="_word__phonetic_09a47a"
             >
-              /wɝd/
-            </p>
-            <button
-              class="_word__button_09a47a"
-            >
-              <span
+              <p
                 class="_word__text_09a47a"
               >
-                Pronounce word
-              </span>
-              <svg
-                class="lucide lucide-play _word__icon_09a47a"
-                fill="none"
-                height="24"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <polygon
-                  points="6 3 20 12 6 21 6 3"
-                />
-              </svg>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div
-      class="_word__container_09a47a"
-    >
-      <div
-        class="_word__meanings_09a47a"
-      >
-        <span
-          class="_word__part-of-speech_09a47a"
-        >
-          noun 
-          <hr
-            class="_word__line_09a47a"
-          />
-        </span>
-        <div
-          class="_word__block_09a47a"
-        >
-          <h3
-            class="_word__subtitle_09a47a"
-          >
-            Meanings
-          </h3>
-          <ul
-            class="_word__definitions_09a47a"
-          >
-            <li
-              class="_word__definition_09a47a"
-            >
-              <p
-                class="_word__definition_09a47a"
-              >
-                News; tidings (used without an article).
-              </p>
-              <p
-                class="_word__example_09a47a"
-              >
-                Have you had any word from John yet?
+                /wɜːd/
               </p>
             </li>
             <li
-              class="_word__definition_09a47a"
+              class="_word__phonetic_09a47a"
             >
               <p
-                class="_word__definition_09a47a"
-              >
-                An order; a request or instruction; an expression of will.
-              </p>
-              <p
-                class="_word__example_09a47a"
-              >
-                Don't fire till I give the word
-              </p>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div
-        class="_word__meanings_09a47a"
-      >
-        <span
-          class="_word__part-of-speech_09a47a"
-        >
-          verb 
-          <hr
-            class="_word__line_09a47a"
-          />
-        </span>
-        <div
-          class="_word__block_09a47a"
-        >
-          <h3
-            class="_word__subtitle_09a47a"
-          >
-            Meanings
-          </h3>
-          <ul
-            class="_word__definitions_09a47a"
-          >
-            <li
-              class="_word__definition_09a47a"
-            >
-              <p
-                class="_word__definition_09a47a"
-              >
-                To say or write (something) using particular words; to phrase (something).
-              </p>
-              <p
-                class="_word__example_09a47a"
-              >
-                I’m not sure how to word this letter to the council.
-              </p>
-            </li>
-            <li
-              class="_word__definition_09a47a"
-            >
-              <p
-                class="_word__definition_09a47a"
-              >
-                To flatter with words, to cajole.
-              </p>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div
-        class="_word__meanings_09a47a"
-      >
-        <span
-          class="_word__part-of-speech_09a47a"
-        >
-          interjection 
-          <hr
-            class="_word__line_09a47a"
-          />
-        </span>
-        <div
-          class="_word__block_09a47a"
-        >
-          <h3
-            class="_word__subtitle_09a47a"
-          >
-            Meanings
-          </h3>
-          <ul
-            class="_word__definitions_09a47a"
-          >
-            <li
-              class="_word__definition_09a47a"
-            >
-              <p
-                class="_word__definition_09a47a"
-              >
-                (stereotypically) An abbreviated form of word up; a statement of the acknowledgment of fact with a hint of nonchalant approval.
-              </p>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="_word_09a47a"
-  >
-    <div
-      class="_word__top_09a47a"
-    >
-      <div
-        class="_word__title_09a47a"
-      >
-        <p
-          class="_word__phonetic_09a47a"
-        >
-          /wɜːd/
-        </p>
-        <ul
-          class="_word__phonetics_09a47a"
-        >
-          <li
-            class="_word__phonetic_09a47a"
-          >
-            <p
-              class="_word__text_09a47a"
-            >
-              /wɜːd/
-            </p>
-          </li>
-          <li
-            class="_word__phonetic_09a47a"
-          >
-            <p
-              class="_word__text_09a47a"
-            >
-              /wɝd/
-            </p>
-            <button
-              class="_word__button_09a47a"
-            >
-              <span
                 class="_word__text_09a47a"
               >
-                Pronounce word
-              </span>
-              <svg
-                class="lucide lucide-play _word__icon_09a47a"
-                fill="none"
-                height="24"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
+                /wɝd/
+              </p>
+              <button
+                class="_word__button_09a47a"
               >
-                <polygon
-                  points="6 3 20 12 6 21 6 3"
-                />
-              </svg>
-            </button>
-          </li>
-        </ul>
+                <span
+                  class="_word__text_09a47a"
+                >
+                  Pronounce word
+                </span>
+                <svg
+                  class="lucide lucide-play _word__icon_09a47a"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <polygon
+                    points="6 3 20 12 6 21 6 3"
+                  />
+                </svg>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="_word__container_09a47a"
+      >
+        <div
+          class="_word__meanings_09a47a"
+        >
+          <span
+            class="_word__part-of-speech_09a47a"
+          >
+            noun 
+            <hr
+              class="_word__line_09a47a"
+            />
+          </span>
+          <div
+            class="_word__block_09a47a"
+          >
+            <h3
+              class="_word__subtitle_09a47a"
+            >
+              Meanings
+            </h3>
+            <ul
+              class="_word__definitions_09a47a"
+            >
+              <li
+                class="_word__definition_09a47a"
+              >
+                <p
+                  class="_word__definition_09a47a"
+                >
+                  News; tidings (used without an article).
+                </p>
+                <p
+                  class="_word__example_09a47a"
+                >
+                  Have you had any word from John yet?
+                </p>
+              </li>
+              <li
+                class="_word__definition_09a47a"
+              >
+                <p
+                  class="_word__definition_09a47a"
+                >
+                  An order; a request or instruction; an expression of will.
+                </p>
+                <p
+                  class="_word__example_09a47a"
+                >
+                  Don't fire till I give the word
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="_word__meanings_09a47a"
+        >
+          <span
+            class="_word__part-of-speech_09a47a"
+          >
+            verb 
+            <hr
+              class="_word__line_09a47a"
+            />
+          </span>
+          <div
+            class="_word__block_09a47a"
+          >
+            <h3
+              class="_word__subtitle_09a47a"
+            >
+              Meanings
+            </h3>
+            <ul
+              class="_word__definitions_09a47a"
+            >
+              <li
+                class="_word__definition_09a47a"
+              >
+                <p
+                  class="_word__definition_09a47a"
+                >
+                  To say or write (something) using particular words; to phrase (something).
+                </p>
+                <p
+                  class="_word__example_09a47a"
+                >
+                  I’m not sure how to word this letter to the council.
+                </p>
+              </li>
+              <li
+                class="_word__definition_09a47a"
+              >
+                <p
+                  class="_word__definition_09a47a"
+                >
+                  To flatter with words, to cajole.
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="_word__meanings_09a47a"
+        >
+          <span
+            class="_word__part-of-speech_09a47a"
+          >
+            interjection 
+            <hr
+              class="_word__line_09a47a"
+            />
+          </span>
+          <div
+            class="_word__block_09a47a"
+          >
+            <h3
+              class="_word__subtitle_09a47a"
+            >
+              Meanings
+            </h3>
+            <ul
+              class="_word__definitions_09a47a"
+            >
+              <li
+                class="_word__definition_09a47a"
+              >
+                <p
+                  class="_word__definition_09a47a"
+                >
+                  (stereotypically) An abbreviated form of word up; a statement of the acknowledgment of fact with a hint of nonchalant approval.
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
     <div
-      class="_word__container_09a47a"
+      class="_word_09a47a"
     >
       <div
-        class="_word__meanings_09a47a"
+        class="_word__top_09a47a"
       >
-        <span
-          class="_word__part-of-speech_09a47a"
-        >
-          verb 
-          <hr
-            class="_word__line_09a47a"
-          />
-        </span>
         <div
-          class="_word__block_09a47a"
+          class="_word__title_09a47a"
         >
-          <h3
-            class="_word__subtitle_09a47a"
+          <p
+            class="_word__phonetic_09a47a"
           >
-            Meanings
-          </h3>
+            /wɜːd/
+          </p>
           <ul
-            class="_word__definitions_09a47a"
+            class="_word__phonetics_09a47a"
           >
             <li
-              class="_word__definition_09a47a"
+              class="_word__phonetic_09a47a"
             >
               <p
-                class="_word__definition_09a47a"
+                class="_word__text_09a47a"
               >
-                (except in set phrases) To be, become, betide.
-              </p>
-              <p
-                class="_word__example_09a47a"
-              >
-                Well worth thee, me friend.
+                /wɜːd/
               </p>
             </li>
+            <li
+              class="_word__phonetic_09a47a"
+            >
+              <p
+                class="_word__text_09a47a"
+              >
+                /wɝd/
+              </p>
+              <button
+                class="_word__button_09a47a"
+              >
+                <span
+                  class="_word__text_09a47a"
+                >
+                  Pronounce word
+                </span>
+                <svg
+                  class="lucide lucide-play _word__icon_09a47a"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <polygon
+                    points="6 3 20 12 6 21 6 3"
+                  />
+                </svg>
+              </button>
+            </li>
           </ul>
+        </div>
+      </div>
+      <div
+        class="_word__container_09a47a"
+      >
+        <div
+          class="_word__meanings_09a47a"
+        >
+          <span
+            class="_word__part-of-speech_09a47a"
+          >
+            verb 
+            <hr
+              class="_word__line_09a47a"
+            />
+          </span>
+          <div
+            class="_word__block_09a47a"
+          >
+            <h3
+              class="_word__subtitle_09a47a"
+            >
+              Meanings
+            </h3>
+            <ul
+              class="_word__definitions_09a47a"
+            >
+              <li
+                class="_word__definition_09a47a"
+              >
+                <p
+                  class="_word__definition_09a47a"
+                >
+                  (except in set phrases) To be, become, betide.
+                </p>
+                <p
+                  class="_word__example_09a47a"
+                >
+                  Well worth thee, me friend.
+                </p>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
