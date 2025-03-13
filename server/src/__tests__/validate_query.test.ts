@@ -348,7 +348,6 @@ describe("validateQuery", () => {
     describe("sort query", () => {
       it("calls the functions to get the user's words reminders with the sort query options", async () => {
         const params = new URLSearchParams({
-          table: "word_reminders",
           column: "created_at",
           direction: "1",
         });
@@ -360,9 +359,9 @@ describe("validateQuery", () => {
         expect(mockGetByUserId).toHaveBeenCalledTimes(1);
         expect(mockGetByUserId).toHaveBeenCalledWith(userId, {
           sort: {
-            table: "word_reminders",
             column: "created_at",
             direction: 1,
+            table: "word_reminders",
           },
         });
         expect(response.headers["content-type"]).toMatch(/json/);
@@ -421,39 +420,9 @@ describe("validateQuery", () => {
         });
       });
 
-      it("returns errors with status code 400 when the sort query options do not have the 'table' field", async () => {
-        const params = new URLSearchParams({
-          column: "created_at",
-          direction: "1",
-        });
-
-        const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?${params}`)
-          .set("Accept", "application/json");
-
-        expect(mockGetByUserId).not.toHaveBeenCalled();
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-              path: "",
-              type: "field",
-              value: {
-                column: "created_at",
-                direction: "1",
-              },
-            },
-          ],
-        });
-      });
-
       it("returns errors with status code 400 when the the sort query options do not have the 'direction' field", async () => {
         const params = new URLSearchParams({
           column: "created_at",
-          table: "word_reminders",
         });
 
         const response = await request(app)
@@ -467,10 +436,10 @@ describe("validateQuery", () => {
           errors: [
             {
               location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+              msg: "'column' and 'direction' must be provided together for sorting.",
               path: "",
               type: "field",
-              value: { column: "created_at", table: "word_reminders" },
+              value: { column: "created_at" },
             },
           ],
         });
@@ -479,7 +448,6 @@ describe("validateQuery", () => {
       it("returns errors with status code 400 words when the sort query options do not have the 'column' field", async () => {
         const params = new URLSearchParams({
           direction: "1",
-          table: "word_reminders",
         });
 
         const response = await request(app)
@@ -493,62 +461,7 @@ describe("validateQuery", () => {
           errors: [
             {
               location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-              path: "",
-              type: "field",
-              value: {
-                direction: "1",
-                table: "word_reminders",
-              },
-            },
-          ],
-        });
-      });
-
-      it("returns errors with status code 400 when the sort query options do not have the 'table' and 'direction' fields", async () => {
-        const params = new URLSearchParams({
-          column: "created_at",
-        });
-
-        const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?${params}`)
-          .set("Accept", "application/json");
-
-        expect(mockGetByUserId).not.toHaveBeenCalled();
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-              path: "",
-              type: "field",
-              value: {
-                column: "created_at",
-              },
-            },
-          ],
-        });
-      });
-
-      it("returns errors with status code 400 when the sort query options do not have the 'table' and 'column' fields", async () => {
-        const params = new URLSearchParams({
-          direction: "1",
-        });
-
-        const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?${params}`)
-          .set("Accept", "application/json");
-
-        expect(mockGetByUserId).not.toHaveBeenCalled();
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
+              msg: "'column' and 'direction' must be provided together for sorting.",
               path: "",
               type: "field",
               value: {
@@ -559,66 +472,66 @@ describe("validateQuery", () => {
         });
       });
 
-      it("returns errors with status code 400 when the sort query options do not have the 'direction' and 'column' fields", async () => {
-        const params = new URLSearchParams({
-          table: "word_reminders",
-        });
+      it("calls the functions to get the user's word reminders when the params are empty", async () => {
+        const params = new URLSearchParams({});
 
         const response = await request(app)
           .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
-        expect(mockGetByUserId).not.toHaveBeenCalled();
+        expect(mockGetByUserId).toHaveBeenCalledTimes(1);
+        expect(mockGetByUserId).toHaveBeenCalledWith(userId, {});
         expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(200);
         expect(response.body).toEqual({
-          errors: [
+          wordReminders: [
             {
-              location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-              path: "",
-              type: "field",
-              value: {
-                table: "word_reminders",
-              },
-            },
-          ],
-        });
-      });
-
-      it("returns errors with status code 400 when the column is a non-empty string", async () => {
-        const params = new URLSearchParams({
-          table: "word_reminders",
-          column: "",
-          direction: "1",
-        });
-
-        const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?${params}`)
-          .set("Accept", "application/json");
-
-        expect(mockGetByUserId).not.toHaveBeenCalled();
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "query",
-              msg: "'column' must be a non-empty string.",
-              path: "column",
-              type: "field",
-              value: "",
+              id: 1,
+              user_id: userId,
+              reminder: wordReminder1.reminder,
+              is_active: wordReminder1.is_active,
+              has_reminder_onload: wordReminder1.has_reminder_onload,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
+              user_words: [
+                {
+                  learned: false,
+                  details: clemencyJson,
+                },
+              ],
             },
             {
-              location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-              path: "",
-              type: "field",
-              value: {
-                column: "",
-                direction: "1",
-                table: "word_reminders",
-              },
+              id: 2,
+              user_id: userId,
+              reminder: wordReminder1.reminder,
+              is_active: wordReminder1.is_active,
+              has_reminder_onload: wordReminder1.has_reminder_onload,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
+              user_words: [
+                {
+                  learned: false,
+                  details: helloJson,
+                },
+              ],
+            },
+            {
+              id: 3,
+              user_id: userId,
+              reminder: wordReminder1.reminder,
+              is_active: wordReminder1.is_active,
+              has_reminder_onload: wordReminder1.has_reminder_onload,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
+              user_words: [
+                {
+                  learned: false,
+                  details: milieuJson,
+                },
+              ],
             },
           ],
         });
@@ -628,7 +541,6 @@ describe("validateQuery", () => {
         const params = new URLSearchParams({
           column: "created_at",
           direction: "true",
-          table: "word_reminders",
         });
 
         const response = await request(app)
@@ -646,44 +558,6 @@ describe("validateQuery", () => {
               path: "direction",
               type: "field",
               value: "true",
-            },
-          ],
-        });
-      });
-
-      it("returns errors with status code 400 when the table is a non-empty string", async () => {
-        const params = new URLSearchParams({
-          column: "created_at",
-          direction: "1",
-          table: "",
-        });
-
-        const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?${params}`)
-          .set("Accept", "application/json");
-
-        expect(mockGetByUserId).not.toHaveBeenCalled();
-        expect(response.headers["content-type"]).toMatch(/json/);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          errors: [
-            {
-              location: "query",
-              msg: "'table' must be a non-empty string.",
-              path: "table",
-              type: "field",
-              value: "",
-            },
-            {
-              location: "query",
-              msg: "'column', 'direction', and 'table' must all be provided together for sorting.",
-              path: "",
-              type: "field",
-              value: {
-                column: "created_at",
-                direction: "1",
-                table: "",
-              },
             },
           ],
         });

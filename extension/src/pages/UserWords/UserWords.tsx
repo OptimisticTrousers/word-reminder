@@ -101,7 +101,6 @@ export const UserWords = CSSModules(
             search: "",
             learned: "",
             column: "",
-            table: "user_words",
             direction: "",
           })
         ),

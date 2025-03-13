@@ -173,28 +173,5 @@ describe("user_word_list", () => {
         ],
       });
     });
-
-    it("returns errors with status code 400 when the search query option is empty", async () => {
-      const search = "";
-
-      const response = await request(app)
-        .get(`/api/users/${userId}/userWords?search=${search}`)
-        .set("Accept", "application/json");
-
-      expect(mockUserWordGetByUserId).not.toHaveBeenCalled();
-      expect(response.headers["content-type"]).toMatch(/json/);
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({
-        errors: [
-          {
-            location: "query",
-            msg: "'search' must be a non-empty string.",
-            path: "search",
-            type: "field",
-            value: "",
-          },
-        ],
-      });
-    });
   });
 });

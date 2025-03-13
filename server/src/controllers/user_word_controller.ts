@@ -240,17 +240,15 @@ export const user_word_list = [
   errorValidationHandler,
   asyncHandler(async (req, res) => {
     const userId = Number(req.params.userId);
-    const { column, direction, table, learned, limit, page, search } =
-      req.query;
+    const { column, direction, learned, limit, page, search } = req.query;
 
     const options = {
       ...(column &&
-        direction &&
-        table && {
+        direction && {
           sort: {
             column: String(column),
             direction: Number(direction),
-            table: String(table),
+            table: "user_words",
           },
         }),
       ...(learned !== undefined && { learned: Boolean(learned) }),

@@ -13,26 +13,18 @@ export const validateSortQuery = [
     .optional({ values: "falsy" })
     .trim()
     .escape()
-    .isInt()
+    .isInt({ gt: 0 })
     .withMessage("'direction' must be a positive integer."),
-  query("table")
-    .optional({ values: "falsy" })
-    .trim()
-    .trim()
-    .escape()
-    .notEmpty()
-    .withMessage("'table' must be a non-empty string."),
   query().custom((_value, { req }) => {
     const query = req.query;
     const column = query?.column;
     const direction = query?.direction;
-    const table = query?.table;
-    const hasSortingParams = column || direction || table;
-    const allSortingParamsProvided = column && direction && table;
+    const hasSortingParams = column || direction;
+    const allSortingParamsProvided = column && direction;
 
     if (hasSortingParams && !allSortingParamsProvided) {
       throw new CustomBadRequestError(
-        "'column', 'direction', and 'table' must all be provided together for sorting."
+        "'column' and 'direction' must be provided together for sorting."
       );
     }
 

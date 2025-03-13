@@ -398,7 +398,6 @@ describe("UserWords component", () => {
               search: "",
               learned: "",
               column: "",
-              table: "user_words",
               direction: "",
             },
           });
