@@ -3,11 +3,11 @@ import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
 
-import { DeleteUserWordModal } from "./DeleteUserWordModal";
+import { DeleteUserModal } from "./DeleteUserModal";
 import * as hooks from "../../../hooks/useNotificationError";
-import { userWordService } from "../../../services/user_word_service";
+import { userService } from "../../../services/user_service";
 
-describe("DeleteUserWordModal component", () => {
+describe("DeleteUserModal component", () => {
   const json = {
     word: { id: "1" },
   };
@@ -24,7 +24,6 @@ describe("DeleteUserWordModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      userWordId: "1",
     };
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
@@ -41,7 +40,7 @@ describe("DeleteUserWordModal component", () => {
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
-                  <DeleteUserWordModal {...props} />;
+                  <DeleteUserModal {...props} />;
                 </QueryClientProvider>
               );
             },
@@ -53,7 +52,7 @@ describe("DeleteUserWordModal component", () => {
     const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
     const alert = screen.getByText(
-      "Are you sure you want to delete your user word?"
+      "Are you sure you want to delete your user?"
     );
     const message = screen.getByText("You can't undo this action.");
 
@@ -62,14 +61,13 @@ describe("DeleteUserWordModal component", () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it("calls the functions to delete a user word", async () => {
+  it("calls the functions to delete a user", async () => {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      userWordId: "1",
     };
     const Stub = createRoutesStub([
       {
@@ -83,7 +81,7 @@ describe("DeleteUserWordModal component", () => {
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
-                  <DeleteUserWordModal {...props} />;
+                  <DeleteUserModal {...props} />;
                 </QueryClientProvider>
               );
             },
@@ -92,8 +90,8 @@ describe("DeleteUserWordModal component", () => {
       },
     ]);
     const status = 200;
-    const mockDeleteUserWord = vi
-      .spyOn(userWordService, "deleteUserWord")
+    const mockDeleteUser = vi
+      .spyOn(userService, "deleteUser")
       .mockImplementation(async () => {
         return { json, status };
       });
@@ -106,12 +104,11 @@ describe("DeleteUserWordModal component", () => {
     await user.click(deleteButton);
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["userWords"],
+      queryKey: ["sessions"],
     });
-    expect(mockDeleteUserWord).toHaveBeenCalledTimes(1);
-    expect(mockDeleteUserWord).toHaveBeenCalledWith({
+    expect(mockDeleteUser).toHaveBeenCalledTimes(1);
+    expect(mockDeleteUser).toHaveBeenCalledWith({
       userId: testUser.id,
-      userWordId: props.userWordId,
     });
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
@@ -124,7 +121,6 @@ describe("DeleteUserWordModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      userWordId: "1",
     };
     const Stub = createRoutesStub([
       {
@@ -138,7 +134,7 @@ describe("DeleteUserWordModal component", () => {
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
-                  <DeleteUserWordModal {...props} />;
+                  <DeleteUserModal {...props} />;
                 </QueryClientProvider>
               );
             },
@@ -148,8 +144,8 @@ describe("DeleteUserWordModal component", () => {
     ]);
     const status = 200;
     const message = "Error Message.";
-    const mockDeleteUserWord = vi
-      .spyOn(userWordService, "deleteUserWord")
+    const mockDeleteUser = vi
+      .spyOn(userService, "deleteUser")
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
@@ -159,16 +155,15 @@ describe("DeleteUserWordModal component", () => {
     });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const user = userEvent.setup();
+
     render(<Stub initialEntries={["/"]} />);
 
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
-
-    expect(mockInvalidateQueries).not.toHaveBeenCalled();
-    expect(mockDeleteUserWord).toHaveBeenCalledTimes(1);
-    expect(mockDeleteUserWord).toHaveBeenCalledWith({
+    expect(mockDeleteUser).toHaveBeenCalledTimes(1);
+    expect(mockDeleteUser).toHaveBeenCalledWith({
       userId: testUser.id,
-      userWordId: props.userWordId,
     });
     expect(mockShowNotificationError).toHaveBeenCalledTimes(1);
     expect(mockShowNotificationError).toHaveBeenCalledWith({
@@ -186,7 +181,6 @@ describe("DeleteUserWordModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      userWordId: "1",
     };
     const Stub = createRoutesStub([
       {
@@ -200,7 +194,7 @@ describe("DeleteUserWordModal component", () => {
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
-                  <DeleteUserWordModal {...props} />;
+                  <DeleteUserModal {...props} />;
                 </QueryClientProvider>
               );
             },
@@ -210,8 +204,8 @@ describe("DeleteUserWordModal component", () => {
     ]);
     const status = 200;
     const delay = 50;
-    const mockDeleteUserWord = vi
-      .spyOn(userWordService, "deleteUserWord")
+    const mockDeleteUser = vi
+      .spyOn(userService, "deleteUser")
       .mockImplementation(async () => {
         return new Promise((resolve) => {
           setTimeout(() => {
@@ -227,10 +221,9 @@ describe("DeleteUserWordModal component", () => {
     await user.click(deleteButton);
 
     expect(deleteButton).toBeDisabled();
-    expect(mockDeleteUserWord).toHaveBeenCalledTimes(1);
-    expect(mockDeleteUserWord).toHaveBeenCalledWith({
+    expect(mockDeleteUser).toHaveBeenCalledTimes(1);
+    expect(mockDeleteUser).toHaveBeenCalledWith({
       userId: testUser.id,
-      userWordId: props.userWordId,
     });
   });
 
@@ -238,7 +231,6 @@ describe("DeleteUserWordModal component", () => {
     const mockToggleModal = vi.fn();
     const props = {
       toggleModal: mockToggleModal,
-      userWordId: "1",
     };
     const user = userEvent.setup();
     const queryClient = new QueryClient({
@@ -256,7 +248,7 @@ describe("DeleteUserWordModal component", () => {
             Component: function () {
               return (
                 <QueryClientProvider client={queryClient}>
-                  <DeleteUserWordModal {...props} />;
+                  <DeleteUserModal {...props} />;
                 </QueryClientProvider>
               );
             },
