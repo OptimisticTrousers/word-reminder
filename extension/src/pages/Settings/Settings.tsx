@@ -1,5 +1,5 @@
 import { Subject, Template, User } from "common";
-import { MouseEvent, useContext } from "react";
+import { MouseEvent, useContext, useState } from "react";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
 
@@ -11,6 +11,7 @@ import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
 } from "../../context/Notification";
+import { DeleteUserModal } from "../../components/modals/DeleteUserModal";
 
 export const Settings = CSSModules(
   function () {
@@ -18,6 +19,7 @@ export const Settings = CSSModules(
     const userId = String(user.id);
     const { showNotificationError } = useNotificationError();
     const { showNotification } = useContext(NotificationContext);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const { isPending, mutate } = useMutation({
       mutationFn: emailService.sendEmail,
       onSuccess: (_, variables) => {
@@ -38,7 +40,11 @@ export const Settings = CSSModules(
       onError: showNotificationError,
     });
 
-    function handleClick(event: MouseEvent<HTMLInputElement>) {
+    function toggleDeleteModal() {
+      setIsDeleteModalOpen((prevValue) => !prevValue);
+    }
+
+    function handleEmailClick(event: MouseEvent<HTMLInputElement>) {
       const name = event.currentTarget.name;
       let template = Template.CHANGE_EMAIL;
       let subject = Subject.CHANGE_EMAIL;
@@ -77,7 +83,7 @@ export const Settings = CSSModules(
               type="button"
               name="email"
               styleName="settings__input"
-              onClick={handleClick}
+              onClick={handleEmailClick}
               disabled={disabled}
             />
           </div>
@@ -90,11 +96,27 @@ export const Settings = CSSModules(
               type="button"
               name="password"
               styleName="settings__input"
-              onClick={handleClick}
+              onClick={handleEmailClick}
+              disabled={disabled}
+            />
+          </div>
+          <div styleName="settings__control">
+            <label styleName="settings__label" htmlFor="user">
+              Delete User
+            </label>
+            <input
+              id="user"
+              type="button"
+              name="user"
+              styleName="settings__input"
+              onClick={toggleDeleteModal}
               disabled={disabled}
             />
           </div>
         </div>
+        {isDeleteModalOpen && (
+          <DeleteUserModal toggleModal={toggleDeleteModal} />
+        )}
       </div>
     );
   },

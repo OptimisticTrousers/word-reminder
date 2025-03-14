@@ -45,6 +45,22 @@ exports[`Settings component > renders non disabled inputs and heading 1`] = `
           type="button"
         />
       </div>
+      <div
+        class="_settings__control_9f5ad4"
+      >
+        <label
+          class="_settings__label_9f5ad4"
+          for="user"
+        >
+          Delete User
+        </label>
+        <input
+          class="_settings__input_9f5ad4"
+          id="user"
+          name="user"
+          type="button"
+        />
+      </div>
     </div>
   </div>
 </DocumentFragment>

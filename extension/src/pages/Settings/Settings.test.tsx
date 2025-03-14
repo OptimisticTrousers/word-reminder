@@ -7,6 +7,14 @@ import { Subject, Template } from "common";
 import { NotificationProvider } from "../../context/Notification";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+vi.mock("../../components/modals/DeleteUserModal", function () {
+  return {
+    DeleteUserModal: function () {
+      return <div data-testid="delete-user-modal"></div>;
+    },
+  };
+});
+
 describe("Settings component", () => {
   function setup({ initialRoute }: { initialRoute: string }) {
     const queryClient = new QueryClient({
@@ -72,6 +80,18 @@ describe("Settings component", () => {
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("opens the modal to delete the user's account when clicked", async () => {
+    const { user } = setup({ initialRoute: "/settings" });
+
+    const deleteUserButton = screen.getByRole("button", {
+      name: "Delete User",
+    });
+    await user.click(deleteUserButton);
+
+    const modal = screen.getByTestId("delete-user-modal");
+    expect(modal).toBeInTheDocument();
   });
 
   it("sends change email verification email when clicking change email button", async () => {
