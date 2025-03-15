@@ -3,6 +3,7 @@ export { http } from "./http";
 export {
   Definition,
   Detail,
+  Column,
   Meaning,
   Phonetic,
   Subject,

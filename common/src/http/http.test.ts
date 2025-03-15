@@ -491,9 +491,6 @@ describe("http", () => {
         new URL(`${url}?partOfSpeech=noun`),
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
       expect(response).toEqual({

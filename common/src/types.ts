@@ -12,6 +12,11 @@ export enum Subject {
   CONFIRM_ACCOUNT = "Confirm Account",
 }
 
+export enum Column {
+  CREATED_AT = "created_at",
+  UPDATED_AT = "updated_at",
+}
+
 export interface User {
   id: number;
   email: string;
