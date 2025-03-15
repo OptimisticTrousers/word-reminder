@@ -23,7 +23,7 @@ export const AutoCreateWordReminder = CSSModules(
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-    const { data, failureReason, error, isError, isLoading } = useQuery({
+    const { data, failureReason, isLoading } = useQuery({
       queryKey: ["autoWordReminders"],
       queryFn: () => {
         return autoWordReminderService.getAutoWordReminder({ userId });
@@ -40,8 +40,6 @@ export const AutoCreateWordReminder = CSSModules(
     const toggleDeleteModal = () => {
       setIsDeleteModalOpen((prevValue) => !prevValue);
     };
-
-    console.log(failureReason, error, isError, isLoading);
 
     if (failureReason) {
       return <ErrorMessage message={failureReason.message} />;
