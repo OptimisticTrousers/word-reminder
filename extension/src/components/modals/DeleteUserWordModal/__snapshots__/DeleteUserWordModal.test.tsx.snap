@@ -1,5 +1,98 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`DeleteUserWordModal component > renders the form with alert and message 1`] = `
+<DocumentFragment>
+  <div
+    aria-labelledby="modal-title"
+    aria-modal="true"
+    class="_modal_811945"
+    role="dialog"
+  >
+    <div
+      class="scale-down _modal__container_811945"
+    >
+      <header
+        class="_modal__header_811945"
+      >
+        <button
+          aria-label="Close modal"
+          class="_modal__button_811945"
+        >
+          <svg
+            class="lucide lucide-square-x _modal__icon_811945"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              height="18"
+              rx="2"
+              ry="2"
+              width="18"
+              x="3"
+              y="3"
+            />
+            <path
+              d="m15 9-6 6"
+            />
+            <path
+              d="m9 9 6 6"
+            />
+          </svg>
+        </button>
+        <div
+          class="_modal__title-bar_811945"
+          id="modal-title"
+        >
+          <h2
+            class="_modal__title_811945"
+          >
+            Delete User Word
+          </h2>
+        </div>
+      </header>
+      <form
+        action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
+        class="_modal_5625f4"
+      >
+        <p
+          class="_modal__alert_5625f4"
+        >
+          Are you sure you want to delete your user word?
+        </p>
+        <p
+          class="_modal__message_5625f4"
+        >
+          You can't undo this action.
+        </p>
+        <div
+          class="_modal__buttons_5625f4"
+        >
+          <button
+            class="_modal__button_5625f4 _modal__button--cancel_5625f4"
+          >
+            Cancel
+          </button>
+          <button
+            class="_modal__button_5625f4 _modal__button--delete_5625f4"
+            type="submit"
+          >
+            Delete
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  ;
+</DocumentFragment>
+`;
+
 exports[`DeleteUserWordReminderModal component > renders the form with alert and message 1`] = `
 <DocumentFragment>
   <div
