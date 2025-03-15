@@ -6,6 +6,7 @@ import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_q
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { validatePageQuery } from "../middleware/validate_page_query";
 import { validateSortQuery } from "../middleware/validate_sort_query";
+import { Column } from "common";
 
 const userId = 1;
 const wordReminder1 = {
@@ -415,6 +416,39 @@ describe("validateQuery", () => {
                   details: milieuJson,
                 },
               ],
+            },
+          ],
+        });
+      });
+
+      it("returns 400 status code when the 'column' is not in the 'Column' enum", async () => {
+        const params = new URLSearchParams({
+          column: "invalid_column",
+        });
+
+        const response = await request(app)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
+          .set("Accept", "application/json");
+
+        expect(response.headers["content-type"]).toMatch(/json/);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+          errors: [
+            {
+              location: "query",
+              msg: `'column' must be a value in this enum: ${Object.values(
+                Column
+              )}.`,
+              path: "column",
+              type: "field",
+              value: "invalid_column",
+            },
+            {
+              location: "query",
+              msg: "'column' and 'direction' must be provided together for sorting.",
+              path: "",
+              type: "field",
+              value: { column: "invalid_column" },
             },
           ],
         });

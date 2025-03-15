@@ -179,7 +179,7 @@ describe("send_email", () => {
     });
   });
 
-  it("returns 400 status code when the 'subject' is not in the Subject' enum", async () => {
+  it("returns 400 status code when the 'subject' is not in the 'Subject' enum", async () => {
     const body = {
       email: user.email,
       template: Template.FORGOT_PASSWORD,

@@ -1,6 +1,8 @@
 import { query } from "express-validator";
 
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
+import { Column } from "common";
+import { errorValidationHandler } from "./error_validation_handler";
 
 export const validateSortQuery = [
   query("column")
@@ -8,7 +10,12 @@ export const validateSortQuery = [
     .trim()
     .escape()
     .notEmpty()
-    .withMessage("'column' must be a non-empty string."),
+    .withMessage("'column' must be a non-empty string.")
+    .bail()
+    .custom((value) => Object.values<string>(Column).includes(value))
+    .withMessage(
+      `'column' must be a value in this enum: ${Object.values(Column)}.`
+    ),
   query("direction")
     .optional({ values: "falsy" })
     .trim()
