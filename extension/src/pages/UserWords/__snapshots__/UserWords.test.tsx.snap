@@ -76,7 +76,6 @@ exports[`UserWords component > renders two forms that have fields for creating a
           </button>
         </form>
         <form
-          action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
           class="_words__form_727679"
         >
           <div
@@ -133,34 +132,53 @@ exports[`UserWords component > renders two forms that have fields for creating a
             </label>
           </div>
           <fieldset
-            class="_sort_7b9046"
+            class="_words__sort_727679 _sort_727679"
           >
             <label
-              class="_sort__label_7b9046"
+              class="_sort__label_727679"
             >
               Sort by:
               <select
-                class="_sort__select_7b9046"
-                name="created_at"
+                class="_sort__select_727679"
               >
                 <option
-                  class="_sort__option_7b9046"
+                  class="_sort__option_727679"
                   value=""
                 >
                   Featured
                 </option>
-                <option
-                  class="_sort__option_7b9046"
-                  value="1"
+                <optgroup
+                  label="Created At"
                 >
-                  Oldest
-                </option>
-                <option
-                  class="_sort__option_7b9046"
-                  value="-1"
+                  <option
+                    class="_sort__option_727679"
+                    value="1"
+                  >
+                    Oldest Created
+                  </option>
+                  <option
+                    class="_sort__option_727679"
+                    value="-1"
+                  >
+                    Newest Created
+                  </option>
+                </optgroup>
+                <optgroup
+                  label="Updated At"
                 >
-                  Newest
-                </option>
+                  <option
+                    class="_sort__option_727679"
+                    value="1"
+                  >
+                    Oldest Updated
+                  </option>
+                  <option
+                    class="_sort__option_727679"
+                    value="-1"
+                  >
+                    Newest Updated
+                  </option>
+                </optgroup>
               </select>
             </label>
           </fieldset>

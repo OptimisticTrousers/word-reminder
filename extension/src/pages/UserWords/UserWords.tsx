@@ -1,6 +1,19 @@
-import { User, UserWord as IUserWord, Word as IWord, Detail } from "common";
+import {
+  User,
+  UserWord as IUserWord,
+  Word as IWord,
+  Detail,
+  Column,
+} from "common";
 import { Download, Import } from "lucide-react";
-import { ChangeEvent, MouseEvent, useContext, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import CSSModules from "react-css-modules";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import {
@@ -21,7 +34,6 @@ import { userWordService } from "../../services/user_word_service";
 import { ErrorResponse } from "../../types";
 import { download } from "../../utils/download";
 import styles from "./UserWords.module.css";
-import { SortSelect } from "../../components/ui/SortSelect";
 import { useContextMenu } from "../../hooks/useContextMenu";
 
 export const UserWords = CSSModules(
@@ -140,20 +152,45 @@ export const UserWords = CSSModules(
       setFile(event.target.files![0]);
     }
 
-    function handleQuery(formData: FormData) {
+    function handleQuery(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
       const newSearchParams = new URLSearchParams({
         search: formData.get("search") as string,
         learned: formData.get("learned") as string,
-        ...(formData.get("created_at") !== "" && {
-          column: "created_at",
-        }),
-        direction: formData.get("created_at") as string,
+        column:
+          ((formData.get(Column.CREATED_AT) as string) && Column.CREATED_AT) ||
+          ((formData.get(Column.UPDATED_AT) as string) && Column.UPDATED_AT) ||
+          "",
+        direction:
+          (formData.get(Column.CREATED_AT) as string) ||
+          (formData.get(Column.UPDATED_AT) as string) ||
+          "",
       });
       const combined = new URLSearchParams([
         ...searchParams,
         ...newSearchParams,
       ]);
       setSearchParams(combined);
+    }
+
+    function handleSelectChange(event: ChangeEvent<HTMLSelectElement>) {
+      const selectElement = event.target;
+      const selectedOption = selectElement.selectedOptions[0];
+      const optgroup = selectedOption.parentElement as HTMLOptGroupElement;
+      const label = optgroup.label;
+
+      let name = "";
+      switch (label) {
+        case "Created At":
+          name = "created_at";
+          break;
+        case "Updated At":
+          name = "updated_at";
+          break;
+      }
+
+      selectElement.name = name;
     }
 
     return (
@@ -199,7 +236,7 @@ export const UserWords = CSSModules(
                 Add
               </button>
             </form>
-            <form styleName="words__form" action={handleQuery}>
+            <form styleName="words__form" onSubmit={handleQuery}>
               <div styleName="words__control">
                 <label styleName="words__label">
                   Export Words
@@ -224,7 +261,36 @@ export const UserWords = CSSModules(
                   />
                 </label>
               </div>
-              <SortSelect disabled={disabled} required={false} />
+              <fieldset styleName="words__sort sort">
+                <label styleName="sort__label">
+                  Sort by:
+                  <select
+                    styleName="sort__select"
+                    disabled={disabled}
+                    onChange={handleSelectChange}
+                  >
+                    <option styleName="sort__option" value="">
+                      Featured
+                    </option>
+                    <optgroup label="Created At">
+                      <option styleName="sort__option" value="1">
+                        Oldest Created
+                      </option>
+                      <option styleName="sort__option" value="-1">
+                        Newest Created
+                      </option>
+                    </optgroup>
+                    <optgroup label="Updated At">
+                      <option styleName="sort__option" value="1">
+                        Oldest Updated
+                      </option>
+                      <option styleName="sort__option" value="-1">
+                        Newest Updated
+                      </option>
+                    </optgroup>
+                  </select>
+                </label>
+              </fieldset>
               <div styleName="words__control">
                 <label styleName="words__label">
                   Filter by:

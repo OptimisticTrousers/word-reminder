@@ -16,35 +16,53 @@ exports[`WordReminders component > renders the form that allows user to filter t
       class="_word-reminder__form_928901"
     >
       <fieldset
-        class="_sort_7b9046"
+        class="_words__sort_928901 _sort_928901"
       >
         <label
-          class="_sort__label_7b9046"
+          class="_sort__label_928901"
         >
           Sort by:
           <select
-            class="_sort__select_7b9046"
-            name="created_at"
-            required=""
+            class="_sort__select_928901"
           >
             <option
-              class="_sort__option_7b9046"
+              class="_sort__option_928901"
               value=""
             >
               Featured
             </option>
-            <option
-              class="_sort__option_7b9046"
-              value="1"
+            <optgroup
+              label="Created At"
             >
-              Oldest
-            </option>
-            <option
-              class="_sort__option_7b9046"
-              value="-1"
+              <option
+                class="_sort__option_928901"
+                value="1"
+              >
+                Oldest Created
+              </option>
+              <option
+                class="_sort__option_928901"
+                value="-1"
+              >
+                Newest Created
+              </option>
+            </optgroup>
+            <optgroup
+              label="Updated At"
             >
-              Newest
-            </option>
+              <option
+                class="_sort__option_928901"
+                value="1"
+              >
+                Oldest Updated
+              </option>
+              <option
+                class="_sort__option_928901"
+                value="-1"
+              >
+                Newest Updated
+              </option>
+            </optgroup>
           </select>
         </label>
       </fieldset>

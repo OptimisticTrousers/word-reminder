@@ -6,6 +6,7 @@ import { WordReminders } from "./WordReminders";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoutesStub, Outlet } from "react-router-dom";
+import { Column } from "common";
 
 vi.mock("../../components/word_reminders/AutoCreateWordReminder", () => {
   return {
@@ -263,7 +264,8 @@ describe("WordReminders component", () => {
       });
     });
 
-    it("allows the user to sort by newest", async () => {
+    it(`calls the functions to sort by newest based on '${Column.CREATED_AT}' field`, async () => {
+      const status = 200;
       const mockGetWordReminderList = vi
         .spyOn(wordReminderService, "getWordReminderList")
         .mockImplementation(async () => {
@@ -281,10 +283,12 @@ describe("WordReminders component", () => {
         });
       const { user } = setup();
 
-      const select = screen.getByRole("combobox");
-      const button = screen.getByRole("button", { name: "Filter" });
-      await user.selectOptions(select, ["Newest"]);
-      await user.click(button);
+      const sortSelect = await screen.findByRole("combobox", {
+        name: "Sort by:",
+      });
+      await user.selectOptions(sortSelect, ["Newest Created"]);
+      const filterButton = screen.getByRole("button", { name: "Filter" });
+      await user.click(filterButton);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
       expect(mockGetWordReminderList).toHaveBeenCalledWith({
@@ -304,14 +308,15 @@ describe("WordReminders component", () => {
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
-            column: "created_at",
+            column: Column.CREATED_AT,
             direction: "-1",
           })
         ),
       });
     });
 
-    it("allows the user to sort by oldest", async () => {
+    it(`calls the functions to sort by oldest based on '${Column.CREATED_AT}' field`, async () => {
+      const status = 200;
       const mockGetWordReminderList = vi
         .spyOn(wordReminderService, "getWordReminderList")
         .mockImplementation(async () => {
@@ -329,10 +334,12 @@ describe("WordReminders component", () => {
         });
       const { user } = setup();
 
-      const select = screen.getByRole("combobox");
-      const button = screen.getByRole("button", { name: "Filter" });
-      await user.selectOptions(select, ["Oldest"]);
-      await user.click(button);
+      const sortSelect = await screen.findByRole("combobox", {
+        name: "Sort by:",
+      });
+      await user.selectOptions(sortSelect, ["Oldest Created"]);
+      const filterButton = screen.getByRole("button", { name: "Filter" });
+      await user.click(filterButton);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
       expect(mockGetWordReminderList).toHaveBeenCalledWith({
@@ -352,7 +359,109 @@ describe("WordReminders component", () => {
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
-            column: "created_at",
+            column: Column.CREATED_AT,
+            direction: "1",
+          })
+        ),
+      });
+    });
+
+    it(`calls the functions to sort by newest based on '${Column.UPDATED_AT}' field`, async () => {
+      const status = 200;
+      const mockGetWordReminderList = vi
+        .spyOn(wordReminderService, "getWordReminderList")
+        .mockImplementation(async () => {
+          return {
+            json: {
+              wordReminders,
+              next: {
+                page: 3,
+                limit: PAGINATION_LIMIT,
+              },
+              previous: { page: 1, limit: PAGINATION_LIMIT },
+            },
+            status,
+          };
+        });
+      const { user } = setup();
+
+      const sortSelect = await screen.findByRole("combobox", {
+        name: "Sort by:",
+      });
+      await user.selectOptions(sortSelect, ["Newest Updated"]);
+      const filterButton = screen.getByRole("button", { name: "Filter" });
+      await user.click(filterButton);
+
+      expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
+          new URLSearchParams({
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            column: "",
+            direction: "",
+          })
+        ),
+      });
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
+          new URLSearchParams({
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            column: Column.UPDATED_AT,
+            direction: "-1",
+          })
+        ),
+      });
+    });
+
+    it(`calls the functions to sort by oldest based on '${Column.UPDATED_AT}' field`, async () => {
+      const status = 200;
+      const mockGetWordReminderList = vi
+        .spyOn(wordReminderService, "getWordReminderList")
+        .mockImplementation(async () => {
+          return {
+            json: {
+              wordReminders,
+              next: {
+                page: 3,
+                limit: PAGINATION_LIMIT,
+              },
+              previous: { page: 1, limit: PAGINATION_LIMIT },
+            },
+            status,
+          };
+        });
+      const { user } = setup();
+
+      const sortSelect = await screen.findByRole("combobox", {
+        name: "Sort by:",
+      });
+      await user.selectOptions(sortSelect, ["Oldest Updated"]);
+      const filterButton = screen.getByRole("button", { name: "Filter" });
+      await user.click(filterButton);
+
+      expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
+          new URLSearchParams({
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            column: "",
+            direction: "",
+          })
+        ),
+      });
+      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+        userId: String(testUser.id),
+        params: Object.fromEntries(
+          new URLSearchParams({
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            column: Column.UPDATED_AT,
             direction: "1",
           })
         ),

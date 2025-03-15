@@ -1,4 +1,4 @@
-import { WORD_MAX } from "common";
+import { Column, WORD_MAX } from "common";
 import { createRoutesStub, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
@@ -766,7 +766,19 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: "",
+            table: "user_words",
+            direction: "",
+          },
+        });
         expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
           userId: String(testUser.id),
           params: {
@@ -802,7 +814,7 @@ describe("UserWords component", () => {
         expect(mockWordServiceGetUserWords).not.toHaveBeenCalled();
       });
 
-      it("calls the functions to sort by newest based on 'created_at' field", async () => {
+      it(`calls the functions to sort by newest based on '${Column.CREATED_AT}' field`, async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
           .spyOn(userWordService, "getUserWordList")
@@ -814,7 +826,7 @@ describe("UserWords component", () => {
         const sortSelect = await screen.findByRole("combobox", {
           name: "Sort by:",
         });
-        await user.selectOptions(sortSelect, ["Newest"]);
+        await user.selectOptions(sortSelect, ["Newest Created"]);
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
@@ -826,14 +838,14 @@ describe("UserWords component", () => {
             limit: PAGINATION_LIMIT,
             search: "",
             learned: "",
-            column: "created_at",
+            column: Column.CREATED_AT,
             table: "user_words",
             direction: "-1",
           },
         });
       });
 
-      it("calls the functions to sort by oldest based on 'created_at' field", async () => {
+      it(`calls the functions to sort by oldest based on '${Column.CREATED_AT}' field`, async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
           .spyOn(userWordService, "getUserWordList")
@@ -845,7 +857,7 @@ describe("UserWords component", () => {
         const sortSelect = await screen.findByRole("combobox", {
           name: "Sort by:",
         });
-        await user.selectOptions(sortSelect, ["Oldest"]);
+        await user.selectOptions(sortSelect, ["Oldest Created"]);
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
@@ -857,7 +869,69 @@ describe("UserWords component", () => {
             limit: PAGINATION_LIMIT,
             search: "",
             learned: "",
-            column: "created_at",
+            column: Column.CREATED_AT,
+            table: "user_words",
+            direction: "1",
+          },
+        });
+      });
+
+      it(`calls the functions to sort by newest based on '${Column.UPDATED_AT}' field`, async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(userWordService, "getUserWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const sortSelect = await screen.findByRole("combobox", {
+          name: "Sort by:",
+        });
+        await user.selectOptions(sortSelect, ["Newest Updated"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.UPDATED_AT,
+            table: "user_words",
+            direction: "-1",
+          },
+        });
+      });
+
+      it(`calls the functions to sort by oldest based on '${Column.UPDATED_AT}' field`, async () => {
+        const status = 200;
+        const mockWordServiceGetUserWords = vi
+          .spyOn(userWordService, "getUserWordList")
+          .mockImplementation(async () => {
+            return { json: { userWords: json, totalRows: 1 }, status };
+          });
+        const { user } = setup();
+
+        const sortSelect = await screen.findByRole("combobox", {
+          name: "Sort by:",
+        });
+        await user.selectOptions(sortSelect, ["Oldest Updated"]);
+        const filterButton = screen.getByRole("button", { name: "Filter" });
+        await user.click(filterButton);
+
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.UPDATED_AT,
             table: "user_words",
             direction: "1",
           },
