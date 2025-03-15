@@ -12,6 +12,7 @@ import {
   NotificationContext,
 } from "../../context/Notification";
 import { DeleteUserModal } from "../../components/modals/DeleteUserModal";
+import { ThemeContext } from "../../context/Theme";
 
 export const Settings = CSSModules(
   function () {
@@ -19,6 +20,7 @@ export const Settings = CSSModules(
     const userId = String(user.id);
     const { showNotificationError } = useNotificationError();
     const { showNotification } = useContext(NotificationContext);
+    const { theme, toggleTheme } = useContext(ThemeContext);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const { isPending, mutate } = useMutation({
       mutationFn: emailService.sendEmail,
@@ -71,8 +73,13 @@ export const Settings = CSSModules(
     const disabled = isPending;
 
     return (
-      <div styleName="settings">
-        <h2 styleName="settings__heading">Change Account Details</h2>
+      <section
+        styleName={`settings settings--${theme}`}
+        aria-labelledby="heading"
+      >
+        <h2 styleName="settings__heading" id="heading">
+          Change Account Details
+        </h2>
         <div styleName="settings__buttons">
           <div styleName="settings__control">
             <label styleName="settings__label" htmlFor="email">
@@ -113,11 +120,20 @@ export const Settings = CSSModules(
               disabled={disabled}
             />
           </div>
+          <div styleName="settings__control">
+            <button
+              styleName="settings__button"
+              onClick={toggleTheme}
+              role="switch"
+            >
+              Toggle Theme
+            </button>
+          </div>
         </div>
         {isDeleteModalOpen && (
           <DeleteUserModal toggleModal={toggleDeleteModal} />
         )}
-      </div>
+      </section>
     );
   },
   styles,

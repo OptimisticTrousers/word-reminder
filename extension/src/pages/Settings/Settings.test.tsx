@@ -6,6 +6,7 @@ import { emailService } from "../../services/email_service";
 import { Subject, Template } from "common";
 import { NotificationProvider } from "../../context/Notification";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Theme, ThemeContext } from "../../context/Theme/Context";
 
 vi.mock("../../components/modals/DeleteUserModal", function () {
   return {
@@ -26,9 +27,13 @@ describe("Settings component", () => {
         Component: function () {
           return (
             <QueryClientProvider client={queryClient}>
-              <NotificationProvider>
-                <Outlet context={{ user: testUser }} />
-              </NotificationProvider>
+              <ThemeContext.Provider
+                value={{ theme: Theme.Dark, toggleTheme: vi.fn() }}
+              >
+                <NotificationProvider>
+                  <Outlet context={{ user: testUser }} />
+                </NotificationProvider>
+              </ThemeContext.Provider>
             </QueryClientProvider>
           );
         },
@@ -75,11 +80,53 @@ describe("Settings component", () => {
     const passwordInput = screen.getByLabelText("Change Password", {
       selector: "input",
     });
+    const deleteUserButton = screen.getByLabelText("Delete User", {
+      selector: "input",
+    });
+    const toggleThemeButton = screen.getByRole("switch", {
+      name: "Toggle Theme",
+    });
 
+    const section = screen.getByRole("region", {
+      name: "Change Account Details",
+    });
+    expect(section).toBeInTheDocument();
+    expect(section.getAttribute("class")).toContain(`settings--${Theme.Dark}`);
+    expect(deleteUserButton).toBeInTheDocument();
+    expect(toggleThemeButton).toBeInTheDocument();
     expect(heading).toBeInTheDocument();
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("toggles theme to light mode", async () => {
+    const { user } = setup({ initialRoute: "/settings" });
+
+    const toggleThemeButton = screen.getByRole("switch", {
+      name: "Toggle Theme",
+    });
+    await user.click(toggleThemeButton);
+
+    const section = screen.getByRole("region", {
+      name: "Change Account Details",
+    });
+    expect(section.getAttribute("class")).toContain(`settings--${Theme.Dark}`);
+  });
+
+  it("toggles theme to dark mode", async () => {
+    const { user } = setup({ initialRoute: "/settings" });
+
+    const toggleThemeButton = screen.getByRole("switch", {
+      name: "Toggle Theme",
+    });
+    await user.click(toggleThemeButton);
+    await user.click(toggleThemeButton);
+
+    const section = screen.getByRole("region", {
+      name: "Change Account Details",
+    });
+    expect(section.getAttribute("class")).toContain(`settings--${Theme.Dark}`);
   });
 
   it("opens the modal to delete the user's account when clicked", async () => {
