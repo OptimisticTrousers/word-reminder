@@ -67,7 +67,6 @@ export const UserWords = CSSModules(
           params: searchParamsObject,
         });
       },
-      staleTime: STALE_TIME,
     });
 
     const json = data?.json;
@@ -349,7 +348,6 @@ export const UserWords = CSSModules(
 const MAX_FILE_SIZE = 1000 * 1024; // 1 MB
 const MAX_WORD_LENGTH = 45;
 const PAGINATION_LIMIT = "10";
-const STALE_TIME = 30000; // 30 seconds in milliseconds
 const WORD_NOTIFICATION_MSGS = {
   addWord: () => {
     return "You have successfully added a word to your dictionary.";

@@ -31,7 +31,6 @@ export const WordReminders = CSSModules(
           params: searchParamsObject,
         });
       },
-      staleTime: STALE_TIME,
     });
 
     function handleQuery(formData: FormData) {
@@ -147,4 +146,3 @@ export const WordReminders = CSSModules(
 );
 
 const PAGINATION_LIMIT = "10";
-const STALE_TIME = 30000; // 30 seconds in milliseconds

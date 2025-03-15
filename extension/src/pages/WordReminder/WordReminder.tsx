@@ -22,7 +22,6 @@ export const WordReminder = CSSModules(
           wordReminderId: String(wordReminderId),
         });
       },
-      staleTime: STALE_TIME,
     });
 
     if (failureReason) {
@@ -45,5 +44,3 @@ export const WordReminder = CSSModules(
   styles,
   { allowMultiple: true, handleNotFoundStyleName: "log" }
 );
-
-const STALE_TIME = 30000; // 30 seconds in milliseconds
