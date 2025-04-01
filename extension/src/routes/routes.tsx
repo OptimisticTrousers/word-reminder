@@ -29,6 +29,7 @@ export function routes(user: User | undefined) {
     {
       path: "/",
       element: user ? <App user={user} /> : <Navigate to="/login" />,
+
       children: [
         {
           path: "confirmation",
@@ -39,6 +40,7 @@ export function routes(user: User | undefined) {
               <EmailConfirmation />
             ),
         },
+        { index: true, element: <UserWords /> },
         { path: "userWords", element: <UserWords /> },
         { path: "userWords/:userWordId", element: <UserWord /> },
         { path: "wordReminders", element: <WordReminders /> },

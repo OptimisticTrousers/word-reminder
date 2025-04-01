@@ -148,6 +148,23 @@ describe("Router component", () => {
         expect(app).toBeInTheDocument();
       });
 
+      it("renders user words page when on home page", async () => {
+        const mockSessionServiceGetCurrentUser = vi
+          .spyOn(sessionService, "getCurrentUser")
+          .mockImplementation(async () => {
+            return { json: { user }, status };
+          });
+
+        setup({ initialRoute: "/" });
+
+        const userWords = await screen.findByTestId("user-words");
+        const app = screen.getByTestId("app");
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+        expect(userWords).toBeInTheDocument();
+        expect(app).toBeInTheDocument();
+      });
+
       it("renders user words page", async () => {
         const mockSessionServiceGetCurrentUser = vi
           .spyOn(sessionService, "getCurrentUser")
