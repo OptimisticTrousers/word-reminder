@@ -57,9 +57,9 @@
   overflow: hidden;
   max-height: 0;
   transition: max-height 0.2s ease-out;
-  display: none;
 }
 
 .user-word__panel--active {
+  max-height: none;
   background-color: var(--color-active-bg);
 }
