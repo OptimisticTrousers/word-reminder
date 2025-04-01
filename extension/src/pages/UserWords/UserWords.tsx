@@ -352,7 +352,7 @@ const WORD_NOTIFICATION_MSGS = {
     return "You have successfully added a word to your dictionary.";
   },
   addWords: () => {
-    return "You have successfully multiple words to your dictionary.";
+    return "You have successfully added multiple words to your dictionary.";
   },
   fileSize: () => {
     return "File is too big. Max size is 1 MB.";

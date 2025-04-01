@@ -447,7 +447,7 @@ describe("UserWords component", () => {
           await user.click(addButton);
 
           const notification = screen.getByRole("dialog", {
-            name: "You have successfully multiple words to your dictionary.",
+            name: "You have successfully added multiple words to your dictionary.",
           });
           expect(notification).toBeInTheDocument();
           expect(mockWordServiceCreate).toHaveBeenCalledTimes(1);
