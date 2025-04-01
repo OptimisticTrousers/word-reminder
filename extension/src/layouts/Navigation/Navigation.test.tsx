@@ -48,6 +48,12 @@ describe("Navigation component", () => {
           },
           { path: "/wordReminders", Component: WordReminders },
           { path: "/settings", Component: Settings },
+          {
+            path: "/login",
+            Component: function () {
+              return <div data-testid="login"></div>;
+            },
+          },
         ],
       },
     ]);
@@ -118,7 +124,7 @@ describe("Navigation component", () => {
   });
 
   it("logs out the user when the 'Log Out' button is clicked", async () => {
-    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    const mockClear = vi.spyOn(queryClient, "clear");
     const mockLogout = vi
       .spyOn(sessionService, "logoutUser")
       .mockImplementation(async () => {
@@ -129,13 +135,12 @@ describe("Navigation component", () => {
     const logoutButton = screen.getByRole("button", { name: "Log Out" });
     await user.click(logoutButton);
 
+    const login = screen.getByTestId("login");
+    expect(login).toBeInTheDocument();
     expect(mockLogout).toHaveBeenCalledTimes(1);
     expect(mockLogout).toHaveBeenCalledWith(undefined);
-    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
-    expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["sessions"],
-      exact: true,
-    });
+    expect(mockClear).toHaveBeenCalledTimes(1);
+    expect(mockClear).toHaveBeenCalledWith();
   });
 
   it("opens a new tab with the extension", async () => {
@@ -195,7 +200,7 @@ describe("Navigation component", () => {
     expect(mockLogout).toHaveBeenCalledWith(undefined);
   });
 
-  it("shows a notification error when attempting to log out", async () => {
+  it("when there is an error, it shows a notification error when attempting to log out", async () => {
     const message = "Bad Request.";
     const status = 400;
     const mockLogout = vi
