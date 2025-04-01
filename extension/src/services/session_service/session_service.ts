@@ -26,6 +26,9 @@ export const sessionService = (function (service) {
       url: `${VITE_API_DOMAIN}/sessions`,
       options: {
         body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
     });
   }

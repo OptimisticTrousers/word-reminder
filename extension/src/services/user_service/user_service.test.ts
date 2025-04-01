@@ -39,6 +39,9 @@ describe("userService", () => {
             email: user.email,
             password: user.newPassword,
           }),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       });
       expect(response).toEqual({

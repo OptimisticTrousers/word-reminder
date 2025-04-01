@@ -32,7 +32,12 @@ describe("sessionService", () => {
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/sessions`,
-        options: { body: JSON.stringify(user) },
+        options: {
+          body: JSON.stringify(user),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       });
       expect(response).toEqual({ json: { user }, status });
     });
