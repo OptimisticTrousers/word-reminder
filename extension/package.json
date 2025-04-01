@@ -1,5 +1,6 @@
 {
   "name": "extension",
+  "description": "Frontend for a word reminder chrome extension that allows users to store words in their dictionary and reminds users of the words that they store so that users can remember words that they come across in their readings.",
   "private": true,
   "version": "1.0.0",
   "type": "module",
