@@ -230,6 +230,7 @@ export const user_word_list = [
   query("learned")
     .optional({ values: "falsy" })
     .isBoolean()
+    .toBoolean()
     .withMessage("'learned' must be a boolean."),
   query("search")
     .optional({ values: "falsy" })
