@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   create_user_word,
   delete_user_word,
+  get_user_word,
   user_word_list,
 } from "../controllers/user_word_controller";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
@@ -25,9 +26,7 @@ userWordRouter
   )
   .post(create_user_word);
 
-userWordRouter.delete(
-  "/:userWordId",
-  validateUserWordId,
-  errorValidationHandler,
-  delete_user_word
-);
+userWordRouter
+  .route("/:userWordId")
+  .delete(validateUserWordId, errorValidationHandler, delete_user_word)
+  .get(validateUserWordId, errorValidationHandler, get_user_word);
