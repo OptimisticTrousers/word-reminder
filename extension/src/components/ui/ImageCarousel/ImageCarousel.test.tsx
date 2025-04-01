@@ -31,15 +31,29 @@ describe("ImageCarousel component", () => {
     },
   ];
 
-  it("shows the first image by default", () => {
-    const { asFragment } = render(
-      <ImageCarousel images={images} hasAutoScroll={false} />
-    );
+  it("shows the first image by default", async () => {
+    const { asFragment } = render(<ImageCarousel images={images} />);
+    const user = userEvent.setup();
+    const toggleAutoScrollButton = screen.getByRole("button", {
+      name: "Disable Auto Scroll",
+    });
+    // toggles auto scroll off
+    await user.click(toggleAutoScrollButton);
 
     const count = screen.getByText("1/3");
     const image = screen.getByRole("presentation");
     const caption = screen.getByText(images[0].comment);
     const link = screen.getByRole("link");
+    const previousButton = screen.getByRole("button", {
+      name: "Previous image",
+    });
+    const nextButton = screen.getByRole("button", { name: "Next image" });
+    const toggleAutoScroll = screen.getByRole("button", {
+      name: "Enable Auto Scroll",
+    });
+    expect(toggleAutoScroll).toBeInTheDocument();
+    expect(previousButton).toBeInTheDocument();
+    expect(nextButton).toBeInTheDocument();
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute("href", images[0].descriptionurl);
     expect(count).toBeInTheDocument();
@@ -52,15 +66,23 @@ describe("ImageCarousel component", () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it("shows no images placeholder when there are no images", () => {
-    const { asFragment } = render(
-      <ImageCarousel images={[]} hasAutoScroll={false} />
-    );
+  it("shows images placeholder and does not show any buttons when there are no images", async () => {
+    const { asFragment } = render(<ImageCarousel images={[]} />);
 
     const count = screen.getByText("0/0");
     const image = screen.getByRole("presentation");
     const caption = screen.getByText("No Images Available");
     const link = screen.queryByRole("link");
+    const previousButton = screen.queryByRole("button", {
+      name: "Previous image",
+    });
+    const nextButton = screen.queryByRole("button", { name: "Next image" });
+    const toggleAutoScroll = screen.queryByRole("button", {
+      name: "Disable Auto Scroll",
+    });
+    expect(toggleAutoScroll).not.toBeInTheDocument();
+    expect(previousButton).not.toBeInTheDocument();
+    expect(nextButton).not.toBeInTheDocument();
     expect(link).not.toBeInTheDocument();
     expect(count).toBeInTheDocument();
     expect(image).toBeInTheDocument();
@@ -72,11 +94,14 @@ describe("ImageCarousel component", () => {
     expect(asFragment).toMatchSnapshot();
   });
 
-  describe("hasAutoScroll", () => {
-    const delay = 500;
+  describe("auto scrolling", () => {
+    const delay = 5000;
 
     beforeEach(() => {
       vi.useFakeTimers();
+      vi.stubGlobal("jest", {
+        advanceTimersByTime: vi.advanceTimersByTime.bind(vi),
+      });
     });
 
     afterEach(() => {
@@ -84,10 +109,23 @@ describe("ImageCarousel component", () => {
       vi.useRealTimers();
     });
 
-    it("it scrolls to the next image in 5 seconds", async () => {
-      const { unmount } = render(
-        <ImageCarousel images={images} hasAutoScroll={true} />
-      );
+    afterAll(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it("enables auto scrolling by default", async () => {
+      const { unmount } = render(<ImageCarousel images={images} />);
+
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      expect(toggleAutoScrollButton).toBeInTheDocument();
+      // Prevents act() error caused by the useInterval hook continuing to run after the test finishes
+      unmount();
+    });
+
+    it("scrolls to the next image in 5 seconds", async () => {
+      const { unmount } = render(<ImageCarousel images={images} />);
       act(() => {
         vi.advanceTimersByTime(delay);
       });
@@ -105,10 +143,8 @@ describe("ImageCarousel component", () => {
       unmount();
     });
 
-    it("it scrolls to to the last image in 10 seconds", () => {
-      const { unmount } = render(
-        <ImageCarousel images={images} hasAutoScroll={true} />
-      );
+    it("scrolls to to the last image in 10 seconds", () => {
+      const { unmount } = render(<ImageCarousel images={images} />);
       act(() => {
         vi.advanceTimersByTime(delay);
         vi.advanceTimersByTime(delay);
@@ -127,10 +163,8 @@ describe("ImageCarousel component", () => {
       unmount();
     });
 
-    it("it scrolls to the first image in 15 seconds", () => {
-      const { unmount } = render(
-        <ImageCarousel images={images} hasAutoScroll={true} />
-      );
+    it("scrolls to the first image in 15 seconds", () => {
+      const { unmount } = render(<ImageCarousel images={images} />);
       act(() => {
         vi.advanceTimersByTime(delay);
         vi.advanceTimersByTime(delay);
@@ -149,12 +183,44 @@ describe("ImageCarousel component", () => {
       // Prevents act() error caused by the useInterval hook continuing to run after the test finishes
       unmount();
     });
+
+    it("disables auto scrolling when the user toggles it off", async () => {
+      render(<ImageCarousel images={images} />);
+      const user = userEvent.setup({
+        advanceTimers: vi.advanceTimersByTime.bind(vi),
+      });
+
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      await user.click(toggleAutoScrollButton);
+
+      expect(toggleAutoScrollButton).toHaveTextContent("Enable Auto Scroll");
+    });
+
+    it("enables auto scrolling when the user toggles it back on after toggling it off", async () => {
+      render(<ImageCarousel images={images} />);
+      const user = userEvent.setup({ delay: null });
+
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      await user.click(toggleAutoScrollButton);
+      await user.click(toggleAutoScrollButton);
+
+      expect(toggleAutoScrollButton).toHaveTextContent("Disable Auto Scroll");
+    });
   });
 
   describe("clicking previous", () => {
     it("goes to the previous image", async () => {
-      render(<ImageCarousel images={images} hasAutoScroll={false} />);
+      render(<ImageCarousel images={images} />);
       const user = userEvent.setup();
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      // toggles auto scroll off
+      await user.click(toggleAutoScrollButton);
       const thirdImageDot = screen.getByRole("button", {
         name: "Show image 3",
       });
@@ -178,8 +244,13 @@ describe("ImageCarousel component", () => {
     });
 
     it("goes to the last image when on the first image", async () => {
-      render(<ImageCarousel images={images} hasAutoScroll={false} />);
+      render(<ImageCarousel images={images} />);
       const user = userEvent.setup();
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      // toggles auto scroll off
+      await user.click(toggleAutoScrollButton);
 
       const previousButton = screen.getByRole("button", {
         name: "Previous image",
@@ -204,8 +275,13 @@ describe("ImageCarousel component", () => {
 
   describe("next", () => {
     it("goes to the next image", async () => {
-      render(<ImageCarousel images={images} hasAutoScroll={false} />);
+      render(<ImageCarousel images={images} />);
       const user = userEvent.setup();
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      // toggles auto scroll off
+      await user.click(toggleAutoScrollButton);
 
       const nextButton = screen.getByRole("button", {
         name: "Next image",
@@ -225,8 +301,13 @@ describe("ImageCarousel component", () => {
     });
 
     it("goes to the first image when on the last image", async () => {
-      render(<ImageCarousel images={images} hasAutoScroll={false} />);
+      render(<ImageCarousel images={images} />);
       const user = userEvent.setup();
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      // toggles auto scroll off
+      await user.click(toggleAutoScrollButton);
       const thirdImageDot = screen.getByRole("button", {
         name: "Show image 3",
       });
@@ -255,8 +336,13 @@ describe("ImageCarousel component", () => {
 
   describe("dots", () => {
     it("clicking on dot goes to that nth image", async () => {
-      render(<ImageCarousel images={images} hasAutoScroll={false} />);
+      render(<ImageCarousel images={images} />);
       const user = userEvent.setup();
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      // toggles auto scroll off
+      await user.click(toggleAutoScrollButton);
 
       const secondImageDot = screen.getByRole("button", {
         name: "Show image 2",
@@ -276,8 +362,13 @@ describe("ImageCarousel component", () => {
     });
 
     it("clicking on the first dot goes to the first image", async () => {
-      render(<ImageCarousel images={images} hasAutoScroll={false} />);
+      render(<ImageCarousel images={images} />);
       const user = userEvent.setup();
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      // toggles auto scroll off
+      await user.click(toggleAutoScrollButton);
       const thirdImageDot = screen.getByRole("button", {
         name: "Show image 3",
       });
@@ -304,8 +395,13 @@ describe("ImageCarousel component", () => {
     });
 
     it("clicking on the last dot goes to the last image", async () => {
-      render(<ImageCarousel images={images} hasAutoScroll={false} />);
+      render(<ImageCarousel images={images} />);
       const user = userEvent.setup();
+      const toggleAutoScrollButton = screen.getByRole("button", {
+        name: "Disable Auto Scroll",
+      });
+      // toggles auto scroll off
+      await user.click(toggleAutoScrollButton);
 
       const thirdImageDot = screen.getByRole("button", {
         name: "Show image 3",

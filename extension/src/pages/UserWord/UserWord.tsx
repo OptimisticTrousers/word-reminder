@@ -68,12 +68,7 @@ export const UserWord = CSSModules(
               {userWord.created_at.toLocaleString()}
             </p>
           }
-          {
-            <ImageCarousel
-              images={images}
-              hasAutoScroll={images.length > 0 ? true : false}
-            />
-          }
+          {<ImageCarousel images={images} />}
           {details.map((detail: Detail, index: number) => {
             return (
               <div key={index} styleName="word_content">

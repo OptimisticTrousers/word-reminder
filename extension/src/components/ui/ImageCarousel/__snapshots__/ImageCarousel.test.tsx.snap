@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ImageCarousel component > shows no images placeholder when there are no images 1`] = `[Function]`;
+exports[`ImageCarousel component > shows images placeholder and does not show any buttons when there are no images 1`] = `[Function]`;
 
 exports[`ImageCarousel component > shows the first image by default 1`] = `
 <DocumentFragment>
@@ -93,6 +93,15 @@ exports[`ImageCarousel component > shows the first image by default 1`] = `
         aria-label="Show image 3"
         class="_carousel__button_02d13e _carousel__button--dot_02d13e _false_02d13e"
       />
+    </div>
+    <div
+      class="_carousel__scroll_02d13e"
+    >
+      <button
+        class="_carousel__button_02d13e _carousel__button--scroll_02d13e"
+      >
+        Enable Auto Scroll
+      </button>
     </div>
   </div>
 </DocumentFragment>

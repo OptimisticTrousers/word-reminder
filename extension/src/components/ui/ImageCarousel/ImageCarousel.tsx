@@ -9,14 +9,14 @@ import noImageAvailableImage from "../../../assets/images/no-image-available.jpg
 
 export interface Props {
   images: Image[];
-  hasAutoScroll: boolean;
 }
 
 export const ImageCarousel = CSSModules(
-  function ({ images, hasAutoScroll }: Props) {
+  function ({ images }: Props) {
     const [slideIndex, setSlideIndex] = useState(1);
+    const [hasAutoScroll, setHasAutoScroll] = useState(true);
 
-    const delay = 500;
+    const delay = 5000;
     useInterval(
       () => {
         plusSlides(1);
@@ -38,6 +38,10 @@ export const ImageCarousel = CSSModules(
 
     function currentSlide(index: number) {
       setSlideIndex(index);
+    }
+
+    function toggleAutoScroll() {
+      setHasAutoScroll((prevValue) => !prevValue);
     }
 
     return (
@@ -81,24 +85,28 @@ export const ImageCarousel = CSSModules(
               </figcaption>
             </figure>
           )}
-          <button
-            styleName="carousel__button carousel__button--prev"
-            aria-label="Previous image"
-            onClick={() => {
-              plusSlides(-1);
-            }}
-          >
-            <ChevronLeft styleName="carousel__icon" />
-          </button>
-          <button
-            styleName="carousel__button carousel__button--next"
-            aria-label="Next image"
-            onClick={() => {
-              plusSlides(1);
-            }}
-          >
-            <ChevronRight styleName="carousel__icon" />
-          </button>
+          {images.length > 0 && (
+            <button
+              styleName="carousel__button carousel__button--prev"
+              aria-label="Previous image"
+              onClick={() => {
+                plusSlides(-1);
+              }}
+            >
+              <ChevronLeft styleName="carousel__icon" />
+            </button>
+          )}
+          {images.length > 0 && (
+            <button
+              styleName="carousel__button carousel__button--next"
+              aria-label="Next image"
+              onClick={() => {
+                plusSlides(1);
+              }}
+            >
+              <ChevronRight styleName="carousel__icon" />
+            </button>
+          )}
         </div>
         <div styleName="carousel__dots">
           {images.map((_, index: number) => {
@@ -115,6 +123,16 @@ export const ImageCarousel = CSSModules(
             );
           })}
         </div>
+        {images.length > 0 && (
+          <div styleName="carousel__scroll">
+            <button
+              onClick={toggleAutoScroll}
+              styleName="carousel__button carousel__button--scroll"
+            >
+              {hasAutoScroll ? "Disable" : "Enable"} Auto Scroll
+            </button>
+          </div>
+        )}
       </div>
     );
   },
