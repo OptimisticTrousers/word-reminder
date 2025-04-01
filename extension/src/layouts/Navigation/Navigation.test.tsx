@@ -138,6 +138,42 @@ describe("Navigation component", () => {
     });
   });
 
+  it("opens a new tab with the extension", async () => {
+    Object.defineProperty(window, "location", {
+      writable: true,
+      value: { search: "?popup=true" },
+    });
+    const path = "index.html?popup=false";
+    const url = `chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/${path}`;
+    const mockGetURL = vi.spyOn(chrome.runtime, "getURL").mockReturnValue(url);
+    const mockCreate = vi.spyOn(chrome.tabs, "create");
+    const { user } = setup("/");
+
+    const openNewTabButton = screen.getByRole("button", {
+      name: "Open in New Tab",
+    });
+    await user.click(openNewTabButton);
+
+    expect(mockGetURL).toHaveBeenCalledTimes(1);
+    expect(mockGetURL).toHaveBeenCalledWith(path);
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+    expect(mockCreate).toHaveBeenCalledWith({ url });
+  });
+
+  it("does not show the button to open the extension in a new tab when the extension is in a tab", async () => {
+    Object.defineProperty(window, "location", {
+      writable: true,
+      value: { search: "?popup=false" },
+    });
+    setup("/");
+
+    const openNewTabButton = await screen.queryByRole("button", {
+      name: "Open in New Tab",
+    });
+
+    expect(openNewTabButton).not.toBeInTheDocument();
+  });
+
   it("disables 'Log Out' button when mutation is pending", async () => {
     const delay = 50;
     const mockLogout = vi

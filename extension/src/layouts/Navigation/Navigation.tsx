@@ -35,6 +35,13 @@ export const Navigation = CSSModules(
       mutate();
     }
 
+    function handleNewTab() {
+      const url = chrome.runtime.getURL("index.html?popup=false");
+      chrome.tabs.create({ url });
+    }
+
+    const inPopup = window.location.search.includes("popup=true");
+
     const disabled = isPending;
 
     return (
@@ -66,6 +73,11 @@ export const Navigation = CSSModules(
         >
           Settings
         </Link>
+        {inPopup && (
+          <button onClick={handleNewTab} styleName="navigation__button">
+            Open in New Tab
+          </button>
+        )}
         <button
           styleName="navigation__button"
           onClick={handleLogout}

@@ -11,6 +11,7 @@ global.chrome = {
         callback();
       }),
     },
+    getURL: vi.fn(),
   },
   contextMenus: {
     onClicked: {
@@ -28,5 +29,8 @@ global.chrome = {
   },
   action: {
     openPopup: vi.fn(),
+  },
+  tabs: {
+    create: vi.fn(),
   },
 };
