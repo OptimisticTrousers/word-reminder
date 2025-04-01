@@ -20,8 +20,8 @@ export const validateSortQuery = [
     .optional({ values: "falsy" })
     .trim()
     .escape()
-    .isInt({ gt: 0 })
-    .withMessage("'direction' must be a positive integer."),
+    .isInt({ min: -1, max: 1 })
+    .withMessage("'direction' must be an integer between -1 and 1."),
   query().custom((_value, { req }) => {
     const query = req.query;
     const column = query?.column;

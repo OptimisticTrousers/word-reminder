@@ -571,7 +571,7 @@ describe("validateQuery", () => {
         });
       });
 
-      it("returns errors with status code 400 when the direction is not a number", async () => {
+      it("returns errors with status code 400 when the direction is not a number within -1 and 1", async () => {
         const params = new URLSearchParams({
           column: "created_at",
           direction: "true",
@@ -588,7 +588,7 @@ describe("validateQuery", () => {
           errors: [
             {
               location: "query",
-              msg: "'direction' must be a positive integer.",
+              msg: "'direction' must be an integer between -1 and 1.",
               path: "direction",
               type: "field",
               value: "true",
