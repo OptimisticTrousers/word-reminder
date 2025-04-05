@@ -8,7 +8,7 @@ exports[`PaginatedList component > pagination > renders no pagination links when
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"
@@ -34,7 +34,7 @@ exports[`PaginatedList component > pagination > renders pagination links when th
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"
@@ -48,20 +48,16 @@ exports[`PaginatedList component > pagination > renders pagination links when th
       <li />
       <li />
     </ul>
-    <a
+    <button
       class="_paginated__link_78cfc4"
-      data-discover="true"
-      href="/words?limit=3&page=1"
     >
       Previous
-    </a>
-    <a
+    </button>
+    <button
       class="_paginated__link_78cfc4"
-      data-discover="true"
-      href="/words?limit=3&page=1"
     >
       Next
-    </a>
+    </button>
   </div>
 </DocumentFragment>
 `;
@@ -74,7 +70,7 @@ exports[`PaginatedList component > pagination > renders the next pagination link
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"
@@ -88,13 +84,11 @@ exports[`PaginatedList component > pagination > renders the next pagination link
       <li />
       <li />
     </ul>
-    <a
+    <button
       class="_paginated__link_78cfc4"
-      data-discover="true"
-      href="/words?limit=3&page=1"
     >
       Next
-    </a>
+    </button>
   </div>
 </DocumentFragment>
 `;
@@ -107,7 +101,7 @@ exports[`PaginatedList component > pagination > renders the previous pagination 
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"
@@ -121,13 +115,11 @@ exports[`PaginatedList component > pagination > renders the previous pagination 
       <li />
       <li />
     </ul>
-    <a
+    <button
       class="_paginated__link_78cfc4"
-      data-discover="true"
-      href="/words?limit=3&page=1"
     >
       Previous
-    </a>
+    </button>
   </div>
 </DocumentFragment>
 `;
@@ -140,7 +132,7 @@ exports[`PaginatedList component > when it is loading > renders that it is loadi
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"
@@ -167,7 +159,7 @@ exports[`PaginatedList component > when it is successful > renders list 1`] = `
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"
@@ -193,7 +185,7 @@ exports[`PaginatedList component > when it is successful > renders that there ar
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"
@@ -207,7 +199,7 @@ exports[`PaginatedList component > when it is successful > renders that there ar
         aria-labelledby="name"
         id="name"
       >
-        words
+        User Words
       </p>
     </ul>
   </div>
@@ -222,7 +214,7 @@ exports[`PaginatedList component > when there is an error > renders error messag
     <h2
       class="_paginated__heading_78cfc4"
     >
-      Words
+      User Words
     </h2>
     <p
       class="_paginated__count_78cfc4"

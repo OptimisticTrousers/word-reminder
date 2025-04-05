@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import CSSModules from "react-css-modules";
-import { Link } from "react-router-dom";
 
 import { ErrorMessage } from "../ErrorMessage";
 import { Loading } from "../Loading";
@@ -21,6 +20,7 @@ export interface Props {
   error: Error | null;
   previous?: Page;
   next?: Page;
+  setPagination: (limit: number, page: number) => void;
 }
 
 export const PaginatedList = CSSModules(
@@ -33,6 +33,7 @@ export const PaginatedList = CSSModules(
     error,
     previous,
     next,
+    setPagination,
   }: Props) {
     return (
       <div styleName="paginated">
@@ -46,20 +47,24 @@ export const PaginatedList = CSSModules(
         {error && <ErrorMessage message={error.message} />}
         {isLoading && <Loading />}
         {previous && (
-          <Link
+          <button
             styleName="paginated__link"
-            to={`/words?limit=${previous.limit}&page=${previous.page}`}
+            onClick={() => {
+              setPagination(previous.limit, previous.page);
+            }}
           >
             Previous
-          </Link>
+          </button>
         )}
         {next && (
-          <Link
+          <button
             styleName="paginated__link"
-            to={`/words?limit=${next.limit}&page=${next.page}`}
+            onClick={() => {
+              setPagination(next.limit, next.page);
+            }}
           >
             Next
-          </Link>
+          </button>
         )}
       </div>
     );

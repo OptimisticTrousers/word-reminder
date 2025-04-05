@@ -8,12 +8,12 @@ exports[`NoMore component > renders title and description 1`] = `
     <p
       class="_container__title_afc42b"
     >
-      No more words
+      No more user words
     </p>
     <p
       class="_container__description_afc42b"
     >
-      Add more words to see more words in your collection.
+      Add more user words to see more user words in your collection.
     </p>
   </div>
 </DocumentFragment>
@@ -27,12 +27,12 @@ exports[`NoMore component > renders title and description in lower case when nam
     <p
       class="_container__title_afc42b"
     >
-      No more words
+      No more user words
     </p>
     <p
       class="_container__description_afc42b"
     >
-      Add more words to see more words in your collection.
+      Add more user words to see more user words in your collection.
     </p>
   </div>
 </DocumentFragment>

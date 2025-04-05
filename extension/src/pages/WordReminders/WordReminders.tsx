@@ -70,6 +70,12 @@ export const WordReminders = CSSModules(
       selectElement.name = name;
     }
 
+    function setPagination(limit: number, page: number) {
+      setSearchParams((prevSearchParams) => {
+        return { ...prevSearchParams, limit, page };
+      });
+    }
+
     const json = data?.json;
 
     return (
@@ -137,6 +143,7 @@ export const WordReminders = CSSModules(
           error={error}
           previous={json && json.previous}
           next={json && json.next}
+          setPagination={setPagination}
         />
       </div>
     );

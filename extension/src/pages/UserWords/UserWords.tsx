@@ -191,6 +191,12 @@ export const UserWords = CSSModules(
       selectElement.name = name;
     }
 
+    function setPagination(limit: number, page: number) {
+      setSearchParams((prevSearchParams) => {
+        return { ...prevSearchParams, limit, page };
+      });
+    }
+
     return (
       <section styleName="words">
         <div styleName="words__top">
@@ -320,7 +326,7 @@ export const UserWords = CSSModules(
           </div>
         </div>
         <PaginatedList
-          name="Words"
+          name="User Words"
           totalRows={json && json.totalRows}
           list={
             json &&
@@ -333,6 +339,7 @@ export const UserWords = CSSModules(
           error={error}
           previous={json && json.previous}
           next={json && json.next}
+          setPagination={setPagination}
         />
       </section>
     );

@@ -5,7 +5,7 @@ import { NoMore } from "./NoMore";
 describe("NoMore component", () => {
   it("renders title and description", async () => {
     const props = {
-      name: "Words",
+      name: "User Words",
     };
 
     const { asFragment } = render(<NoMore {...props} />);
@@ -22,7 +22,7 @@ describe("NoMore component", () => {
 
   it("renders title and description in lower case when name is uppercase", async () => {
     const props = {
-      name: "WORDS",
+      name: "USER WORDS",
     };
 
     const { asFragment } = render(<NoMore {...props} />);
