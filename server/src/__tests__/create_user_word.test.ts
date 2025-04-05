@@ -138,9 +138,14 @@ describe("create_user_word", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        word: {
-          details: wordResponse,
-          id: wordId,
+        userWord: {
+          ...userWord,
+          created_at: userWord.created_at.toISOString(),
+          updated_at: userWord.created_at.toISOString(),
+          word: {
+            details: wordResponse,
+            id: wordId,
+          },
         },
       });
       expect(mockGetWordByWord).toHaveBeenCalledTimes(1);
@@ -255,9 +260,14 @@ describe("create_user_word", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        word: {
-          details: wordResponse,
-          id: wordId,
+        userWord: {
+          ...userWord,
+          created_at: userWord.created_at.toISOString(),
+          updated_at: userWord.created_at.toISOString(),
+          word: {
+            details: wordResponse,
+            id: wordId,
+          },
         },
       });
       expect(mockGetWordByWord).toHaveBeenCalledTimes(1);
@@ -322,9 +332,14 @@ describe("create_user_word", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        word: {
-          details: wordResponse,
-          id: wordId,
+        userWord: {
+          ...userWord,
+          created_at: userWord.created_at.toISOString(),
+          updated_at: userWord.created_at.toISOString(),
+          word: {
+            details: wordResponse,
+            id: wordId,
+          },
         },
       });
       expect(mockGetWordByWord).toHaveBeenCalledTimes(1);
@@ -427,9 +442,14 @@ describe("create_user_word", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        word: {
-          details: wordResponse,
-          id: wordId,
+        userWord: {
+          ...userWord,
+          created_at: userWord.created_at.toISOString(),
+          updated_at: userWord.created_at.toISOString(),
+          word: {
+            details: wordResponse,
+            id: wordId,
+          },
         },
       });
       expect(mockGetWordByWord).toHaveBeenCalledTimes(1);

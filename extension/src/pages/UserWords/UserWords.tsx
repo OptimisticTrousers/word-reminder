@@ -15,7 +15,11 @@ import {
   useState,
 } from "react";
 import CSSModules from "react-css-modules";
-import { useOutletContext, useSearchParams } from "react-router-dom";
+import {
+  useNavigate,
+  useOutletContext,
+  useSearchParams,
+} from "react-router-dom";
 import {
   keepPreviousData,
   useMutation,
@@ -44,6 +48,7 @@ export const UserWords = CSSModules(
     const userId = String(user.id);
     const inputRef = useRef(null);
     const submitButtonRef = useRef(null);
+    const navigate = useNavigate();
     useContextMenu({ inputRef, submitButtonRef });
     const [file, setFile] = useState<File | null>(null);
     const [searchParams, setSearchParams] = useSearchParams({
@@ -75,7 +80,7 @@ export const UserWords = CSSModules(
         return { formData: data.formData };
       },
       mutationFn: userWordService.createUserWord,
-      onSuccess: (_response, _variables, context) => {
+      onSuccess: (response, _variables, context) => {
         const formData = context.formData;
         const word = formData.get("word") as string;
         if (file && file.size > 0) {
@@ -92,6 +97,7 @@ export const UserWords = CSSModules(
         queryClient.invalidateQueries({
           queryKey: ["userWords"],
         });
+        navigate(`/userWords/${response.json.userWord.id}`);
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);

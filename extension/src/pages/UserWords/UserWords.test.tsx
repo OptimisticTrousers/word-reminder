@@ -1,5 +1,5 @@
 import { Column, WORD_MAX } from "common";
-import { createRoutesStub, Outlet } from "react-router-dom";
+import { createRoutesStub, Outlet, useParams } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -65,6 +65,13 @@ describe("UserWords component", () => {
             path: "/login",
             Component: function () {
               return <form></form>;
+            },
+          },
+          {
+            path: "/userWords/:userWordId",
+            Component: function () {
+              const { userWordId } = useParams();
+              return <div data-testid={`user-word-${userWordId}`}></div>;
             },
           },
         ],
@@ -190,7 +197,10 @@ describe("UserWords component", () => {
         const mockWordServiceCreateWord = vi
           .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
-            return { json: { word: json[0] }, status };
+            return {
+              json: { userWord: { ...userWord1, word: json[0] } },
+              status,
+            };
           });
         const mockInvalidateQueries = vi.spyOn(
           queryClient,
@@ -210,6 +220,8 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
+        const userWord = screen.getByTestId("user-word-1");
+        expect(userWord).toBeInTheDocument();
         expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
         expect(mockInvalidateQueries).toHaveBeenCalledWith({
           queryKey: ["userWords"],
@@ -249,6 +261,8 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: message,
         });
+        const userWord = screen.queryByTestId("user-word-1");
+        expect(userWord).not.toBeInTheDocument();
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
           userId: String(testUser.id),
@@ -262,7 +276,10 @@ describe("UserWords component", () => {
         const mockWordServiceCreateWord = vi
           .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
-            return { json: { word: json[0] }, status };
+            return {
+              json: { userWord: { ...userWord1, word: json[0] } },
+              status,
+            };
           });
         const mockInvalidateQueries = vi.spyOn(
           queryClient,
@@ -285,6 +302,8 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "File is too big. Max size is 1 MB.",
         });
+        const userWord = screen.queryByTestId("user-word-1");
+        expect(userWord).not.toBeInTheDocument();
         expect(mockInvalidateQueries).not.toHaveBeenCalled();
         expect(mockWordServiceCreateWord).not.toHaveBeenCalled();
         expect(notification).toBeInTheDocument();
@@ -317,6 +336,8 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: AUTH_NOTIFICATION_MSGS.credentialsExpired(),
         });
+        const userWord = screen.queryByTestId("user-word-1");
+        expect(userWord).not.toBeInTheDocument();
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
           userId: String(testUser.id),
@@ -335,7 +356,10 @@ describe("UserWords component", () => {
         const mockWordServiceCreate = vi
           .spyOn(userWordService, "createUserWord")
           .mockImplementation(async () => {
-            return { json: { word: json[0] }, status };
+            return {
+              json: { userWord: { ...userWord1, word: json[0] } },
+              status,
+            };
           });
         const { user } = setup();
 
@@ -351,6 +375,8 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
+        const userWord = screen.getByTestId("user-word-1");
+        expect(userWord).toBeInTheDocument();
         expect(mockWordServiceCreate).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreate).toHaveBeenCalledWith({
           userId: String(testUser.id),

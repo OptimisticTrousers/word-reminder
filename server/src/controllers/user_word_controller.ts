@@ -146,13 +146,13 @@ export const create_user_word = [
     const existingWord = await wordQueries.getByWord(word);
 
     if (existingWord) {
-      await userWordQueries.create({
+      const userWord = await userWordQueries.create({
         user_id: userId,
         word_id: existingWord.id,
         learned: false,
       });
 
-      res.status(200).json({ word: existingWord });
+      res.status(200).json({ userWord: { ...userWord, word: existingWord } });
       return;
     }
 
@@ -188,13 +188,13 @@ export const create_user_word = [
       }
     }
 
-    await userWordQueries.create({
+    const userWord = await userWordQueries.create({
       user_id: userId,
       word_id: newWord.id,
       learned: false,
     });
 
-    res.status(200).json({ word: newWord });
+    res.status(200).json({ userWord: { ...userWord, word: newWord } });
   }),
 ];
 
