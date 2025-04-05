@@ -6,7 +6,7 @@ import { useContextMenu } from "./useContextMenu";
 import { render, screen } from "@testing-library/react";
 
 describe("useContextMenu", () => {
-  const id = "1";
+  const id = "84";
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,7 +34,8 @@ describe("useContextMenu", () => {
       expect(mockCreate).toHaveBeenCalledWith({
         id,
         title: "Add Word",
-        contexts: ["page"],
+        contexts: ["selection"],
+        type: "normal",
         enabled: true,
         visible: true,
       });
@@ -53,23 +54,11 @@ describe("useContextMenu", () => {
           </>
         );
       }
-      const mockAddListener = vi.spyOn(
-        chrome.runtime.onInstalled,
-        "addListener"
-      );
-      const mockRemoveListener = vi.spyOn(
-        chrome.runtime.onInstalled,
-        "removeListener"
-      );
       const mockRemove = vi.spyOn(chrome.contextMenus, "remove");
       const { unmount } = render(<TestComponent />);
 
       unmount();
 
-      expect(mockRemoveListener).toHaveBeenCalledTimes(1);
-      expect(mockRemoveListener).toHaveBeenCalledWith(
-        mockAddListener.mock.calls[0][0] // make sure that the remove listener is called with the same callback as the add listener
-      );
       expect(mockRemove).toHaveBeenCalledTimes(1);
       expect(mockRemove).toHaveBeenCalledWith(id);
     });
@@ -108,7 +97,7 @@ describe("useContextMenu", () => {
       render(<TestComponent />);
 
       const button = screen.getByRole("button");
-      const input = screen.getByDisplayValue(selectionText);
+      const input = await screen.findByDisplayValue(selectionText);
       expect(input).toBeInTheDocument();
       expect(button).toHaveTextContent("Submitting...");
       expect(mockAddListener).toHaveBeenCalledTimes(1);

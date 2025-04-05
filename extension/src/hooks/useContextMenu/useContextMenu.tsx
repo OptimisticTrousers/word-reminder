@@ -8,37 +8,34 @@ export function useContextMenu({
   submitButtonRef: RefObject<HTMLButtonElement | null>;
 }) {
   useEffect(() => {
-    const id = "1";
+    const id = "84";
+    chrome.contextMenus.create({
+      id,
+      title: "Add Word",
+      contexts: ["selection"],
+      type: "normal",
+      enabled: true,
+      visible: true,
+    });
 
-    function callback() {
-      chrome.contextMenus.create({
-        id,
-        title: "Add Word",
-        contexts: ["page"],
-        enabled: true,
-        visible: true,
-      });
-    }
-
-    chrome.runtime.onInstalled.addListener(callback);
     return () => {
-      chrome.runtime.onInstalled.removeListener(callback);
       chrome.contextMenus.remove(id);
     };
   }, []);
 
   useEffect(() => {
     function callback(item: chrome.contextMenus.OnClickData) {
-      if (inputRef.current === null || submitButtonRef.current === null) {
-        return;
-      }
       const selectionText = item.selectionText;
       if (!selectionText) {
         return;
       }
-      chrome.action.openPopup();
-      inputRef.current.value = selectionText;
-      submitButtonRef.current.click();
+      chrome.action.openPopup().then(() => {
+        if (inputRef.current === null || submitButtonRef.current === null) {
+          return;
+        }
+        inputRef.current.value = selectionText;
+        submitButtonRef.current.click();
+      });
     }
 
     chrome.contextMenus.onClicked.addListener(callback);

@@ -28,9 +28,14 @@ global.chrome = {
     create: vi.fn(),
   },
   action: {
-    openPopup: vi.fn(),
+    openPopup: vi.fn().mockResolvedValue(),
   },
   tabs: {
     create: vi.fn(),
+  },
+  storage: {
+    sync: {
+      set: vi.fn(),
+    },
   },
 };
