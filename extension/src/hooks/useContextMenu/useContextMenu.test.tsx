@@ -1,35 +1,78 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- disable ESLint check for the next line
-// @ts-nocheck -- this TS comment turns off TypeScript type checking for this file because we do not
-// mock the entire Chrome API, but only the parts we need
-import { useRef, useState } from "react";
 import { useContextMenu } from "./useContextMenu";
 import { render, screen } from "@testing-library/react";
+import * as hooks from "../../hooks/useChromeStorageSync";
+import { createRoutesStub, useParams } from "react-router-dom";
+import { userWordService } from "../../services/user_word_service";
 
 describe("useContextMenu", () => {
-  const id = "84";
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe("onInstalled event", () => {
-    it("creates the context menu on mount through the oninstalled listener", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
+  const key = "userId";
+  const userId = "1";
+  const id = "84";
 
-        return (
-          <>
-            <input ref={inputRef} />
-            <button ref={submitButtonRef}>Submit</button>
-          </>
-        );
-      }
+  const json = [
+    {
+      id: 1,
+      details: [
+        {
+          word: "word",
+        },
+      ],
+    },
+  ];
+
+  const userWord1 = {
+    id: 1,
+    user_id: "1",
+    word_id: json[0].id,
+    details: json[0].details,
+    learned: false,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  const status = 200;
+
+  function setup() {
+    const Stub = createRoutesStub([
+      {
+        path: "/",
+        Component: TestComponent,
+      },
+      {
+        path: "/userWords/:userWordId",
+        Component: function () {
+          const { userWordId } = useParams();
+          return <div data-testid={`user-word-${userWordId}`}>ok</div>;
+        },
+      },
+    ]);
+
+    function TestComponent() {
+      useContextMenu(userId);
+
+      return <div></div>;
+    }
+
+    return {
+      ...render(<Stub initialEntries={["/"]} />),
+    };
+  }
+
+  describe("onInstalled event", () => {
+    it("creates the context menu on mount", async () => {
+      const mockUseChromeStorageSync = vi
+        .spyOn(hooks, "useChromeStorageSync")
+        .mockReturnValue([userId, function () {}]);
       const mockCreate = vi.spyOn(chrome.contextMenus, "create");
 
-      render(<TestComponent />);
+      setup();
 
+      expect(mockUseChromeStorageSync).toHaveBeenCalledTimes(1);
+      expect(mockUseChromeStorageSync).toHaveBeenCalledWith("userId", userId);
       expect(mockCreate).toHaveBeenCalledTimes(1);
       expect(mockCreate).toHaveBeenCalledWith({
         id,
@@ -41,103 +84,80 @@ describe("useContextMenu", () => {
       });
     });
 
-    it("removes the context and oninstalled listener menu on unmount", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
-
-        return (
-          <>
-            <input ref={inputRef} />
-            <button ref={submitButtonRef}>Submit</button>
-          </>
-        );
-      }
+    it("removes the context menu on unmount", async () => {
+      const mockAddListener = vi.spyOn(
+        chrome.runtime.onInstalled,
+        "addListener"
+      );
+      const mockRemoveListener = vi.spyOn(
+        chrome.runtime.onInstalled,
+        "removeListener"
+      );
       const mockRemove = vi.spyOn(chrome.contextMenus, "remove");
-      const { unmount } = render(<TestComponent />);
+      const { unmount } = setup();
 
       unmount();
 
+      expect(mockRemoveListener).toHaveBeenCalledTimes(1);
+      expect(mockRemoveListener).toHaveBeenCalledWith(
+        mockAddListener.mock.calls[0][0] // make sure that the remove listener is called with the same callback as the add listener
+      );
       expect(mockRemove).toHaveBeenCalledTimes(1);
       expect(mockRemove).toHaveBeenCalledWith(id);
     });
   });
 
   describe("onClicked event", async () => {
-    it("opens popup, sets input value to selected text, and clicks submit button in the onclicked listener", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
-        const [text, setText] = useState("Submit");
-
-        function toggleClick() {
-          setText("Submitting...");
-        }
-
-        return (
-          <>
-            <input ref={inputRef} />
-            <button ref={submitButtonRef} onClick={toggleClick}>
-              {text}
-            </button>
-          </>
-        );
-      }
+    it("opens popup extension window and creates a user word", async () => {
+      const mockCreateUserWord = vi
+        .spyOn(userWordService, "createUserWord")
+        .mockImplementation(async () => {
+          return {
+            json: { userWord: { ...userWord1, word: json[0] } },
+            status,
+          };
+        });
       const selectionText = "jones";
       const mockAddListener = vi
         .spyOn(chrome.contextMenus.onClicked, "addListener")
         .mockImplementation((callback) => {
-          const item = { selectionText };
+          const item = { selectionText } as chrome.contextMenus.OnClickData;
           callback(item);
         });
+      const mockUseChromeStorageSync = vi
+        .spyOn(hooks, "useChromeStorageSync")
+        .mockReturnValue([userId, function () {}]);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
+      const formData = new FormData();
+      formData.append("word", selectionText);
 
-      render(<TestComponent />);
+      setup();
 
-      const button = screen.getByRole("button");
-      const input = await screen.findByDisplayValue(selectionText);
-      expect(input).toBeInTheDocument();
-      expect(button).toHaveTextContent("Submitting...");
+      const userWord = await screen.findByTestId(`user-word-${userWord1.id}`);
+      expect(userWord).toBeInTheDocument();
       expect(mockAddListener).toHaveBeenCalledTimes(1);
       expect(mockAddListener).toHaveBeenCalledWith(expect.any(Function));
+      expect(mockUseChromeStorageSync).toHaveBeenCalledTimes(1);
+      expect(mockUseChromeStorageSync).toHaveBeenCalledWith(key, userId);
+      expect(mockCreateUserWord).toHaveBeenCalledTimes(1);
+      expect(mockCreateUserWord).toHaveBeenCalledWith({ userId, formData });
       expect(mockOpenPopup).toHaveBeenCalledTimes(1);
       expect(mockOpenPopup).toHaveBeenCalledWith();
     });
 
     it("removes onclicked listener on unmount", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
-        const [text, setText] = useState("Submit");
-
-        function toggleClick() {
-          setText("Submitting...");
-        }
-
-        return (
-          <>
-            <input ref={inputRef} />
-            <button ref={submitButtonRef} onClick={toggleClick}>
-              {text}
-            </button>
-          </>
-        );
-      }
       const selectionText = "jones";
       const mockAddListener = vi
         .spyOn(chrome.contextMenus.onClicked, "addListener")
         .mockImplementation((callback) => {
-          const item = { selectionText };
+          const item = { selectionText } as chrome.contextMenus.OnClickData;
           callback(item);
         });
       const mockRemoveListener = vi.spyOn(
         chrome.contextMenus.onClicked,
         "removeListener"
       );
-      const { unmount } = render(<TestComponent />);
+      const { unmount } = setup();
 
       unmount();
 
@@ -147,134 +167,30 @@ describe("useContextMenu", () => {
       );
     });
 
-    it("does not open extension popup, change input value, or call button when selection text is empty", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
-        const [text, setText] = useState("Submit");
-
-        function toggleClick() {
-          setText("Submitting...");
-        }
-
-        return (
-          <>
-            <input ref={inputRef} defaultValue="" />
-            <button ref={submitButtonRef} onClick={toggleClick}>
-              {text}
-            </button>
-          </>
-        );
-      }
+    it("does not open the popup extension window and does not create user word", async () => {
       const selectionText = "";
       const mockAddListener = vi
         .spyOn(chrome.contextMenus.onClicked, "addListener")
         .mockImplementation((callback) => {
-          const item = { selectionText };
+          const item = { selectionText } as chrome.contextMenus.OnClickData;
           callback(item);
+        });
+      const mockCreateUserWord = vi
+        .spyOn(userWordService, "createUserWord")
+        .mockImplementation(async () => {
+          return {
+            json: { userWord: { ...userWord1, word: json[0] } },
+            status,
+          };
         });
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
 
-      render(<TestComponent />);
+      setup();
 
-      const button = screen.getByRole("button");
-      const input = screen.getByDisplayValue("");
-      expect(input).toBeInTheDocument();
-      expect(button).toHaveTextContent("Submit");
-      expect(mockOpenPopup).not.toHaveBeenCalled();
       expect(mockAddListener).toHaveBeenCalledTimes(1);
       expect(mockAddListener).toHaveBeenCalledWith(expect.any(Function));
-    });
-
-    it("does not create the onclicked listener when input ref is null", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
-
-        return (
-          <>
-            <input />
-            <button ref={submitButtonRef}>Submit</button>
-          </>
-        );
-      }
-      const mockAddListener = vi.spyOn(
-        chrome.contextMenus.onClicked,
-        "addListener"
-      );
-      const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
-
-      render(<TestComponent />);
-
-      const button = screen.getByRole("button");
-      const input = screen.getByDisplayValue("");
-      expect(input).toBeInTheDocument();
-      expect(button).toHaveTextContent("Submit");
       expect(mockOpenPopup).not.toHaveBeenCalled();
-      expect(mockAddListener).toHaveBeenCalledTimes(1);
-      expect(mockAddListener).toHaveBeenCalledWith(expect.any(Function));
-    });
-
-    it("does not create the onclicked listener when submit button ref is null", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
-
-        return (
-          <>
-            <input ref={inputRef} />
-            <button>Submit</button>
-          </>
-        );
-      }
-      const mockAddListener = vi.spyOn(
-        chrome.contextMenus.onClicked,
-        "addListener"
-      );
-      const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
-
-      render(<TestComponent />);
-
-      const button = screen.getByRole("button");
-      const input = screen.getByDisplayValue("");
-      expect(input).toBeInTheDocument();
-      expect(button).toHaveTextContent("Submit");
-      expect(mockOpenPopup).not.toHaveBeenCalled();
-      expect(mockAddListener).toHaveBeenCalledTimes(1);
-      expect(mockAddListener).toHaveBeenCalledWith(expect.any(Function));
-    });
-
-    it("does not create the onclicked listener when input and submit button ref are null", async () => {
-      function TestComponent() {
-        const inputRef = useRef(null);
-        const submitButtonRef = useRef(null);
-        useContextMenu({ inputRef, submitButtonRef });
-
-        return (
-          <>
-            <input />
-            <button>Submit</button>
-          </>
-        );
-      }
-      const mockAddListener = vi.spyOn(
-        chrome.contextMenus.onClicked,
-        "addListener"
-      );
-      const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
-
-      render(<TestComponent />);
-
-      const button = screen.getByRole("button");
-      const input = screen.getByDisplayValue("");
-      expect(input).toBeInTheDocument();
-      expect(button).toHaveTextContent("Submit");
-      expect(mockOpenPopup).not.toHaveBeenCalled();
-      expect(mockAddListener).toHaveBeenCalledTimes(1);
-      expect(mockAddListener).toHaveBeenCalledWith(expect.any(Function));
+      expect(mockCreateUserWord).not.toHaveBeenCalled();
     });
   });
 });

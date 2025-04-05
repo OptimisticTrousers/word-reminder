@@ -1,41 +1,47 @@
-import { RefObject, useEffect } from "react";
+import { useEffect } from "react";
+import { userWordService } from "../../services/user_word_service";
+import { useChromeStorageSync } from "../useChromeStorageSync";
+import { useNavigate } from "react-router-dom";
 
-export function useContextMenu({
-  inputRef,
-  submitButtonRef,
-}: {
-  inputRef: RefObject<HTMLInputElement | null>;
-  submitButtonRef: RefObject<HTMLButtonElement | null>;
-}) {
+export function useContextMenu(initialValue: string) {
+  const [userId] = useChromeStorageSync("userId", initialValue);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const id = "84";
-    chrome.contextMenus.create({
-      id,
-      title: "Add Word",
-      contexts: ["selection"],
-      type: "normal",
-      enabled: true,
-      visible: true,
-    });
+    function callback() {
+      chrome.contextMenus.create({
+        id,
+        title: "Add Word",
+        contexts: ["selection"],
+        type: "normal",
+        enabled: true,
+        visible: true,
+      });
+    }
+
+    chrome.runtime.onInstalled.addListener(callback);
 
     return () => {
+      chrome.runtime.onInstalled.removeListener(callback);
       chrome.contextMenus.remove(id);
     };
   }, []);
 
   useEffect(() => {
-    function callback(item: chrome.contextMenus.OnClickData) {
-      const selectionText = item.selectionText;
+    async function callback(info: chrome.contextMenus.OnClickData) {
+      const selectionText = info.selectionText;
       if (!selectionText) {
         return;
       }
-      chrome.action.openPopup().then(() => {
-        if (inputRef.current === null || submitButtonRef.current === null) {
-          return;
-        }
-        inputRef.current.value = selectionText;
-        submitButtonRef.current.click();
+      const formData = new FormData();
+      formData.append("word", String(selectionText));
+      await chrome.action.openPopup();
+      const response = await userWordService.createUserWord({
+        userId,
+        formData,
       });
+      navigate(`/userWords/${response.json.userWord.id}`);
     }
 
     chrome.contextMenus.onClicked.addListener(callback);
@@ -43,5 +49,5 @@ export function useContextMenu({
     return () => {
       chrome.contextMenus.onClicked.removeListener(callback);
     };
-  }, [inputRef, submitButtonRef]);
+  }, [navigate, userId]);
 }

@@ -15,11 +15,7 @@ import {
   useState,
 } from "react";
 import CSSModules from "react-css-modules";
-import {
-  useNavigate,
-  useOutletContext,
-  useSearchParams,
-} from "react-router-dom";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 import {
   keepPreviousData,
   useMutation,
@@ -38,7 +34,6 @@ import { userWordService } from "../../services/user_word_service";
 import { ErrorResponse } from "../../types";
 import { download } from "../../utils/download";
 import styles from "./UserWords.module.css";
-import { useContextMenu } from "../../hooks/useContextMenu";
 
 export const UserWords = CSSModules(
   function () {
@@ -48,8 +43,6 @@ export const UserWords = CSSModules(
     const userId = String(user.id);
     const inputRef = useRef(null);
     const submitButtonRef = useRef(null);
-    const navigate = useNavigate();
-    useContextMenu({ inputRef, submitButtonRef });
     const [file, setFile] = useState<File | null>(null);
     const [searchParams, setSearchParams] = useSearchParams({
       page: "1",
@@ -80,7 +73,7 @@ export const UserWords = CSSModules(
         return { formData: data.formData };
       },
       mutationFn: userWordService.createUserWord,
-      onSuccess: (response, _variables, context) => {
+      onSuccess: (_response, _variables, context) => {
         const formData = context.formData;
         const word = formData.get("word") as string;
         if (file && file.size > 0) {
@@ -97,7 +90,6 @@ export const UserWords = CSSModules(
         queryClient.invalidateQueries({
           queryKey: ["userWords"],
         });
-        navigate(`/userWords/${response.json.userWord.id}`);
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);
@@ -135,7 +127,6 @@ export const UserWords = CSSModules(
 
     function handleAdd(formData: FormData) {
       const word = formData.get("word") as string;
-      formData.append("userId", userId);
       if (!file && word.length === 0) {
         showNotification(
           NOTIFICATION_ACTIONS.ERROR,

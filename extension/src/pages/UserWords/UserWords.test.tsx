@@ -1,5 +1,5 @@
 import { Column, WORD_MAX } from "common";
-import { createRoutesStub, Outlet, useParams } from "react-router-dom";
+import { createRoutesStub, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -10,9 +10,7 @@ import { NotificationProvider } from "../../context/Notification";
 import { userWordService } from "../../services/user_word_service";
 import { UserWords } from "./UserWords";
 import * as utils from "../../utils/download";
-import * as hooks from "../../hooks/useContextMenu";
 import { UserWord } from "../../components/words/UserWord";
-import { RefObject, useEffect } from "react";
 
 vi.mock("../../components/ui/PaginatedList/PaginatedList");
 
@@ -65,13 +63,6 @@ describe("UserWords component", () => {
             path: "/login",
             Component: function () {
               return <form></form>;
-            },
-          },
-          {
-            path: "/userWords/:userWordId",
-            Component: function () {
-              const { userWordId } = useParams();
-              return <div data-testid={`user-word-${userWordId}`}></div>;
             },
           },
         ],
@@ -192,7 +183,6 @@ describe("UserWords component", () => {
         const word = json[0].details[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
-        formData.append("userId", String(testUser.id));
         const status = 200;
         const mockWordServiceCreateWord = vi
           .spyOn(userWordService, "createUserWord")
@@ -220,8 +210,6 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
-        const userWord = screen.getByTestId("user-word-1");
-        expect(userWord).toBeInTheDocument();
         expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
         expect(mockInvalidateQueries).toHaveBeenCalledWith({
           queryKey: ["userWords"],
@@ -239,7 +227,6 @@ describe("UserWords component", () => {
         const word = json[0].details[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
-        formData.append("userId", String(testUser.id));
         const message = "Bad Request.";
         const status = 400;
         const mockWordServiceCreateWord = vi
@@ -261,8 +248,6 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: message,
         });
-        const userWord = screen.queryByTestId("user-word-1");
-        expect(userWord).not.toBeInTheDocument();
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
           userId: String(testUser.id),
@@ -302,8 +287,6 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "File is too big. Max size is 1 MB.",
         });
-        const userWord = screen.queryByTestId("user-word-1");
-        expect(userWord).not.toBeInTheDocument();
         expect(mockInvalidateQueries).not.toHaveBeenCalled();
         expect(mockWordServiceCreateWord).not.toHaveBeenCalled();
         expect(notification).toBeInTheDocument();
@@ -314,7 +297,6 @@ describe("UserWords component", () => {
         const word = json[0].details[0].word;
         formData.append("word", word);
         formData.append("csv", new File([""], ""));
-        formData.append("userId", String(testUser.id));
         const message = "User is unauthenticated.";
         const status = 401;
         const mockWordServiceCreateWord = vi
@@ -336,8 +318,6 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: AUTH_NOTIFICATION_MSGS.credentialsExpired(),
         });
-        const userWord = screen.queryByTestId("user-word-1");
-        expect(userWord).not.toBeInTheDocument();
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
           userId: String(testUser.id),
@@ -351,7 +331,6 @@ describe("UserWords component", () => {
         const formData = new FormData();
         formData.append("word", word.slice(0, -1));
         formData.append("csv", new File([""], ""));
-        formData.append("userId", String(testUser.id));
         const status = 200;
         const mockWordServiceCreate = vi
           .spyOn(userWordService, "createUserWord")
@@ -375,8 +354,6 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
-        const userWord = screen.getByTestId("user-word-1");
-        expect(userWord).toBeInTheDocument();
         expect(mockWordServiceCreate).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreate).toHaveBeenCalledWith({
           userId: String(testUser.id),
@@ -455,7 +432,6 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", csvFile);
-          formData.append("userId", String(testUser.id));
           const { user } = setup();
           const status = 200;
           const mockWordServiceCreate = vi
@@ -493,7 +469,6 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", notACsvFile);
-          formData.append("userId", String(testUser.id));
           const status = 200;
           const mockWordServiceCreate = vi
             .spyOn(userWordService, "createUserWord")
@@ -529,7 +504,6 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", csvFile);
-          formData.append("userId", String(testUser.id));
           const message = "Bad Request.";
           const status = 400;
           const mockWordServiceCreateWord = vi
@@ -572,7 +546,6 @@ describe("UserWords component", () => {
           });
           formData.append("word", "");
           formData.append("csv", csvFile);
-          formData.append("userId", String(testUser.id));
           const message = "User is unauthenticated.";
           const status = 401;
           const mockWordServiceCreateWord = vi
@@ -615,7 +588,6 @@ describe("UserWords component", () => {
       const word = "";
       formData.append("word", word);
       formData.append("csv", new File([""], ""));
-      formData.append("userId", String(testUser.id));
       const status = 200;
       const mockWordServiceCreateWord = vi
         .spyOn(userWordService, "createUserWord")
@@ -641,7 +613,6 @@ describe("UserWords component", () => {
       const word = json[0].details[0].word;
       formData.append("word", word);
       formData.append("csv", new File([""], ""));
-      formData.append("userId", String(testUser.id));
       const delay = 50;
       const status = 200;
       const mockWordServiceCreateWord = vi
@@ -1093,41 +1064,5 @@ describe("UserWords component", () => {
     });
     expect(wordInput).toHaveFocus();
     expect(asFragment()).toMatchSnapshot();
-  });
-
-  it("uses context menu hook", async () => {
-    vi.spyOn(hooks, "useContextMenu").mockImplementation(
-      ({
-        inputRef,
-        submitButtonRef,
-      }: {
-        inputRef: RefObject<HTMLInputElement | null>;
-        submitButtonRef: RefObject<HTMLButtonElement | null>;
-      }) => {
-        useEffect(() => {
-          if (inputRef.current) {
-            inputRef.current.value = "input has changed";
-          }
-          if (submitButtonRef.current) {
-            submitButtonRef.current.textContent = "button has changed";
-          }
-        }, [inputRef, submitButtonRef]);
-      }
-    );
-    const status = 200;
-    vi.spyOn(userWordService, "getUserWordList").mockImplementation(
-      async () => {
-        return { json: { userWords: json, totalRows: 1 }, status };
-      }
-    );
-
-    setup();
-
-    const input = await screen.findByDisplayValue("input has changed");
-    const submitButton = screen.getByRole("button", {
-      name: "button has changed",
-    });
-    expect(input).toBeInTheDocument();
-    expect(submitButton).toBeInTheDocument();
   });
 });

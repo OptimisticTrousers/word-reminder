@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 
 import { App } from "./App";
-import * as hooks from "../../hooks/useUserId";
+import * as hooks from "../../hooks/useContextMenu";
+import { createRoutesStub } from "react-router-dom";
 
 vi.mock("../../layouts/Footer", () => {
   return {
@@ -19,8 +20,10 @@ vi.mock("../../layouts/Navigation", () => {
   };
 });
 
-vi.mock("react-router-dom", () => {
+vi.mock("react-router-dom", async () => {
+  const originalModule = await vi.importActual("react-router-dom");
   return {
+    ...originalModule,
     Outlet: function () {
       return <div data-testid="outlet"></div>;
     },
@@ -37,8 +40,18 @@ const user = {
 
 describe("App component", () => {
   it("renders main element and footer", () => {
-    const mockUseUserId = vi.spyOn(hooks, "useUserId");
-    const { asFragment } = render(<App user={user} />);
+    const Stub = createRoutesStub([
+      {
+        path: "/",
+        Component: function () {
+          return <App user={user} />;
+        },
+      },
+    ]);
+    const mockUseContextMenu = vi
+      .spyOn(hooks, "useContextMenu")
+      .mockReturnValue();
+    const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
     const footer = screen.getByTestId("footer");
     const navigation = screen.getByTestId("navigation");
@@ -46,8 +59,8 @@ describe("App component", () => {
     expect(footer).toBeInTheDocument();
     expect(navigation).toBeInTheDocument();
     expect(outlet).toBeInTheDocument();
-    expect(mockUseUserId).toHaveBeenCalledTimes(1);
-    expect(mockUseUserId).toHaveBeenCalledWith(user.id);
+    expect(mockUseContextMenu).toHaveBeenCalledTimes(1);
+    expect(mockUseContextMenu).toHaveBeenCalledWith(String(user.id));
     expect(asFragment()).toMatchSnapshot();
   });
 });
