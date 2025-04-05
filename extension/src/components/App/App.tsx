@@ -7,10 +7,12 @@ import { ThemeContext } from "../../context/Theme";
 import styles from "./App.module.css";
 import { Footer } from "../../layouts/Footer";
 import { Navigation } from "../../layouts/Navigation";
+import { useUserId } from "../../hooks/useUserId";
 
 export const App = CSSModules(
-  function ({ user }: { user?: User }) {
+  function ({ user }: { user: User }) {
     const { theme } = useContext(ThemeContext);
+    useUserId(user.id);
 
     return (
       <main styleName={`main main--${theme}`}>

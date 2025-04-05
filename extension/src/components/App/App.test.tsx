@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 
 import { App } from "./App";
+import * as hooks from "../../hooks/useUserId";
 
 vi.mock("../../layouts/Footer", () => {
   return {
@@ -26,9 +27,18 @@ vi.mock("react-router-dom", () => {
   };
 });
 
+const user = {
+  id: 1,
+  email: "bob@gmail.com",
+  confirmed: false,
+  created_at: new Date(),
+  updated_at: new Date(),
+};
+
 describe("App component", () => {
   it("renders main element and footer", () => {
-    const { asFragment } = render(<App />);
+    const mockUseUserId = vi.spyOn(hooks, "useUserId");
+    const { asFragment } = render(<App user={user} />);
 
     const footer = screen.getByTestId("footer");
     const navigation = screen.getByTestId("navigation");
@@ -36,6 +46,8 @@ describe("App component", () => {
     expect(footer).toBeInTheDocument();
     expect(navigation).toBeInTheDocument();
     expect(outlet).toBeInTheDocument();
+    expect(mockUseUserId).toHaveBeenCalledTimes(1);
+    expect(mockUseUserId).toHaveBeenCalledWith(user.id);
     expect(asFragment()).toMatchSnapshot();
   });
 });
