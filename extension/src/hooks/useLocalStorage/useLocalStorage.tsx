@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect, Dispatch } from "react";
 
-export function useLocalStorage(key: string, intialValue: string) {
+export function useLocalStorage(
+  key: string,
+  initialValue: string
+): [any, Dispatch<any>] {
   const [value, setValue] = useState(() => {
     const jsonValue = localStorage.getItem(key);
     if (jsonValue != null) return JSON.parse(jsonValue);
-    return intialValue;
+    return initialValue;
   });
 
   useEffect(() => {
