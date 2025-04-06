@@ -250,7 +250,7 @@ describe("CreateWordReminderModal component", () => {
     });
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
+      queryKey: ["userWords", Object.fromEntries(new URLSearchParams())],
       exact: true,
     });
   });

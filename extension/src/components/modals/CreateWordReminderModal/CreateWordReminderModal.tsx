@@ -30,7 +30,7 @@ export const CreateWordReminderModal = CSSModules(
     const { showNotificationError } = useNotificationError();
     const queryClient = useQueryClient();
     const { data } = useQuery({
-      queryKey: ["wordReminders"],
+      queryKey: ["userWords"],
       queryFn: async () => {
         return userWordService.getUserWordList({
           userId,
@@ -48,7 +48,7 @@ export const CreateWordReminderModal = CSSModules(
         );
         const searchParamsObject = Object.fromEntries(searchParams);
         queryClient.invalidateQueries({
-          queryKey: ["wordReminders", searchParamsObject],
+          queryKey: ["userWords", searchParamsObject],
           exact: true,
         });
       },
