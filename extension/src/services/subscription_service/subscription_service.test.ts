@@ -10,6 +10,7 @@ describe("subscriptionService", () => {
     vi.clearAllMocks();
   });
 
+  const userId = "1";
   const subscription = {
     endpoint: "https://random-push-service.com/unique-id-1234/",
     keys: {
@@ -28,13 +29,14 @@ describe("subscriptionService", () => {
           return { json: { subscription }, status };
         });
 
-      const response = await subscriptionService.createSubscription(
-        subscription
-      );
+      const response = await subscriptionService.createSubscription({
+        userId,
+        subscription,
+      });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
-        url: `${VITE_API_DOMAIN}/subscriptions`,
+        url: `${VITE_API_DOMAIN}/users/${userId}/subscriptions`,
         options: { body: JSON.stringify(subscription), credentials: "include" },
       });
       expect(response).toEqual({
