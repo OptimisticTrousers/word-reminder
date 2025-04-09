@@ -6,7 +6,7 @@ import { boss } from "../db/boss";
 import { userWordQueries } from "../db/user_word_queries";
 import { createWordReminder } from "../utils/word_reminder";
 
-const queueName = "auto-word-reminder-queue";
+const queuePostfix = "auto-word-reminder-queue";
 
 // @desc Create a auto word reminder
 // @route POST /api/users/:userId/autoWordReminders
@@ -46,34 +46,27 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
       sort_mode,
     });
 
-    const user_word_ids = randomUserWords.map((user_word: UserWord) => {
-      return user_word.id;
-    });
-
     await createWordReminder({
       user_id: userId,
       is_active,
       has_reminder_onload,
       reminder,
       finish: addToDuration,
-      user_word_ids,
+      user_words: randomUserWords,
     });
   }
 
-  const queue = `${userId}-${queueName}`;
+  const queueName = `${userId}-${queuePostfix}`;
 
-  await boss.sendAfter(queue, {}, {}, addToDuration);
+  await boss.sendAfter(queueName, {}, {}, addToDuration);
 
-  await boss.work(queue, async () => {
+  await boss.work(queueName, async () => {
     // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
     const randomUserWords = await userWordQueries.getUserWords({
       user_id: userId,
       word_count,
       has_learned_words,
       sort_mode,
-    });
-    const user_word_ids = randomUserWords.map((user_word: UserWord) => {
-      return user_word.id;
     });
     const newAddToDuration = new Date(Date.now() + duration);
 
@@ -83,7 +76,7 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
       has_reminder_onload,
       reminder,
       finish: newAddToDuration,
-      user_word_ids,
+      user_words: randomUserWords,
     });
   });
 
@@ -116,9 +109,9 @@ export const delete_auto_word_reminder = asyncHandler(async (req, res) => {
     autoWordReminderId
   );
 
-  const queue = `${userId}-${queueName}`;
+  const queueName = `${userId}-${queuePostfix}`;
 
-  await boss.deleteQueue(queue);
+  await boss.deleteQueue(queueName);
 
   res.status(200).json({
     autoWordReminder: deletedAutoWordReminder,
@@ -165,9 +158,6 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
       has_learned_words,
       sort_mode,
     });
-    const user_word_ids = randomUserWords.map((user_word: UserWord) => {
-      return user_word.id;
-    });
 
     await createWordReminder({
       user_id: userId,
@@ -175,26 +165,23 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
       has_reminder_onload,
       reminder,
       finish: addToDuration,
-      user_word_ids,
+      user_words: randomUserWords,
     });
   }
 
-  const queue = `${userId}-${queueName}`;
+  const queueName = `${userId}-${queuePostfix}`;
 
-  await boss.purgeQueue(queue);
+  await boss.purgeQueue(queueName);
 
-  await boss.sendAfter(queue, {}, {}, addToDuration);
+  await boss.sendAfter(queueName, {}, {}, addToDuration);
 
-  await boss.work(queue, async () => {
+  await boss.work(queueName, async () => {
     // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
     const randomUserWords = await userWordQueries.getUserWords({
       user_id: userId,
       word_count,
       has_learned_words,
       sort_mode,
-    });
-    const user_word_ids = randomUserWords.map((user_word: UserWord) => {
-      return user_word.id;
     });
     const newAddToDuration = new Date(Date.now() + duration);
 
@@ -204,7 +191,7 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
       has_reminder_onload,
       reminder,
       finish: newAddToDuration,
-      user_word_ids,
+      user_words: randomUserWords,
     });
   });
 

@@ -171,7 +171,7 @@ describe("update_auto_word_reminder", () => {
         has_reminder_onload: autoWordReminder.has_reminder_onload,
         reminder: autoWordReminder.reminder,
         finish: new Date(autoWordReminderParams.duration),
-        user_word_ids: [userWord1.id, userWord2.id, userWord3.id],
+        user_words: [userWord1, userWord2, userWord3],
       });
       expect(mockCreateWordReminder).toHaveBeenCalledWith({
         user_id: userId,
@@ -179,7 +179,7 @@ describe("update_auto_word_reminder", () => {
         has_reminder_onload: autoWordReminder.has_reminder_onload,
         reminder: autoWordReminder.reminder,
         finish: new Date(autoWordReminderParams.duration),
-        user_word_ids: [userWord1.id, userWord2.id, userWord3.id],
+        user_words: [userWord1, userWord2, userWord3],
       });
       expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
       expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);
@@ -265,7 +265,7 @@ describe("update_auto_word_reminder", () => {
         has_reminder_onload: autoWordReminder.has_reminder_onload,
         reminder: autoWordReminder.reminder,
         finish: new Date(autoWordReminderParams.duration),
-        user_word_ids: [userWord1.id, userWord2.id, userWord3.id],
+        user_words: [userWord1, userWord2, userWord3],
       });
       expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
       expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);

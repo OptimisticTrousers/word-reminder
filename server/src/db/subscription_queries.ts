@@ -8,41 +8,60 @@ export const subscriptionQueries = (function () {
   const { columns, db, getById, deleteById, table } = queries;
 
   const create = async ({
-    endpoint,
-    keys,
+    userId,
+    subscription: { endpoint, keys },
   }: {
-    endpoint: string;
-    keys: {
-      p256dh: string;
-      auth: string;
+    userId: number;
+    subscription: {
+      endpoint: string;
+      keys: {
+        p256dh: string;
+        auth: string;
+      };
     };
   }) => {
     const { rows }: QueryResult<Subscription> = await db.query(
       `
-    INSERT INTO ${table}(endpoint, p256dh, auth)
-    VALUES ($1, $2, $3)
+    INSERT INTO ${table}(endpoint, p256dh, auth, user_id)
+    VALUES ($1, $2, $3, $4)
     RETURNING ${columns};
       `,
-      [endpoint, keys.p256dh, keys.auth]
+      [endpoint, keys.p256dh, keys.auth, userId]
     );
 
     return rows[0];
   };
 
-  const get = async () => {
+  const deleteByUserId = async (userId: number) => {
     const { rows }: QueryResult<Subscription> = await db.query(
       `
-    SELECT ${columns} FROM ${table};
-      `
+    DELETE FROM ${table}
+    WHERE user_id = $1
+    RETURNING ${columns};
+      `,
+      [userId]
     );
 
-    return rows;
+    return rows[0];
+  };
+
+  const getByUserId = async (userId: number) => {
+    const { rows }: QueryResult<Subscription> = await db.query(
+      `
+    SELECT ${columns} FROM ${table}
+    WHERE user_id = $1;
+      `,
+      [userId]
+    );
+
+    return rows[0];
   };
 
   return {
     create,
-    get,
-    getById: getById.bind(queries),
+    deleteByUserId,
     deleteById: deleteById.bind(queries),
+    getById: getById.bind(queries),
+    getByUserId,
   };
 })();

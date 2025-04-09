@@ -132,7 +132,8 @@ export interface AutoWordReminder {
 }
 
 export interface Subscription {
-  id: string;
+  id: number;
+  userId: number;
   endpoint: string;
   p256dh: string;
   auth: string;

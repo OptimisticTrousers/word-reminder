@@ -7,15 +7,21 @@ import {
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { createWordReminder } from "../utils/word_reminder";
-import { UserWord } from "common";
+import { boss } from "../db/boss";
+import { triggerWebPushMsg } from "../utils/trigger_web_push_msg";
+import { subscriptionQueries } from "../db/subscription_queries";
 import { userWordQueries } from "../db/user_word_queries";
+import { wordQueries } from "../db/word_queries";
+import { Detail, UserWord } from "common";
+
+const queuePostfix = "word-reminder-queue";
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders
 // @access Private
 export const create_word_reminder = asyncHandler(async (req, res) => {
   const userId = Number(req.params.userId);
-  const { is_active, has_reminder_onload, reminder, finish, user_word_ids } =
+  const { is_active, has_reminder_onload, reminder, finish, user_words } =
     req.body;
 
   const wordReminder = await createWordReminder({
@@ -24,8 +30,30 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
     has_reminder_onload,
     reminder,
     finish,
-    user_word_ids,
+    user_words,
   });
+
+  const queueName = `${userId}-${queuePostfix}`;
+
+  if (reminder) {
+    await boss.schedule(queueName, reminder);
+
+    const wordsPromises: Promise<string>[] = user_words.map(
+      async (user_word: UserWord & { details: Detail[] }) => {
+        const userWord = await userWordQueries.getById(Number(user_word.id));
+        const word = await wordQueries.getById(userWord!.word_id);
+        return word!.details[0].word;
+      }
+    );
+
+    const words: string[] = await Promise.all(wordsPromises);
+
+    const subscription = await subscriptionQueries.getByUserId(userId);
+
+    await boss.work(queueName, async () => {
+      await triggerWebPushMsg(subscription, words.join(", "));
+    });
+  }
 
   res.status(200).json({
     wordReminder,
@@ -42,6 +70,10 @@ export const delete_word_reminders = asyncHandler(async (req, res) => {
 
   const deletedWordReminders = await wordReminderQueries.deleteByUserId(userId);
 
+  const queueName = `${userId}-${queuePostfix}`;
+
+  await boss.deleteQueue(queueName);
+
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
     wordReminders: deletedWordReminders,
@@ -52,6 +84,7 @@ export const delete_word_reminders = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:userId/wordReminders/:wordReminderId
 // @access  Private
 export const delete_word_reminder = asyncHandler(async (req, res) => {
+  const userId = Number(req.params.userId);
   const wordReminderId = Number(req.params.wordReminderId);
 
   const deletedUserWordsWordReminders =
@@ -60,6 +93,10 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
   const deletedWordReminder = await wordReminderQueries.deleteById(
     wordReminderId
   );
+
+  const queueName = `${userId}-${queuePostfix}`;
+
+  await boss.deleteQueue(queueName);
 
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
@@ -88,8 +125,9 @@ export const get_word_reminder = asyncHandler(async (req, res) => {
 export const update_word_reminder = [
   errorValidationHandler,
   asyncHandler(async (req, res) => {
+    const userId = Number(req.params.userId);
     const wordReminderId = Number(req.params.wordReminderId);
-    const { is_active, has_reminder_onload, reminder, finish, user_word_ids } =
+    const { is_active, has_reminder_onload, reminder, finish, user_words } =
       req.body;
 
     const wordReminder = await wordReminderQueries.updateById(wordReminderId, {
@@ -99,12 +137,34 @@ export const update_word_reminder = [
       finish,
     });
 
-    user_word_ids.forEach(async (user_word_id: number) => {
+    user_words.forEach(async (user_word: UserWord) => {
       await userWordsWordRemindersQueries.create({
-        user_word_id,
+        user_word_id: user_word.id,
         word_reminder_id: wordReminderId,
       });
     });
+
+    const queueName = `${userId}-${queuePostfix}`;
+
+    if (reminder) {
+      await boss.schedule(queueName, reminder);
+
+      const wordsPromises: Promise<string>[] = user_words.map(
+        async (user_word: UserWord & { details: Detail[] }) => {
+          const userWord = await userWordQueries.getById(Number(user_word.id));
+          const word = await wordQueries.getById(userWord!.word_id);
+          return word!.details[0].word;
+        }
+      );
+
+      const words: string[] = await Promise.all(wordsPromises);
+
+      const subscription = await subscriptionQueries.getByUserId(userId);
+
+      await boss.work(queueName, async () => {
+        await triggerWebPushMsg(subscription, words.join(", "));
+      });
+    }
 
     res.status(200).json({
       wordReminder,

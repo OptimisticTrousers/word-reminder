@@ -4,6 +4,7 @@ import request from "supertest";
 import { delete_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
+import { boss } from "../db/boss";
 
 const app = express();
 app.use(express.json());
@@ -53,16 +54,21 @@ const deletedUserWordsWordReminders = [
   userWordsWordReminder3,
 ];
 
-describe("delete_word_reminder", () => {
-  const deleteByWordReminderIdMock = jest
-    .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
-    .mockResolvedValue(deletedUserWordsWordReminders);
-  const deleteByIdMock = jest
-    .spyOn(wordReminderQueries, "deleteById")
-    .mockImplementation(async () => {
-      return wordReminder;
-    });
+const deleteByWordReminderIdMock = jest
+  .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
+  .mockResolvedValue(deletedUserWordsWordReminders);
+const deleteByIdMock = jest
+  .spyOn(wordReminderQueries, "deleteById")
+  .mockImplementation(async () => {
+    return wordReminder;
+  });
+const mockDeleteQueue = jest
+  .spyOn(boss, "deleteQueue")
+  .mockImplementation(jest.fn());
 
+const queueName = `${userId}-word-reminder-queue`;
+
+describe("delete_word_reminder", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -89,5 +95,7 @@ describe("delete_word_reminder", () => {
     expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder.id);
     expect(deleteByIdMock).toHaveBeenCalledTimes(1);
     expect(deleteByIdMock).toHaveBeenCalledWith(wordReminder.id);
+    expect(mockDeleteQueue).toHaveBeenCalledTimes(1);
+    expect(mockDeleteQueue).toHaveBeenCalledWith(queueName);
   });
 });

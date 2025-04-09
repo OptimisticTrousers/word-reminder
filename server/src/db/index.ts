@@ -131,6 +131,7 @@ export const createPopulateDb = function (client: Client) {
 
       CREATE TABLE subscriptions (
         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        user_id INTEGER REFERENCES users(id) NOT NULL,
         endpoint TEXT UNIQUE NOT NULL,
         p256dh TEXT UNIQUE NOT NULL,
         auth TEXT UNIQUE NOT NULL
