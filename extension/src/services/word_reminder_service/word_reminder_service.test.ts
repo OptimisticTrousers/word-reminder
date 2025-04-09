@@ -20,7 +20,7 @@ describe("wordReminderService", () => {
     reminder: "* * * * *",
     is_active: true,
     finish: new Date(Date.now() + 1000),
-    user_word_ids: [],
+    user_words: [],
   };
 
   const wordReminder2 = {
@@ -29,7 +29,7 @@ describe("wordReminderService", () => {
     is_active: true,
     reminder: "* * * * *",
     finish: new Date(Date.now() + 1000),
-    user_word_ids: [],
+    user_words: [],
   };
 
   describe("getWordReminderList", () => {

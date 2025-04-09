@@ -29,6 +29,26 @@ function urlB64ToUint8Array(base64String) {
   return outputArray;
 }
 
+function createContextMenus() {
+  function onInstalledCallback() {
+    chrome.contextMenus.create({
+      title: "Add Word",
+      contexts: ["selection"],
+      type: "normal",
+      enabled: true,
+      visible: true,
+    });
+  }
+
+  function onClickedCallback() {
+    alert("hi there, it's me, your friendly neighborhood spiderman");
+  }
+
+  chrome.runtime.onInstalled.callback(onInstalledCallback);
+
+  chrome.contextMenus.onClicked.addListener(onClickedCallback);
+}
+
 async function subscribe() {
   try {
     const SERVER_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
@@ -47,6 +67,7 @@ async function subscribe() {
 }
 
 async function main() {
+  createContextMenus();
   const subscription = await subscribe();
   const result = await chrome.storage.sync.get(["userId"]);
   if (result.userId) {

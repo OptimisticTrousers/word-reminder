@@ -1,4 +1,8 @@
-import { WordReminder as IWordReminder, Detail } from "common";
+import {
+  WordReminder as IWordReminder,
+  Detail,
+  UserWord as UserWordI,
+} from "common";
 import cronstrue from "cronstrue";
 import { useState } from "react";
 import CSSModules from "react-css-modules";
@@ -11,13 +15,7 @@ import styles from "./WordReminder.module.css";
 export interface Props {
   searchParams: URLSearchParams;
   wordReminder: IWordReminder & {
-    user_words: {
-      learned: boolean;
-      created_at: Date;
-      updated_at: Date;
-      details: Detail[];
-      id: number;
-    }[];
+    user_words: (UserWordI & { details: Detail[] })[];
   };
 }
 
@@ -79,16 +77,7 @@ export const WordReminder = CSSModules(
           </div>
           <ul styleName="word-reminder__user-words">
             {wordReminder.user_words.map(
-              (
-                user_word: {
-                  details: Detail[];
-                  learned: boolean;
-                  created_at: Date;
-                  updated_at: Date;
-                  id: number;
-                },
-                index: number
-              ) => {
+              (user_word: UserWordI & { details: Detail[] }, index: number) => {
                 return <UserWord key={index} {...user_word} />;
               }
             )}

@@ -1,4 +1,4 @@
-import { Detail, User, WordReminder } from "common";
+import { Detail, User, UserWord, WordReminder } from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,13 +20,7 @@ interface Props {
   searchParams: URLSearchParams;
   toggleModal: ToggleModal;
   wordReminder: WordReminder & {
-    user_words: {
-      learned: boolean;
-      created_at: Date;
-      updated_at: Date;
-      details: Detail[];
-      id: number;
-    }[];
+    user_words: (UserWord & { details: Detail[] })[];
   };
 }
 
@@ -73,22 +67,16 @@ export const UpdateWordReminderModal = CSSModules(
     }
 
     function handleUpdate(formData: FormData) {
-      const userWordToIds: { [key: string]: string } = {};
+      const wordToUserWord: { [key: string]: UserWord } = {};
       data?.json.user_words.forEach(
-        (user_word: {
-          learned: boolean;
-          created_at: Date;
-          updated_at: Date;
-          details: Detail[];
-          id: number;
-        }) => {
-          userWordToIds[user_word.details[0].word] = String(user_word.id);
+        (user_word: UserWord & { details: Detail[] }) => {
+          wordToUserWord[user_word.details[0].word] = user_word;
         }
       );
 
       const userWords = formData.get("user_words") as string;
-      const userWordIds = userWords.split(",").map((userWord: string) => {
-        return userWordToIds[userWord.toLowerCase()];
+      const userWordsData = userWords.split(",").map((userWord: string) => {
+        return wordToUserWord[userWord.toLowerCase()];
       });
 
       mutate({
@@ -101,7 +89,7 @@ export const UpdateWordReminderModal = CSSModules(
           has_reminder_onload: Boolean(
             formData.get("has_reminder_onload") as string
           ),
-          user_word_ids: userWordIds,
+          user_words: userWordsData,
         },
       });
     }
@@ -144,13 +132,7 @@ export const UpdateWordReminderModal = CSSModules(
               placeholder="Separate words with a comma."
               defaultValue={String(
                 wordReminder.user_words.map(
-                  (user_word: {
-                    learned: boolean;
-                    created_at: Date;
-                    updated_at: Date;
-                    details: Detail[];
-                    id: number;
-                  }) => {
+                  (user_word: UserWord & { details: Detail[] }) => {
                     return user_word.details[0].word;
                   }
                 )
@@ -158,13 +140,7 @@ export const UpdateWordReminderModal = CSSModules(
             />
             <datalist id="words">
               {data?.json.user_words.map(
-                (user_word: {
-                  learned: boolean;
-                  created_at: Date;
-                  updated_at: Date;
-                  id: number;
-                  details: Detail[];
-                }) => {
+                (user_word: UserWord & { details: Detail[] }) => {
                   const word = user_word.details[0].word;
                   return (
                     <option

@@ -1,3 +1,4 @@
+import { UserWord } from "common";
 import { service, Params } from "../service";
 
 export const wordReminderService = (function (service) {
@@ -44,7 +45,7 @@ export const wordReminderService = (function (service) {
       has_reminder_onload: boolean;
       reminder: string;
       finish: Date;
-      user_word_ids: string[];
+      user_words: UserWord[];
     };
   }) {
     return post({
@@ -72,7 +73,7 @@ export const wordReminderService = (function (service) {
       has_reminder_onload: boolean;
       reminder: string;
       finish: Date;
-      user_word_ids: string[];
+      user_words: UserWord[];
     };
   }) {
     return put({

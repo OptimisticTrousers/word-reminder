@@ -8,7 +8,7 @@ import { UpdateWordReminderModal } from "./UpdateWordReminderModal";
 import { userWordService } from "../../../services/user_word_service";
 import { ErrorBoundary } from "../../ErrorBoundary/ErrorBoundary";
 import { Mock } from "vitest";
-import { Detail } from "common";
+import { Detail, UserWord } from "common";
 
 vi.mock("../../ErrorBoundary/ErrorBoundary");
 vi.mock("../ModalContainer/ModalContainer");
@@ -89,22 +89,7 @@ describe("UpdateWordReminderModal component", () => {
     user_id: testUser.id,
     reminder: "* * * * *",
     finish: new Date("2025-02-08"),
-    user_words: [
-      {
-        learned: userWord1.learned,
-        created_at: userWord1.created_at,
-        updated_at: userWord1.updated_at,
-        details: word1.details,
-        id: userWord1.id,
-      },
-      {
-        learned: userWord2.learned,
-        created_at: userWord2.created_at,
-        updated_at: userWord2.updated_at,
-        details: word2.details,
-        id: userWord2.id,
-      },
-    ],
+    user_words: [userWord1, userWord2],
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -182,13 +167,7 @@ describe("UpdateWordReminderModal component", () => {
     const userWords = screen.getByDisplayValue(
       String(
         wordReminder.user_words.map(
-          (userWord: {
-            learned: boolean;
-            created_at: Date;
-            updated_at: Date;
-            details: Detail[];
-            id: number;
-          }) => {
+          (userWord: UserWord & { details: Detail[] }) => {
             return userWord.details[0].word;
           }
         )
@@ -241,13 +220,7 @@ describe("UpdateWordReminderModal component", () => {
     const userWords = await screen.findByDisplayValue(
       String(
         wordReminder.user_words.map(
-          (userWord: {
-            learned: boolean;
-            created_at: Date;
-            updated_at: Date;
-            details: Detail[];
-            id: number;
-          }) => {
+          (userWord: UserWord & { details: Detail[] }) => {
             return userWord.details[0].word;
           }
         )
@@ -278,7 +251,7 @@ describe("UpdateWordReminderModal component", () => {
       body: {
         reminder: "* * * * *",
         finish: new Date("2025-02-10"),
-        user_word_ids: [String(userWord1.id)],
+        user_words: [userWord1],
         is_active: !wordReminder.is_active,
         has_reminder_onload: !wordReminder.has_reminder_onload,
       },
@@ -341,7 +314,7 @@ describe("UpdateWordReminderModal component", () => {
       body: {
         reminder: "* * * * *",
         finish: wordReminder.finish,
-        user_word_ids: [String(userWord1.id), String(userWord2.id)],
+        user_words: [userWord1, userWord2],
         is_active: wordReminder.is_active,
         has_reminder_onload: wordReminder.has_reminder_onload,
       },
@@ -385,7 +358,7 @@ describe("UpdateWordReminderModal component", () => {
       body: {
         reminder: "* * * * *",
         finish: wordReminder.finish,
-        user_word_ids: [String(userWord1.id), String(userWord2.id)],
+        user_words: [userWord1, userWord2],
         is_active: wordReminder.is_active,
         has_reminder_onload: wordReminder.has_reminder_onload,
       },
@@ -449,12 +422,7 @@ describe("UpdateWordReminderModal component", () => {
       const userWords = screen.getByDisplayValue(
         String(
           wordReminder.user_words.map(
-            (userWord: {
-              learned: boolean;
-              created_at: Date;
-              details: Detail[];
-              id: number;
-            }) => {
+            (userWord: UserWord & { details: Detail[] }) => {
               return userWord.details[0].word;
             }
           )
@@ -501,13 +469,7 @@ describe("UpdateWordReminderModal component", () => {
       const userWords = screen.getByDisplayValue(
         String(
           wordReminder.user_words.map(
-            (userWord: {
-              learned: boolean;
-              created_at: Date;
-              updated_at: Date;
-              details: Detail[];
-              id: number;
-            }) => {
+            (userWord: UserWord & { details: Detail[] }) => {
               return userWord.details[0].word;
             }
           )
@@ -554,13 +516,7 @@ describe("UpdateWordReminderModal component", () => {
       const userWords = screen.getByDisplayValue(
         String(
           wordReminder.user_words.map(
-            (userWord: {
-              learned: boolean;
-              created_at: Date;
-              updated_at: Date;
-              details: Detail[];
-              id: number;
-            }) => {
+            (userWord: UserWord & { details: Detail[] }) => {
               return userWord.details[0].word;
             }
           )

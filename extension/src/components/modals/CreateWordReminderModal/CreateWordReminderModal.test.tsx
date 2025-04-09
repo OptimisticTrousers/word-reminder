@@ -243,7 +243,7 @@ describe("CreateWordReminderModal component", () => {
       body: {
         reminder: "* * * * *",
         finish: new Date("2025-02-04"),
-        user_word_ids: [userWord1.id, userWord2.id],
+        user_words: [userWord1, userWord2],
         is_active: false,
         has_reminder_onload: false,
       },
@@ -320,7 +320,7 @@ describe("CreateWordReminderModal component", () => {
       body: {
         reminder: "* * * * *",
         finish: new Date("2025-02-04"),
-        user_word_ids: [userWord1.id, userWord2.id],
+        user_words: [userWord1, userWord2],
         is_active: false,
         has_reminder_onload: false,
       },
@@ -369,7 +369,7 @@ describe("CreateWordReminderModal component", () => {
       body: {
         reminder: "* * * * *",
         finish: new Date("2025-02-04"),
-        user_word_ids: [userWord1.id],
+        user_words: [userWord1],
         is_active: true,
         has_reminder_onload: true,
       },

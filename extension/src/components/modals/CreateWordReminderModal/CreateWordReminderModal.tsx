@@ -1,4 +1,4 @@
-import { Detail, User } from "common";
+import { Detail, User, UserWord } from "common";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -63,22 +63,16 @@ export const CreateWordReminderModal = CSSModules(
     }
 
     function handleCreate(formData: FormData) {
-      const userWordToIds: { [key: string]: string } = {};
+      const wordToUserWord: { [key: string]: UserWord } = {};
       data?.json.user_words.forEach(
-        (user_word: {
-          learned: boolean;
-          created_at: Date;
-          updated_at: Date;
-          details: Detail[];
-          id: string;
-        }) => {
-          userWordToIds[user_word.details[0].word] = user_word.id;
+        (user_word: UserWord & { details: Detail[] }) => {
+          wordToUserWord[user_word.details[0].word] = user_word;
         }
       );
 
       const userWords = formData.get("user_words") as string;
-      const userWordIds = userWords.split(",").map((userWord: string) => {
-        return userWordToIds[userWord.toLowerCase()];
+      const userWordsData = userWords.split(",").map((userWord: string) => {
+        return wordToUserWord[userWord.toLowerCase()];
       });
 
       mutate({
@@ -90,7 +84,7 @@ export const CreateWordReminderModal = CSSModules(
           has_reminder_onload: Boolean(
             formData.get("has_reminder_onload") as string
           ),
-          user_word_ids: userWordIds,
+          user_words: userWordsData,
         },
       });
     }
@@ -131,13 +125,7 @@ export const CreateWordReminderModal = CSSModules(
             />
             <datalist id="words">
               {data?.json.user_words.map(
-                (user_word: {
-                  learned: boolean;
-                  created_at: Date;
-                  updated_at: Date;
-                  id: number;
-                  details: Detail[];
-                }) => {
+                (user_word: UserWord & { details: Detail[] }) => {
                   const word = user_word.details[0].word;
                   return (
                     <option
