@@ -142,6 +142,8 @@ export const createPopulateDb = function (client: Client) {
         expires_at TIMESTAMP NOT NULL DEFAULT (NOW() + INTERVAL '30 minutes')
       );
 
+      CREATE UNIQUE index ON word_reminders (is_active) WHERE is_active = true;
+
       CREATE OR REPLACE FUNCTION trigger_set_timestamp()
       RETURNS TRIGGER AS $$
       BEGIN

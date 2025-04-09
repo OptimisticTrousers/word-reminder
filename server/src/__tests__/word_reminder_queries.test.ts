@@ -42,6 +42,18 @@ describe("wordReminderQueries", () => {
       expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
     });
+
+    it("does not allow the user to create an active word reminder when one is already active", async () => {
+      await userQueries.create(userParams);
+
+      await wordReminderQueries.create(wordReminderParams);
+
+      await expect(async () => {
+        await wordReminderQueries.create(wordReminderParams);
+      }).rejects.toThrow(
+        'duplicate key value violates unique constraint "word_reminders_is_active_idx"'
+      );
+    });
   });
 
   describe("deleteByUserId", () => {
@@ -88,6 +100,31 @@ describe("wordReminderQueries", () => {
       });
       expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
+    });
+
+    it("does not allow the user to update a word reminder to active when one is already active", async () => {
+      await userQueries.create(userParams);
+
+      const newWordReminderParams = {
+        finish: new Date(Date.now() + 1000),
+        reminder: "* * * * *",
+        is_active: true,
+        has_reminder_onload: true,
+      };
+      await wordReminderQueries.create({
+        ...wordReminderParams,
+        is_active: false,
+      });
+      await wordReminderQueries.create(wordReminderParams);
+
+      await expect(async () => {
+        await wordReminderQueries.updateById(
+          wordReminderId,
+          newWordReminderParams
+        );
+      }).rejects.toThrow(
+        'duplicate key value violates unique constraint "word_reminders_is_active_idx"'
+      );
     });
   });
 });

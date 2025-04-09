@@ -361,12 +361,14 @@ describe("userWordsWordRemindersQueries", () => {
       const wordReminder1 = await wordReminderQueries.create(
         wordReminderParams
       );
-      const wordReminder2 = await wordReminderQueries.create(
-        wordReminderParams
-      );
-      const wordReminder3 = await wordReminderQueries.create(
-        wordReminderParams
-      );
+      const wordReminder2 = await wordReminderQueries.create({
+        ...wordReminderParams,
+        is_active: false,
+      });
+      const wordReminder3 = await wordReminderQueries.create({
+        ...wordReminderParams,
+        is_active: false,
+      });
 
       await userWordsWordRemindersQueries.create({
         user_word_id: clemencyUserWord.id,
@@ -469,12 +471,14 @@ describe("userWordsWordRemindersQueries", () => {
         const wordReminder1 = await wordReminderQueries.create(
           wordReminderParams
         );
-        const wordReminder2 = await wordReminderQueries.create(
-          wordReminderParams
-        );
-        const wordReminder3 = await wordReminderQueries.create(
-          wordReminderParams
-        );
+        const wordReminder2 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
+        const wordReminder3 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
 
         await userWordsWordRemindersQueries.create({
           user_word_id: clemencyUserWord.id,
@@ -574,12 +578,14 @@ describe("userWordsWordRemindersQueries", () => {
           const wordReminder1 = await wordReminderQueries.create(
             wordReminderParams
           );
-          const wordReminder2 = await wordReminderQueries.create(
-            wordReminderParams
-          );
-          const wordReminder3 = await wordReminderQueries.create(
-            wordReminderParams
-          );
+          const wordReminder2 = await wordReminderQueries.create({
+            ...wordReminderParams,
+            is_active: false,
+          });
+          const wordReminder3 = await wordReminderQueries.create({
+            ...wordReminderParams,
+            is_active: false,
+          });
 
           await userWordsWordRemindersQueries.create({
             user_word_id: clemencyUserWord.id,
@@ -659,8 +665,14 @@ describe("userWordsWordRemindersQueries", () => {
           const wordReminder1 = await wordReminderQueries.create(
             wordReminderParams
           );
-          const wordReminder2 = await wordReminderQueries.create(wordReminder1);
-          const wordReminder3 = await wordReminderQueries.create(wordReminder1);
+          const wordReminder2 = await wordReminderQueries.create({
+            ...wordReminderParams,
+            is_active: false,
+          });
+          const wordReminder3 = await wordReminderQueries.create({
+            ...wordReminderParams,
+            is_active: false,
+          });
 
           await userWordsWordRemindersQueries.create({
             user_word_id: clemencyUserWord.id,
@@ -736,7 +748,10 @@ describe("userWordsWordRemindersQueries", () => {
           const wordReminder1 = await wordReminderQueries.create(
             wordReminderParams
           );
-          const wordReminder2 = await wordReminderQueries.create(wordReminder1);
+          const wordReminder2 = await wordReminderQueries.create({
+            ...wordReminderParams,
+            is_active: false,
+          });
 
           await userWordsWordRemindersQueries.create({
             user_word_id: clemencyUserWord.id,
@@ -822,12 +837,14 @@ describe("userWordsWordRemindersQueries", () => {
         const wordReminder1 = await wordReminderQueries.create(
           wordReminderParams
         );
-        const wordReminder2 = await wordReminderQueries.create(
-          wordReminderParams
-        );
-        const wordReminder3 = await wordReminderQueries.create(
-          wordReminderParams
-        );
+        const wordReminder2 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
+        const wordReminder3 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
 
         await userWordsWordRemindersQueries.create({
           user_word_id: clemencyUserWord.id,
@@ -938,12 +955,14 @@ describe("userWordsWordRemindersQueries", () => {
         const wordReminder1 = await wordReminderQueries.create(
           wordReminderParams
         );
-        const wordReminder2 = await wordReminderQueries.create(
-          wordReminderParams
-        );
-        const wordReminder3 = await wordReminderQueries.create(
-          wordReminderParams
-        );
+        const wordReminder2 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
+        const wordReminder3 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
 
         await userWordsWordRemindersQueries.create({
           user_word_id: clemencyUserWord.id,
@@ -1054,12 +1073,14 @@ describe("userWordsWordRemindersQueries", () => {
         const wordReminder1 = await wordReminderQueries.create(
           wordReminderParams
         );
-        const wordReminder2 = await wordReminderQueries.create(
-          wordReminderParams
-        );
-        const wordReminder3 = await wordReminderQueries.create(
-          wordReminderParams
-        );
+        const wordReminder2 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
+        const wordReminder3 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
 
         await userWordsWordRemindersQueries.create({
           user_word_id: clemencyUserWord.id,
@@ -1170,12 +1191,14 @@ describe("userWordsWordRemindersQueries", () => {
         const wordReminder1 = await wordReminderQueries.create(
           wordReminderParams
         );
-        const wordReminder2 = await wordReminderQueries.create(
-          wordReminderParams
-        );
-        const wordReminder3 = await wordReminderQueries.create(
-          wordReminderParams
-        );
+        const wordReminder2 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
+        const wordReminder3 = await wordReminderQueries.create({
+          ...wordReminderParams,
+          is_active: false,
+        });
 
         await userWordsWordRemindersQueries.create({
           user_word_id: clemencyUserWord.id,
