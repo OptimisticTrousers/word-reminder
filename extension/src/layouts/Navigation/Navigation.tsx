@@ -41,7 +41,8 @@ export const Navigation = CSSModules(
       chrome.tabs.create({ url });
     }
 
-    const inPopup = window.location.search.includes("popup=true");
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const inPopup = urlSearchParams.get("popup") === "true";
 
     const disabled = isPending;
 
