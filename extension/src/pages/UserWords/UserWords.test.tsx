@@ -157,6 +157,10 @@ describe("UserWords component", () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    queryClient.clear();
+  });
+
   describe("word creation", () => {
     beforeEach(() => {
       vi.spyOn(userWordService, "getUserWordList").mockImplementation(
@@ -808,17 +812,19 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
-          userId: String(testUser.id),
-          params: {
-            page: "1",
-            limit: PAGINATION_LIMIT,
-            search: "",
-            learned: "",
-            column: "",
-            direction: "",
-          },
+        await waitFor(() => {
+          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+          expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+            userId: String(testUser.id),
+            params: {
+              page: "1",
+              limit: PAGINATION_LIMIT,
+              search: "",
+              learned: "",
+              column: "",
+              direction: "",
+            },
+          });
         });
       });
 
