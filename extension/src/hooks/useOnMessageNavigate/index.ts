@@ -1,0 +1,1 @@
+export { useOnMessageRedirect } from "./useOnMessageNavigate";

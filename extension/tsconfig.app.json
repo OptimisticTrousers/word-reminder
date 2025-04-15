@@ -3,7 +3,7 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2021",
     "useDefineForClassFields": true,
-    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "lib": ["ES2021", "DOM", "DOM.Iterable", "WebWorker"],
     "module": "ESNext",
     "skipLibCheck": true,
     "types": ["vitest/globals", "@testing-library/jest-dom", "chrome"],
@@ -21,7 +21,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/service-worker"]
 }

@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && tsc --project tsconfig.sw.json && vite build",
     "extension": "tsc -b && vite build --watch",
+    "sw": "vite build --config vite.sw.config.ts",
+    "preextension": "npm run sw",
     "coverage": "vitest run --coverage",
     "test": "vitest",
     "lint": "eslint .",

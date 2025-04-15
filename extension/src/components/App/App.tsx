@@ -7,12 +7,12 @@ import { ThemeContext } from "../../context/Theme";
 import styles from "./App.module.css";
 import { Footer } from "../../layouts/Footer";
 import { Navigation } from "../../layouts/Navigation";
-import { useContextMenu } from "../../hooks/useContextMenu";
+import { useChromeStorageSync } from "../../hooks/useChromeStorageSync";
 
 export const App = CSSModules(
   function ({ user }: { user: User }) {
     const { theme } = useContext(ThemeContext);
-    useContextMenu(String(user.id));
+    useChromeStorageSync("userId", String(user.id));
 
     return (
       <main styleName={`main main--${theme}`}>

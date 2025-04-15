@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { Router } from "./Router";
 import { sessionService } from "../services/session_service";
+import * as hooks from "../hooks/useOnMessageNavigate";
 
 vi.mock("../components/ui/Loading/Loading");
 
@@ -128,7 +129,28 @@ describe("Router component", () => {
     vi.clearAllMocks();
   });
 
+  const mockUseOnMessageRedirect = vi
+    .spyOn(hooks, "useOnMessageRedirect")
+    .mockImplementation(vi.fn());
+
   describe("returns routing", () => {
+    it("calls 'useOnMessageRedirect' hook", async () => {
+      const mockSessionServiceGetCurrentUser = vi
+        .spyOn(sessionService, "getCurrentUser")
+        .mockImplementation(async () => {
+          return { json: { user }, status };
+        });
+
+      setup({ initialRoute: `/` });
+
+      const app = await screen.findByTestId("app");
+      expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
+      expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
+      expect(mockUseOnMessageRedirect).toHaveBeenCalledTimes(2); // once for '/' route, another when redirected to '/userWords'
+      expect(mockUseOnMessageRedirect).toHaveBeenCalledWith();
+      expect(app).toBeInTheDocument();
+    });
+
     describe("when the user is logged in", () => {
       it("renders user word page", async () => {
         const userWordId = 1;

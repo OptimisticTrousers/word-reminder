@@ -7,10 +7,13 @@ global.chrome = {
       addListener: vi.fn().mockImplementation((callback) => {
         callback();
       }),
-      removeListener: vi.fn().mockImplementation((callback) => {
+    },
+    onMessage: {
+      addListener: vi.fn().mockImplementation((callback) => {
         callback();
       }),
     },
+    sendMessage: vi.fn().mockResolvedValue(),
     getURL: vi.fn(),
   },
   contextMenus: {
@@ -19,12 +22,7 @@ global.chrome = {
         const item = { selectionText: "" };
         callback(item);
       }),
-      removeListener: vi.fn().mockImplementation((callback) => {
-        const item = { selectionText: "" };
-        callback(item);
-      }),
     },
-    remove: vi.fn(),
     create: vi.fn(),
   },
   action: {
