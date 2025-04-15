@@ -149,32 +149,36 @@ export const UserWord = CSSModules(
                                     {definition.example}
                                   </p>
                                 )}
-                                {definition.synonyms &&
-                                  definition.synonyms.map(
-                                    (synonym: string, index: number) => {
-                                      return (
-                                        <li
-                                          styleName="word__synonym"
-                                          key={index}
-                                        >
-                                          {synonym}
-                                        </li>
-                                      );
-                                    }
-                                  )}
-                                {definition.antonyms &&
-                                  definition.antonyms.map(
-                                    (antonym: string, index: number) => {
-                                      return (
-                                        <li
-                                          styleName="word__antonym"
-                                          key={index}
-                                        >
-                                          {antonym}
-                                        </li>
-                                      );
-                                    }
-                                  )}
+                                <ul styleName="word__synonyms">
+                                  {definition.synonyms &&
+                                    definition.synonyms.map(
+                                      (synonym: string, index: number) => {
+                                        return (
+                                          <li
+                                            styleName="word__synonym"
+                                            key={index}
+                                          >
+                                            {synonym}
+                                          </li>
+                                        );
+                                      }
+                                    )}
+                                </ul>
+                                <ul styleName="word__antonyms">
+                                  {definition.antonyms &&
+                                    definition.antonyms.map(
+                                      (antonym: string, index: number) => {
+                                        return (
+                                          <li
+                                            styleName="word__antonym"
+                                            key={index}
+                                          >
+                                            {antonym}
+                                          </li>
+                                        );
+                                      }
+                                    )}
+                                </ul>
                               </li>
                             )
                           )}

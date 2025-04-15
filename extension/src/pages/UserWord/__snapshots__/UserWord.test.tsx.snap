@@ -161,6 +161,12 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 >
                   Have you had any word from John yet?
                 </p>
+                <ul
+                  class="_word__synonyms_063118"
+                />
+                <ul
+                  class="_word__antonyms_063118"
+                />
               </li>
               <li
                 class="_word__definition_063118"
@@ -175,16 +181,24 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 >
                   I give you my word that I will be there on time.
                 </p>
-              </li>
-              <li
-                class="_word__synonym_063118"
-              >
-                promise
-              </li>
-              <li
-                class="_word__antonym_063118"
-              >
-                false promise
+                <ul
+                  class="_word__synonyms_063118"
+                >
+                  <li
+                    class="_word__synonym_063118"
+                  >
+                    promise
+                  </li>
+                </ul>
+                <ul
+                  class="_word__antonyms_063118"
+                >
+                  <li
+                    class="_word__antonym_063118"
+                  >
+                    false promise
+                  </li>
+                </ul>
               </li>
             </ul>
           </div>
