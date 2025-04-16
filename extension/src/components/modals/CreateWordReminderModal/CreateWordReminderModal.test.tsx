@@ -159,7 +159,7 @@ describe("CreateWordReminderModal component", () => {
   it("renders the form with all inputs", async () => {
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockToggleModal = vi.fn();
@@ -198,7 +198,7 @@ describe("CreateWordReminderModal component", () => {
   it("calls the functions to create a word reminder", async () => {
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockCreateWordReminder = vi
@@ -250,7 +250,7 @@ describe("CreateWordReminderModal component", () => {
     });
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["userWords", Object.fromEntries(new URLSearchParams())],
+      queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
       exact: true,
     });
   });
@@ -277,7 +277,7 @@ describe("CreateWordReminderModal component", () => {
     const status = 400;
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockCreateWordReminder = vi
@@ -333,7 +333,7 @@ describe("CreateWordReminderModal component", () => {
   it("disables the create button when the mutation is loading", async () => {
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockCreateWordReminder = vi
@@ -407,7 +407,7 @@ describe("CreateWordReminderModal component", () => {
       vi.spyOn(userWordService, "getUserWordList").mockImplementation(
         async () => {
           return {
-            json: { user_words: [userWord1, userWord2] },
+            json: { userWords: [userWord1, userWord2] },
             status,
           };
         }
@@ -444,7 +444,7 @@ describe("CreateWordReminderModal component", () => {
       vi.spyOn(userWordService, "getUserWordList").mockImplementation(
         async () => {
           return {
-            json: { user_words: [userWord1, userWord2] },
+            json: { userWords: [userWord1, userWord2] },
             status,
           };
         }
@@ -481,7 +481,7 @@ describe("CreateWordReminderModal component", () => {
       vi.spyOn(userWordService, "getUserWordList").mockImplementation(
         async () => {
           return {
-            json: { user_words: [userWord1, userWord2] },
+            json: { userWords: [userWord1, userWord2] },
             status,
           };
         }

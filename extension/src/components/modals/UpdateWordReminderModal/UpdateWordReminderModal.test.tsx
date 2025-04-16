@@ -146,7 +146,7 @@ describe("UpdateWordReminderModal component", () => {
   it("renders the form with all inputs", async () => {
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockToggleModal = vi.fn();
@@ -167,8 +167,8 @@ describe("UpdateWordReminderModal component", () => {
     const userWords = screen.getByDisplayValue(
       String(
         wordReminder.user_words.map(
-          (userWord: UserWord & { details: Detail[] }) => {
-            return userWord.details[0].word;
+          (user_word: UserWord & { details: Detail[] }) => {
+            return user_word.details[0].word;
           }
         )
       )
@@ -195,7 +195,7 @@ describe("UpdateWordReminderModal component", () => {
   it("calls the functions to update a word reminder", async () => {
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockUpdateWordReminder = vi
@@ -220,8 +220,8 @@ describe("UpdateWordReminderModal component", () => {
     const userWords = await screen.findByDisplayValue(
       String(
         wordReminder.user_words.map(
-          (userWord: UserWord & { details: Detail[] }) => {
-            return userWord.details[0].word;
+          (user_word: UserWord & { details: Detail[] }) => {
+            return user_word.details[0].word;
           }
         )
       )
@@ -285,7 +285,7 @@ describe("UpdateWordReminderModal component", () => {
     const status = 400;
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockUpdateWordReminder = vi
@@ -327,7 +327,7 @@ describe("UpdateWordReminderModal component", () => {
   it("disables the update button when the mutation is loading", async () => {
     vi.spyOn(userWordService, "getUserWordList").mockImplementation(
       async () => {
-        return { json: { user_words: [userWord1, userWord2] }, status };
+        return { json: { userWords: [userWord1, userWord2] }, status };
       }
     );
     const mockUpdateWordReminder = vi
@@ -399,7 +399,7 @@ describe("UpdateWordReminderModal component", () => {
       vi.spyOn(userWordService, "getUserWordList").mockImplementation(
         async () => {
           return {
-            json: { user_words: [userWord1, userWord2] },
+            json: { userWords: [userWord1, userWord2] },
             status,
           };
         }
@@ -422,8 +422,8 @@ describe("UpdateWordReminderModal component", () => {
       const userWords = screen.getByDisplayValue(
         String(
           wordReminder.user_words.map(
-            (userWord: UserWord & { details: Detail[] }) => {
-              return userWord.details[0].word;
+            (user_word: UserWord & { details: Detail[] }) => {
+              return user_word.details[0].word;
             }
           )
         )
@@ -446,7 +446,7 @@ describe("UpdateWordReminderModal component", () => {
       vi.spyOn(userWordService, "getUserWordList").mockImplementation(
         async () => {
           return {
-            json: { user_words: [userWord1, userWord2] },
+            json: { userWords: [userWord1, userWord2] },
             status,
           };
         }
@@ -469,8 +469,8 @@ describe("UpdateWordReminderModal component", () => {
       const userWords = screen.getByDisplayValue(
         String(
           wordReminder.user_words.map(
-            (userWord: UserWord & { details: Detail[] }) => {
-              return userWord.details[0].word;
+            (user_word: UserWord & { details: Detail[] }) => {
+              return user_word.details[0].word;
             }
           )
         )
@@ -493,7 +493,7 @@ describe("UpdateWordReminderModal component", () => {
       vi.spyOn(userWordService, "getUserWordList").mockImplementation(
         async () => {
           return {
-            json: { user_words: [userWord1, userWord2] },
+            json: { userWords: [userWord1, userWord2] },
             status,
           };
         }
@@ -516,8 +516,8 @@ describe("UpdateWordReminderModal component", () => {
       const userWords = screen.getByDisplayValue(
         String(
           wordReminder.user_words.map(
-            (userWord: UserWord & { details: Detail[] }) => {
-              return userWord.details[0].word;
+            (user_word: UserWord & { details: Detail[] }) => {
+              return user_word.details[0].word;
             }
           )
         )

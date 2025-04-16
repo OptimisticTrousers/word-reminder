@@ -2,7 +2,7 @@ import { User } from "common";
 import { useContext } from "react";
 import CSSModules from "react-css-modules";
 import { useOutletContext } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   NOTIFICATION_ACTIONS,
@@ -26,6 +26,7 @@ export const DeleteWordReminderModal = CSSModules(
     const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
+    const queryClient = useQueryClient();
     const { isPending, mutate } = useMutation({
       mutationFn: wordReminderService.deleteWordReminder,
       onSuccess: () => {
@@ -33,6 +34,9 @@ export const DeleteWordReminderModal = CSSModules(
           NOTIFICATION_ACTIONS.SUCCESS,
           WORD_REMINDER_NOTIFICATION_MSGS.deleteWordReminder()
         );
+        queryClient.invalidateQueries({
+          queryKey: ["wordReminders"],
+        });
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);

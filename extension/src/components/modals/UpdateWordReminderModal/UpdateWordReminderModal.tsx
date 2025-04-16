@@ -68,9 +68,9 @@ export const UpdateWordReminderModal = CSSModules(
 
     function handleUpdate(formData: FormData) {
       const wordToUserWord: { [key: string]: UserWord } = {};
-      data?.json.user_words.forEach(
-        (user_word: UserWord & { details: Detail[] }) => {
-          wordToUserWord[user_word.details[0].word] = user_word;
+      data?.json.userWords.forEach(
+        (userWord: UserWord & { details: Detail[] }) => {
+          wordToUserWord[userWord.details[0].word] = userWord;
         }
       );
 
@@ -113,7 +113,7 @@ export const UpdateWordReminderModal = CSSModules(
               name="finish"
               required
               defaultValue={String(
-                wordReminder.finish.toISOString().slice(0, 10)
+                new Date(wordReminder.finish).toISOString().slice(0, 10)
               )}
             />
           </div>
@@ -126,6 +126,18 @@ export const UpdateWordReminderModal = CSSModules(
               multiple
               name="user_words"
               id="user_words"
+              onFocus={(event) => {
+                const type = event.target.type;
+                if (type === "text") {
+                  event.target.type = "email";
+                }
+              }}
+              onBlur={(event) => {
+                const type = event.target.type;
+                if (type === "email") {
+                  event.target.type = "text";
+                }
+              }}
               list="words"
               required
               size={64}
@@ -139,12 +151,12 @@ export const UpdateWordReminderModal = CSSModules(
               )}
             />
             <datalist id="words">
-              {data?.json.user_words.map(
-                (user_word: UserWord & { details: Detail[] }) => {
-                  const word = user_word.details[0].word;
+              {data?.json.userWords.map(
+                (userWord: UserWord & { details: Detail[] }) => {
+                  const word = userWord.details[0].word;
                   return (
                     <option
-                      key={user_word.id}
+                      key={userWord.id}
                       styleName="modal__option"
                       value={word}
                     >

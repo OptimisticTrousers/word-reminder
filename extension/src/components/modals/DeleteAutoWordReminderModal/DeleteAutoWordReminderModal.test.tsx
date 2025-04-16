@@ -96,12 +96,18 @@ describe("DeleteAutoWordReminderModal component", () => {
       .mockImplementation(async () => {
         return { json, status };
       });
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const user = userEvent.setup();
 
     render(<Stub initialEntries={["/"]} />);
 
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
+    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["autoWordReminders"],
+      exact: true,
+    });
     expect(mockDeleteAutoWordReminder).toHaveBeenCalledTimes(1);
     expect(mockDeleteAutoWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
@@ -151,12 +157,14 @@ describe("DeleteAutoWordReminderModal component", () => {
     vi.spyOn(hooks, "useNotificationError").mockImplementation(() => {
       return { showNotificationError: mockShowNotificationError };
     });
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const user = userEvent.setup();
 
     render(<Stub initialEntries={["/"]} />);
 
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
     expect(mockDeleteAutoWordReminder).toHaveBeenCalledTimes(1);
     expect(mockDeleteAutoWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,

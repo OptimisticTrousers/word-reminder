@@ -96,12 +96,17 @@ describe("DeleteWordReminderModal component", () => {
       .mockImplementation(async () => {
         return { json, status };
       });
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const user = userEvent.setup();
 
     render(<Stub initialEntries={["/"]} />);
 
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
+    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["wordReminders"],
+    });
     expect(mockDeleteWordReminder).toHaveBeenCalledTimes(1);
     expect(mockDeleteWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
@@ -151,12 +156,14 @@ describe("DeleteWordReminderModal component", () => {
     vi.spyOn(hooks, "useNotificationError").mockImplementation(() => {
       return { showNotificationError: mockShowNotificationError };
     });
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const user = userEvent.setup();
 
     render(<Stub initialEntries={["/"]} />);
 
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
     expect(mockDeleteWordReminder).toHaveBeenCalledTimes(1);
     expect(mockDeleteWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,

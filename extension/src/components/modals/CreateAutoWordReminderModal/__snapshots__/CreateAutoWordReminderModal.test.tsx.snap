@@ -21,6 +21,11 @@ exports[`CreateAutoWordReminderModal component > renders form with all inputs 1`
         <div
           class="_reminder_a2fc7e"
         >
+          <a
+            href="https://cronprompt.com/"
+          >
+            Visit cronprompt for more details
+          </a>
           <p
             class="_reminder__description_a2fc7e"
           />

@@ -48,7 +48,7 @@ export const CreateWordReminderModal = CSSModules(
         );
         const searchParamsObject = Object.fromEntries(searchParams);
         queryClient.invalidateQueries({
-          queryKey: ["userWords", searchParamsObject],
+          queryKey: ["wordReminders", searchParamsObject],
           exact: true,
         });
       },
@@ -64,12 +64,11 @@ export const CreateWordReminderModal = CSSModules(
 
     function handleCreate(formData: FormData) {
       const wordToUserWord: { [key: string]: UserWord } = {};
-      data?.json.user_words.forEach(
-        (user_word: UserWord & { details: Detail[] }) => {
-          wordToUserWord[user_word.details[0].word] = user_word;
+      data?.json.userWords.forEach(
+        (userWord: UserWord & { details: Detail[] }) => {
+          wordToUserWord[userWord.details[0].word] = userWord;
         }
       );
-
       const userWords = formData.get("user_words") as string;
       const userWordsData = userWords.split(",").map((userWord: string) => {
         return wordToUserWord[userWord.toLowerCase()];
@@ -114,22 +113,34 @@ export const CreateWordReminderModal = CSSModules(
               User Words
             </label>
             <input
-              type="text"
+              type="email"
               multiple
               name="user_words"
               id="user_words"
+              onFocus={(event) => {
+                const type = event.target.type;
+                if (type === "text") {
+                  event.target.type = "email";
+                }
+              }}
+              onBlur={(event) => {
+                const type = event.target.type;
+                if (type === "email") {
+                  event.target.type = "text";
+                }
+              }}
               list="words"
               required
               size={64}
-              placeholder="Separate words with a comma."
+              placeholder="Separate words with a comma and no spaces."
             />
             <datalist id="words">
-              {data?.json.user_words.map(
-                (user_word: UserWord & { details: Detail[] }) => {
-                  const word = user_word.details[0].word;
+              {data?.json.userWords.map(
+                (userWord: UserWord & { details: Detail[] }) => {
+                  const word = userWord.details[0].word;
                   return (
                     <option
-                      key={user_word.id}
+                      key={userWord.id}
                       styleName="modal__option"
                       value={word}
                     >
