@@ -54,18 +54,6 @@ const deletedUserWordsWordReminders = [
   userWordsWordReminder3,
 ];
 
-const deleteByWordReminderIdMock = jest
-  .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
-  .mockResolvedValue(deletedUserWordsWordReminders);
-const deleteByIdMock = jest
-  .spyOn(wordReminderQueries, "deleteById")
-  .mockImplementation(async () => {
-    return wordReminder;
-  });
-const mockDeleteQueue = jest
-  .spyOn(boss, "deleteQueue")
-  .mockImplementation(jest.fn());
-
 const queueName = `${userId}-word-reminder-queue`;
 
 describe("delete_word_reminder", () => {
@@ -74,6 +62,18 @@ describe("delete_word_reminder", () => {
   });
 
   it("deletes a user's word reminders", async () => {
+    const deleteByWordReminderIdMock = jest
+      .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
+      .mockResolvedValue(deletedUserWordsWordReminders);
+    const deleteByIdMock = jest
+      .spyOn(wordReminderQueries, "deleteById")
+      .mockImplementation(async () => {
+        return wordReminder;
+      });
+    const mockPurgeQueue = jest
+      .spyOn(boss, "purgeQueue")
+      .mockImplementation(jest.fn());
+
     const response = await request(app).delete(
       `/api/users/${userId}/wordReminders/${wordReminder.id}`
     );
@@ -95,7 +95,45 @@ describe("delete_word_reminder", () => {
     expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder.id);
     expect(deleteByIdMock).toHaveBeenCalledTimes(1);
     expect(deleteByIdMock).toHaveBeenCalledWith(wordReminder.id);
-    expect(mockDeleteQueue).toHaveBeenCalledTimes(1);
-    expect(mockDeleteQueue).toHaveBeenCalledWith(queueName);
+    expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
+    expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);
+  });
+
+  it("does not delete queue if word reminder is not active", async () => {
+    const deleteByWordReminderIdMock = jest
+      .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
+      .mockResolvedValue(deletedUserWordsWordReminders);
+    const deleteByIdMock = jest
+      .spyOn(wordReminderQueries, "deleteById")
+      .mockImplementation(async () => {
+        return { ...wordReminder, is_active: false };
+      });
+    const mockPurgeQueue = jest
+      .spyOn(boss, "purgeQueue")
+      .mockImplementation(jest.fn());
+
+    const response = await request(app).delete(
+      `/api/users/${userId}/wordReminders/${wordReminder.id}`
+    );
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      wordReminder: {
+        ...wordReminder,
+        is_active: false,
+        updated_at: wordReminder.updated_at.toISOString(),
+        created_at: wordReminder.created_at.toISOString(),
+        finish: wordReminder.finish.toISOString(),
+      },
+      userWordsWordReminders: deletedUserWordsWordReminders,
+    });
+    expect(deleteByWordReminderIdMock).toHaveBeenCalledTimes(1);
+    expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder.id);
+    expect(deleteByWordReminderIdMock).toHaveBeenCalledTimes(1);
+    expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder.id);
+    expect(deleteByIdMock).toHaveBeenCalledTimes(1);
+    expect(deleteByIdMock).toHaveBeenCalledWith(wordReminder.id);
+    expect(mockPurgeQueue).not.toHaveBeenCalled();
   });
 });

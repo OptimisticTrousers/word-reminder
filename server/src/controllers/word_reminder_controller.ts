@@ -96,7 +96,9 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
 
   const queueName = `${userId}-${queuePostfix}`;
 
-  await boss.deleteQueue(queueName);
+  if (deletedWordReminder?.is_active) {
+    await boss.purgeQueue(queueName);
+  }
 
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
