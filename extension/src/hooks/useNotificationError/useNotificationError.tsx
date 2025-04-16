@@ -13,13 +13,20 @@ export function useNotificationError() {
   const { showNotification } = useContext(NotificationContext);
 
   function showNotificationError(response: ErrorResponse) {
-    const message = response.json.message;
-    if (message === "Incorrect email." || message === "Incorrect password.") {
+    if ("errors" in response.json) {
+      showNotification(
+        NOTIFICATION_ACTIONS.ERROR,
+        `Errors: ${response.json.errors.map((error) => error.msg)}`
+      );
+    } else if (
+      response.json.message === "Incorrect email." ||
+      response.json.message === "Incorrect password."
+    ) {
       showNotification(
         NOTIFICATION_ACTIONS.ERROR,
         AUTH_NOTIFICATION_MSGS.incorrectCredentials()
       );
-    } else if (message == "User is unauthenticated.") {
+    } else if (response.json.message == "User is unauthenticated.") {
       showNotification(
         NOTIFICATION_ACTIONS.ERROR,
         AUTH_NOTIFICATION_MSGS.credentialsExpired()

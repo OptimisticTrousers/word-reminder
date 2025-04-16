@@ -121,8 +121,60 @@ describe("useNotificationError", () => {
       expect(notification).toBeInTheDocument();
     });
 
+    it("shows form validation error", async () => {
+      const fakeResponse = {
+        json: {
+          errors: [
+            {
+              location: "body",
+              msg: "'finish' must come after the current date.",
+              path: "finish",
+              type: "field",
+              value: "2025-04-09T00:00:00.000Z",
+            },
+            {
+              location: "body",
+              msg: "'user_words' must be specified.",
+              path: "user_words",
+              type: "field",
+              value: "",
+            },
+          ],
+        },
+        status: 400,
+      };
+      function TestComponent() {
+        const { showNotificationError } = useNotificationError();
+
+        function handleClick() {
+          showNotificationError(fakeResponse);
+        }
+        return <button onClick={handleClick}>Show Notification</button>;
+      }
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <NotificationProvider>
+            <TestComponent />
+          </NotificationProvider>
+        </MemoryRouter>
+      );
+
+      const showNotificationButton = screen.getByRole("button", {
+        name: "Show Notification",
+      });
+      await user.click(showNotificationButton);
+
+      const notification = screen.getByRole("dialog", {
+        name: `Errors: ${fakeResponse.json.errors.map(
+          (error: { msg: string }) => error.msg
+        )}`,
+      });
+      expect(notification).toBeInTheDocument();
+    });
+
     it("shows custom message notification", async () => {
-      const fakeResponse: ErrorResponse = {
+      const fakeResponse = {
         json: { message: "Bad Request." },
         status: 400,
       };

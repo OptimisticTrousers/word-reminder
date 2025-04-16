@@ -5,7 +5,6 @@ import { Loading } from "../components/ui/Loading";
 import { Error500 } from "../pages/Error500";
 import { sessionService } from "../services/session_service";
 import { routes } from "./routes";
-import { ErrorResponse } from "../types";
 import { useOnMessageRedirect } from "../hooks/useOnMessageNavigate";
 
 export function Router() {
@@ -26,7 +25,11 @@ export function Router() {
 
   if (isError) {
     return (
-      <Error500 message={(error as unknown as ErrorResponse).json.message} />
+      <Error500
+        message={
+          (error as unknown as { json: { message: string } }).json.message
+        }
+      />
     );
   }
 
