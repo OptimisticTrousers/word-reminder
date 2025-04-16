@@ -87,6 +87,7 @@ export const AutoCreateWordReminder = CSSModules(
     return (
       <>
         <section styleName="auto-word-reminder">
+          <h3 styleName="auto-word-reminder__heading">Auto Word Reminder</h3>
           <div styleName="auto-word-reminder__id">
             ID: {autoWordReminder.id}
           </div>

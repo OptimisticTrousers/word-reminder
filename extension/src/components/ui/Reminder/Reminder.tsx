@@ -14,6 +14,7 @@ export const Reminder = CSSModules(
   function ({ disabled, value, handleChange }: Props) {
     return (
       <div styleName="reminder">
+        <a href="https://cronprompt.com/">Visit cronprompt for more details</a>
         <p styleName="reminder__description">
           {value &&
             cronstrue.toString(value, {

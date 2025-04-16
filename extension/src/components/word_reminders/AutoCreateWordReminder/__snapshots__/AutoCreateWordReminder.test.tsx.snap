@@ -5,6 +5,11 @@ exports[`AutoCreateWordReminder component > when the auto word reminder does exi
   <section
     class="_auto-word-reminder_f00845"
   >
+    <h3
+      class="_auto-word-reminder__heading_f00845"
+    >
+      Auto Word Reminder
+    </h3>
     <div
       class="_auto-word-reminder__id_f00845"
     >

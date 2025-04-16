@@ -177,7 +177,7 @@ describe("wordReminder component", () => {
       />
     );
 
-    const id = screen.getByText(wordReminder.id);
+    const id = screen.getByText(`ID: ${wordReminder.id}`);
     const reminder = screen.getByText("Reminder: Every 2 minutes");
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"
@@ -309,7 +309,7 @@ describe("wordReminder component", () => {
         />
       );
 
-      const id = screen.getByText(wordReminder.id);
+      const id = screen.getByText(`ID: ${wordReminder.id}`);
       const reminder = screen.getByText("Reminder: Every 2 minutes");
       const isActive = screen.getByText(
         "Active (whether the word reminder will actively remind you of the words in it): Yes"
@@ -359,7 +359,7 @@ describe("wordReminder component", () => {
       />
     );
 
-    const id = screen.getByText(wordReminder.id);
+    const id = screen.getByText(`ID: ${wordReminder.id}`);
     const reminder = screen.getByText("Reminder: Every 2 minutes");
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"

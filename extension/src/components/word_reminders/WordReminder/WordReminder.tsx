@@ -39,7 +39,7 @@ export const WordReminder = CSSModules(
     return (
       <>
         <div styleName="word-reminder">
-          <div styleName="word-reminder__id">{wordReminder.id}</div>
+          <div styleName="word-reminder__id">ID: {wordReminder.id}</div>
           <div styleName="word-reminder__reminder">Reminder: {reminder}</div>
           <div styleName="word-reminder__is-active">
             Active (whether the word reminder will actively remind you of the
