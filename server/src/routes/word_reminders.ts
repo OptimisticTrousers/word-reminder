@@ -9,7 +9,10 @@ import {
 } from "../controllers/word_reminder_controller";
 import { validatePageQuery } from "../middleware/validate_page_query";
 import { validateSortQuery } from "../middleware/validate_sort_query";
-import { validateWordReminder } from "../middleware/validate_word_reminder";
+import {
+  validateOptions,
+  validateWordReminder,
+} from "../middleware/validate_word_reminder";
 import { validateWordReminderId } from "../middleware/validate_word_reminder_id";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 
@@ -26,7 +29,12 @@ wordReminderRouter
     errorValidationHandler,
     word_reminder_list
   )
-  .post(validateWordReminder, errorValidationHandler, create_word_reminder)
+  .post(
+    validateWordReminder,
+    validateOptions,
+    errorValidationHandler,
+    create_word_reminder
+  )
   .delete(delete_word_reminders);
 
 wordReminderRouter
@@ -35,6 +43,7 @@ wordReminderRouter
   .put(
     validateWordReminderId,
     validateWordReminder,
+    validateOptions,
     errorValidationHandler,
     update_word_reminder
   )
