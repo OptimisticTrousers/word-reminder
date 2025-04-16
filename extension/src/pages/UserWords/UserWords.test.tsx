@@ -1,5 +1,5 @@
 import { Column, WORD_MAX } from "common";
-import { createRoutesStub, Outlet } from "react-router-dom";
+import { createRoutesStub, Outlet, useParams } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -63,6 +63,13 @@ describe("UserWords component", () => {
             path: "/login",
             Component: function () {
               return <form></form>;
+            },
+          },
+          {
+            path: "/userWords/:userWordId",
+            Component: function () {
+              const { userWordId } = useParams();
+              return <div data-testid="user-word">{userWordId}</div>;
             },
           },
         ],
@@ -196,10 +203,6 @@ describe("UserWords component", () => {
               status,
             };
           });
-        const mockInvalidateQueries = vi.spyOn(
-          queryClient,
-          "invalidateQueries"
-        );
         const { user } = setup();
 
         const wordInput = screen.getByLabelText("Word", {
@@ -214,10 +217,9 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
-        expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
-        expect(mockInvalidateQueries).toHaveBeenCalledWith({
-          queryKey: ["userWords"],
-        });
+        const userWordPage = screen.getByTestId("user-word");
+        expect(userWordPage).toBeInTheDocument();
+        expect(userWordPage).toHaveTextContent(String(userWord1.id));
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
           userId: String(testUser.id),
@@ -270,10 +272,6 @@ describe("UserWords component", () => {
               status,
             };
           });
-        const mockInvalidateQueries = vi.spyOn(
-          queryClient,
-          "invalidateQueries"
-        );
         const file = new File([new ArrayBuffer(1024000 + 1)], "words.csv", {
           type: "text/csv",
         });
@@ -291,7 +289,6 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "File is too big. Max size is 1 MB.",
         });
-        expect(mockInvalidateQueries).not.toHaveBeenCalled();
         expect(mockWordServiceCreateWord).not.toHaveBeenCalled();
         expect(notification).toBeInTheDocument();
       });

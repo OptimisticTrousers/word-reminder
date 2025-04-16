@@ -15,13 +15,12 @@ import {
   useState,
 } from "react";
 import CSSModules from "react-css-modules";
-import { useOutletContext, useSearchParams } from "react-router-dom";
 import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+  useNavigate,
+  useOutletContext,
+  useSearchParams,
+} from "react-router-dom";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 
 import { PaginatedList } from "../../components/ui/PaginatedList";
 import { UserWord } from "../../components/words/UserWord";
@@ -42,6 +41,7 @@ export const UserWords = CSSModules(
     const { user }: { user: User } = useOutletContext();
     const userId = String(user.id);
     const inputRef = useRef(null);
+    const navigate = useNavigate();
     const submitButtonRef = useRef(null);
     const [file, setFile] = useState<File | null>(null);
     const [searchParams, setSearchParams] = useSearchParams({
@@ -52,7 +52,6 @@ export const UserWords = CSSModules(
       column: "",
       direction: "",
     });
-    const queryClient = useQueryClient();
     const searchParamsObject = Object.fromEntries(searchParams);
 
     const { data, error, isLoading, isSuccess } = useQuery({
@@ -73,7 +72,7 @@ export const UserWords = CSSModules(
         return { formData: data.formData };
       },
       mutationFn: userWordService.createUserWord,
-      onSuccess: (_response, _variables, context) => {
+      onSuccess: (response, _variables, context) => {
         const formData = context.formData;
         const word = formData.get("word") as string;
         if (file && file.size > 0) {
@@ -87,9 +86,7 @@ export const UserWords = CSSModules(
             WORD_NOTIFICATION_MSGS.addWord()
           );
         }
-        queryClient.invalidateQueries({
-          queryKey: ["userWords"],
-        });
+        navigate(`/userWords/${response.json.userWord.id}`);
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);
