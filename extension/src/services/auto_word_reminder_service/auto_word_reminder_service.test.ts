@@ -76,6 +76,10 @@ describe("autoWordReminderService", () => {
         options: {
           body: JSON.stringify(autoWordReminderParams),
           credentials: "include",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       });
       expect(response).toEqual({
@@ -131,6 +135,10 @@ describe("autoWordReminderService", () => {
         options: {
           body: JSON.stringify(autoWordReminderParams),
           credentials: "include",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       });
       expect(response).toEqual({

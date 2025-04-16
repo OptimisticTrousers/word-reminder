@@ -50,7 +50,14 @@ export const wordReminderService = (function (service) {
   }) {
     return post({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
-      options: { body: JSON.stringify(body), credentials: "include" },
+      options: {
+        body: JSON.stringify(body),
+        credentials: "include",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
     });
   }
 
@@ -78,7 +85,14 @@ export const wordReminderService = (function (service) {
   }) {
     return put({
       url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders/${wordReminderId}`,
-      options: { body: JSON.stringify(body), credentials: "include" },
+      options: {
+        body: JSON.stringify(body),
+        credentials: "include",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
     });
   }
 

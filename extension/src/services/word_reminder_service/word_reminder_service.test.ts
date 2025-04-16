@@ -55,7 +55,9 @@ describe("wordReminderService", () => {
       expect(mockGet).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users/${userId}/wordReminders`,
         params: paramsObject,
-        options: { credentials: "include" },
+        options: {
+          credentials: "include",
+        },
       });
       expect(response).toEqual({
         json: { wordReminders: [wordReminder1, wordReminder2] },
@@ -111,6 +113,10 @@ describe("wordReminderService", () => {
         options: {
           body: JSON.stringify(wordReminder1),
           credentials: "include",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       });
       expect(response).toEqual({
@@ -165,6 +171,10 @@ describe("wordReminderService", () => {
         options: {
           body: JSON.stringify(wordReminder1),
           credentials: "include",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       });
       expect(response).toEqual({
