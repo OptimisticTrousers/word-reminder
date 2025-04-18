@@ -5,7 +5,7 @@ import { subscriptionQueries } from "../db/subscription_queries";
 
 export async function triggerWebPushMsg(
   subscription: Subscription,
-  dataToSend?: string | Buffer | null
+  dataToSend: string | Buffer | null
 ): Promise<void> {
   try {
     await webpush.sendNotification(

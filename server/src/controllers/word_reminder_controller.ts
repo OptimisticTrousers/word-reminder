@@ -14,8 +14,6 @@ import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
 import { Detail, UserWord } from "common";
 
-const queuePostfix = "word-reminder-queue";
-
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders
 // @access Private
@@ -33,7 +31,7 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
     user_words,
   });
 
-  const queueName = `${userId}-${queuePostfix}`;
+  const queueName = res.locals.queueName;
 
   if (reminder) {
     await boss.schedule(queueName, reminder);
@@ -70,7 +68,7 @@ export const delete_word_reminders = asyncHandler(async (req, res) => {
 
   const deletedWordReminders = await wordReminderQueries.deleteByUserId(userId);
 
-  const queueName = `${userId}-${queuePostfix}`;
+  const queueName = res.locals.queueName;
 
   await boss.deleteQueue(queueName);
 
@@ -94,7 +92,7 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
     wordReminderId
   );
 
-  const queueName = `${userId}-${queuePostfix}`;
+  const queueName = res.locals.queueName;
 
   if (deletedWordReminder?.is_active) {
     await boss.purgeQueue(queueName);
@@ -146,7 +144,7 @@ export const update_word_reminder = [
       });
     });
 
-    const queueName = `${userId}-${queuePostfix}`;
+    const queueName = res.locals.queueName;
 
     if (reminder) {
       await boss.schedule(queueName, reminder);

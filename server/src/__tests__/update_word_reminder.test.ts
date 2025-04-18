@@ -9,6 +9,7 @@ import { subscriptionQueries } from "../db/subscription_queries";
 import * as triggerWebPush from "../utils/trigger_web_push_msg";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
+import { createQueue } from "../middleware/create_queue";
 
 describe("update_word_reminder", () => {
   const userId = 1;
@@ -149,12 +150,13 @@ describe("update_word_reminder", () => {
     .mockResolvedValueOnce(word1)
     .mockResolvedValueOnce(word2);
 
-  const queueName = `${userId}-word-reminder-queue`;
+  const queuePostfix = "word-reminder-queue";
 
   const app = express();
   app.use(express.json());
   app.put(
     "/api/users/:userId/wordReminders/:wordReminderId",
+    createQueue(queuePostfix),
     update_word_reminder
   );
 
@@ -176,6 +178,7 @@ describe("update_word_reminder", () => {
       .set("Accept", "application/json")
       .send(body);
 
+    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({

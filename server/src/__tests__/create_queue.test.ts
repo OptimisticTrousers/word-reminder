@@ -5,8 +5,7 @@ import { boss } from "../db/boss";
 import { createQueue } from "../middleware/create_queue";
 
 const userId = 1;
-const message = "Success.";
-const queueName = "emails-queue";
+const queuePostfix = "emails-queue";
 
 describe("createQueue", () => {
   it("creates a queue for word reminders", async () => {
@@ -14,9 +13,9 @@ describe("createQueue", () => {
     app.use(express.json());
     app.post(
       "/api/users/:userId/emails",
-      createQueue(queueName),
+      createQueue(queuePostfix),
       (req, res) => {
-        res.status(200).json({ message });
+        res.status(200).json({ queueName: res.locals.queueName });
       }
     );
     const mockCreateQueue = jest
@@ -27,9 +26,10 @@ describe("createQueue", () => {
       .post(`/api/users/${userId}/emails`)
       .set("Accept", "application/json");
 
+    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message });
+    expect(response.body).toEqual({ queueName });
     expect(mockCreateQueue).toHaveBeenCalledTimes(1);
     expect(mockCreateQueue).toHaveBeenCalledWith(queueName);
   });

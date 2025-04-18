@@ -8,17 +8,19 @@ import { delete_auto_word_reminder } from "../controllers/auto_word_reminder_con
 import { SortMode } from "common";
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { boss } from "../db/boss";
+import { createQueue } from "../middleware/create_queue";
 
+const queuePostfix = "auto-word-reminder-queue";
 const app = express();
 app.use(express.json());
 app.delete(
   "/api/users/:userId/autoWordReminders/:autoWordReminderId",
+  createQueue(queuePostfix),
   delete_auto_word_reminder
 );
 
 describe("delete_auto_word_reminder", () => {
   const userId = 1;
-  const queueName = `${userId}-auto-word-reminder-queue`;
   const autoWordReminderId = 1;
   const autoWordReminder = {
     id: autoWordReminderId,
@@ -49,6 +51,7 @@ describe("delete_auto_word_reminder", () => {
       `/api/users/${userId}/autoWordReminders/${autoWordReminderId}`
     );
 
+    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({

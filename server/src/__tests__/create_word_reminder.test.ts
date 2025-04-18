@@ -8,6 +8,7 @@ import { subscriptionQueries } from "../db/subscription_queries";
 import * as triggerWebPush from "../utils/trigger_web_push_msg";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
+import { createQueue } from "../middleware/create_queue";
 
 describe("create_word_reminder", () => {
   const userId = 1;
@@ -96,6 +97,7 @@ describe("create_word_reminder", () => {
     updated_at: new Date(),
   };
 
+  jest.spyOn(boss, "createQueue").mockImplementation(jest.fn());
   const mockCreateWordReminder = jest
     .spyOn(wordReminders, "createWordReminder")
     .mockImplementation(async () => {
@@ -127,11 +129,15 @@ describe("create_word_reminder", () => {
     .mockResolvedValueOnce(word1)
     .mockResolvedValueOnce(word2);
 
-  const queueName = `${userId}-word-reminder-queue`;
+  const queuePostfix = "word-reminder-queue";
 
   const app = express();
   app.use(express.json());
-  app.post("/api/users/:userId/wordReminders", create_word_reminder);
+  app.post(
+    "/api/users/:userId/wordReminders",
+    createQueue(queuePostfix),
+    create_word_reminder
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -152,6 +158,7 @@ describe("create_word_reminder", () => {
       .set("Accept", "application/json")
       .send(body);
 
+    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({

@@ -1,12 +1,9 @@
-import { UserWord } from "common";
 import asyncHandler from "express-async-handler";
 
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { boss } from "../db/boss";
 import { userWordQueries } from "../db/user_word_queries";
 import { createWordReminder } from "../utils/word_reminder";
-
-const queuePostfix = "auto-word-reminder-queue";
 
 // @desc Create a auto word reminder
 // @route POST /api/users/:userId/autoWordReminders
@@ -56,7 +53,7 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
     });
   }
 
-  const queueName = `${userId}-${queuePostfix}`;
+  const queueName = res.locals.queueName;
 
   await boss.sendAfter(queueName, {}, {}, addToDuration);
 
@@ -109,7 +106,7 @@ export const delete_auto_word_reminder = asyncHandler(async (req, res) => {
     autoWordReminderId
   );
 
-  const queueName = `${userId}-${queuePostfix}`;
+  const queueName = res.locals.queueName;
 
   await boss.deleteQueue(queueName);
 
@@ -169,7 +166,7 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
     });
   }
 
-  const queueName = `${userId}-${queuePostfix}`;
+  const queueName = res.locals.queueName;
 
   await boss.purgeQueue(queueName);
 

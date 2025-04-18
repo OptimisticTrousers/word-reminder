@@ -8,6 +8,7 @@ import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { boss } from "../db/boss";
 import * as wordReminders from "../utils/word_reminder";
 import { userWordQueries } from "../db/user_word_queries";
+import { createQueue } from "../middleware/create_queue";
 
 jest.spyOn(global.Date, "now").mockImplementation(() => {
   return new Date(0).valueOf();
@@ -78,12 +79,13 @@ const userWord3 = {
 
 const userWords = [userWord1, userWord2, userWord3];
 
-const queueName = `${userId}-auto-word-reminder-queue`;
+const queuePostfix = "auto-word-reminder-queue";
 
 const app = express();
 app.use(express.json());
 app.put(
   "/api/users/:userId/autoWordReminders/:autoWordReminderId",
+  createQueue(queuePostfix),
   update_auto_word_reminder
 );
 
@@ -129,6 +131,7 @@ describe("update_auto_word_reminder", () => {
         .set("Accept", "application/json")
         .send({ ...autoWordReminderParams, create_now: true });
 
+      const queueName = `${userId}-${queuePostfix}`;
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
@@ -229,6 +232,7 @@ describe("update_auto_word_reminder", () => {
         .set("Accept", "application/json")
         .send({ ...autoWordReminderParams, create_now: false });
 
+      const queueName = `${userId}-${queuePostfix}`;
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({

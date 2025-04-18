@@ -5,11 +5,14 @@ import { delete_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { boss } from "../db/boss";
+import { createQueue } from "../middleware/create_queue";
 
+const queuePostfix = "word-reminder-queue";
 const app = express();
 app.use(express.json());
 app.delete(
   "/api/users/:userId/wordReminders/:wordReminderId",
+  createQueue(queuePostfix),
   delete_word_reminder
 );
 
@@ -54,8 +57,6 @@ const deletedUserWordsWordReminders = [
   userWordsWordReminder3,
 ];
 
-const queueName = `${userId}-word-reminder-queue`;
-
 describe("delete_word_reminder", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -78,6 +79,7 @@ describe("delete_word_reminder", () => {
       `/api/users/${userId}/wordReminders/${wordReminder.id}`
     );
 
+    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
