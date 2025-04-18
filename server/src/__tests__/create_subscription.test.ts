@@ -6,8 +6,9 @@ import { subscriptionQueries } from "../db/subscription_queries";
 
 const app = express();
 app.use(express.json());
-app.post("/api/subscriptions", create_subscription);
+app.post("/api/users/:userId/subscriptions", create_subscription);
 
+const userId = 1;
 const subscription = {
   endpoint: "https://random-push-service.com/unique-id-1234/",
   keys: {
@@ -28,7 +29,7 @@ describe("create_subscription", () => {
 
   it("returns success message", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send(subscription);
 
@@ -36,12 +37,15 @@ describe("create_subscription", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ data: { success: true } });
     expect(mockCreateSubscription).toHaveBeenCalledTimes(1);
-    expect(mockCreateSubscription).toHaveBeenCalledWith(subscription);
+    expect(mockCreateSubscription).toHaveBeenCalledWith({
+      userId,
+      subscription,
+    });
   });
 
   it("returns 400 status code when the 'endpoint' key is not provided", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send({
         keys: {
@@ -68,7 +72,7 @@ describe("create_subscription", () => {
 
   it("returns 400 status code when the 'auth' key is not provided", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send({
         endpoint: subscription.endpoint,
@@ -95,7 +99,7 @@ describe("create_subscription", () => {
 
   it("returns 400 status code when the 'p256dh' key is not provided", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send({
         endpoint: subscription.endpoint,
@@ -122,7 +126,7 @@ describe("create_subscription", () => {
 
   it("returns 400 status code when the 'endpoint' and 'auth' key are not provided", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send({
         keys: {
@@ -155,7 +159,7 @@ describe("create_subscription", () => {
 
   it("returns 400 status code when the 'auth' and 'p256dh' keys are not provided", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send({
         endpoint: subscription.endpoint,
@@ -186,7 +190,7 @@ describe("create_subscription", () => {
 
   it("returns 400 status code when the 'p256dh' and 'endpoint' key are not provided", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send({
         keys: {
@@ -219,7 +223,7 @@ describe("create_subscription", () => {
 
   it("returns 400 status code when the 'endpoint', 'p256dh', and 'auth' are not provided", async () => {
     const response = await request(app)
-      .post("/api/subscriptions")
+      .post(`/api/users/${userId}/subscriptions`)
       .set("Accept", "application/json")
       .send({});
 

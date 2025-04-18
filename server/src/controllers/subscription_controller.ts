@@ -5,7 +5,7 @@ import { subscriptionQueries } from "../db/subscription_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 
 // @desc Create new subscription
-// @route POST /api/subscriptions
+// @route POST /api/users/:userId/subscriptions
 // @access Private
 export const create_subscription = [
   // Validate and sanitize fields.
@@ -25,8 +25,9 @@ export const create_subscription = [
     .withMessage("P256dh must be specified."),
   errorValidationHandler,
   asyncHandler(async (req, res) => {
+    const userId = Number(req.params.userId);
     const subscription = req.body;
-    await subscriptionQueries.create(subscription);
+    await subscriptionQueries.create({ userId, subscription });
 
     res.status(200).json({ data: { success: true } });
   }),
