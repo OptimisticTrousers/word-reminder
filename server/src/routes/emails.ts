@@ -3,7 +3,6 @@ import { Router } from "express";
 import { send_email } from "../controllers/email_controller";
 import { createQueue } from "../middleware/create_queue";
 
-export const emailRouter = Router({ caseSensitive: true });
+export const emailRouter = Router({ caseSensitive: true, mergeParams: true });
 
-createQueue("email-queue");
-emailRouter.route("/").post(send_email);
+emailRouter.route("/").post(createQueue("email-queue"), send_email);

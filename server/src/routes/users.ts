@@ -14,6 +14,7 @@ import { isAuthenticated } from "../middleware/is_authenticated";
 import { validateUserId } from "../middleware/validate_user_id";
 import { userWordRouter } from "./user_words";
 import { wordReminderRouter } from "./word_reminders";
+import { subscriptionRouter } from "./subscriptions";
 
 export const userRouter = Router({ caseSensitive: true });
 
@@ -57,3 +58,5 @@ userRouter.use(
 );
 
 userRouter.use("/:userId/emails", emailRouter);
+
+userRouter.use("/:userId/subscriptions", subscriptionRouter);
