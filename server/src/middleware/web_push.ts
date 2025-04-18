@@ -11,7 +11,7 @@ const vapidKeys = {
 
 export const webPush = asyncHandler(async (req, res, next) => {
   webpush.setVapidDetails(
-    WEBPUSH_EMAIL,
+    `mailto:${WEBPUSH_EMAIL}`,
     vapidKeys.publicKey,
     vapidKeys.privateKey
   );

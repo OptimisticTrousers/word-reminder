@@ -12,6 +12,8 @@ import { db, sessionStore } from "./db";
 import { errorHandler } from "./middleware/error_handler";
 import { apiRouter } from "./routes/api";
 import { viewRouter } from "./routes/views";
+import { webPush } from "./middleware/web_push";
+import { boss } from "./db/boss";
 
 export const app = express();
 
@@ -28,6 +30,8 @@ app.use(
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+
+app.use(webPush);
 
 app.use(logger("dev"));
 

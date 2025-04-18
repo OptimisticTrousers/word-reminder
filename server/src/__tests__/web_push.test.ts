@@ -33,7 +33,7 @@ describe("webPush", () => {
     expect(response.body).toEqual({ message });
     expect(mockSetVapidDetails).toHaveBeenCalledTimes(1);
     expect(mockSetVapidDetails).toHaveBeenCalledWith(
-      WEBPUSH_EMAIL,
+      `mailto:${WEBPUSH_EMAIL}`,
       VAPID_PUBLIC_KEY,
       VAPID_PRIVATE_KEY
     );
