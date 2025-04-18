@@ -36,6 +36,51 @@ describe("subscriptionQueries", () => {
         auth: subscription1.keys.auth,
       });
     });
+
+    it("updates existing subscription if it exists already", async () => {
+      const user = await userQueries.create(user1);
+      const userId = user!.id;
+      await subscriptionQueries.create({
+        userId,
+        subscription: subscription1,
+      });
+      const subscription = await subscriptionQueries.create({
+        userId,
+        subscription: { ...subscription1, endpoint: "updated-endpoint" },
+      });
+
+      expect(subscription).toEqual({
+        id: subscriptionId1,
+        user_id: userId,
+        endpoint: "updated-endpoint",
+        p256dh: subscription1.keys.p256dh,
+        auth: subscription1.keys.auth,
+      });
+    });
+  });
+
+  describe("updates a subscription", () => {
+    it("updates a subscription", async () => {
+      const user = await userQueries.create(user1);
+      const userId = user!.id;
+      const subscription = await subscriptionQueries.create({
+        userId,
+        subscription: subscription1,
+      });
+      const updatedSubscription = await subscriptionQueries.update({
+        id: subscription.id,
+        userId,
+        subscription: { ...subscription1, endpoint: "updated-endpoint" },
+      });
+
+      expect(updatedSubscription).toEqual({
+        id: subscriptionId1,
+        user_id: userId,
+        endpoint: "updated-endpoint",
+        p256dh: subscription1.keys.p256dh,
+        auth: subscription1.keys.auth,
+      });
+    });
   });
 
   describe("deleteByUserId", () => {

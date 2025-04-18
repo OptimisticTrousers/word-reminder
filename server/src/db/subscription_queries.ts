@@ -20,6 +20,16 @@ export const subscriptionQueries = (function () {
       };
     };
   }) => {
+    const existingSubscription = await getByUserId(userId);
+
+    if (existingSubscription) {
+      return update({
+        userId,
+        subscription: { endpoint, keys: keys },
+        id: existingSubscription.id,
+      });
+    }
+
     const { rows }: QueryResult<Subscription> = await db.query(
       `
     INSERT INTO ${table}(endpoint, p256dh, auth, user_id)
@@ -27,6 +37,34 @@ export const subscriptionQueries = (function () {
     RETURNING ${columns};
       `,
       [endpoint, keys.p256dh, keys.auth, userId]
+    );
+
+    return rows[0];
+  };
+
+  const update = async ({
+    id,
+    userId,
+    subscription: { endpoint, keys },
+  }: {
+    id: number;
+    userId: number;
+    subscription: {
+      endpoint: string;
+      keys: {
+        p256dh: string;
+        auth: string;
+      };
+    };
+  }) => {
+    const { rows }: QueryResult<Subscription> = await db.query(
+      `
+    UPDATE ${table}
+    SET endpoint = $1, p256dh = $2, auth = $3, user_id = $4
+    WHERE id = $5
+    RETURNING ${columns};
+      `,
+      [endpoint, keys.p256dh, keys.auth, userId, id]
     );
 
     return rows[0];
@@ -60,6 +98,7 @@ export const subscriptionQueries = (function () {
   return {
     create,
     deleteByUserId,
+    update,
     deleteById: deleteById.bind(queries),
     getById: getById.bind(queries),
     getByUserId,
