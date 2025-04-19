@@ -73,7 +73,7 @@ export const delete_word_reminders = asyncHandler(async (req, res) => {
 
   const queueName = res.locals.queueName;
 
-  await boss.deleteQueue(queueName);
+  await boss.offWork(queueName);
 
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
@@ -85,7 +85,6 @@ export const delete_word_reminders = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:userId/wordReminders/:wordReminderId
 // @access  Private
 export const delete_word_reminder = asyncHandler(async (req, res) => {
-  const userId = Number(req.params.userId);
   const wordReminderId = Number(req.params.wordReminderId);
 
   const deletedUserWordsWordReminders =
@@ -98,7 +97,7 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
   const queueName = res.locals.queueName;
 
   if (deletedWordReminder?.is_active) {
-    await boss.purgeQueue(queueName);
+    await boss.offWork(queueName);
   }
 
   res.status(200).json({
