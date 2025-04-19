@@ -34,7 +34,8 @@ global.chrome = {
   storage: {
     sync: {
       set: vi.fn().mockResolvedValue(),
-      get: vi.fn().mockResolvedValue(),
+      set: vi.fn().mockResolvedValue(),
+      remove: vi.fn().mockResolvedValue(),
     },
   },
 };

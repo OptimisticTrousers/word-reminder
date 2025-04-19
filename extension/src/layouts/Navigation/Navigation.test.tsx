@@ -130,6 +130,7 @@ describe("Navigation component", () => {
       .mockImplementation(async () => {
         return { json: { user: { id: "1" } }, status: 200 };
       });
+    const mockSyncRemove = vi.spyOn(chrome.storage.sync, "remove");
     const { user } = setup("/");
 
     const logoutButton = screen.getByRole("button", { name: "Log Out" });
@@ -137,6 +138,8 @@ describe("Navigation component", () => {
 
     const login = screen.getByTestId("login");
     expect(login).toBeInTheDocument();
+    expect(mockSyncRemove).toHaveBeenCalledTimes(1);
+    expect(mockSyncRemove).toHaveBeenCalledWith("userId");
     expect(mockLogout).toHaveBeenCalledTimes(1);
     expect(mockLogout).toHaveBeenCalledWith(undefined);
     expect(mockClear).toHaveBeenCalledTimes(1);

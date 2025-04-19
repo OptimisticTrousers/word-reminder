@@ -33,6 +33,7 @@ export const Navigation = CSSModules(
     async function handleLogout() {
       mutate();
       queryClient.clear();
+      chrome.storage.sync.remove("userId");
       navigate("/login");
     }
 
