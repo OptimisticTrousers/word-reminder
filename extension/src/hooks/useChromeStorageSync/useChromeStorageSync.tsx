@@ -9,11 +9,12 @@ export function useChromeStorageSync(
 
   useEffect(() => {
     chrome.storage.sync.get([key]).then((result) => {
-      if (result.key) {
-        setValue(result.key);
-      } else {
+      let resultValue = result.key;
+      if (!resultValue) {
         chrome.storage.sync.set({ [key]: value });
+        resultValue = value;
       }
+      setValue(resultValue);
     });
   }, [key, value, initialValue]);
 

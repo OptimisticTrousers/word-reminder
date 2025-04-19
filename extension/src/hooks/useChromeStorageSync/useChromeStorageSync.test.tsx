@@ -76,10 +76,11 @@ describe("useChromeStorageSync", () => {
     const user = userEvent.setup();
     render(<TestComponent />);
 
-    const button = await screen.findByRole("button");
+    const button = await screen.findByRole("button", { name: value });
     await user.click(button);
 
     expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent("2");
     expect(mockStorageSyncSet).toHaveBeenCalledTimes(2);
     expect(mockStorageSyncSet).toHaveBeenCalledWith({ [key]: value });
     expect(mockStorageSyncSet).toHaveBeenCalledWith({ [key]: "2" });
