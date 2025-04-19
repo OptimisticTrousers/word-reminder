@@ -6,7 +6,7 @@ import * as helpers from "./helpers";
 
 const {
   createContextMenuService,
-  createServiceWorkerService,
+  startServiceWorkerService,
   createWebpushService,
 } = helpers;
 
@@ -44,6 +44,32 @@ describe("Service Worker Suite", async () => {
         });
         expect(subscription).toEqual(mockSubscription);
       });
+
+      it("does not create subscription or handle push event when subscription to web push fails", async () => {
+        const mockSubscribe = vi.fn().mockImplementation(() => {
+          throw new Error("subscription fails");
+        });
+        const mockSelf = {
+          registration: {
+            pushManager: {
+              subscribe: mockSubscribe,
+            },
+          },
+          navigator: {
+            serviceWorker: {},
+          },
+        } as unknown as ServiceWorkerGlobalScope;
+
+        const webpushService = createWebpushService(mockSelf);
+        const subscription = await webpushService.subscribe();
+
+        expect(mockSubscribe).toHaveBeenCalledTimes(1);
+        expect(mockSubscribe).toHaveBeenCalledWith({
+          userVisibleOnly: true,
+          applicationServerKey: expect.any(Uint8Array),
+        });
+        expect(subscription).toEqual(null);
+      });
     });
 
     describe("Push Events", () => {
@@ -61,13 +87,18 @@ describe("Service Worker Suite", async () => {
 
         const webpushService = createWebpushService(mockSelf);
         const words = ["hello", "welcome"];
-        const mockWaitUntil = vi.fn();
+        const mockWaitUntil = vi
+          .fn()
+          .mockImplementation(async (promiseChain) => {
+            const promise1 = await promiseChain;
+            const promise2 = await promise1;
+            await promise2;
+          });
+        const wordReminderId = "1";
         const event = {
           data: {
             json: function () {
-              return {
-                words,
-              };
+              return { words, wordReminderId };
             },
           },
           waitUntil: mockWaitUntil,
@@ -76,7 +107,7 @@ describe("Service Worker Suite", async () => {
 
         expect(mockShowNotification).toHaveBeenCalledTimes(1);
         expect(mockShowNotification).toHaveBeenCalledWith(
-          `Your active word reminder has these words:`,
+          `Word Reminder Chrome Extension: your active word reminder has these words:`,
           {
             body: words,
             icon: "/favicon/web-app-manifest-192x192.png",
@@ -84,6 +115,30 @@ describe("Service Worker Suite", async () => {
         );
         expect(mockWaitUntil).toHaveBeenCalledTimes(1);
         expect(mockWaitUntil).toHaveBeenCalledWith(promise);
+      });
+
+      it("does not handle responding to the 'push' event when there is no payload", async () => {
+        const promise = Promise.resolve();
+        const mockShowNotification = vi.fn().mockReturnValue(promise);
+        const mockSelf = {
+          registration: {
+            showNotification: mockShowNotification,
+          },
+          navigator: {
+            serviceWorker: {},
+          },
+        } as unknown as ServiceWorkerGlobalScope;
+
+        const webpushService = createWebpushService(mockSelf);
+        const mockWaitUntil = vi.fn();
+        const event = {
+          data: null,
+          waitUntil: mockWaitUntil,
+        } as unknown as PushEvent;
+        webpushService.handlePush(event);
+
+        expect(mockShowNotification).not.toHaveBeenCalled();
+        expect(mockWaitUntil).not.toHaveBeenCalled();
       });
     });
   });
@@ -132,7 +187,10 @@ describe("Service Worker Suite", async () => {
       expect(mockOpenPopup).toHaveBeenCalledTimes(1);
       expect(mockOpenPopup).toHaveBeenCalledWith();
       expect(mockSendMessage).toHaveBeenCalledTimes(1);
-      expect(mockSendMessage).toHaveBeenCalledWith(userWordId);
+      expect(mockSendMessage).toHaveBeenCalledWith({
+        resource: "userWords",
+        id: userWordId,
+      });
     });
 
     it("does not create user word, opens popup, and sends message when select text is empty", async () => {
@@ -163,182 +221,18 @@ describe("Service Worker Suite", async () => {
   });
 
   describe("Service Worker Init", () => {
-    it("does not do anything if service workers are not supported in the browser", async () => {
-      const userId = "1";
-      const mockGet = vi
-        .spyOn(chrome.storage.sync, "get")
-        .mockImplementation(async () => {
-          return { userId };
-        });
-      const mockSubscribe = vi.fn().mockImplementation(() => {
-        const mockSubscription = {
-          endpoint: "https://random-push-service.com/unique-id-1234/",
-          getKey: vi.fn().mockImplementation((key) => {
-            if (key === "p256dh") {
-              return "BIPUL12DLfytvTajnryr2PRdAgXS3HGKiLqndGcJGabyhHheJYlNGCeXl1dn18gSJ1WAkAPIxr4gK0_dQds4yiI";
-            } else if (key === "auth") {
-              return "FPssNDTKnInHVndSTdbKFw==";
-            }
-          }),
-        } as unknown as PushSubscription;
-        return mockSubscription;
-      });
-      const mockHandlePush = vi.fn();
-      const mockCreateWebpushService = vi
-        .spyOn(helpers, "createWebpushService")
-        .mockReturnValue({
-          subscribe: mockSubscribe,
-          handlePush: mockHandlePush,
-        }) as any;
-      const mockOnClickedCallback = vi.fn();
-      const mockCreateContextMenuService = vi
-        .spyOn(helpers, "createContextMenuService")
-        .mockReturnValue({
-          onClickedCallback: mockOnClickedCallback,
-        }) as any;
-      const mockCreateSubscription = vi
-        .spyOn(subscriptionService, "createSubscription")
-        .mockResolvedValue({
-          json: { subscription: { id: "1" } },
-          status: 200,
-        });
-      const mockInfo = {} as unknown as chrome.contextMenus.OnClickData;
-      vi.spyOn(chrome.contextMenus.onClicked, "addListener").mockImplementation(
-        (callback) => {
-          callback(mockInfo);
-        }
+    it("does not do anything if the chrome storage sync does not have a 'userId'", async () => {
+      const mockOnStartupAddListener = vi.spyOn(
+        chrome.runtime.onStartup,
+        "addListener"
       );
-
-      const words = ["hello", "welcome"];
-      const mockWaitUntil = vi.fn();
-      const mockEvent = {
-        data: {
-          json: function () {
-            return {
-              words,
-            };
-          },
-        },
-        waitUntil: mockWaitUntil,
-      } as unknown as PushEvent;
-      const mockSelf = {
-        registration: {},
-        // 'serviceWorker' property not defined on navigator for test
-        navigator: {},
-        addEventListener: vi.fn().mockImplementation((_event, callback) => {
-          callback(mockEvent);
-        }),
-        PushManager: class {},
-      } as unknown as ServiceWorkerGlobalScope;
-      const serviceWorkerService = createServiceWorkerService(
-        mockCreateWebpushService,
-        mockCreateContextMenuService
-      );
-      await serviceWorkerService.__init__(mockSelf);
-
-      expect(mockGet).not.toHaveBeenCalled();
-      expect(mockCreateWebpushService).not.toHaveBeenCalled();
-      expect(mockSubscribe).not.toHaveBeenCalled();
-      expect(mockCreateContextMenuService).not.toHaveBeenCalled();
-      expect(mockOnClickedCallback).not.toHaveBeenCalled();
-      expect(mockCreateSubscription).not.toHaveBeenCalled();
-      expect(mockHandlePush).not.toHaveBeenCalled();
-    });
-
-    it("only sets up context menu if web push is not supported in the browser", async () => {
-      const userId = "1";
-      const mockGet = vi
-        .spyOn(chrome.storage.sync, "get")
-        .mockImplementation(async () => {
-          return { userId };
-        });
-      const mockSubscribe = vi.fn().mockImplementation(() => {
-        const mockSubscription = {
-          endpoint: "https://random-push-service.com/unique-id-1234/",
-          getKey: vi.fn().mockImplementation((key) => {
-            if (key === "p256dh") {
-              return "BIPUL12DLfytvTajnryr2PRdAgXS3HGKiLqndGcJGabyhHheJYlNGCeXl1dn18gSJ1WAkAPIxr4gK0_dQds4yiI";
-            } else if (key === "auth") {
-              return "FPssNDTKnInHVndSTdbKFw==";
-            }
-          }),
-        } as unknown as PushSubscription;
-        return mockSubscription;
-      });
-      const mockHandlePush = vi.fn();
-      const mockCreateWebpushService = vi
-        .spyOn(helpers, "createWebpushService")
-        .mockReturnValue({
-          subscribe: mockSubscribe,
-          handlePush: mockHandlePush,
-        }) as any;
-      const mockOnClickedCallback = vi.fn();
-      const mockCreateContextMenuService = vi
-        .spyOn(helpers, "createContextMenuService")
-        .mockReturnValue({
-          onClickedCallback: mockOnClickedCallback,
-        }) as any;
-      const mockCreateSubscription = vi
-        .spyOn(subscriptionService, "createSubscription")
-        .mockResolvedValue({
-          json: { subscription: { id: "1" } },
-          status: 200,
-        });
-      const mockInfo = {} as unknown as chrome.contextMenus.OnClickData;
-      vi.spyOn(chrome.contextMenus.onClicked, "addListener").mockImplementation(
-        (callback) => {
-          callback(mockInfo);
-        }
-      );
-
-      const words = ["hello", "welcome"];
-      const mockWaitUntil = vi.fn();
-      const mockEvent = {
-        data: {
-          json: function () {
-            return {
-              words,
-            };
-          },
-        },
-        waitUntil: mockWaitUntil,
-      } as unknown as PushEvent;
-      const mockSelf = {
-        registration: {},
-        navigator: {
-          serviceWorker: {},
-          // 'PushManager' property not defined on window for test
-        },
-        addEventListener: vi.fn().mockImplementation((_event, callback) => {
-          callback(mockEvent);
-        }),
-      } as unknown as ServiceWorkerGlobalScope;
-      const serviceWorkerService = createServiceWorkerService(
-        mockCreateWebpushService,
-        mockCreateContextMenuService
-      );
-      await serviceWorkerService.__init__(mockSelf);
-
-      expect(mockGet).toHaveBeenCalledTimes(1);
-      expect(mockGet).toHaveBeenCalledWith(["userId"]);
-      expect(mockCreateContextMenuService).toHaveBeenCalledTimes(1);
-      expect(mockCreateContextMenuService).toHaveBeenCalledWith(userId);
-      expect(mockOnClickedCallback).toHaveBeenCalledTimes(1);
-      expect(mockOnClickedCallback).toHaveBeenCalledWith(mockInfo);
-      expect(mockCreateWebpushService).not.toHaveBeenCalled();
-      expect(mockSubscribe).not.toHaveBeenCalled();
-      expect(mockCreateSubscription).not.toHaveBeenCalled();
-      expect(mockHandlePush).not.toHaveBeenCalled();
-    });
-
-    it("does not do anything if the chrome storage sync does not have a 'userId' ", async () => {
       // no 'userId' key in Chrome Storage Sync for test
       const mockGet = vi
         .spyOn(chrome.storage.sync, "get")
         .mockImplementation(async () => {
           return { userId: null };
         });
-      const mockSubscribe = vi.fn().mockImplementation(() => {
+      const mockSubscribe = vi.fn().mockImplementation(async () => {
         const mockSubscription = {
           endpoint: "https://random-push-service.com/unique-id-1234/",
           getKey: vi.fn().mockImplementation((key) => {
@@ -352,18 +246,14 @@ describe("Service Worker Suite", async () => {
         return mockSubscription;
       });
       const mockHandlePush = vi.fn();
-      const mockCreateWebpushService = vi
-        .spyOn(helpers, "createWebpushService")
-        .mockReturnValue({
-          subscribe: mockSubscribe,
-          handlePush: mockHandlePush,
-        }) as any;
+      const mockCreateWebpushService = vi.fn().mockReturnValue({
+        subscribe: mockSubscribe,
+        handlePush: mockHandlePush,
+      }) as any;
       const mockOnClickedCallback = vi.fn();
-      const mockCreateContextMenuService = vi
-        .spyOn(helpers, "createContextMenuService")
-        .mockReturnValue({
-          onClickedCallback: mockOnClickedCallback,
-        }) as any;
+      const mockCreateContextMenuService = vi.fn().mockReturnValue({
+        onClickedCallback: mockOnClickedCallback,
+      }) as any;
       const mockCreateSubscription = vi
         .spyOn(subscriptionService, "createSubscription")
         .mockResolvedValue({
@@ -399,30 +289,128 @@ describe("Service Worker Suite", async () => {
           callback(mockEvent);
         }),
       } as unknown as ServiceWorkerGlobalScope;
-      const serviceWorkerService = createServiceWorkerService(
+      startServiceWorkerService(
         mockCreateWebpushService,
-        mockCreateContextMenuService
+        mockCreateContextMenuService,
+        mockSelf
       );
-      await serviceWorkerService.__init__(mockSelf);
 
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+      expect(mockHandlePush).toHaveBeenCalledTimes(1);
+      expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
+      expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
+      expect(mockCreateWebpushService).toHaveBeenCalledWith(mockSelf);
+      expect(mockOnStartupAddListener).toHaveBeenCalledTimes(1);
+      expect(mockOnStartupAddListener).toHaveBeenCalledWith(
+        expect.any(Function)
+      );
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith(["userId"]);
-      expect(mockCreateWebpushService).not.toHaveBeenCalled();
-      expect(mockSubscribe).not.toHaveBeenCalled();
       expect(mockCreateContextMenuService).not.toHaveBeenCalled();
       expect(mockOnClickedCallback).not.toHaveBeenCalled();
+      expect(mockSubscribe).not.toHaveBeenCalled();
       expect(mockCreateSubscription).not.toHaveBeenCalled();
-      expect(mockHandlePush).not.toHaveBeenCalled();
     });
 
-    it("calls all functions", async () => {
+    it("does not do anything if push subscription fails", async () => {
       const userId = "1";
+      const mockOnStartupAddListener = vi.spyOn(
+        chrome.runtime.onStartup,
+        "addListener"
+      );
       const mockGet = vi
         .spyOn(chrome.storage.sync, "get")
         .mockImplementation(async () => {
           return { userId };
         });
-      const mockSubscribe = vi.fn().mockImplementation(() => {
+      // trying to subscribe to web push throws error, return null
+      const mockSubscribe = vi.fn().mockImplementation(async () => {
+        return null;
+      });
+      const mockHandlePush = vi.fn();
+      const mockCreateWebpushService = vi.fn().mockReturnValue({
+        subscribe: mockSubscribe,
+        handlePush: mockHandlePush,
+      }) as any;
+      const mockOnClickedCallback = vi.fn();
+      const mockCreateContextMenuService = vi.fn().mockReturnValue({
+        onClickedCallback: mockOnClickedCallback,
+      }) as any;
+      const mockCreateSubscription = vi
+        .spyOn(subscriptionService, "createSubscription")
+        .mockResolvedValue({
+          json: { subscription: { id: "1" } },
+          status: 200,
+        });
+      const mockInfo = {} as unknown as chrome.contextMenus.OnClickData;
+      vi.spyOn(chrome.contextMenus.onClicked, "addListener").mockImplementation(
+        (callback) => {
+          callback(mockInfo);
+        }
+      );
+
+      const words = ["hello", "welcome"];
+      const mockWaitUntil = vi.fn();
+      const mockEvent = {
+        data: {
+          text: function () {
+            return words;
+          },
+        },
+        waitUntil: mockWaitUntil,
+      } as unknown as PushEvent;
+      const mockSelf = {
+        registration: {},
+        navigator: {
+          serviceWorker: {},
+        },
+        PushManager: class {},
+        addEventListener: vi.fn().mockImplementation((_event, callback) => {
+          callback(mockEvent);
+        }),
+      } as unknown as ServiceWorkerGlobalScope;
+      startServiceWorkerService(
+        mockCreateWebpushService,
+        mockCreateContextMenuService,
+        mockSelf
+      );
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+      expect(mockOnStartupAddListener).toHaveBeenCalledTimes(1);
+      expect(mockOnStartupAddListener).toHaveBeenCalledWith(
+        expect.any(Function)
+      );
+      expect(mockHandlePush).toHaveBeenCalledTimes(1);
+      expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
+      expect(mockGet).toHaveBeenCalledTimes(1);
+      expect(mockGet).toHaveBeenCalledWith(["userId"]);
+      expect(mockCreateContextMenuService).toHaveBeenCalledTimes(1);
+      expect(mockCreateContextMenuService).toHaveBeenCalledWith(userId);
+      expect(mockOnClickedCallback).toHaveBeenCalledTimes(1);
+      expect(mockOnClickedCallback).toHaveBeenCalledWith(mockInfo);
+      expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
+      expect(mockCreateWebpushService).toHaveBeenCalledWith(mockSelf);
+      expect(mockSubscribe).toHaveBeenCalledTimes(1);
+      expect(mockSubscribe).toHaveBeenCalledWith();
+      expect(mockCreateSubscription).not.toHaveBeenCalled();
+    });
+
+    it("calls all functions", async () => {
+      const userId = "1";
+      const mockOnStartupAddListener = vi.spyOn(
+        chrome.runtime.onStartup,
+        "addListener"
+      );
+      const mockGet = vi
+        .spyOn(chrome.storage.sync, "get")
+        .mockImplementation(async () => {
+          return { userId };
+        });
+      const mockSubscribe = vi.fn().mockImplementation(async () => {
         const mockSubscription = {
           endpoint: "https://random-push-service.com/unique-id-1234/",
           getKey: vi.fn().mockImplementation((key) => {
@@ -436,18 +424,14 @@ describe("Service Worker Suite", async () => {
         return mockSubscription;
       });
       const mockHandlePush = vi.fn();
-      const mockCreateWebpushService = vi
-        .spyOn(helpers, "createWebpushService")
-        .mockReturnValue({
-          subscribe: mockSubscribe,
-          handlePush: mockHandlePush,
-        }) as any;
+      const mockCreateWebpushService = vi.fn().mockReturnValue({
+        subscribe: mockSubscribe,
+        handlePush: mockHandlePush,
+      }) as any;
       const mockOnClickedCallback = vi.fn();
-      const mockCreateContextMenuService = vi
-        .spyOn(helpers, "createContextMenuService")
-        .mockReturnValue({
-          onClickedCallback: mockOnClickedCallback,
-        }) as any;
+      const mockCreateContextMenuService = vi.fn().mockReturnValue({
+        onClickedCallback: mockOnClickedCallback,
+      }) as any;
       const mockCreateSubscription = vi
         .spyOn(subscriptionService, "createSubscription")
         .mockResolvedValue({
@@ -483,31 +467,34 @@ describe("Service Worker Suite", async () => {
         }),
         PushManager: class {},
       } as unknown as ServiceWorkerGlobalScope;
-      const serviceWorkerService = createServiceWorkerService(
+      startServiceWorkerService(
         mockCreateWebpushService,
-        mockCreateContextMenuService
+        mockCreateContextMenuService,
+        mockSelf
       );
-      await serviceWorkerService.__init__(mockSelf);
 
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+      expect(mockOnStartupAddListener).toHaveBeenCalledTimes(1);
+      expect(mockOnStartupAddListener).toHaveBeenCalledWith(
+        expect.any(Function)
+      );
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith(["userId"]);
-      expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
-      expect(mockCreateWebpushService).toHaveBeenCalledWith(mockSelf);
-      expect(mockSubscribe).toHaveBeenCalledTimes(1);
-      expect(mockSubscribe).toHaveBeenCalledWith();
       expect(mockCreateContextMenuService).toHaveBeenCalledTimes(1);
       expect(mockCreateContextMenuService).toHaveBeenCalledWith(userId);
       expect(mockOnClickedCallback).toHaveBeenCalledTimes(1);
       expect(mockOnClickedCallback).toHaveBeenCalledWith(mockInfo);
+      expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
+      expect(mockCreateWebpushService).toHaveBeenCalledWith(mockSelf);
+      expect(mockSubscribe).toHaveBeenCalledTimes(1);
+      expect(mockSubscribe).toHaveBeenCalledWith();
       expect(mockCreateSubscription).toHaveBeenCalledTimes(1);
       expect(mockCreateSubscription).toHaveBeenCalledWith({
         subscription: {
           endpoint: "https://random-push-service.com/unique-id-1234/",
-          keys: {
-            p256dh:
-              "BIPUL12DLfytvTajnryr2PRdAgXS3HGKiLqndGcJGabyhHheJYlNGCeXl1dn18gSJ1WAkAPIxr4gK0_dQds4yiI",
-            auth: "FPssNDTKnInHVndSTdbKFw==",
-          },
+          getKey: expect.any(Function),
         },
         userId,
       });

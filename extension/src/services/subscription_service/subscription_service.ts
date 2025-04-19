@@ -8,19 +8,14 @@ export const subscriptionService = (function (service) {
     subscription,
   }: {
     userId: string;
-    subscription: {
-      endpoint: string;
-      keys: {
-        p256dh: string;
-        auth: string;
-      };
-    };
+    subscription: PushSubscription;
   }) {
     return post({
       url: `${VITE_API_DOMAIN}/users/${userId}/subscriptions`,
       options: {
         body: JSON.stringify(subscription),
         credentials: "include",
+        headers: { "Content-Type": "application/json" },
       },
     });
   }

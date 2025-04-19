@@ -13,11 +13,14 @@ describe("subscriptionService", () => {
   const userId = "1";
   const subscription = {
     endpoint: "https://random-push-service.com/unique-id-1234/",
-    keys: {
-      p256dh:
-        "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM=",
-      auth: "tBHItJI5svbpez7KI4CCXg==",
+    expirationTime: null,
+    options: {
+      applicationServerKey: new ArrayBuffer(8),
+      userVisibleOnly: true,
     },
+    getKey: vi.fn(),
+    toJSON: vi.fn(),
+    unsubscribe: vi.fn(),
   };
   const status = 200;
 
@@ -37,7 +40,13 @@ describe("subscriptionService", () => {
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users/${userId}/subscriptions`,
-        options: { body: JSON.stringify(subscription), credentials: "include" },
+        options: {
+          body: JSON.stringify(subscription),
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       });
       expect(response).toEqual({
         json: { subscription },

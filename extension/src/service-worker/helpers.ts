@@ -5,7 +5,7 @@ import { subscriptionService } from "../services/subscription_service";
 import { userWordService } from "../services/user_word_service";
 
 type CreateWebPushService = (self: ServiceWorkerGlobalScope) => {
-  subscribe: () => Promise<PushSubscription>;
+  subscribe: () => Promise<PushSubscription | null>;
   handlePush: (event: PushEvent) => void;
 };
 
@@ -26,20 +26,29 @@ export const createWebpushService: CreateWebPushService = (self) => {
   }
 
   async function subscribe() {
-    const SERVER_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-    const applicationServerKey = urlB64ToUint8Array(SERVER_PUBLIC_KEY);
-    const subscription = await self.registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey,
-    });
+    try {
+      const SERVER_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      const applicationServerKey = urlB64ToUint8Array(SERVER_PUBLIC_KEY);
+      const subscription = await self.registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey,
+      });
 
-    console.log(`Subscribed: ${JSON.stringify(subscription, null, 2)}`);
+      console.log(`Subscribed: ${JSON.stringify(subscription, null, 2)}`);
 
-    return subscription;
+      return subscription;
+    } catch (error) {
+      console.error(`Subscribe error: `, error);
+      return null;
+    }
   }
 
   function handlePush(event: PushEvent) {
-    const json = event.data!.json();
+    if (!event.data) {
+      return;
+    }
+
+    const json = event.data.json();
     const words = json.words;
     const options = {
       body: words,
@@ -47,7 +56,7 @@ export const createWebpushService: CreateWebPushService = (self) => {
     };
 
     const promiseChain = self.registration.showNotification(
-      `Your active word reminder has these words:`,
+      `Word Reminder Chrome Extension: your active word reminder has these words:`,
       options
     );
 
@@ -84,7 +93,10 @@ export const createContextMenuService: CreateContextMenuService = (userId) => {
         formData,
       });
       await chrome.action.openPopup();
-      await chrome.runtime.sendMessage(response.json.userWord.id);
+      await chrome.runtime.sendMessage({
+        resource: "userWords",
+        id: response.json.userWord.id,
+      });
     } catch (error) {
       console.error("Context menu error: ", error);
     }
@@ -95,21 +107,20 @@ export const createContextMenuService: CreateContextMenuService = (userId) => {
 
 type CreateServiceWorkerService = (
   createWebPushService: CreateWebPushService,
-  createContextMenuService: CreateContextMenuService
-) => {
-  __init__: (self: ServiceWorkerGlobalScope) => Promise<void>;
-};
+  createContextMenuService: CreateContextMenuService,
+  self: ServiceWorkerGlobalScope
+) => void;
 
-export const createServiceWorkerService: CreateServiceWorkerService = (
+export const startServiceWorkerService: CreateServiceWorkerService = (
   createWebpushService,
-  createContextMenuService
+  createContextMenuService,
+  self
 ) => {
-  async function __init__(self: ServiceWorkerGlobalScope) {
-    if (!("serviceWorker" in self.navigator)) {
-      // Service Worker isn't supported on this browser, disable or hide UI.
-      return;
-    }
+  const webpushService = createWebpushService(self);
 
+  self.addEventListener("push", webpushService.handlePush);
+
+  chrome.runtime.onStartup.addListener(async () => {
     const result = await chrome.storage.sync.get(["userId"]);
     const userId = result.userId;
 
@@ -118,32 +129,20 @@ export const createServiceWorkerService: CreateServiceWorkerService = (
     }
 
     const contextMenuService = createContextMenuService(userId);
+
     chrome.contextMenus.onClicked.addListener(
       contextMenuService.onClickedCallback
     );
 
-    if (!("PushManager" in self)) {
-      // Push isn't supported on this browser, disable or hide UI.
+    const subscription = await webpushService.subscribe();
+
+    if (!subscription) {
       return;
     }
 
-    const webpushService = createWebpushService(self);
-
-    const pushSubscription = await webpushService.subscribe();
-
     await subscriptionService.createSubscription({
-      subscription: {
-        endpoint: pushSubscription.endpoint,
-        keys: {
-          p256dh: String(pushSubscription.getKey("p256dh")),
-          auth: String(pushSubscription.getKey("auth")),
-        },
-      },
+      subscription,
       userId,
     });
-
-    self.addEventListener("push", webpushService.handlePush);
-  }
-
-  return { __init__ };
+  });
 };

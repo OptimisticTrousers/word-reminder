@@ -3,7 +3,7 @@
 // mock the entire Chrome API, but only the parts we need
 global.chrome = {
   runtime: {
-    onInstalled: {
+    onStartup: {
       addListener: vi.fn().mockImplementation((callback) => {
         callback();
       }),
