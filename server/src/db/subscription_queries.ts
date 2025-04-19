@@ -25,7 +25,7 @@ export const subscriptionQueries = (function () {
     if (existingSubscription) {
       return update({
         userId,
-        subscription: { endpoint, keys: keys },
+        subscription: { endpoint, keys },
         id: existingSubscription.id,
       });
     }

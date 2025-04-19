@@ -49,7 +49,10 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
     const subscription = await subscriptionQueries.getByUserId(userId);
 
     await boss.work(queueName, async () => {
-      await triggerWebPushMsg(subscription, words.join(", "));
+      const data = {
+        words: words.join(", "),
+      };
+      await triggerWebPushMsg(subscription, JSON.stringify(data));
     });
   }
 
@@ -162,7 +165,10 @@ export const update_word_reminder = [
       const subscription = await subscriptionQueries.getByUserId(userId);
 
       await boss.work(queueName, async () => {
-        await triggerWebPushMsg(subscription, words.join(", "));
+        const data = {
+          words: words.join(", "),
+        };
+        await triggerWebPushMsg(subscription, JSON.stringify(data));
       });
     }
 

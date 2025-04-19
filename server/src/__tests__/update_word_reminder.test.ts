@@ -220,7 +220,9 @@ describe("update_word_reminder", () => {
     expect(mockTriggerWebPushMsg).toHaveBeenCalledTimes(1);
     expect(mockTriggerWebPushMsg).toHaveBeenCalledWith(
       subscription1,
-      `${word1.details[0].word}, ${word2.details[0].word}`
+      JSON.stringify({
+        words: `${word1.details[0].word}, ${word2.details[0].word}`,
+      })
     );
   });
 });

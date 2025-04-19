@@ -74,7 +74,7 @@ describe("Login component", () => {
       name: `You have successfully logged in, ${email}.`,
     });
     expect(mockSendMessage).toHaveBeenCalledTimes(1);
-    expect(mockSendMessage).toHaveBeenCalledWith({});
+    expect(mockSendMessage).toHaveBeenCalledWith(null);
     expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
     expect(notification).toBeInTheDocument();
