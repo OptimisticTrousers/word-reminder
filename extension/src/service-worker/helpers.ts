@@ -120,29 +120,29 @@ export const startServiceWorkerService: CreateServiceWorkerService = (
 
   self.addEventListener("push", webpushService.handlePush);
 
-  chrome.runtime.onStartup.addListener(async () => {
-    const result = await chrome.storage.sync.get(["userId"]);
-    const userId = result.userId;
+  chrome.runtime.onInstalled.addListener(() => {
+    chrome.runtime.onMessage.addListener(async (_message, sender) => {
+      if (sender.url && sender.url.startsWith(`${sender.origin}/index.html`)) {
+        const result = await chrome.storage.sync.get(["userId"]);
+        const userId = result.userId;
 
-    if (!userId) {
-      return;
-    }
+        const contextMenuService = createContextMenuService(userId);
 
-    const contextMenuService = createContextMenuService(userId);
+        chrome.contextMenus.onClicked.addListener(
+          contextMenuService.onClickedCallback
+        );
 
-    chrome.contextMenus.onClicked.addListener(
-      contextMenuService.onClickedCallback
-    );
+        const subscription = await webpushService.subscribe();
 
-    const subscription = await webpushService.subscribe();
+        if (!subscription) {
+          return;
+        }
 
-    if (!subscription) {
-      return;
-    }
-
-    await subscriptionService.createSubscription({
-      subscription,
-      userId,
+        await subscriptionService.createSubscription({
+          subscription,
+          userId,
+        });
+      }
     });
   });
 };

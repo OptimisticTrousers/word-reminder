@@ -3,7 +3,7 @@
 // mock the entire Chrome API, but only the parts we need
 global.chrome = {
   runtime: {
-    onStartup: {
+    onInstalled: {
       addListener: vi.fn().mockImplementation((callback) => {
         callback();
       }),
@@ -18,10 +18,7 @@ global.chrome = {
   },
   contextMenus: {
     onClicked: {
-      addListener: vi.fn().mockImplementation((callback) => {
-        const item = { selectionText: "" };
-        callback(item);
-      }),
+      addListener: vi.fn(),
     },
     create: vi.fn(),
   },
@@ -34,7 +31,7 @@ global.chrome = {
   storage: {
     sync: {
       set: vi.fn().mockResolvedValue(),
-      set: vi.fn().mockResolvedValue(),
+      get: vi.fn().mockResolvedValue(),
       remove: vi.fn().mockResolvedValue(),
     },
   },

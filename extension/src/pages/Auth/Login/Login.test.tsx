@@ -48,6 +48,7 @@ describe("Login component", () => {
   });
 
   it("calls the functions to login, show notification, and redirect user", async () => {
+    const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
     const mockSessionServiceLogin = vi
       .spyOn(sessionService, "loginUser")
       .mockImplementation(async () => {
@@ -72,6 +73,8 @@ describe("Login component", () => {
     const notification = screen.getByRole("dialog", {
       name: `You have successfully logged in, ${email}.`,
     });
+    expect(mockSendMessage).toHaveBeenCalledTimes(1);
+    expect(mockSendMessage).toHaveBeenCalledWith({});
     expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
     expect(notification).toBeInTheDocument();

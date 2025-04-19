@@ -14,9 +14,16 @@ describe("useOnMessageNavigate", () => {
     const mockOnMessageAddListener = vi
       .spyOn(chrome.runtime.onMessage, "addListener")
       .mockImplementation((callback) => {
-        callback({ resource: "userWords", id: userWordId }, {}, function () {});
+        callback(
+          { resource: "userWords", id: userWordId },
+          {
+            id: "okplhmjkgoekmcnjbjjglmnpanfkgdfa",
+            origin: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa",
+            url: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/service-worker.js",
+          },
+          vi.fn()
+        );
       });
-
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -41,5 +48,6 @@ describe("useOnMessageNavigate", () => {
     expect(userWord).toBeInTheDocument();
     expect(userWord).toHaveTextContent(userWordId);
     expect(mockOnMessageAddListener).toHaveBeenCalledTimes(1);
+    expect(mockOnMessageAddListener).toHaveBeenCalledWith(expect.any(Function));
   });
 });

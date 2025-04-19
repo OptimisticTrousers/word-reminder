@@ -28,6 +28,7 @@ export const Login = CSSModules(
           LOGIN_AUTH_NOTIFICATION_MSGS.login(response.json.user.email)
         );
         queryClient.invalidateQueries({ queryKey: ["sessions"], exact: true });
+        chrome.runtime.sendMessage({});
       },
       onError: showNotificationError,
     });
