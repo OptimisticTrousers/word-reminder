@@ -11,6 +11,7 @@ import { DeleteWordReminderModal } from "../../modals/DeleteWordReminderModal";
 import { UpdateWordReminderModal } from "../../modals/UpdateWordReminderModal";
 import { UserWord } from "../../words/UserWord";
 import styles from "./WordReminder.module.css";
+import { Link } from "react-router-dom";
 
 export interface Props {
   searchParams: URLSearchParams;
@@ -40,6 +41,12 @@ export const WordReminder = CSSModules(
       <>
         <div styleName="word-reminder">
           <div styleName="word-reminder__id">ID: {wordReminder.id}</div>
+          <Link
+            styleName="word-reminder__link"
+            to={`/wordReminders/${wordReminder.id}`}
+          >
+            More Word Reminder Details
+          </Link>
           <div styleName="word-reminder__reminder">Reminder: {reminder}</div>
           <div styleName="word-reminder__is-active">
             Active (whether the word reminder will actively remind you of the

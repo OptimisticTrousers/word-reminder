@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { WordReminder } from "./WordReminder";
 import { Mock } from "vitest";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 
 vi.mock("../../modals/UpdateWordReminderModal", () => {
   return {
@@ -171,13 +172,18 @@ describe("wordReminder component", () => {
     const searchParams = new URLSearchParams();
 
     const { asFragment } = render(
-      <WordReminder
-        searchParams={searchParams}
-        wordReminder={{ ...wordReminder, user_words: userWords }}
-      />
+      <MemoryRouter>
+        <WordReminder
+          searchParams={searchParams}
+          wordReminder={{ ...wordReminder, user_words: userWords }}
+        />
+      </MemoryRouter>
     );
 
     const id = screen.getByText(`ID: ${wordReminder.id}`);
+    const link = screen.getByRole("link", {
+      name: "More Word Reminder Details",
+    });
     const reminder = screen.getByText("Reminder: Every 2 minutes");
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"
@@ -196,6 +202,8 @@ describe("wordReminder component", () => {
     );
     const userWordEls = screen.getAllByTestId("user-word");
     expect(id).toBeInTheDocument();
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", `/wordReminders/${wordReminder.id}`);
     expect(reminder).toBeInTheDocument();
     expect(isActive).toBeInTheDocument();
     expect(hasReminderOnload).toBeInTheDocument();
@@ -220,10 +228,12 @@ describe("wordReminder component", () => {
     const searchParams = new URLSearchParams();
 
     render(
-      <WordReminder
-        searchParams={searchParams}
-        wordReminder={{ ...wordReminder, user_words: userWords }}
-      />
+      <MemoryRouter>
+        <WordReminder
+          searchParams={searchParams}
+          wordReminder={{ ...wordReminder, user_words: userWords }}
+        />
+      </MemoryRouter>
     );
 
     const reminder = screen.getByText(
@@ -246,10 +256,12 @@ describe("wordReminder component", () => {
     const searchParams = new URLSearchParams();
 
     render(
-      <WordReminder
-        searchParams={searchParams}
-        wordReminder={{ ...wordReminder, user_words: userWords }}
-      />
+      <MemoryRouter>
+        <WordReminder
+          searchParams={searchParams}
+          wordReminder={{ ...wordReminder, user_words: userWords }}
+        />
+      </MemoryRouter>
     );
     const user = userEvent.setup();
 
@@ -274,10 +286,12 @@ describe("wordReminder component", () => {
     const searchParams = new URLSearchParams();
 
     render(
-      <WordReminder
-        searchParams={searchParams}
-        wordReminder={{ ...wordReminder, user_words: userWords }}
-      />
+      <MemoryRouter>
+        <WordReminder
+          searchParams={searchParams}
+          wordReminder={{ ...wordReminder, user_words: userWords }}
+        />
+      </MemoryRouter>
     );
     const user = userEvent.setup();
 
@@ -303,10 +317,12 @@ describe("wordReminder component", () => {
       const searchParams = new URLSearchParams();
 
       const { asFragment } = render(
-        <WordReminder
-          searchParams={searchParams}
-          wordReminder={{ ...wordReminder, user_words: userWords }}
-        />
+        <MemoryRouter>
+          <WordReminder
+            searchParams={searchParams}
+            wordReminder={{ ...wordReminder, user_words: userWords }}
+          />
+        </MemoryRouter>
       );
 
       const id = screen.getByText(`ID: ${wordReminder.id}`);
@@ -353,10 +369,12 @@ describe("wordReminder component", () => {
     const searchParams = new URLSearchParams();
 
     const { asFragment } = render(
-      <WordReminder
-        searchParams={searchParams}
-        wordReminder={{ ...wordReminder, user_words: userWords }}
-      />
+      <MemoryRouter>
+        <WordReminder
+          searchParams={searchParams}
+          wordReminder={{ ...wordReminder, user_words: userWords }}
+        />
+      </MemoryRouter>
     );
 
     const id = screen.getByText(`ID: ${wordReminder.id}`);
