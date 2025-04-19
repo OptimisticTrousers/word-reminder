@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
 import { App } from "./App";
-import * as hooks from "../../hooks/useChromeStorageSync";
 import { createRoutesStub } from "react-router-dom";
 
 vi.mock("../../layouts/Footer", () => {
@@ -48,9 +47,6 @@ describe("App component", () => {
         },
       },
     ]);
-    const mockUseChromeStorageSync = vi
-      .spyOn(hooks, "useChromeStorageSync")
-      .mockReturnValue([user.id, function () {}]);
     const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
     const footer = screen.getByTestId("footer");
@@ -59,11 +55,6 @@ describe("App component", () => {
     expect(footer).toBeInTheDocument();
     expect(navigation).toBeInTheDocument();
     expect(outlet).toBeInTheDocument();
-    expect(mockUseChromeStorageSync).toHaveBeenCalledTimes(1);
-    expect(mockUseChromeStorageSync).toHaveBeenCalledWith(
-      "userId",
-      String(user.id)
-    );
     expect(asFragment()).toMatchSnapshot();
   });
 });

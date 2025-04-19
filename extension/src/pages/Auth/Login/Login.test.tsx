@@ -25,6 +25,7 @@ describe("Login component", () => {
   });
 
   const testUser = {
+    id: "1",
     email: "bob@gmail.com",
     password: "password",
   };
@@ -49,6 +50,7 @@ describe("Login component", () => {
 
   it("calls the functions to login, show notification, and redirect user", async () => {
     const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
+    const mockSet = vi.spyOn(chrome.storage.sync, "set");
     const mockSessionServiceLogin = vi
       .spyOn(sessionService, "loginUser")
       .mockImplementation(async () => {
@@ -75,8 +77,13 @@ describe("Login component", () => {
     });
     expect(mockSendMessage).toHaveBeenCalledTimes(1);
     expect(mockSendMessage).toHaveBeenCalledWith(null);
+    expect(mockSet).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenCalledWith({ userId: testUser.id });
     expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
-    expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
+    expect(mockSessionServiceLogin).toHaveBeenCalledWith({
+      email: testUser.email,
+      password: testUser.password,
+    });
     expect(notification).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
@@ -228,7 +235,10 @@ describe("Login component", () => {
       });
       expect(notification).toBeInTheDocument();
       expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
-      expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
+      expect(mockSessionServiceLogin).toHaveBeenCalledWith({
+        email: testUser.email,
+        password: testUser.password,
+      });
     });
 
     it("disables the form elements and buttons when while it is loading", async () => {

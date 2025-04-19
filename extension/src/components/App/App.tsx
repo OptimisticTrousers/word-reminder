@@ -7,12 +7,10 @@ import { ThemeContext } from "../../context/Theme";
 import styles from "./App.module.css";
 import { Footer } from "../../layouts/Footer";
 import { Navigation } from "../../layouts/Navigation";
-import { useChromeStorageSync } from "../../hooks/useChromeStorageSync";
 
 export const App = CSSModules(
   function ({ user }: { user: User }) {
     const { theme } = useContext(ThemeContext);
-    useChromeStorageSync("userId", String(user.id));
 
     return (
       <main styleName={`main main--${theme}`}>

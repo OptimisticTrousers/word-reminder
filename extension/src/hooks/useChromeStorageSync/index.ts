@@ -1,1 +1,0 @@
-export { useChromeStorageSync } from "./useChromeStorageSync";
