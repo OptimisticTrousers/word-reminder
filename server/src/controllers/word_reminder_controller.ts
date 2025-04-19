@@ -33,7 +33,7 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
 
   const queueName = res.locals.queueName;
 
-  if (reminder) {
+  if (is_active) {
     await boss.schedule(queueName, reminder);
 
     const wordsPromises: Promise<string>[] = user_words.map(
@@ -46,12 +46,11 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
 
     const words: string[] = await Promise.all(wordsPromises);
 
-    const subscription = await subscriptionQueries.getByUserId(userId);
-
     await boss.work(queueName, async () => {
       const data = {
         words: words.join(", "),
       };
+      const subscription = await subscriptionQueries.getByUserId(userId);
       await triggerWebPushMsg(subscription, JSON.stringify(data));
     });
   }
@@ -148,7 +147,7 @@ export const update_word_reminder = [
 
     const queueName = res.locals.queueName;
 
-    if (reminder) {
+    if (is_active) {
       await boss.schedule(queueName, reminder);
 
       const wordsPromises: Promise<string>[] = user_words.map(
@@ -161,12 +160,11 @@ export const update_word_reminder = [
 
       const words: string[] = await Promise.all(wordsPromises);
 
-      const subscription = await subscriptionQueries.getByUserId(userId);
-
       await boss.work(queueName, async () => {
         const data = {
           words: words.join(", "),
         };
+        const subscription = await subscriptionQueries.getByUserId(userId);
         await triggerWebPushMsg(subscription, JSON.stringify(data));
       });
     }
