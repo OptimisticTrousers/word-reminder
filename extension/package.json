@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.64.2",
-    "@tanstack/react-query-devtools": "^5.66.9",
     "common": "file:../common",
     "cronstrue": "^2.56.0",
     "lucide-react": "^0.474.0",
