@@ -4,12 +4,20 @@
 import { subscriptionService } from "../services/subscription_service";
 import { userWordService } from "../services/user_word_service";
 
-type CreateWebPushService = (self: ServiceWorkerGlobalScope) => {
+type HandleNavigate = (resource: string, id: string) => Promise<void>;
+
+type CreateWebPushService = (
+  self: ServiceWorkerGlobalScope,
+  handleNavigate: HandleNavigate
+) => {
   subscribe: () => Promise<PushSubscription | null>;
   handlePush: (event: PushEvent) => void;
 };
 
-export const createWebpushService: CreateWebPushService = (self) => {
+export const createWebpushService: CreateWebPushService = (
+  self,
+  handleNavigate
+) => {
   function urlB64ToUint8Array(base64String: string) {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
@@ -50,10 +58,40 @@ export const createWebpushService: CreateWebPushService = (self) => {
 
     const json = event.data.json();
     const words = json.words;
-    const options = {
+    const wordReminderId = json.id;
+    const options: NotificationOptions & {
+      actions?: {
+        action: string;
+        title: string;
+        icon: string;
+      }[];
+    } = {
       body: words,
       icon: "/favicon/web-app-manifest-192x192.png",
     };
+
+    if ("actions" in Notification.prototype) {
+      // Action buttons are supported.
+      options.actions = [
+        {
+          action: "navigate-to-word-reminder",
+          title: "Navigate to Word Reminder",
+          icon: "/images/navigation.png",
+        },
+      ];
+    }
+
+    self.addEventListener("notificationclick", async (event) => {
+      const clickedNotification = event.notification;
+      clickedNotification.close();
+
+      if (!event.action) {
+        // Was a normal notification click
+        return;
+      }
+
+      await handleNavigate("wordReminders", wordReminderId);
+    });
 
     const promiseChain = self.registration.showNotification(
       `Word Reminder Chrome Extension: your active word reminder has these words:`,
@@ -66,11 +104,17 @@ export const createWebpushService: CreateWebPushService = (self) => {
   return { subscribe, handlePush };
 };
 
-type CreateContextMenuService = (userId: string) => {
+type CreateContextMenuService = (
+  userId: string,
+  handleNavigate: HandleNavigate
+) => {
   onClickedCallback: (info: chrome.contextMenus.OnClickData) => Promise<void>;
 };
 
-export const createContextMenuService: CreateContextMenuService = (userId) => {
+export const createContextMenuService: CreateContextMenuService = (
+  userId,
+  handleNavigate
+) => {
   chrome.contextMenus.create({
     id: "84",
     title: "Add Word",
@@ -92,11 +136,7 @@ export const createContextMenuService: CreateContextMenuService = (userId) => {
         userId,
         formData,
       });
-      await chrome.action.openPopup();
-      await chrome.runtime.sendMessage({
-        resource: "userWords",
-        id: response.json.userWord.id,
-      });
+      await handleNavigate("userWords", response.json.userWord.id);
     } catch (error) {
       console.error("Context menu error: ", error);
     }
@@ -116,7 +156,15 @@ export const startServiceWorkerService: CreateServiceWorkerService = (
   createContextMenuService,
   self
 ) => {
-  const webpushService = createWebpushService(self);
+  async function handleNavigate(resource: string, id: string) {
+    await chrome.action.openPopup();
+    await chrome.runtime.sendMessage({
+      resource,
+      id,
+    });
+  }
+
+  const webpushService = createWebpushService(self, handleNavigate);
 
   self.addEventListener("push", webpushService.handlePush);
 
@@ -126,7 +174,10 @@ export const startServiceWorkerService: CreateServiceWorkerService = (
         const result = await chrome.storage.sync.get(["userId"]);
         const userId = result.userId;
 
-        const contextMenuService = createContextMenuService(userId);
+        const contextMenuService = createContextMenuService(
+          userId,
+          handleNavigate
+        );
 
         chrome.contextMenus.onClicked.addListener(
           contextMenuService.onClickedCallback

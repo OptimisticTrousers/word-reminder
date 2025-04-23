@@ -296,6 +296,7 @@ describe("create_word_reminder", () => {
     expect(mockTriggerWebPushMsg).toHaveBeenCalledWith(
       subscription1,
       JSON.stringify({
+        id: wordReminder.id,
         words: `${word1.details[0].word}, ${word2.details[0].word}`,
       })
     );

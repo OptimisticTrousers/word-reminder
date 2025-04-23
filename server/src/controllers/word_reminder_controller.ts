@@ -48,6 +48,7 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
 
     await boss.work(queueName, async () => {
       const data = {
+        id: wordReminder.id,
         words: words.join(", "),
       };
       const subscription = await subscriptionQueries.getByUserId(userId);
@@ -162,6 +163,7 @@ export const update_word_reminder = [
 
       await boss.work(queueName, async () => {
         const data = {
+          id: wordReminder.id,
           words: words.join(", "),
         };
         const subscription = await subscriptionQueries.getByUserId(userId);
