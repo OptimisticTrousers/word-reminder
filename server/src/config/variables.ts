@@ -19,13 +19,11 @@ for (const variable of [
   "SERVER_PORT",
   "VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
-  "WEBPUSH_EMAIL",
-  "PROTON_SMTP_USER",
-  "PROTON_SMTP_TOKEN",
-  "PROTON_SMTP_SERVER",
-  "PROTON_SMTP_PORT",
+  "WORD_REMINDER_EMAIL",
   "SERVER_URL",
   "FRONTEND_VERIFICATION",
+  "AWS_ACCESS_KEY_ID",
+  "AWS_SECRET_ACCESS_KEY",
 ]) {
   if (!(variable in process.env)) {
     throw new Error(`${variable} is not defined in .env file.`);

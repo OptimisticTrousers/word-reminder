@@ -4,7 +4,7 @@
   "description": "Server for a word reminder chrome extension that allows users to store words in their dictionary and reminds users of the words that they store so that users can remember words that they come across in their readings.",
   "main": "index.js",
   "engines": {
-    "node": "22.13.1"
+    "node": "22.15.0"
   },
   "scripts": {
     "coverage": "jest --runInBand --coverage",
@@ -17,6 +17,7 @@
   "author": "Tony Isern",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.787.0",
     "bcryptjs": "^2.4.3",
     "common": "file:../common",
     "connect-pg-simple": "^10.0.0",
@@ -31,7 +32,6 @@
     "express-validator": "^7.0.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.16",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.13.1",

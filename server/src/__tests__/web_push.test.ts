@@ -4,7 +4,7 @@ import { webPush } from "../middleware/web_push";
 import webpush from "web-push";
 import { variables } from "../config/variables";
 
-const { VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY, WEBPUSH_EMAIL } = variables;
+const { VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY, WORD_REMINDER_EMAIL } = variables;
 
 describe("webPush", () => {
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe("webPush", () => {
     expect(response.body).toEqual({ message });
     expect(mockSetVapidDetails).toHaveBeenCalledTimes(1);
     expect(mockSetVapidDetails).toHaveBeenCalledWith(
-      `mailto:${WEBPUSH_EMAIL}`,
+      `mailto:${WORD_REMINDER_EMAIL}`,
       VAPID_PUBLIC_KEY,
       VAPID_PRIVATE_KEY
     );

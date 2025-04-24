@@ -1,59 +1,69 @@
-import nodemailer from "nodemailer";
+import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses";
 
 import { variables } from "../config/variables";
 
-const {
-  PROTON_SMTP_USER,
-  PROTON_SMTP_TOKEN,
-  PROTON_SMTP_SERVER,
-  PROTON_SMTP_PORT,
-} = variables;
+const { WORD_REMINDER_EMAIL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } =
+  variables;
 
-jest.mock("nodemailer");
-
-const mockNodemailer = jest.mocked(nodemailer);
+const mockSend = jest.fn();
+jest.mock("@aws-sdk/client-ses", () => {
+  const originalModule = jest.requireActual("@aws-sdk/client-ses");
+  return {
+    ...originalModule,
+    SESClient: jest.fn().mockImplementation(() => {
+      return {
+        send: mockSend,
+      };
+    }),
+  };
+});
 
 describe("email", () => {
   it("calls the functions to create a transport when initialized", async () => {
-    const mockCreateTransporter = jest.spyOn(mockNodemailer, "createTransport");
-
     await jest.isolateModulesAsync(async () => {
       await import("../utils/email");
     });
 
-    expect(mockCreateTransporter).toHaveBeenCalledTimes(1);
-    expect(mockCreateTransporter).toHaveBeenCalledWith({
-      host: PROTON_SMTP_SERVER,
-      port: Number(PROTON_SMTP_PORT),
-      secure: false, // It actually uses STARTTLS, there are no shared keys
-      auth: {
-        user: PROTON_SMTP_USER,
-        pass: PROTON_SMTP_TOKEN,
+    expect(SESClient).toHaveBeenCalledTimes(1);
+    expect(SESClient).toHaveBeenCalledWith({
+      region: "us-east-1",
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY,
       },
     });
   });
 
   it("calls the functions to send an email", async () => {
-    const mockSendMail = jest.fn();
-    jest
-      .spyOn(mockNodemailer, "createTransport")
-      .mockReturnValue({ sendMail: mockSendMail });
-    const { email } = await import("../utils/email");
-
     const emailData = {
-      userId: "1",
       to: "bob@protonmail.com",
       subject: "Hello there",
       html: "<p>Hello world!</p>",
     };
+    const sendEmailCommand = {
+      Destination: {
+        ToAddresses: [emailData.to],
+      },
+      ReplyToAddresses: [],
+      Message: {
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: emailData.html,
+          },
+        },
+        Subject: {
+          Charset: "UTF-8",
+          Data: emailData.subject,
+        },
+      },
+      Source: WORD_REMINDER_EMAIL,
+    };
+
+    const { email } = await import("../utils/email");
     await email.sendMail(emailData);
 
-    expect(mockSendMail).toHaveBeenCalledTimes(1);
-    expect(mockSendMail).toHaveBeenCalledWith({
-      from: PROTON_SMTP_USER,
-      to: emailData.to,
-      subject: emailData.subject,
-      html: emailData.html,
-    });
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend.mock.calls[0][0].input).toMatchObject(sendEmailCommand);
   });
 });
