@@ -10,7 +10,8 @@
     "coverage": "jest --runInBand --coverage",
     "dev": "nodemon src/server.ts",
     "seed": "ts-node src/db/populatedb",
-    "start": "node src/app.ts",
+    "start": "ts-node src/server.ts",
+    "start:test": "NODE_ENV=test ts-node src/server.ts",
     "test": "jest --watch --runInBand"
   },
   "keywords": [],

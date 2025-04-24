@@ -10,3 +10,10 @@ export const apiRouter = Router({ caseSensitive: true });
 apiRouter.use("/sessions", sessionRouter);
 apiRouter.use("/users", userRouter);
 apiRouter.use("/subscriptions", isAuthenticated, subscriptionRouter);
+
+(async () => {
+  if (process.env.NODE_ENV === "test") {
+    const { testingRouter } = await import("./testing");
+    apiRouter.use("/testing", testingRouter);
+  }
+})();

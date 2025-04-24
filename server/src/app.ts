@@ -13,7 +13,6 @@ import { errorHandler } from "./middleware/error_handler";
 import { apiRouter } from "./routes/api";
 import { viewRouter } from "./routes/views";
 import { webPush } from "./middleware/web_push";
-import { boss } from "./db/boss";
 
 export const app = express();
 
