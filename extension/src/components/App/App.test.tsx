@@ -46,38 +46,65 @@ const user = {
 };
 
 describe("App component", () => {
-  it("renders main element and footer when the user is confirmed", () => {
-    const Stub = createRoutesStub([
-      {
-        path: "/",
-        Component: function () {
-          return <App user={user} />;
+  describe("when MODE === 'production'", () => {
+    it("renders main element and footer when the user is confirmed", () => {
+      vi.stubEnv("MODE", "production");
+      const Stub = createRoutesStub([
+        {
+          path: "/",
+          Component: function () {
+            return <App user={user} />;
+          },
         },
-      },
-    ]);
-    const { asFragment } = render(<Stub initialEntries={["/"]} />);
+      ]);
+      const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
-    const footer = screen.getByTestId("footer");
-    const navigation = screen.getByTestId("navigation");
-    const outlet = screen.getByTestId("outlet");
-    expect(footer).toBeInTheDocument();
-    expect(navigation).toBeInTheDocument();
-    expect(outlet).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
+      const footer = screen.getByTestId("footer");
+      const navigation = screen.getByTestId("navigation");
+      const outlet = screen.getByTestId("outlet");
+      expect(footer).toBeInTheDocument();
+      expect(navigation).toBeInTheDocument();
+      expect(outlet).toBeInTheDocument();
+      expect(asFragment()).toMatchSnapshot();
+    });
+
+    it("renders main element and footer when the user is not confirmed", () => {
+      vi.stubEnv("MODE", "production");
+      const Stub = createRoutesStub([
+        {
+          path: "/",
+          Component: function () {
+            return <App user={{ ...user, confirmed: false }} />;
+          },
+        },
+      ]);
+      render(<Stub initialEntries={["/"]} />);
+
+      const emailConfirmation = screen.getByTestId("email-confirmation");
+      expect(emailConfirmation).toBeInTheDocument();
+    });
   });
 
-  it("renders main element and footer when the user is not confirmed", () => {
-    const Stub = createRoutesStub([
-      {
-        path: "/",
-        Component: function () {
-          return <App user={{ ...user, confirmed: false }} />;
+  describe("when MODE !== 'production'", () => {
+    it("renders main element and footer", () => {
+      vi.stubEnv("MODE", "development");
+      const Stub = createRoutesStub([
+        {
+          path: "/",
+          Component: function () {
+            return <App user={{ ...user, confirmed: false }} />;
+          },
         },
-      },
-    ]);
-    render(<Stub initialEntries={["/"]} />);
+      ]);
+      const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
-    const emailConfirmation = screen.getByTestId("email-confirmation");
-    expect(emailConfirmation).toBeInTheDocument();
+      const footer = screen.getByTestId("footer");
+      const navigation = screen.getByTestId("navigation");
+      const outlet = screen.getByTestId("outlet");
+      expect(footer).toBeInTheDocument();
+      expect(navigation).toBeInTheDocument();
+      expect(outlet).toBeInTheDocument();
+      expect(asFragment()).toMatchSnapshot();
+    });
   });
 });

@@ -13,8 +13,10 @@ export const App = CSSModules(
   function ({ user }: { user: User }) {
     const { theme } = useContext(ThemeContext);
 
-    if (!user.confirmed) {
-      return <EmailConfirmation user={user} />;
+    if (import.meta.env.MODE === "production") {
+      if (!user.confirmed) {
+        return <EmailConfirmation user={user} />;
+      }
     }
 
     return (
