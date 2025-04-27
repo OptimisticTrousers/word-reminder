@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Account</title>
+    <link rel="stylesheet" href="stylesheets/confirm.css" />
+  </head>
+  <body>
+    <form
+      class="form"
+      action="/api/users/<%= userId %>&<%= token %>"
+      method="POST"
+    >
+      <div class="form__control">
+        <input
+          class="form__input"
+          type="password"
+          name="confirmed"
+          id="confirmed"
+          defaultValue="true"
+        />
+      </div>
+      <button class="form__button" type="submit">Confirm Account</button>
+    </form>
+  </body>
+</html>

@@ -14,6 +14,22 @@ import { emailDoesNotExist } from "../utils/email_does_not_exist";
 
 const { SALT } = variables;
 
+// @desc Confirms a user's account
+// @route POST /api/users/:userId&:token
+// @access Private
+export const confirm_account = asyncHandler(async (req, res) => {
+  const userId = Number(req.params.userId);
+
+  const user = await userQueries.getById(userId);
+  if (user!.confirmed === false) {
+    await userQueries.updateById(userId, { confirmed: true });
+  }
+
+  res.render("pages/success", {
+    message: "You have successfully confirmed your account!",
+  });
+});
+
 // @desc    Delete single user
 // @route   DELETE /api/users/:userId
 // @access  Private

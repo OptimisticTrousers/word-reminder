@@ -3,6 +3,7 @@ import { Router } from "express";
 import { autoWordReminderRouter } from "./auto_word_reminders";
 import { logout_user } from "../controllers/session_controller";
 import {
+  confirm_account,
   delete_user,
   signup_user,
   update_user,
@@ -15,6 +16,7 @@ import { validateUserId } from "../middleware/validate_user_id";
 import { userWordRouter } from "./user_words";
 import { wordReminderRouter } from "./word_reminders";
 import { subscriptionRouter } from "./subscriptions";
+import { validateToken } from "../middleware/validate_token";
 
 export const userRouter = Router({ caseSensitive: true });
 
@@ -30,6 +32,10 @@ userRouter
     delete_user,
     logout_user
   );
+
+userRouter
+  .route("/:userId&:token")
+  .post(validateUserId, validateToken, errorValidationHandler, confirm_account);
 
 userRouter.use(
   "/:userId/userWords",

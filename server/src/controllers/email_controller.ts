@@ -11,6 +11,9 @@ import { tokenQueries } from "../db/token_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { email } from "../utils/email";
 import { userQueries } from "../db/user_queries";
+import { variables } from "../config/variables";
+
+const { SERVER_URL, SERVER_PORT } = variables;
 
 // @desc Sends an email
 // @route POST /api/users/:userId/emails
@@ -56,8 +59,23 @@ export const send_email = [
         userId = String(user.id);
       }
     }
+    let templateRoute = "";
+    switch (template) {
+      case Template.CHANGE_EMAIL:
+        templateRoute = "changeEmail";
+        break;
+      case Template.CHANGE_PASSWORD:
+        templateRoute = "changePassword";
+        break;
+      case Template.CONFIRM_ACCOUNT:
+        templateRoute = "confirmAccount";
+        break;
+      case Template.FORGOT_PASSWORD:
+        templateRoute = "forgotPassword";
+        break;
+    }
     const html = ejs.render(emailTemplate, {
-      url: `/${template}/${userId}&${token.token}`,
+      url: `${SERVER_URL}:${SERVER_PORT}/${templateRoute}/${userId}&${token.token}`,
     });
     const info = await email.sendMail({
       to: req.body.email,

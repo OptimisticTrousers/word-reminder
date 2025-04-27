@@ -12,6 +12,9 @@ import { tokenQueries } from "../db/token_queries";
 import { email } from "../utils/email";
 import { Subject, Template } from "common";
 import { userQueries } from "../db/user_queries";
+import { variables } from "../config/variables";
+
+const { SERVER_URL, SERVER_PORT } = variables;
 
 const userId = 1;
 const user = {
@@ -260,7 +263,7 @@ describe("send_email", () => {
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
       html: ejs.render(emailTemplate, {
-        url: `/${body.template}/${userId}&${token.token}`,
+        url: `${SERVER_URL}:${SERVER_PORT}/confirmAccount/${userId}&${token.token}`,
       }),
       subject: body.subject,
       to: body.email,
@@ -303,7 +306,7 @@ describe("send_email", () => {
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
       html: ejs.render(emailTemplate, {
-        url: `/${body.template}/${userId}&${token.token}`,
+        url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
       }),
       subject: body.subject,
       to: body.email,
@@ -346,7 +349,7 @@ describe("send_email", () => {
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
       html: ejs.render(emailTemplate, {
-        url: `/${body.template}/${userId}&${token.token}`,
+        url: `${SERVER_URL}:${SERVER_PORT}/changeEmail/${userId}&${token.token}`,
       }),
       subject: body.subject,
       to: body.email,
@@ -394,7 +397,7 @@ describe("send_email", () => {
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
       html: ejs.render(emailTemplate, {
-        url: `/${body.template}/${userId}&${token.token}`,
+        url: `${SERVER_URL}:${SERVER_PORT}/forgotPassword/${userId}&${token.token}`,
       }),
       subject: body.subject,
       to: body.email,
