@@ -19,6 +19,14 @@ vi.mock("../../layouts/Navigation", () => {
   };
 });
 
+vi.mock("../../pages/Auth/EmailConfirmation", () => {
+  return {
+    EmailConfirmation: function () {
+      return <div data-testid="email-confirmation"></div>;
+    },
+  };
+});
+
 vi.mock("react-router-dom", async () => {
   const originalModule = await vi.importActual("react-router-dom");
   return {
@@ -32,13 +40,13 @@ vi.mock("react-router-dom", async () => {
 const user = {
   id: 1,
   email: "bob@gmail.com",
-  confirmed: false,
+  confirmed: true,
   created_at: new Date(),
   updated_at: new Date(),
 };
 
 describe("App component", () => {
-  it("renders main element and footer", () => {
+  it("renders main element and footer when the user is confirmed", () => {
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -56,5 +64,20 @@ describe("App component", () => {
     expect(navigation).toBeInTheDocument();
     expect(outlet).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("renders main element and footer when the user is not confirmed", () => {
+    const Stub = createRoutesStub([
+      {
+        path: "/",
+        Component: function () {
+          return <App user={{ ...user, confirmed: false }} />;
+        },
+      },
+    ]);
+    render(<Stub initialEntries={["/"]} />);
+
+    const emailConfirmation = screen.getByTestId("email-confirmation");
+    expect(emailConfirmation).toBeInTheDocument();
   });
 });

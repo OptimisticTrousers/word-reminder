@@ -86,14 +86,6 @@ vi.mock("../pages/Settings", function () {
   };
 });
 
-vi.mock("../pages/Auth/EmailConfirmation", () => {
-  return {
-    EmailConfirmation: function () {
-      return <div data-testid="email-confirmation"></div>;
-    },
-  };
-});
-
 describe("Router component", () => {
   const errorMessage = "Server Error.";
 
@@ -253,23 +245,6 @@ describe("Router component", () => {
         expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
         expect(userWords).toBeInTheDocument();
         expect(app).toBeInTheDocument();
-      });
-
-      it("shows the email confirmation page when the user is not confirmed", async () => {
-        const mockSessionServiceGetCurrentUser = vi
-          .spyOn(sessionService, "getCurrentUser")
-          .mockImplementation(async () => {
-            return { json: { user: { ...user, confirmed: false } }, status };
-          });
-
-        setup({ initialRoute: "/confirmation" });
-
-        const emailConfirmationEmail = await screen.findByTestId(
-          "email-confirmation"
-        );
-        expect(emailConfirmationEmail).toBeInTheDocument();
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledTimes(1);
-        expect(mockSessionServiceGetCurrentUser).toHaveBeenCalledWith();
       });
     });
 

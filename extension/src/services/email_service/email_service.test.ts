@@ -40,7 +40,13 @@ describe("emailService", () => {
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith({
         url: `${VITE_API_DOMAIN}/users/${userId}/emails`,
-        options: { body: JSON.stringify(body), credentials: "include" },
+        options: {
+          body: JSON.stringify(body),
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       });
       expect(response).toEqual({ json: { info }, status });
     });

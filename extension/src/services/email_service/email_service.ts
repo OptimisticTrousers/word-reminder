@@ -23,6 +23,9 @@ export const emailService = (function (service) {
       options: {
         body: JSON.stringify(body),
         credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
       },
     });
   }

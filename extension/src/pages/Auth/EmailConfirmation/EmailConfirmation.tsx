@@ -6,11 +6,13 @@ import { emailService } from "../../../services/email_service";
 import styles from "./EmailConfirmation.module.css";
 import { Loading } from "../../../components/ui/Loading";
 import { Error500 } from "../../Error500";
-import { useOutletContext } from "react-router-dom";
+
+interface Props {
+  user: User;
+}
 
 export const EmailConfirmation = CSSModules(
-  function () {
-    const { user }: { user: User } = useOutletContext();
+  function ({ user }: Props) {
     const userId = String(user.id);
     const { isLoading, failureReason } = useQuery({
       queryKey: ["emails"],

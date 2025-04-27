@@ -7,10 +7,15 @@ import { ThemeContext } from "../../context/Theme";
 import styles from "./App.module.css";
 import { Footer } from "../../layouts/Footer";
 import { Navigation } from "../../layouts/Navigation";
+import { EmailConfirmation } from "../../pages/Auth/EmailConfirmation";
 
 export const App = CSSModules(
   function ({ user }: { user: User }) {
     const { theme } = useContext(ThemeContext);
+
+    if (!user.confirmed) {
+      return <EmailConfirmation user={user} />;
+    }
 
     return (
       <main styleName={`main main--${theme}`}>

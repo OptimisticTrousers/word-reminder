@@ -5,7 +5,6 @@ import { emailService } from "../../../services/email_service";
 import { EmailConfirmation } from "./EmailConfirmation";
 import { Subject, Template } from "common";
 import { NotificationProvider } from "../../../context/Notification";
-import { createRoutesStub, Outlet } from "react-router-dom";
 
 vi.mock("../../../components/ui/Loading/Loading");
 
@@ -18,8 +17,11 @@ describe("EmailConfirmation component", () => {
   };
 
   const user = {
-    id: "1",
+    id: 1,
     email: "bob@gmail.com",
+    confirmed: false,
+    created_at: new Date(),
+    updated_at: new Date(),
   };
 
   const status = 200;
@@ -28,30 +30,14 @@ describe("EmailConfirmation component", () => {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
-    const Stub = createRoutesStub([
-      {
-        path: "/",
-        Component: function () {
-          return <Outlet context={{ user }} />;
-        },
-        children: [
-          {
-            path: "/confirmation",
-            Component: function () {
-              return (
-                <NotificationProvider>
-                  <QueryClientProvider client={queryClient}>
-                    <EmailConfirmation />
-                  </QueryClientProvider>
-                </NotificationProvider>
-              );
-            },
-          },
-        ],
-      },
-    ]);
 
-    return render(<Stub initialEntries={["/confirmation"]} />);
+    return render(
+      <NotificationProvider>
+        <QueryClientProvider client={queryClient}>
+          <EmailConfirmation user={user} />
+        </QueryClientProvider>
+      </NotificationProvider>
+    );
   }
 
   beforeEach(() => {
@@ -80,7 +66,7 @@ describe("EmailConfirmation component", () => {
     expect(message).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      userId: user.id,
+      userId: String(user.id),
       body: {
         email: user.email,
         subject: Subject.CONFIRM_ACCOUNT,
@@ -108,7 +94,7 @@ describe("EmailConfirmation component", () => {
     expect(loading).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      userId: user.id,
+      userId: String(user.id),
       body: {
         email: user.email,
         subject: Subject.CONFIRM_ACCOUNT,
@@ -132,7 +118,7 @@ describe("EmailConfirmation component", () => {
     expect(error).toBeInTheDocument();
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
     expect(mockSendEmail).toHaveBeenCalledWith({
-      userId: user.id,
+      userId: String(user.id),
       body: {
         email: user.email,
         subject: Subject.CONFIRM_ACCOUNT,
