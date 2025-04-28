@@ -11,6 +11,7 @@ import { wordReminderQueries } from "../db/word_reminder_queries";
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
+import { subscriptionQueries } from "../db/subscription_queries";
 
 const { SALT } = variables;
 
@@ -35,6 +36,7 @@ export const confirm_account = asyncHandler(async (req, res) => {
 // @access  Private
 export const delete_user = asyncHandler(async (req, _res, next) => {
   const userId = Number(req.params.userId);
+  await subscriptionQueries.deleteByUserId(userId);
   await userWordQueries.deleteByUserId(userId);
   await wordReminderQueries.deleteByUserId(userId);
   await autoWordReminderQueries.deleteByUserId(userId);

@@ -6,6 +6,7 @@ import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { userQueries } from "../db/user_queries";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
+import { subscriptionQueries } from "../db/subscription_queries";
 
 const userId = 1;
 const message = "Success!";
@@ -17,6 +18,9 @@ app.delete("/api/users/:userId", delete_user, (req, res) => {
 
 describe("delete_user", () => {
   it("calls the methods to delete the user and the user's user words", async () => {
+    const mockSubscriptionDeleteByUserId = jest
+      .spyOn(subscriptionQueries, "deleteByUserId")
+      .mockImplementation(jest.fn());
     const mockUserWordDeleteByUserId = jest
       .spyOn(userWordQueries, "deleteByUserId")
       .mockImplementation(jest.fn());
@@ -37,6 +41,8 @@ describe("delete_user", () => {
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message });
+    expect(mockSubscriptionDeleteByUserId).toHaveBeenCalledTimes(1);
+    expect(mockSubscriptionDeleteByUserId).toHaveBeenCalledWith(userId);
     expect(mockUserWordDeleteByUserId).toHaveBeenCalledTimes(1);
     expect(mockUserWordDeleteByUserId).toHaveBeenCalledWith(userId);
     expect(mockWordReminderDeleteByUserId).toHaveBeenCalledTimes(1);
