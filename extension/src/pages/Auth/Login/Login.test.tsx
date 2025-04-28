@@ -14,6 +14,12 @@ describe("Login component", () => {
       path: "/login",
       Component: Login,
     },
+    {
+      path: "/userWords",
+      Component: function () {
+        return <button>Current URL: /userWords</button>;
+      },
+    },
   ]);
 
   const queryClient = new QueryClient({
@@ -72,9 +78,13 @@ describe("Login component", () => {
     const loginButton = screen.getByRole("button", { name: "Login" });
     await user.click(loginButton);
 
+    const userWords = await screen.findByRole("button", {
+      name: "Current URL: /userWords",
+    });
     const notification = screen.getByRole("dialog", {
       name: `You have successfully logged in, ${email}.`,
     });
+    expect(userWords).toBeInTheDocument();
     expect(mockSendMessage).toHaveBeenCalledTimes(1);
     expect(mockSendMessage).toHaveBeenCalledWith(null);
     expect(mockSet).toHaveBeenCalledTimes(1);
@@ -85,12 +95,12 @@ describe("Login component", () => {
       password: testUser.password,
     });
     expect(notification).toBeInTheDocument();
-    expect(asFragment()).toMatchSnapshot();
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
       queryKey: ["sessions"],
       exact: true,
     });
+    expect(asFragment()).toMatchSnapshot();
   });
 
   it("shows correct link to creating an account", async () => {

@@ -14,7 +14,9 @@ export const Navigation = CSSModules(
     const navigate = useNavigate();
     const { isPending, mutate } = useMutation({
       mutationFn: sessionService.logoutUser,
-      onSuccess: async () => {},
+      onSettled: async () => {
+        await chrome.storage.sync.remove("userId");
+      },
       onError: showNotificationError,
     });
 
@@ -33,8 +35,7 @@ export const Navigation = CSSModules(
     async function handleLogout() {
       mutate();
       queryClient.clear();
-      chrome.storage.sync.remove("userId");
-      navigate("/login");
+      await navigate("/login");
     }
 
     function handleNewTab() {

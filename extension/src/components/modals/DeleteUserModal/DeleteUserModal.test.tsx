@@ -51,11 +51,12 @@ describe("DeleteUserModal component", () => {
 
     const { asFragment } = render(<Stub initialEntries={["/"]} />);
 
+    const notification = screen.getByRole("dialog");
     const alert = screen.getByText(
       "Are you sure you want to delete your user?"
     );
     const message = screen.getByText("You can't undo this action.");
-
+    expect(notification).toBeInTheDocument();
     expect(alert).toBeInTheDocument();
     expect(message).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
@@ -86,6 +87,12 @@ describe("DeleteUserModal component", () => {
               );
             },
           },
+          {
+            path: "/login",
+            Component: function () {
+              return <div data-testid="login"></div>;
+            },
+          },
         ],
       },
     ]);
@@ -95,17 +102,20 @@ describe("DeleteUserModal component", () => {
       .mockImplementation(async () => {
         return { json, status };
       });
-    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
+    const mockSyncRemove = vi.spyOn(chrome.storage.sync, "remove");
     const user = userEvent.setup();
 
     render(<Stub initialEntries={["/"]} />);
 
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
-    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
-    expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["sessions"],
-    });
+
+    const login = screen.getByTestId("login");
+    const notification = screen.queryByRole("dialog");
+    expect(notification).not.toBeInTheDocument();
+    expect(login).toBeInTheDocument();
+    expect(mockSyncRemove).toHaveBeenCalledTimes(1);
+    expect(mockSyncRemove).toHaveBeenCalledWith("userId");
     expect(mockDeleteUser).toHaveBeenCalledTimes(1);
     expect(mockDeleteUser).toHaveBeenCalledWith({
       userId: testUser.id,
@@ -142,7 +152,7 @@ describe("DeleteUserModal component", () => {
         ],
       },
     ]);
-    const status = 200;
+    const status = 400;
     const message = "Error Message.";
     const mockDeleteUser = vi
       .spyOn(userService, "deleteUser")
@@ -153,14 +163,13 @@ describe("DeleteUserModal component", () => {
     vi.spyOn(hooks, "useNotificationError").mockImplementation(() => {
       return { showNotificationError: mockShowNotificationError };
     });
-    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const user = userEvent.setup();
 
     render(<Stub initialEntries={["/"]} />);
 
-    expect(mockInvalidateQueries).not.toHaveBeenCalled();
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
+
     expect(mockDeleteUser).toHaveBeenCalledTimes(1);
     expect(mockDeleteUser).toHaveBeenCalledWith({
       userId: testUser.id,
@@ -197,6 +206,12 @@ describe("DeleteUserModal component", () => {
                   <DeleteUserModal {...props} />;
                 </QueryClientProvider>
               );
+            },
+          },
+          {
+            path: "/login",
+            Component: function () {
+              return <div data-testid="login"></div>;
             },
           },
         ],

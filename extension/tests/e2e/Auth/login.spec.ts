@@ -1,8 +1,5 @@
 import { test, expect } from "../fixtures";
-import { goto, loginWith, testUser } from "../helpers";
-
-// Reset storage state for this file to avoid being authenticated
-test.use({ storageState: { cookies: [], origins: [] } });
+import { goto, loginWith, testUser, VITE_API_DOMAIN } from "../helpers";
 
 test.describe("Login page", () => {
   test.beforeEach(async ({ page, context, extensionId }) => {
@@ -29,6 +26,13 @@ test.describe("Login page", () => {
   });
 
   test.describe("logging in", () => {
+    test.beforeEach(async ({ request }) => {
+      await request.delete(`${VITE_API_DOMAIN}/testing/reset`);
+      await request.post(`${VITE_API_DOMAIN}/users`, {
+        data: testUser,
+      });
+    });
+
     test("succeeds with correct credentials", async ({ page }) => {
       await loginWith(page, testUser.email, testUser.password);
 

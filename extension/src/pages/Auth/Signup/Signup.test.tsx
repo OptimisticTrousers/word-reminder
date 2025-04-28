@@ -32,6 +32,7 @@ describe("Signup component", () => {
   });
 
   const testUser = {
+    id: "1",
     email: "bob@gmail.com",
     password: "password",
   };
@@ -55,6 +56,8 @@ describe("Signup component", () => {
   });
 
   it("calls the functions to signup, login, show notification, redirect user", async () => {
+    const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
+    const mockSet = vi.spyOn(chrome.storage.sync, "set");
     const mockUserServiceSignup = vi
       .spyOn(userService, "signupUser")
       .mockImplementation(async () => {
@@ -65,6 +68,7 @@ describe("Signup component", () => {
       .mockImplementation(async () => {
         return { json: { user: testUser }, status };
       });
+    const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { asFragment, user } = setup();
     const email = testUser.email;
     const password = testUser.password;
@@ -86,10 +90,25 @@ describe("Signup component", () => {
     const notification = screen.getByRole("dialog", {
       name: `You have successfully signed in, ${email}.`,
     });
+    expect(mockSendMessage).toHaveBeenCalledTimes(1);
+    expect(mockSendMessage).toHaveBeenCalledWith(null);
+    expect(mockSet).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenCalledWith({ userId: testUser.id });
     expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
-    expect(mockSessionServiceLogin).toHaveBeenCalledWith(testUser);
+    expect(mockSessionServiceLogin).toHaveBeenCalledWith({
+      email: testUser.email,
+      password: testUser.password,
+    });
     expect(mockUserServiceSignup).toHaveBeenCalledTimes(1);
-    expect(mockUserServiceSignup).toHaveBeenCalledWith(testUser);
+    expect(mockUserServiceSignup).toHaveBeenCalledWith({
+      email: testUser.email,
+      password: testUser.password,
+    });
+    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["sessions"],
+      exact: true,
+    });
     expect(userWords).toBeInTheDocument();
     expect(notification).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
@@ -121,7 +140,10 @@ describe("Signup component", () => {
     const notification = screen.getByRole("dialog", { name: message });
     expect(notification).toBeInTheDocument();
     expect(mockUserServiceSignup).toHaveBeenCalledTimes(1);
-    expect(mockUserServiceSignup).toHaveBeenCalledWith(testUser);
+    expect(mockUserServiceSignup).toHaveBeenCalledWith({
+      email: testUser.email,
+      password: testUser.password,
+    });
   });
 
   it("shows correct link to log into account", async () => {
@@ -264,7 +286,10 @@ describe("Signup component", () => {
       });
       expect(notification).toBeInTheDocument();
       expect(mockUserServiceSignup).toHaveBeenCalledTimes(1);
-      expect(mockUserServiceSignup).toHaveBeenCalledWith(testUser);
+      expect(mockUserServiceSignup).toHaveBeenCalledWith({
+        email: testUser.email,
+        password: testUser.password,
+      });
       expect(mockSessionServiceLogin).not.toHaveBeenCalled();
     });
 

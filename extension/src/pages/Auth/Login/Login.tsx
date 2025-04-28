@@ -1,7 +1,7 @@
 import { EMAIL_MAX, PASSWORD_MAX, User } from "common";
 import { useContext } from "react";
 import CSSModules from "react-css-modules";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AUTH_NOTIFICATION_MSGS } from "../constants";
@@ -18,27 +18,32 @@ export const Login = CSSModules(
   function () {
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     const { status, mutate } = useMutation({
       mutationFn: sessionService.loginUser,
-      onSuccess: (response: Response & { json: { user: User } }) => {
+      onSuccess: async (response: Response & { json: { user: User } }) => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
           LOGIN_AUTH_NOTIFICATION_MSGS.login(response.json.user.email)
         );
-        queryClient.invalidateQueries({ queryKey: ["sessions"], exact: true });
-        chrome.storage.sync.set({ userId: response.json.user.id });
-        chrome.runtime.sendMessage(null);
+        await queryClient.invalidateQueries({
+          queryKey: ["sessions"],
+          exact: true,
+        });
+        await chrome.storage.sync.set({ userId: response.json.user.id });
+        await chrome.runtime.sendMessage(null);
       },
       onError: showNotificationError,
     });
 
-    function handleSubmit(formData: FormData) {
+    async function handleSubmit(formData: FormData) {
       mutate({
         email: formData.get("email") as string,
         password: formData.get("password") as string,
       });
+      await navigate("/userWords");
     }
 
     const disabled = status === "pending";

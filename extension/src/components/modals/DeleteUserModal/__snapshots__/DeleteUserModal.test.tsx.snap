@@ -53,7 +53,7 @@ exports[`DeleteUserModal component > renders the form with alert and message 1`]
           <h2
             class="_modal__title_811945"
           >
-            Delete User Word
+            Delete User
           </h2>
         </div>
       </header>

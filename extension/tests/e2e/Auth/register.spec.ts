@@ -1,9 +1,6 @@
 import { test, expect } from "../fixtures";
 import { VITE_API_DOMAIN, goto, registerWith, testUser } from "../helpers";
 
-// Reset storage state for this file to avoid being authenticated
-test.use({ storageState: { cookies: [], origins: [] } });
-
 test.describe("Register page", () => {
   test.beforeEach(async ({ page, context, extensionId }) => {
     await context.clearCookies();

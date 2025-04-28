@@ -1,7 +1,7 @@
 import { User } from "common";
 import { useContext } from "react";
 import CSSModules from "react-css-modules";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -21,19 +21,18 @@ interface Props {
 
 export const DeleteUserModal = CSSModules(
   function ({ toggleModal }: Props) {
+    const navigate = useNavigate();
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
     const queryClient = useQueryClient();
     const { isPending, mutate } = useMutation({
       mutationFn: userService.deleteUser,
-      onSuccess: () => {
+      onSuccess: async () => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
           USER_NOTIFICATION_MSGS.deleteUser()
         );
-        queryClient.invalidateQueries({
-          queryKey: ["sessions"],
-        });
+        await chrome.storage.sync.remove("userId");
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);
@@ -45,8 +44,10 @@ export const DeleteUserModal = CSSModules(
     const { user }: { user: User } = useOutletContext();
     const userId = String(user.id);
 
-    function handleDelete() {
+    async function handleDelete() {
       mutate({ userId });
+      queryClient.clear();
+      await navigate("/login");
     }
 
     function handleCancel() {
@@ -54,7 +55,7 @@ export const DeleteUserModal = CSSModules(
     }
 
     return (
-      <ModalContainer title="Delete User Word" toggleModal={toggleModal}>
+      <ModalContainer title="Delete User" toggleModal={toggleModal}>
         <form styleName="modal" action={handleDelete}>
           <p styleName="modal__alert">
             Are you sure you want to delete your user?

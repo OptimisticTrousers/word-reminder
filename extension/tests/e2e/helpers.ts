@@ -30,6 +30,6 @@ export async function goto(page: Page, extensionId: string) {
 export const VITE_API_DOMAIN = "http://localhost:5000/api";
 
 export const testUser = {
-  email: "testuser@protonmail.com",
+  email: "theoptimistictrouser@protonmail.com",
   password: "password",
 };

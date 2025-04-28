@@ -159,7 +159,7 @@ describe("service", () => {
   });
 
   describe("remove", () => {
-    it("returns resolved promise from fetch", async () => {
+    it("returns resolved promise from fetch when status is 200", async () => {
       const mockHttpRemove = vi
         .spyOn(http, "remove")
         .mockImplementation(async () => {
@@ -178,6 +178,27 @@ describe("service", () => {
         url: "https://example.com",
       });
       expect(response).toEqual({ json: {}, status: 200 });
+    });
+
+    it("returns resolved promise from fetch when status code is 204", async () => {
+      const mockHttpRemove = vi
+        .spyOn(http, "remove")
+        .mockImplementation(async () => {
+          return {
+            json: {},
+            status: 204,
+          };
+        });
+
+      const response = await service.remove({
+        url: "https://example.com",
+      });
+
+      expect(mockHttpRemove).toHaveBeenCalledTimes(1);
+      expect(mockHttpRemove).toHaveBeenCalledWith({
+        url: "https://example.com",
+      });
+      expect(response).toEqual({ json: {}, status: 204 });
     });
 
     it("returns rejected promise from fetch when the status is not 200", async () => {

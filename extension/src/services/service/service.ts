@@ -66,7 +66,7 @@ export const service = (function () {
     options?: RequestInit;
   }) {
     const response = await remove({ url, params, options });
-    if (response.status !== 200) {
+    if (response.status !== 200 && response.status !== 204) {
       return Promise.reject(response);
     }
     return response;
