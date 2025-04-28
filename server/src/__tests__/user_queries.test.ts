@@ -139,14 +139,11 @@ describe("userQueries", () => {
     });
   });
 
-  describe("get", () => {
-    it("returns the user by id and password", async () => {
+  describe("getByIdWithPassword", () => {
+    it("returns the user with password by id", async () => {
       await userQueries.create(userParams);
 
-      const user = await userQueries.get({
-        id: userId,
-        password: userParams.password,
-      });
+      const user = await userQueries.getByIdWithPassword(userId);
 
       const createdAtTimestamp = new Date(user!.created_at).getTime();
       const updatedAtTimestamp = new Date(user!.updated_at).getTime();
@@ -154,21 +151,13 @@ describe("userQueries", () => {
       expect(user).toEqual({
         id: 1,
         email: userParams.email,
+        password: userParams.password,
         confirmed: false,
         created_at: expect.any(Date),
         updated_at: expect.any(Date),
       });
       expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
       expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
-    });
-
-    it("returns undefined when the user does not exist", async () => {
-      const user = await userQueries.get({
-        id: userId,
-        password: "does_not_exist",
-      });
-
-      expect(user).toBeUndefined();
     });
   });
 });

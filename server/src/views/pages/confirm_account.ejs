@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Confirm Account</title>
-    <link rel="stylesheet" href="stylesheets/confirm.css" />
+    <link rel="stylesheet" href="/stylesheets/confirm.css" />
   </head>
   <body>
     <form
       class="form"
-      action="/api/users/<%= userId %>&<%= token %>"
+      action="/api/users/verify/<%= userId %>&<%= token %>"
       method="POST"
     >
       <div class="form__control">

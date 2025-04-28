@@ -24,7 +24,6 @@ userRouter.route("/").post(signup_user);
 
 userRouter
   .route("/:userId")
-  .put(isAuthenticated, validateUserId, errorValidationHandler, update_user)
   .delete(
     isAuthenticated,
     validateUserId,
@@ -35,6 +34,10 @@ userRouter
 
 userRouter
   .route("/:userId&:token")
+  .post(validateUserId, errorValidationHandler, update_user);
+
+userRouter
+  .route("/verify/:userId&:token")
   .post(validateUserId, validateToken, errorValidationHandler, confirm_account);
 
 userRouter.use(

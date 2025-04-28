@@ -35,20 +35,16 @@ export const userQueries = (function () {
     return rows[0];
   };
 
-  const get = async ({
-    id,
-    password,
-  }: {
-    id: number;
-    password: string;
-  }): Promise<User | undefined> => {
-    const { rows }: QueryResult<User> = await db.query(
+  const getByIdWithPassword = async (
+    id: number
+  ): Promise<User & { password: string }> => {
+    const { rows }: QueryResult<User & { password: string }> = await db.query(
       `
-    SELECT ${columns}
+    SELECT ${columns}, password
     FROM users
-    WHERE id = $1 AND password = $2;
+    WHERE id = $1;
       `,
-      [id, password]
+      [id]
     );
 
     return rows[0];
@@ -109,7 +105,7 @@ export const userQueries = (function () {
   return {
     create,
     deleteById: deleteById.bind(queries),
-    get,
+    getByIdWithPassword,
     getByEmail,
     getById: getById.bind(queries),
     updateById,

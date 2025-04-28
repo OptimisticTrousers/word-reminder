@@ -12,11 +12,12 @@ import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
 import { subscriptionQueries } from "../db/subscription_queries";
+import { db } from "../db";
 
 const { SALT } = variables;
 
 // @desc Confirms a user's account
-// @route POST /api/users/:userId&:token
+// @route POST /api/users/verify/:userId&:token
 // @access Private
 export const confirm_account = asyncHandler(async (req, res) => {
   const userId = Number(req.params.userId);
@@ -88,18 +89,10 @@ export const signup_user = [
 ];
 
 // @desc    Update user details
-// @route   PUT /api/users/:userId
+// @route   POST /api/users/:userId
 // @access  Private
 export const update_user = [
   // Validate and sanitize fields
-  body("confirmed")
-    .optional()
-    .notEmpty({ ignore_whitespace: true })
-    .withMessage("confirmed must be specified.")
-    .bail()
-    .isBoolean()
-    .toBoolean()
-    .withMessage("confirmed must be a boolean."),
   body("email")
     .optional()
     .trim()
@@ -131,11 +124,6 @@ export const update_user = [
     .isLength({ min: 1 })
     .withMessage("oldPassword must be specified.")
     .custom((_, { req }) => {
-      if (!req.user) {
-        throw new CustomBadRequestError(
-          "oldPassword is not required when the session user is not provided."
-        );
-      }
       if (
         !req.body.email &&
         !req.body.newPassword &&
@@ -166,7 +154,7 @@ export const update_user = [
           "newPassword and newPasswordConfirmation must be equal."
         );
       }
-      if (req.user && !req.body.oldPassword) {
+      if (!req.body.oldPassword) {
         throw new CustomBadRequestError(
           "oldPassword is required when updating password."
         );
@@ -209,54 +197,38 @@ export const update_user = [
       return;
     }
 
-    const sessionUser = req.user;
+    const { oldPassword, newPassword, email } = req.body;
 
-    const { confirmed, oldPassword, newPassword, email } = req.body;
+    const user = await userQueries.getByIdWithPassword(userId);
 
-    if (sessionUser) {
-      if (confirmed) {
-        await userQueries.updateById(userId, { confirmed });
+    const match = await bcrypt.compare(oldPassword, user.password);
 
-        res.render("pages/success", {
-          message: "You have successfully confirmed your account!",
-        });
-        return;
-      }
-
-      const oldHashedPassword = await bcrypt.hash(oldPassword, Number(SALT));
-
-      const user = await userQueries.get({
-        id: userId,
-        password: oldHashedPassword,
+    const message = "You typed your old password incorrectly. Try again.";
+    if (!match && newPassword) {
+      res.render("pages/change_password", {
+        userId,
+        message,
+        token,
       });
+      return;
+    }
 
-      const message = "You typed your old password incorrectly. Try again.";
-      if (!user && newPassword) {
-        res.render("pages/change_password", {
-          userId,
-          message,
-          token,
-        });
-        return;
-      }
+    if (!match && email) {
+      res.render("pages/change_email", {
+        userId,
+        message,
+        token,
+      });
+      return;
+    }
 
-      if (!user && email) {
-        res.render("pages/change_email", {
-          userId,
-          message,
-          token,
-        });
-        return;
-      }
+    if (email) {
+      await userQueries.updateById(userId, { email });
 
-      if (email) {
-        await userQueries.updateById(userId, { email });
-
-        res.render("pages/success", {
-          message: "You have successfully updated your email!",
-        });
-        return;
-      }
+      res.render("pages/success", {
+        message: "You have successfully updated your email!",
+      });
+      return;
     }
 
     const newHashedPassword = await bcrypt.hash(newPassword, Number(SALT));

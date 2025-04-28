@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Change Email</title>
-    <link rel="stylesheet" href="stylesheets/change.css" />
+    <link rel="stylesheet" href="/stylesheets/change.css" />
   </head>
   <body>
     <% if (message) { %>
@@ -13,7 +13,7 @@
     <form
       class="form"
       action="/api/users/<%= userId %>&<%= token %>"
-      method="PUT"
+      method="POST"
     >
       <div class="form__control">
         <label class="form__label" for="email">Email:</label>
