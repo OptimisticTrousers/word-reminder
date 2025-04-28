@@ -1,10 +1,8 @@
 import { test, expect } from "../fixtures";
-import { VITE_API_DOMAIN, goto } from "../helpers";
+import { goto, testUser } from "../helpers";
 
-const testUser = {
-  email: "testuser@protonmail.com",
-  password: "password",
-};
+// Reset storage state for this file to avoid being authenticated
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe("Forgot password page", () => {
   test.beforeEach(async ({ page, extensionId }) => {
@@ -27,13 +25,9 @@ test.describe("Forgot password page", () => {
     await expect(loginLink).toBeVisible();
   });
 
-  test("submitting request to reset password", async ({ page, request }) => {
-    await request.post(`${VITE_API_DOMAIN}/users`, {
-      data: testUser,
-    });
-
+  test("submitting request to reset password", async ({ page }) => {
     const email = page.getByLabel("Email");
-    await email.fill("testuser@protonmail.com");
+    await email.fill(testUser.email);
     const sendVerificationEmailButton = page.getByRole("button", {
       name: "Send verification email",
     });
