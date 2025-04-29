@@ -14,19 +14,19 @@ describe("validate_token", () => {
     const token = "invalidToken";
     const app = express();
     app.use(express.json());
-    app.get("/change-password/:token", validateToken, (req, res) => {
+    app.get("/changePassword/:token", validateToken, (req, res) => {
       res.json({ message });
     });
-    app.get("/failed-verification", (req, res) => {
+    app.get("/failedVerification", (req, res) => {
       res.json({ message });
     });
     const mockVerify = jest
       .spyOn(tokenQueries, "verify")
       .mockResolvedValue(false);
 
-    const response = await request(app).get(`/change-password/${token}`);
+    const response = await request(app).get(`/changePassword/${token}`);
 
-    expect(response.headers.location).toBe("/failed-verification");
+    expect(response.headers.location).toBe("/failedVerification");
     expect(response.status).toBe(303);
     expect(mockVerify).toHaveBeenCalledTimes(1);
     expect(mockVerify).toHaveBeenCalledWith(token);
@@ -36,10 +36,10 @@ describe("validate_token", () => {
     const token = "validToken";
     const app = express();
     app.use(express.json());
-    app.get("/change-password/:token", validateToken, (req, res) => {
+    app.get("/changePassword/:token", validateToken, (req, res) => {
       res.json({ token: res.locals.token });
     });
-    app.get("/failed-verification", (req, res) => {
+    app.get("/failedVerification", (req, res) => {
       res.json({ message });
     });
     const mockVerify = jest
@@ -47,7 +47,7 @@ describe("validate_token", () => {
       .mockResolvedValue(true);
 
     const response = await request(app)
-      .get(`/change-password/${token}`)
+      .get(`/changePassword/${token}`)
       .set("Accept", "application/json");
 
     expect(response.headers["content-type"]).toMatch(/json/);

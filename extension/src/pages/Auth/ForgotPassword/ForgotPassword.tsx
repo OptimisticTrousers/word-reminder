@@ -34,8 +34,8 @@ export const ForgotPassword = CSSModules(
         userId: undefined,
         body: {
           email,
-          subject: Subject.FORGOT_PASSWORD,
-          template: Template.FORGOT_PASSWORD,
+          subject: Subject.CHANGE_PASSWORD,
+          template: Template.CHANGE_PASSWORD,
         },
       });
     }

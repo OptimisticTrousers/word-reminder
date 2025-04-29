@@ -11,8 +11,8 @@ import { boss } from "../db/boss";
 import { tokenQueries } from "../db/token_queries";
 import { email } from "../utils/email";
 import { Subject, Template } from "common";
-import { userQueries } from "../db/user_queries";
 import { variables } from "../config/variables";
+import { userQueries } from "../db/user_queries";
 
 const { SERVER_URL, SERVER_PORT } = variables;
 
@@ -185,7 +185,7 @@ describe("send_email", () => {
   it("returns 400 status code when the 'subject' is not in the 'Subject' enum", async () => {
     const body = {
       email: user.email,
-      template: Template.FORGOT_PASSWORD,
+      template: Template.CHANGE_PASSWORD,
       subject: "invalid-subject",
     };
 
@@ -307,6 +307,56 @@ describe("send_email", () => {
     expect(mockSend).toHaveBeenCalledWith({
       html: ejs.render(emailTemplate, {
         url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
+        title: "Change Password",
+      }),
+      subject: body.subject,
+      to: body.email,
+    });
+    expect(mockSendAfter).toHaveBeenCalledTimes(1);
+    expect(mockSendAfter).toHaveBeenCalledWith(
+      queueName,
+      { token },
+      {},
+      new Date(ms)
+    );
+    expect(mockWork).toHaveBeenCalledTimes(1);
+    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
+    expect(mockDeleteAll).toHaveBeenCalledTimes(1);
+    expect(mockDeleteAll).toHaveBeenCalledWith(["token1", "token2"]);
+  });
+
+  it("calls the functions to send email with 'forgot_password' template when userId is undefined", async () => {
+    const body = {
+      email: user.email,
+      template: Template.FORGOT_PASSWORD,
+      subject: Subject.FORGOT_PASSWORD,
+    };
+    const emailTemplate = await readFile(
+      path.join(__dirname, "..", "views", "emails", "change_password.ejs"),
+      "utf-8"
+    );
+    const mockGetByEmail = jest
+      .spyOn(userQueries, "getByEmail")
+      .mockResolvedValue(user);
+
+    const response = await request(app)
+      .post(`/api/users/${undefined}/emails`)
+      .set("Accept", "application/json")
+      .send(body);
+    await capturedCallback(mockJobs);
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ info });
+    expect(mockGetByEmail).toHaveBeenCalledTimes(1);
+    expect(mockGetByEmail).toHaveBeenCalledWith(user.email);
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+    expect(mockCreate).toHaveBeenCalledWith();
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend).toHaveBeenCalledWith({
+      html: ejs.render(emailTemplate, {
+        url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
+        title: "Forgot Password",
       }),
       subject: body.subject,
       to: body.email,
@@ -350,54 +400,6 @@ describe("send_email", () => {
     expect(mockSend).toHaveBeenCalledWith({
       html: ejs.render(emailTemplate, {
         url: `${SERVER_URL}:${SERVER_PORT}/changeEmail/${userId}&${token.token}`,
-      }),
-      subject: body.subject,
-      to: body.email,
-    });
-    expect(mockSendAfter).toHaveBeenCalledTimes(1);
-    expect(mockSendAfter).toHaveBeenCalledWith(
-      queueName,
-      { token },
-      {},
-      new Date(ms)
-    );
-    expect(mockWork).toHaveBeenCalledTimes(1);
-    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
-    expect(mockDeleteAll).toHaveBeenCalledTimes(1);
-    expect(mockDeleteAll).toHaveBeenCalledWith(["token1", "token2"]);
-  });
-
-  it("calls the functions to send email with 'forgot_password' template when userId is undefined", async () => {
-    const body = {
-      email: user.email,
-      template: Template.FORGOT_PASSWORD,
-      subject: Subject.FORGOT_PASSWORD,
-    };
-    const emailTemplate = await readFile(
-      path.join(__dirname, "..", "views", "emails", `${body.template}.ejs`),
-      "utf-8"
-    );
-    const mockGetByEmail = jest
-      .spyOn(userQueries, "getByEmail")
-      .mockResolvedValue(user);
-
-    const response = await request(app)
-      .post(`/api/users/${undefined}/emails`)
-      .set("Accept", "application/json")
-      .send(body);
-    await capturedCallback(mockJobs);
-
-    expect(response.headers["content-type"]).toMatch(/json/);
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ info });
-    expect(mockGetByEmail).toHaveBeenCalledTimes(1);
-    expect(mockGetByEmail).toHaveBeenCalledWith(user.email);
-    expect(mockCreate).toHaveBeenCalledTimes(1);
-    expect(mockCreate).toHaveBeenCalledWith();
-    expect(mockSend).toHaveBeenCalledTimes(1);
-    expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(emailTemplate, {
-        url: `${SERVER_URL}:${SERVER_PORT}/forgotPassword/${userId}&${token.token}`,
       }),
       subject: body.subject,
       to: body.email,

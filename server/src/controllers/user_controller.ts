@@ -1,4 +1,4 @@
-import { User } from "common";
+import { Template, User } from "common";
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import { body, validationResult } from "express-validator";
@@ -12,7 +12,6 @@ import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
 import { subscriptionQueries } from "../db/subscription_queries";
-import { db } from "../db";
 
 const { SALT } = variables;
 
@@ -24,7 +23,20 @@ export const confirm_account = asyncHandler(async (req, res) => {
 
   const user = await userQueries.getById(userId);
   if (user!.confirmed === false) {
-    await userQueries.updateById(userId, { confirmed: true });
+    try {
+      await userQueries.updateById(userId, {
+        confirmed: true,
+      });
+    } catch (error) {
+      res.render("pages/error", {
+        errors: [
+          {
+            msg: "Server Error. Unable to confirm your account. Please log into WordReminder and try again.",
+          },
+        ],
+      });
+      return;
+    }
   }
 
   res.render("pages/success", {
@@ -108,32 +120,6 @@ export const update_user = [
     .bail()
     .custom((value) => {
       return emailDoesNotExist(value);
-    })
-    .custom((_, { req }) => {
-      if (!req.body.oldPassword) {
-        throw new CustomBadRequestError(
-          "oldPassword is required when updating email."
-        );
-      }
-      return true;
-    }),
-  body("oldPassword")
-    .optional()
-    .trim()
-    .escape()
-    .isLength({ min: 1 })
-    .withMessage("oldPassword must be specified.")
-    .custom((_, { req }) => {
-      if (
-        !req.body.email &&
-        !req.body.newPassword &&
-        !req.body.newPasswordConfirmation
-      ) {
-        throw new CustomBadRequestError(
-          "oldPassword requires email or newPassword and newPasswordConfirmation to be provided."
-        );
-      }
-      return true;
     }),
   body("newPassword")
     .optional()
@@ -152,11 +138,6 @@ export const update_user = [
       if (value !== req.body.newPasswordConfirmation) {
         throw new CustomBadRequestError(
           "newPassword and newPasswordConfirmation must be equal."
-        );
-      }
-      if (!req.body.oldPassword) {
-        throw new CustomBadRequestError(
-          "oldPassword is required when updating password."
         );
       }
       return true;
@@ -185,8 +166,8 @@ export const update_user = [
     return true;
   }),
   asyncHandler(async (req, res) => {
-    const userId = Number(req.params.userId);
     const token = req.params.token;
+    const userId = Number(req.params.userId);
 
     const errors = validationResult(req);
 
@@ -197,48 +178,41 @@ export const update_user = [
       return;
     }
 
-    const { oldPassword, newPassword, email } = req.body;
+    const { newPassword, email } = req.body;
 
-    const user = await userQueries.getByIdWithPassword(userId);
+    if (newPassword) {
+      const newHashedPassword = await bcrypt.hash(newPassword, Number(SALT));
 
-    const match = await bcrypt.compare(oldPassword, user.password);
-
-    const message = "You typed your old password incorrectly. Try again.";
-    if (!match && newPassword) {
-      res.render("pages/change_password", {
-        userId,
-        message,
-        token,
-      });
-      return;
-    }
-
-    if (!match && email) {
-      res.render("pages/change_email", {
-        userId,
-        message,
-        token,
-      });
-      return;
-    }
-
-    if (email) {
-      await userQueries.updateById(userId, { email });
+      try {
+        await userQueries.updateById(userId, {
+          password: newHashedPassword,
+        });
+      } catch (error) {
+        res.render("pages/change_password", {
+          userId,
+          token,
+          message: `Unable to change your password. ${error}. Please try again.`,
+        });
+      }
 
       res.render("pages/success", {
-        message: "You have successfully updated your email!",
+        message: "You have successfully updated your password!",
       });
       return;
     }
 
-    const newHashedPassword = await bcrypt.hash(newPassword, Number(SALT));
-
-    await userQueries.updateById(userId, {
-      password: newHashedPassword,
-    });
+    try {
+      await userQueries.updateById(userId, { email });
+    } catch (error) {
+      res.render("pages/change_email", {
+        userId,
+        token,
+        message: `Unable to change your email. ${error}. Please try again.`,
+      });
+    }
 
     res.render("pages/success", {
-      message: "You have successfully updated your password!",
+      message: "You have successfully updated your email!",
     });
   }),
 ];

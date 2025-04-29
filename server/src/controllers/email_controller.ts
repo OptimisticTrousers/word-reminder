@@ -48,8 +48,13 @@ export const send_email = [
     let userId = req.params.userId;
     const { template, subject } = req.body;
 
+    let templateName = template;
+    if (template === Template.FORGOT_PASSWORD) {
+      templateName = "change_password";
+    }
+
     const emailTemplate = await readFile(
-      path.join(__dirname, "..", "views", "emails", `${template}.ejs`),
+      path.join(__dirname, "..", "views", "emails", `${templateName}.ejs`),
       "utf-8"
     );
     const token = await tokenQueries.create();
@@ -60,22 +65,26 @@ export const send_email = [
       }
     }
     let templateRoute = "";
+    let templateTitle = "";
     switch (template) {
       case Template.CHANGE_EMAIL:
         templateRoute = "changeEmail";
         break;
-      case Template.CHANGE_PASSWORD:
-        templateRoute = "changePassword";
-        break;
       case Template.CONFIRM_ACCOUNT:
         templateRoute = "confirmAccount";
         break;
+      case Template.CHANGE_PASSWORD:
+        templateRoute = "changePassword";
+        templateTitle = "Change Password";
+        break;
       case Template.FORGOT_PASSWORD:
-        templateRoute = "forgotPassword";
+        templateRoute = "changePassword";
+        templateTitle = "Forgot Password";
         break;
     }
     const html = ejs.render(emailTemplate, {
       url: `${SERVER_URL}:${SERVER_PORT}/${templateRoute}/${userId}&${token.token}`,
+      ...(templateTitle != "" && { title: templateTitle }),
     });
     const info = await email.sendMail({
       to: req.body.email,

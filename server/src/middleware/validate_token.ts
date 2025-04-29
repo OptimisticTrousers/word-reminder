@@ -9,7 +9,7 @@ export const validateToken = asyncHandler(async (req, res, next) => {
 
 
   if (!isValidToken) {
-    res.redirect(303, "/failed-verification");
+    res.redirect(303, "/failedVerification");
     return;
   }
 

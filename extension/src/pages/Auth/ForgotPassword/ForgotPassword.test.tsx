@@ -86,8 +86,8 @@ describe("ForgotPassword component", () => {
       userId: undefined,
       body: {
         email: testUser.email,
-        subject: Subject.FORGOT_PASSWORD,
-        template: Template.FORGOT_PASSWORD,
+        subject: Subject.CHANGE_PASSWORD,
+        template: Template.CHANGE_PASSWORD,
       },
     });
   });

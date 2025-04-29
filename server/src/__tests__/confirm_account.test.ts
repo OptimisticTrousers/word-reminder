@@ -36,6 +36,34 @@ describe("confirmAccount", () => {
 
     const response = await request(app).get(`/api/users/${user.id}&${token}`);
 
+    const hasMessage = response.text.includes(
+      "You have successfully confirmed your account!"
+    );
+    expect(hasMessage).toBe(true);
+    expect(response.headers["content-type"]).toBe("text/html; charset=utf-8");
+    expect(response.status).toBe(200);
+    expect(mockGetById).toHaveBeenCalledTimes(1);
+    expect(mockGetById).toHaveBeenCalledWith(user.id);
+    expect(mockUpdateById).toHaveBeenCalledTimes(1);
+    expect(mockUpdateById).toHaveBeenCalledWith(user.id, { confirmed: true });
+  });
+
+  it("calls the functions to get the user and renders the errors page when the updating the user throws an error", async () => {
+    const mockGetById = jest
+      .spyOn(userQueries, "getById")
+      .mockResolvedValue(user);
+    const mockUpdateById = jest
+      .spyOn(userQueries, "updateById")
+      .mockImplementation(async () => {
+        throw new Error("cannot confirm user");
+      });
+
+    const response = await request(app).get(`/api/users/${user.id}&${token}`);
+
+    const hasMessage = response.text.includes(
+      "Server Error. Unable to confirm your account. Please log into WordReminder and try again."
+    );
+    expect(hasMessage).toBe(true);
     expect(response.headers["content-type"]).toBe("text/html; charset=utf-8");
     expect(response.status).toBe(200);
     expect(mockGetById).toHaveBeenCalledTimes(1);
@@ -54,6 +82,10 @@ describe("confirmAccount", () => {
 
     const response = await request(app).get(`/api/users/${user.id}&${token}`);
 
+    const hasMessage = response.text.includes(
+      "You have successfully confirmed your account!"
+    );
+    expect(hasMessage).toBe(true);
     expect(response.headers["content-type"]).toBe("text/html; charset=utf-8");
     expect(response.status).toBe(200);
     expect(mockGetById).toHaveBeenCalledTimes(1);

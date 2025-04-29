@@ -8,7 +8,6 @@ import {
   change_password,
   confirm_account,
   failed_verification,
-  forgot_password,
   index,
 } from "../controllers/views_controller";
 
@@ -17,7 +16,7 @@ const token = "token";
 
 describe("views", () => {
   describe(`${Template.CONFIRM_ACCOUNT}`, () => {
-    it(`calls the functions to render '${Template.CONFIRM_ACCOUNT}' template`, async () => {
+    it(`calls the functions to render '${Template.CONFIRM_ACCOUNT}' page`, async () => {
       const app = express();
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
@@ -33,7 +32,7 @@ describe("views", () => {
   });
 
   describe(`${Template.CHANGE_PASSWORD}`, () => {
-    it(`calls the functions to render '${Template.CHANGE_PASSWORD}' template`, async () => {
+    it(`calls the functions to render '${Template.CHANGE_PASSWORD}' page`, async () => {
       const app = express();
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
@@ -49,7 +48,7 @@ describe("views", () => {
   });
 
   describe(`${Template.CHANGE_EMAIL}`, () => {
-    it(`calls the functions to render '${Template.CHANGE_EMAIL}' template`, async () => {
+    it(`calls the functions to render '${Template.CHANGE_EMAIL}' page`, async () => {
       const app = express();
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
@@ -65,7 +64,7 @@ describe("views", () => {
   });
 
   describe("failed_verification", () => {
-    it("calls the functions to render 'failed_verification' template", async () => {
+    it("calls the functions to render 'failed_verification' page", async () => {
       const app = express();
       app.set("views", path.join(__dirname, "..", "views"));
       app.set("view engine", "ejs");
@@ -73,22 +72,6 @@ describe("views", () => {
 
       const response = await request(app)
         .get("/failedVerification")
-        .set("Accept", "text/html");
-
-      expect(response.headers["content-type"]).toMatch(/html/);
-      expect(response.status).toBe(200);
-    });
-  });
-
-  describe(`${Template.FORGOT_PASSWORD}`, () => {
-    it(`calls the functions to render '${Template.FORGOT_PASSWORD}' template`, async () => {
-      const app = express();
-      app.set("views", path.join(__dirname, "..", "views"));
-      app.set("view engine", "ejs");
-      app.get(`/forgotPassword/:userId&:token`, forgot_password);
-
-      const response = await request(app)
-        .get(`/forgotPassword/${userId}&${token}`)
         .set("Accept", "text/html");
 
       expect(response.headers["content-type"]).toMatch(/html/);
