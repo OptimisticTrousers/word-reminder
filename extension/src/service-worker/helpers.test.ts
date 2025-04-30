@@ -130,6 +130,9 @@ describe("Service Worker Suite", async () => {
         } as unknown as PushEvent;
         webpushService.handlePush(event);
 
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(mockWaitUntil).toHaveBeenCalledTimes(1);
+        expect(mockWaitUntil).toHaveBeenCalledWith(promise);
         expect(mockClose).toHaveBeenCalledTimes(1);
         expect(mockClose).toHaveBeenCalledWith();
         expect(mockHandleNavigate).toHaveBeenCalledTimes(1);
@@ -152,8 +155,6 @@ describe("Service Worker Suite", async () => {
             ],
           }
         );
-        expect(mockWaitUntil).toHaveBeenCalledTimes(1);
-        expect(mockWaitUntil).toHaveBeenCalledWith(promise);
       });
 
       it("handles responding to the 'push' event when notification actions are not supported", async () => {
@@ -201,9 +202,9 @@ describe("Service Worker Suite", async () => {
         } as unknown as PushEvent;
         webpushService.handlePush(event);
 
-        expect(mockClose).toHaveBeenCalledTimes(1);
-        expect(mockClose).toHaveBeenCalledWith();
-        expect(mockHandleNavigate).not.toBeCalled();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(mockWaitUntil).toHaveBeenCalledTimes(1);
+        expect(mockWaitUntil).toHaveBeenCalledWith(promise);
         expect(mockShowNotification).toHaveBeenCalledTimes(1);
         expect(mockShowNotification).toHaveBeenCalledWith(
           `Word Reminder Chrome Extension: your active word reminder has these words:`,
@@ -212,8 +213,8 @@ describe("Service Worker Suite", async () => {
             icon: "/favicon/web-app-manifest-192x192.png",
           }
         );
-        expect(mockWaitUntil).toHaveBeenCalledTimes(1);
-        expect(mockWaitUntil).toHaveBeenCalledWith(promise);
+        expect(mockHandleNavigate).not.toBeCalled();
+        expect(mockClose).not.toHaveBeenCalled();
       });
 
       it("does not handle responding to the 'push' event when there is no payload", async () => {

@@ -84,7 +84,6 @@ export const createWebpushService: CreateWebPushService = (
 
     self.addEventListener("notificationclick", async (event) => {
       const clickedNotification = event.notification;
-      clickedNotification.close();
 
       if (!event.action) {
         // Was a normal notification click
@@ -92,6 +91,7 @@ export const createWebpushService: CreateWebPushService = (
       }
 
       await handleNavigate("wordReminders", wordReminderId);
+      clickedNotification.close();
     });
 
     const promiseChain = self.registration.showNotification(
