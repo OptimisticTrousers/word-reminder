@@ -15,7 +15,7 @@ import { WordReminder } from "../../components/word_reminders/WordReminder";
 import { wordReminderService } from "../../services/word_reminder_service/word_reminder_service";
 import styles from "./WordReminders.module.css";
 import { AutoCreateWordReminder } from "../../components/word_reminders/AutoCreateWordReminder";
-import { ChangeEvent } from "react";
+import { ChangeEvent, FormEvent } from "react";
 
 export const WordReminders = CSSModules(
   function () {
@@ -39,7 +39,9 @@ export const WordReminders = CSSModules(
       },
     });
 
-    function handleQuery(formData: FormData) {
+    function handleQuery(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
       const newSearchParams = new URLSearchParams({
         column:
           ((formData.get(Column.CREATED_AT) as string) && Column.CREATED_AT) ||
@@ -88,7 +90,7 @@ export const WordReminders = CSSModules(
       <div styleName="words-reminder">
         <AutoCreateWordReminder />
         <CreateWordReminder searchParams={searchParams} />
-        <form styleName="word-reminder__form" action={handleQuery}>
+        <form styleName="word-reminder__form" onSubmit={handleQuery}>
           <fieldset styleName="words__sort sort">
             <label styleName="sort__label">
               Sort by:
