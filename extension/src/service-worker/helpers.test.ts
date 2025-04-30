@@ -244,6 +244,162 @@ describe("Service Worker Suite", async () => {
         expect(mockWaitUntil).not.toHaveBeenCalled();
       });
     });
+
+    describe("Push Subscription Change Events", () => {
+      it("handles responding to the 'pushsubscriptionchange' event", async () => {
+        const userId = "1";
+        const mockGet = vi
+          .spyOn(chrome.storage.sync, "get")
+          .mockImplementation(async () => {
+            return { userId };
+          });
+        const mockCreateSubscription = vi
+          .spyOn(subscriptionService, "createSubscription")
+          .mockResolvedValue({
+            json: { subscription: { id: "1" } },
+            status: 200,
+          });
+        const mockSubscription = {
+          endpoint: "https://random-push-service.com/unique-id-1234/",
+          getKey: function () {},
+        } as unknown as PushSubscription;
+        const mockSubscribe = vi.fn().mockResolvedValue(mockSubscription);
+        const mockSelf = {
+          registration: {
+            pushManager: {
+              subscribe: mockSubscribe,
+            },
+          },
+          navigator: {
+            serviceWorker: {},
+          },
+          addEventListener: vi
+            .fn()
+            .mockImplementation(async (_event, callback) => {
+              await callback();
+            }),
+        } as unknown as ServiceWorkerGlobalScope;
+
+        const mockHandleNavigate = vi.fn();
+        const webpushService = createWebpushService(
+          mockSelf,
+          mockHandleNavigate
+        );
+        await webpushService.handlePushSubscriptionChange();
+
+        expect(mockSubscribe).toHaveBeenCalledTimes(1);
+        expect(mockSubscribe).toHaveBeenCalledWith({
+          userVisibleOnly: true,
+          applicationServerKey: expect.any(Uint8Array),
+        });
+        expect(mockGet).toHaveBeenCalledTimes(1);
+        expect(mockGet).toHaveBeenCalledWith(["userId"]);
+        expect(mockCreateSubscription).toHaveBeenCalledTimes(1);
+        expect(mockCreateSubscription).toHaveBeenCalledWith({
+          subscription: {
+            endpoint: "https://random-push-service.com/unique-id-1234/",
+            getKey: expect.any(Function),
+          },
+          userId,
+        });
+      });
+
+      it("handles responding to the 'pushsubscriptionchange' event when the web push subscribe fails", async () => {
+        const userId = "1";
+        const mockGet = vi
+          .spyOn(chrome.storage.sync, "get")
+          .mockImplementation(async () => {
+            return { userId };
+          });
+        const mockCreateSubscription = vi
+          .spyOn(subscriptionService, "createSubscription")
+          .mockResolvedValue({
+            json: { subscription: { id: "1" } },
+            status: 200,
+          });
+        const mockSubscribe = vi.fn().mockResolvedValue(null);
+        const mockSelf = {
+          registration: {
+            pushManager: {
+              subscribe: mockSubscribe,
+            },
+          },
+          navigator: {
+            serviceWorker: {},
+          },
+          addEventListener: vi
+            .fn()
+            .mockImplementation(async (_event, callback) => {
+              await callback();
+            }),
+        } as unknown as ServiceWorkerGlobalScope;
+
+        const mockHandleNavigate = vi.fn();
+        const webpushService = createWebpushService(
+          mockSelf,
+          mockHandleNavigate
+        );
+        await webpushService.handlePushSubscriptionChange();
+
+        expect(mockSubscribe).toHaveBeenCalledTimes(1);
+        expect(mockSubscribe).toHaveBeenCalledWith({
+          userVisibleOnly: true,
+          applicationServerKey: expect.any(Uint8Array),
+        });
+        expect(mockGet).not.toHaveBeenCalled();
+        expect(mockCreateSubscription).not.toHaveBeenCalled();
+      });
+
+      it("handles responding to the 'pushsubscriptionchange' event when the user id is not in chrome storage sync", async () => {
+        const mockGet = vi
+          .spyOn(chrome.storage.sync, "get")
+          .mockImplementation(async () => {
+            return { userId: undefined };
+          });
+        const mockCreateSubscription = vi
+          .spyOn(subscriptionService, "createSubscription")
+          .mockResolvedValue({
+            json: { subscription: { id: "1" } },
+            status: 200,
+          });
+        const mockSubscription = {
+          endpoint: "https://random-push-service.com/unique-id-1234/",
+          getKey: function () {},
+        } as unknown as PushSubscription;
+        const mockSubscribe = vi.fn().mockResolvedValue(mockSubscription);
+        const mockSelf = {
+          registration: {
+            pushManager: {
+              subscribe: mockSubscribe,
+            },
+          },
+          navigator: {
+            serviceWorker: {},
+          },
+          addEventListener: vi
+            .fn()
+            .mockImplementation(async (_event, callback) => {
+              await callback();
+            }),
+        } as unknown as ServiceWorkerGlobalScope;
+
+        const mockHandleNavigate = vi.fn();
+        const webpushService = createWebpushService(
+          mockSelf,
+          mockHandleNavigate
+        );
+        await webpushService.handlePushSubscriptionChange();
+
+        expect(mockSubscribe).toHaveBeenCalledTimes(1);
+        expect(mockSubscribe).toHaveBeenCalledWith({
+          userVisibleOnly: true,
+          applicationServerKey: expect.any(Uint8Array),
+        });
+        expect(mockGet).toHaveBeenCalledTimes(1);
+        expect(mockGet).toHaveBeenCalledWith(["userId"]);
+        expect(mockCreateSubscription).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe("Context Menus", () => {
@@ -354,6 +510,7 @@ describe("Service Worker Suite", async () => {
       });
       const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
+      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
@@ -361,6 +518,7 @@ describe("Service Worker Suite", async () => {
           return {
             subscribe: mockSubscribe,
             handlePush: mockHandlePush,
+            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -375,8 +533,8 @@ describe("Service Worker Suite", async () => {
         });
       const mockInfo = {} as unknown as chrome.contextMenus.OnClickData;
       vi.spyOn(chrome.contextMenus.onClicked, "addListener").mockImplementation(
-        async (callback) => {
-          await callback(mockInfo);
+        (callback) => {
+          callback(mockInfo);
         }
       );
 
@@ -399,9 +557,14 @@ describe("Service Worker Suite", async () => {
         navigator: {
           serviceWorker: {},
         },
-        addEventListener: vi.fn().mockImplementation((_event, callback) => {
-          callback(mockEvent);
-        }),
+        addEventListener: vi
+          .fn()
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback(mockEvent);
+          })
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback();
+          }),
         PushManager: class {},
       } as unknown as ServiceWorkerGlobalScope;
       startServiceWorkerService(
@@ -432,6 +595,8 @@ describe("Service Worker Suite", async () => {
       );
       expect(mockHandlePush).toHaveBeenCalledTimes(1);
       expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
       expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
       expect(mockCreateWebpushService).toHaveBeenCalledWith(
         mockSelf,
@@ -484,6 +649,7 @@ describe("Service Worker Suite", async () => {
       });
       const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
+      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
@@ -491,6 +657,7 @@ describe("Service Worker Suite", async () => {
           return {
             subscribe: mockSubscribe,
             handlePush: mockHandlePush,
+            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -530,9 +697,14 @@ describe("Service Worker Suite", async () => {
           serviceWorker: {},
         },
         PushManager: class {},
-        addEventListener: vi.fn().mockImplementation((_event, callback) => {
-          callback(mockEvent);
-        }),
+        addEventListener: vi
+          .fn()
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback(mockEvent);
+          })
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback();
+          }),
       } as unknown as ServiceWorkerGlobalScope;
       startServiceWorkerService(
         mockCreateWebpushService,
@@ -562,6 +734,8 @@ describe("Service Worker Suite", async () => {
       );
       expect(mockHandlePush).toHaveBeenCalledTimes(1);
       expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
       expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
       expect(mockCreateWebpushService).toHaveBeenCalledWith(
         mockSelf,
@@ -606,6 +780,7 @@ describe("Service Worker Suite", async () => {
       });
       const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
+      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
@@ -613,6 +788,7 @@ describe("Service Worker Suite", async () => {
           return {
             subscribe: mockSubscribe,
             handlePush: mockHandlePush,
+            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -648,9 +824,14 @@ describe("Service Worker Suite", async () => {
           serviceWorker: {},
         },
         PushManager: class {},
-        addEventListener: vi.fn().mockImplementation((_event, callback) => {
-          callback(mockEvent);
-        }),
+        addEventListener: vi
+          .fn()
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback(mockEvent);
+          })
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback();
+          }),
       } as unknown as ServiceWorkerGlobalScope;
       startServiceWorkerService(
         mockCreateWebpushService,
@@ -680,6 +861,8 @@ describe("Service Worker Suite", async () => {
       );
       expect(mockHandlePush).toHaveBeenCalledTimes(1);
       expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith(["userId"]);
       expect(mockCreateContextMenuService).toHaveBeenCalledTimes(1);
@@ -740,6 +923,7 @@ describe("Service Worker Suite", async () => {
       });
       const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
+      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
@@ -747,6 +931,7 @@ describe("Service Worker Suite", async () => {
           return {
             subscribe: mockSubscribe,
             handlePush: mockHandlePush,
+            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -783,9 +968,14 @@ describe("Service Worker Suite", async () => {
         navigator: {
           serviceWorker: {},
         },
-        addEventListener: vi.fn().mockImplementation((_event, callback) => {
-          callback(mockEvent);
-        }),
+        addEventListener: vi
+          .fn()
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback(mockEvent);
+          })
+          .mockImplementationOnce(async (_event, callback) => {
+            await callback();
+          }),
         PushManager: class {},
       } as unknown as ServiceWorkerGlobalScope;
       startServiceWorkerService(
@@ -840,6 +1030,8 @@ describe("Service Worker Suite", async () => {
       });
       expect(mockHandlePush).toHaveBeenCalledTimes(1);
       expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
+      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
     });
   });
 });
