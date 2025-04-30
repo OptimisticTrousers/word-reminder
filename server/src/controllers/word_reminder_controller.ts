@@ -8,12 +8,7 @@ import { wordReminderQueries } from "../db/word_reminder_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { scheduleWordReminder } from "../utils/word_reminder";
 import { boss } from "../db/boss";
-import { triggerWebPushMsg } from "../utils/trigger_web_push_msg";
-import { subscriptionQueries } from "../db/subscription_queries";
-import { userWordQueries } from "../db/user_word_queries";
-import { wordQueries } from "../db/word_queries";
-import { Detail, UserWord } from "common";
-import { timeout } from "cron";
+import { UserWord } from "common";
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders

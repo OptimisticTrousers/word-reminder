@@ -19,7 +19,6 @@ export const validateOptions = [
     .withMessage("'is_active' must be a boolean."),
   body("reminder")
     .trim()
-    .escape()
     .isLength({ min: 1 })
     .withMessage("'reminder' must be specified.")
     .bail()
