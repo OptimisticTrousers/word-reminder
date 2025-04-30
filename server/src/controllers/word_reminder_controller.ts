@@ -6,55 +6,48 @@ import {
 } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-import { createWordReminder } from "../utils/word_reminder";
+import { scheduleWordReminder } from "../utils/word_reminder";
 import { boss } from "../db/boss";
 import { triggerWebPushMsg } from "../utils/trigger_web_push_msg";
 import { subscriptionQueries } from "../db/subscription_queries";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
 import { Detail, UserWord } from "common";
+import { timeout } from "cron";
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders
 // @access Private
 export const create_word_reminder = asyncHandler(async (req, res) => {
-  const userId = Number(req.params.userId);
+  const { userId } = req.params;
   const { is_active, has_reminder_onload, reminder, finish, user_words } =
     req.body;
 
-  const wordReminder = await createWordReminder({
+  const wordReminder = await wordReminderQueries.create({
+    user_id: Number(userId),
+    is_active: is_active,
+    has_reminder_onload: has_reminder_onload,
+    finish,
+    reminder,
+  });
+
+  user_words.forEach(async (user_word: UserWord) => {
+    await userWordsWordRemindersQueries.create({
+      user_word_id: user_word.id,
+      word_reminder_id: wordReminder.id,
+    });
+  });
+
+  await scheduleWordReminder({
+    word_reminder_id: wordReminder.id,
     user_id: userId,
     is_active,
     has_reminder_onload,
     reminder,
     finish,
     user_words,
+    queueName: res.locals.queueName,
   });
-
-  const queueName = res.locals.queueName;
-
-  if (is_active) {
-    await boss.schedule(queueName, reminder);
-
-    const wordsPromises: Promise<string>[] = user_words.map(
-      async (user_word: UserWord & { details: Detail[] }) => {
-        const userWord = await userWordQueries.getById(Number(user_word.id));
-        const word = await wordQueries.getById(userWord!.word_id);
-        return word!.details[0].word;
-      }
-    );
-
-    const words: string[] = await Promise.all(wordsPromises);
-
-    await boss.work(queueName, async () => {
-      const data = {
-        id: wordReminder.id,
-        words: words.join(", "),
-      };
-      const subscription = await subscriptionQueries.getByUserId(userId);
-      await triggerWebPushMsg(subscription, JSON.stringify(data));
-    });
-  }
 
   res.status(200).json({
     wordReminder,
@@ -142,34 +135,23 @@ export const update_word_reminder = [
     user_words.forEach(async (user_word: UserWord) => {
       await userWordsWordRemindersQueries.create({
         user_word_id: user_word.id,
-        word_reminder_id: wordReminderId,
+        word_reminder_id: wordReminder.id,
       });
     });
 
     const queueName = res.locals.queueName;
+    await boss.offWork(queueName);
 
-    if (is_active) {
-      await boss.schedule(queueName, reminder);
-
-      const wordsPromises: Promise<string>[] = user_words.map(
-        async (user_word: UserWord & { details: Detail[] }) => {
-          const userWord = await userWordQueries.getById(Number(user_word.id));
-          const word = await wordQueries.getById(userWord!.word_id);
-          return word!.details[0].word;
-        }
-      );
-
-      const words: string[] = await Promise.all(wordsPromises);
-
-      await boss.work(queueName, async () => {
-        const data = {
-          id: wordReminder.id,
-          words: words.join(", "),
-        };
-        const subscription = await subscriptionQueries.getByUserId(userId);
-        await triggerWebPushMsg(subscription, JSON.stringify(data));
-      });
-    }
+    await scheduleWordReminder({
+      word_reminder_id: wordReminder.id,
+      user_id: String(userId),
+      is_active,
+      has_reminder_onload,
+      reminder,
+      finish,
+      user_words,
+      queueName: res.locals.queueName,
+    });
 
     res.status(200).json({
       wordReminder,

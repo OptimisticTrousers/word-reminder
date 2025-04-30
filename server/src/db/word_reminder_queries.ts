@@ -72,9 +72,23 @@ export const wordReminderQueries = (function () {
     return rows[0];
   };
 
+  const deactivate = async () => {
+    const { rows }: QueryResult<WordReminder> = await db.query(
+      `
+    UPDATE ${table}
+    SET is_active = false
+    WHERE is_active = true
+    RETURNING ${columns};
+      `
+    );
+
+    return rows[0];
+  };
+
   return {
     create,
     deleteByUserId,
+    deactivate,
     deleteById: deleteById.bind(queries),
     getById: getById.bind(queries),
     updateById,

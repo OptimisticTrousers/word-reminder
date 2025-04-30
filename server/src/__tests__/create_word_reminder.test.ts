@@ -3,12 +3,8 @@ import request from "supertest";
 
 import { create_word_reminder } from "../controllers/word_reminder_controller";
 import * as wordReminders from "../utils/word_reminder";
-import { boss } from "../db/boss";
-import { subscriptionQueries } from "../db/subscription_queries";
-import * as triggerWebPush from "../utils/trigger_web_push_msg";
-import { userWordQueries } from "../db/user_word_queries";
-import { wordQueries } from "../db/word_queries";
-import { createQueue } from "../middleware/create_queue";
+import { wordReminderQueries } from "../db/word_reminder_queries";
+import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 
 describe("create_word_reminder", () => {
   const userId = 1;
@@ -25,14 +21,6 @@ describe("create_word_reminder", () => {
     id: 1,
     created_at: new Date(),
     updated_at: new Date(),
-  };
-  const subscription1 = {
-    id: 1,
-    userId,
-    endpoint: "https://random-push-service.com/unique-id-1234/",
-    p256dh:
-      "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM=",
-    auth: "tBHItJI5svbpez7KI4CCXg==",
   };
   const word1 = {
     id: 1,
@@ -96,6 +84,16 @@ describe("create_word_reminder", () => {
     created_at: new Date(),
     updated_at: new Date(),
   };
+  const userWordsWordReminders1 = {
+    id: 1,
+    word_reminder_id: wordReminder.id,
+    user_word_id: userWord1.id,
+  };
+  const userWordsWordReminders2 = {
+    id: 2,
+    word_reminder_id: wordReminder.id,
+    user_word_id: userWord2.id,
+  };
 
   const queuePostfix = "word-reminder-queue";
 
@@ -103,7 +101,11 @@ describe("create_word_reminder", () => {
   app.use(express.json());
   app.post(
     "/api/users/:userId/wordReminders",
-    createQueue(queuePostfix),
+    (req, res, next) => {
+      const userId = req.params.userId;
+      res.locals.queueName = `${userId}-${queuePostfix}`;
+      next();
+    },
     create_word_reminder
   );
 
@@ -112,37 +114,16 @@ describe("create_word_reminder", () => {
   });
 
   it("calls the functions to create the word reminder and sets up reminder", async () => {
-    jest.spyOn(boss, "createQueue").mockImplementation(jest.fn());
-    const mockCreateWordReminder = jest
-      .spyOn(wordReminders, "createWordReminder")
-      .mockImplementation(async () => {
-        return wordReminder;
-      });
-    const mockSchedule = jest
-      .spyOn(boss, "schedule")
+    const mockWordReminderCreate = jest
+      .spyOn(wordReminderQueries, "create")
+      .mockResolvedValue(wordReminder);
+    const mockUserWordsWordRemindersCreate = jest
+      .spyOn(userWordsWordRemindersQueries, "create")
+      .mockResolvedValueOnce(userWordsWordReminders1)
+      .mockResolvedValueOnce(userWordsWordReminders2);
+    const mockScheduleWordReminder = jest
+      .spyOn(wordReminders, "scheduleWordReminder")
       .mockImplementation(jest.fn());
-    const mockSubscriptionQueriesGetByUserId = jest
-      .spyOn(subscriptionQueries, "getByUserId")
-      .mockResolvedValue(subscription1);
-    let capturedCallback: any;
-    const mockWork = jest
-      .spyOn(boss, "work")
-      .mockImplementation(async (_queueName, callback) => {
-        capturedCallback = callback;
-        // callback not called for test
-        return "";
-      });
-    const mockTriggerWebPushMsg = jest
-      .spyOn(triggerWebPush, "triggerWebPushMsg")
-      .mockImplementation(jest.fn());
-    const mockUserWordQueriesGetById = jest
-      .spyOn(userWordQueries, "getById")
-      .mockResolvedValueOnce(userWord1)
-      .mockResolvedValueOnce(userWord2);
-    const mockWordQueriesGetById = jest
-      .spyOn(wordQueries, "getById")
-      .mockResolvedValueOnce(word1)
-      .mockResolvedValueOnce(word2);
 
     const body = {
       user_id: userId,
@@ -169,9 +150,23 @@ describe("create_word_reminder", () => {
         updated_at: wordReminder.updated_at.toISOString(),
       },
     });
-    expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockCreateWordReminder).toHaveBeenCalledWith({
-      user_id: userId,
+    expect(mockWordReminderCreate).toHaveBeenCalledTimes(1);
+    expect(mockWordReminderCreate).toHaveBeenCalledWith({
+      ...wordReminderParams,
+      finish: wordReminder.finish.toISOString(),
+    });
+    expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledTimes(2);
+    expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledWith({
+      user_word_id: userWordsWordReminders1.user_word_id,
+      word_reminder_id: userWordsWordReminders1.word_reminder_id,
+    });
+    expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledWith({
+      user_word_id: userWordsWordReminders2.user_word_id,
+      word_reminder_id: userWordsWordReminders2.word_reminder_id,
+    });
+    expect(mockScheduleWordReminder).toHaveBeenCalledTimes(1);
+    expect(mockScheduleWordReminder).toHaveBeenCalledWith({
+      user_id: String(userId),
       is_active: body.is_active,
       has_reminder_onload: body.has_reminder_onload,
       user_words: [
@@ -188,201 +183,8 @@ describe("create_word_reminder", () => {
       ],
       reminder: body.reminder,
       finish: body.finish.toISOString(),
+      queueName,
+      word_reminder_id: wordReminder.id,
     });
-    expect(mockUserWordQueriesGetById).toHaveBeenCalledTimes(2);
-    expect(mockUserWordQueriesGetById).toHaveBeenCalledWith(userWord1.id);
-    expect(mockUserWordQueriesGetById).toHaveBeenCalledWith(userWord2.id);
-    expect(mockWordQueriesGetById).toHaveBeenCalledTimes(2);
-    expect(mockWordQueriesGetById).toHaveBeenCalledWith(word1.id);
-    expect(mockWordQueriesGetById).toHaveBeenCalledWith(word2.id);
-    expect(mockSchedule).toHaveBeenCalledTimes(1);
-    expect(mockSchedule).toHaveBeenCalledWith(queueName, wordReminder.reminder);
-    expect(mockWork).toHaveBeenCalledTimes(1);
-    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
-    expect(mockSubscriptionQueriesGetByUserId).not.toHaveBeenCalled();
-    expect(mockTriggerWebPushMsg).not.toHaveBeenCalled();
-  });
-
-  it("calls the functions inside of scheduled callback", async () => {
-    jest.spyOn(boss, "createQueue").mockImplementation(jest.fn());
-    const mockCreateWordReminder = jest
-      .spyOn(wordReminders, "createWordReminder")
-      .mockImplementation(async () => {
-        return wordReminder;
-      });
-    const mockSchedule = jest
-      .spyOn(boss, "schedule")
-      .mockImplementation(jest.fn());
-    const mockSubscriptionQueriesGetByUserId = jest
-      .spyOn(subscriptionQueries, "getByUserId")
-      .mockResolvedValue(subscription1);
-    let capturedCallback: any;
-    const mockWork = jest
-      .spyOn(boss, "work")
-      .mockImplementation(async (_queueName, callback) => {
-        capturedCallback = callback;
-        capturedCallback();
-        return "";
-      });
-    const mockTriggerWebPushMsg = jest
-      .spyOn(triggerWebPush, "triggerWebPushMsg")
-      .mockImplementation(jest.fn());
-    const mockUserWordQueriesGetById = jest
-      .spyOn(userWordQueries, "getById")
-      .mockResolvedValueOnce(userWord1)
-      .mockResolvedValueOnce(userWord2);
-    const mockWordQueriesGetById = jest
-      .spyOn(wordQueries, "getById")
-      .mockResolvedValueOnce(word1)
-      .mockResolvedValueOnce(word2);
-    const body = {
-      user_id: userId,
-      is_active: wordReminderParams.is_active,
-      has_reminder_onload: wordReminderParams.has_reminder_onload,
-      finish: wordReminderParams.finish,
-      reminder: wordReminderParams.reminder,
-      user_words: [userWord1, userWord2],
-    };
-
-    const response = await request(app)
-      .post(`/api/users/${userId}/wordReminders`)
-      .set("Accept", "application/json")
-      .send(body);
-
-    const queueName = `${userId}-${queuePostfix}`;
-    expect(response.headers["content-type"]).toMatch(/json/);
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      wordReminder: {
-        ...wordReminder,
-        finish: wordReminder.finish.toISOString(),
-        created_at: wordReminder.created_at.toISOString(),
-        updated_at: wordReminder.updated_at.toISOString(),
-      },
-    });
-    expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockCreateWordReminder).toHaveBeenCalledWith({
-      user_id: userId,
-      is_active: body.is_active,
-      has_reminder_onload: body.has_reminder_onload,
-      user_words: [
-        {
-          ...userWord1,
-          updated_at: userWord1.updated_at.toISOString(),
-          created_at: userWord1.created_at.toISOString(),
-        },
-        {
-          ...userWord2,
-          updated_at: userWord2.updated_at.toISOString(),
-          created_at: userWord2.created_at.toISOString(),
-        },
-      ],
-      reminder: body.reminder,
-      finish: body.finish.toISOString(),
-    });
-    expect(mockUserWordQueriesGetById).toHaveBeenCalledTimes(2);
-    expect(mockUserWordQueriesGetById).toHaveBeenCalledWith(userWord1.id);
-    expect(mockUserWordQueriesGetById).toHaveBeenCalledWith(userWord2.id);
-    expect(mockWordQueriesGetById).toHaveBeenCalledTimes(2);
-    expect(mockWordQueriesGetById).toHaveBeenCalledWith(word1.id);
-    expect(mockWordQueriesGetById).toHaveBeenCalledWith(word2.id);
-    expect(mockSchedule).toHaveBeenCalledTimes(1);
-    expect(mockSchedule).toHaveBeenCalledWith(queueName, wordReminder.reminder);
-    expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledTimes(1);
-    expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledWith(userId);
-    expect(mockWork).toHaveBeenCalledTimes(1);
-    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
-    expect(mockTriggerWebPushMsg).toHaveBeenCalledTimes(1);
-    expect(mockTriggerWebPushMsg).toHaveBeenCalledWith(
-      subscription1,
-      JSON.stringify({
-        id: wordReminder.id,
-        words: `${word1.details[0].word}, ${word2.details[0].word}`,
-      })
-    );
-  });
-
-  it("only calls the functions to create the word reminder when the word reminder is not active", async () => {
-    jest.spyOn(boss, "createQueue").mockImplementation(jest.fn());
-    const mockCreateWordReminder = jest
-      .spyOn(wordReminders, "createWordReminder")
-      .mockImplementation(async () => {
-        return wordReminder;
-      });
-    const mockSchedule = jest
-      .spyOn(boss, "schedule")
-      .mockImplementation(jest.fn());
-    const mockSubscriptionQueriesGetByUserId = jest
-      .spyOn(subscriptionQueries, "getByUserId")
-      .mockResolvedValue(subscription1);
-    let capturedCallback: any;
-    const mockWork = jest
-      .spyOn(boss, "work")
-      .mockImplementation(async (_queueName, callback) => {
-        capturedCallback = callback;
-        capturedCallback();
-        return "";
-      });
-    const mockTriggerWebPushMsg = jest
-      .spyOn(triggerWebPush, "triggerWebPushMsg")
-      .mockImplementation(jest.fn());
-    const mockUserWordQueriesGetById = jest
-      .spyOn(userWordQueries, "getById")
-      .mockResolvedValueOnce(userWord1)
-      .mockResolvedValueOnce(userWord2);
-    const mockWordQueriesGetById = jest
-      .spyOn(wordQueries, "getById")
-      .mockResolvedValueOnce(word1)
-      .mockResolvedValueOnce(word2);
-    const body = {
-      user_id: userId,
-      is_active: false,
-      has_reminder_onload: wordReminderParams.has_reminder_onload,
-      finish: wordReminderParams.finish,
-      reminder: wordReminderParams.reminder,
-      user_words: [userWord1, userWord2],
-    };
-
-    const response = await request(app)
-      .post(`/api/users/${userId}/wordReminders`)
-      .set("Accept", "application/json")
-      .send(body);
-
-    expect(response.headers["content-type"]).toMatch(/json/);
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      wordReminder: {
-        ...wordReminder,
-        finish: wordReminder.finish.toISOString(),
-        created_at: wordReminder.created_at.toISOString(),
-        updated_at: wordReminder.updated_at.toISOString(),
-      },
-    });
-    expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockCreateWordReminder).toHaveBeenCalledWith({
-      user_id: userId,
-      is_active: body.is_active,
-      has_reminder_onload: body.has_reminder_onload,
-      user_words: [
-        {
-          ...userWord1,
-          updated_at: userWord1.updated_at.toISOString(),
-          created_at: userWord1.created_at.toISOString(),
-        },
-        {
-          ...userWord2,
-          updated_at: userWord2.updated_at.toISOString(),
-          created_at: userWord2.created_at.toISOString(),
-        },
-      ],
-      reminder: body.reminder,
-      finish: body.finish.toISOString(),
-    });
-    expect(mockUserWordQueriesGetById).not.toHaveBeenCalled();
-    expect(mockWordQueriesGetById).not.toHaveBeenCalled();
-    expect(mockSchedule).not.toHaveBeenCalled();
-    expect(mockSubscriptionQueriesGetByUserId).not.toHaveBeenCalled();
-    expect(mockWork).not.toHaveBeenCalled();
-    expect(mockTriggerWebPushMsg).not.toHaveBeenCalled();
   });
 });

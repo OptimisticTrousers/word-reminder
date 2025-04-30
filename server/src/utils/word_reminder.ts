@@ -1,36 +1,54 @@
-import { UserWord } from "common";
+import { Detail, UserWord } from "common";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
+import { boss } from "../db/boss";
+import { userWordQueries } from "../db/user_word_queries";
+import { wordQueries } from "../db/word_queries";
+import { timeout } from "cron";
+import { subscriptionQueries } from "../db/subscription_queries";
+import { triggerWebPushMsg } from "./trigger_web_push_msg";
 
-export const createWordReminder = async ({
+export const scheduleWordReminder = async ({
+  word_reminder_id,
   user_id,
   is_active,
-  has_reminder_onload,
   reminder,
-  finish,
   user_words,
+  queueName,
 }: {
-  user_id: number;
+  word_reminder_id: number;
+  user_id: string;
   is_active: boolean;
   has_reminder_onload: boolean;
   reminder: string;
   finish: Date;
-  user_words: UserWord[];
+  user_words: (UserWord & { details?: Detail[] })[];
+  queueName: string;
 }) => {
-  const wordReminder = await wordReminderQueries.create({
-    user_id,
-    is_active: is_active,
-    has_reminder_onload: has_reminder_onload,
-    finish,
-    reminder,
-  });
+  if (is_active) {
+    await boss.schedule(queueName, reminder);
 
-  user_words.forEach((user_word: UserWord) => {
-    userWordsWordRemindersQueries.create({
-      user_word_id: user_word.id,
-      word_reminder_id: wordReminder.id,
+    const wordsPromises: Promise<string>[] = user_words.map(
+      async (user_word: UserWord) => {
+        const userWord = await userWordQueries.getById(Number(user_word.id));
+        const word = await wordQueries.getById(userWord!.word_id);
+        return word!.details[0].word;
+      }
+    );
+
+    const words: string[] = await Promise.all(wordsPromises);
+
+    const pollingIntervalMs = timeout(reminder);
+    const pollingIntervalSeconds = Math.round(pollingIntervalMs / 1000);
+    await boss.work(queueName, { pollingIntervalSeconds }, async () => {
+      const data = {
+        id: word_reminder_id,
+        words: words.join(", "),
+      };
+      const subscription = await subscriptionQueries.getByUserId(
+        Number(user_id)
+      );
+      await triggerWebPushMsg(subscription, JSON.stringify(data));
     });
-  });
-
-  return wordReminder;
+  }
 };
