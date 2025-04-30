@@ -82,7 +82,7 @@ exports[`AutoCreateWordReminder component > when the auto word reminder does not
 <DocumentFragment>
   <button
     aria-haspopup="dialog"
-    aria-labelledby="title"
+    aria-labelledby="autowordreminder-title"
     class="_create_f00845"
   >
     <div
@@ -117,7 +117,7 @@ exports[`AutoCreateWordReminder component > when the auto word reminder does not
       >
         <h2
           class="_create__title_f00845"
-          id="title"
+          id="autowordreminder-title"
         >
           Create Auto Word Reminder
         </h2>

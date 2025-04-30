@@ -333,7 +333,7 @@ describe("UpdateWordReminderModal component", () => {
     const mockUpdateWordReminder = vi
       .spyOn(wordReminderService, "updateWordReminder")
       .mockImplementation(async () => {
-        const delay = 50;
+        const delay = 500;
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve({ json: { wordReminder }, status });

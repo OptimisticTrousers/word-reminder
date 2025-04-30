@@ -218,7 +218,7 @@ describe("DeleteUserModal component", () => {
       },
     ]);
     const status = 200;
-    const delay = 50;
+    const delay = 500;
     const mockDeleteUser = vi
       .spyOn(userService, "deleteUser")
       .mockImplementation(async () => {

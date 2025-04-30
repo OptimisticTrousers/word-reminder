@@ -132,7 +132,7 @@ export const UpdateWordReminderModal = CSSModules(
               User Words
             </label>
             <input
-              type="text"
+              type="email"
               multiple
               name="user_words"
               id="user_words"
