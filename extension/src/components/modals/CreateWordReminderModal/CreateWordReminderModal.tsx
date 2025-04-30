@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ModalContainer } from "../ModalContainer";
 import { userWordService } from "../../../services/user_word_service";
 import styles from "./CreateWordReminderModal.module.css";
-import { ChangeEvent, useContext, useMemo, useState } from "react";
+import { ChangeEvent, ReactNode, useContext, useMemo, useState } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
@@ -62,15 +62,21 @@ export const CreateWordReminderModal = CSSModules(
       setReminder(event.target.value);
     }
 
-    const wordToUserWord: { [key: string]: UserWord } = useMemo(() => {
-      const hash: { [key: string]: UserWord } = {};
+    const [wordToUserWord, words] = useMemo(() => {
+      const wordToUserWord: { [key: string]: UserWord } = {};
 
-      data?.json.userWords.forEach(
+      const words: ReactNode[] = data?.json.userWords.map(
         (userWord: UserWord & { details: Detail[] }) => {
-          hash[userWord.details[0].word] = userWord;
+          const word = userWord.details[0].word;
+          wordToUserWord[word] = userWord;
+          return (
+            <option key={userWord.id} styleName="modal__option" value={word}>
+              {word}
+            </option>
+          );
         }
       );
-      return hash;
+      return [wordToUserWord, words];
     }, [data]);
 
     function handleCreate(formData: FormData) {
@@ -139,22 +145,7 @@ export const CreateWordReminderModal = CSSModules(
               size={64}
               placeholder="Separate words with a comma and no spaces."
             />
-            <datalist id="words">
-              {data?.json.userWords.map(
-                (userWord: UserWord & { details: Detail[] }) => {
-                  const word = userWord.details[0].word;
-                  return (
-                    <option
-                      key={userWord.id}
-                      styleName="modal__option"
-                      value={word}
-                    >
-                      {word}
-                    </option>
-                  );
-                }
-              )}
-            </datalist>
+            <datalist id="words">{words}</datalist>
           </div>
           <fieldset styleName="modal__fieldset">
             <legend styleName="modal__legend">Options</legend>
