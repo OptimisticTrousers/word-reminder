@@ -61,12 +61,12 @@ export const AutoCreateWordReminder = CSSModules(
             styleName="create"
             onClick={toggleCreateModal}
             aria-haspopup="dialog"
-            aria-labelledby="title"
+            aria-labelledby="autowordreminder-title"
           >
             <div styleName="create__container">
               <CirclePlus styleName="create__icon" />
               <div styleName="create__text">
-                <h2 styleName="create__title" id="title">
+                <h2 styleName="create__title" id="autowordreminder-title">
                   Create Auto Word Reminder
                 </h2>
                 <p styleName="create__description">

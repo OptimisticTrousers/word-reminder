@@ -32,12 +32,12 @@ export const CreateWordReminder = CSSModules(
           styleName={`create create--${theme}`}
           onClick={toggleModal}
           aria-haspopup="dialog"
-          aria-labelledby="title"
+          aria-labelledby="wordreminder-title"
         >
           <div styleName="create__container">
             <CirclePlus styleName="create__icon" />
             <div styleName="create__text">
-              <h2 styleName="create__title" id="title">
+              <h2 styleName="create__title" id="wordreminder-title">
                 Create Word Reminder
               </h2>
               <p styleName="create__description">
