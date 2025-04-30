@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ModalContainer } from "../ModalContainer";
 import { userWordService } from "../../../services/user_word_service";
 import styles from "./CreateWordReminderModal.module.css";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useMemo, useState } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
@@ -62,13 +62,18 @@ export const CreateWordReminderModal = CSSModules(
       setReminder(event.target.value);
     }
 
-    function handleCreate(formData: FormData) {
-      const wordToUserWord: { [key: string]: UserWord } = {};
+    const wordToUserWord: { [key: string]: UserWord } = useMemo(() => {
+      const hash: { [key: string]: UserWord } = {};
+
       data?.json.userWords.forEach(
         (userWord: UserWord & { details: Detail[] }) => {
-          wordToUserWord[userWord.details[0].word] = userWord;
+          hash[userWord.details[0].word] = userWord;
         }
       );
+      return hash;
+    }, [data]);
+
+    function handleCreate(formData: FormData) {
       const userWords = formData.get("user_words") as string;
       const userWordsData = userWords.split(",").map((userWord: string) => {
         return wordToUserWord[userWord.toLowerCase()];
