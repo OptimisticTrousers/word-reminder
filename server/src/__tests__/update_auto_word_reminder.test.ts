@@ -10,10 +10,6 @@ import { userWordQueries } from "../db/user_word_queries";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 
-jest.spyOn(global.Date, "now").mockImplementation(() => {
-  return new Date(0).valueOf();
-});
-
 const userId = 1;
 
 const wordReminderParams = {
@@ -107,18 +103,6 @@ describe("update_auto_word_reminder", () => {
       const mockAutoWordReminderUpdateById = jest
         .spyOn(autoWordReminderQueries, "updateById")
         .mockResolvedValue(autoWordReminder);
-      const mockUserWordGetByUserWords = jest
-        .spyOn(userWordQueries, "getUserWords")
-        .mockResolvedValue(userWords);
-      const mockUserWordsWordRemindersCreate = jest
-        .spyOn(userWordsWordRemindersQueries, "create")
-        .mockResolvedValueOnce(userWordsWordReminders1)
-        .mockResolvedValueOnce(userWordsWordReminders2)
-        .mockResolvedValueOnce(userWordsWordReminders1)
-        .mockResolvedValueOnce(userWordsWordReminders2);
-      const mockWordReminderCreate = jest
-        .spyOn(wordReminderQueries, "create")
-        .mockResolvedValue(wordReminder);
       const mockPurgeQueue = jest
         .spyOn(boss, "purgeQueue")
         .mockImplementation(jest.fn());
@@ -126,25 +110,33 @@ describe("update_auto_word_reminder", () => {
         .spyOn(boss, "schedule")
         .mockImplementation(jest.fn());
       let capturedCallback: any;
-      const workerId = "1";
       const mockWork = jest
         .spyOn(boss, "work")
         .mockImplementation(async (queueName, options, callback) => {
           capturedCallback = callback;
           // callback not called for test
-          return workerId;
+          return "";
         });
-      const mockNotifyWorker = jest
-        .spyOn(boss, "notifyWorker")
-        .mockImplementation(jest.fn());
-      const mockScheduleWordReminder = jest
-        .spyOn(wordReminders, "scheduleWordReminder")
+      const mockDeactivate = jest
+        .spyOn(wordReminderQueries, "deactivate")
         .mockImplementation(jest.fn());
       const mockOffWork = jest
         .spyOn(boss, "offWork")
         .mockImplementation(jest.fn());
-      const mockDeactivate = jest
-        .spyOn(wordReminderQueries, "deactivate")
+      const mockUserWordGetByUserWords = jest
+        .spyOn(userWordQueries, "getUserWords")
+        .mockResolvedValue(userWords);
+      const mockWordReminderCreate = jest
+        .spyOn(wordReminderQueries, "create")
+        .mockResolvedValue(wordReminder);
+      const mockUserWordsWordRemindersCreate = jest
+        .spyOn(userWordsWordRemindersQueries, "create")
+        .mockResolvedValueOnce(userWordsWordReminders1)
+        .mockResolvedValueOnce(userWordsWordReminders2)
+        .mockResolvedValueOnce(userWordsWordReminders1)
+        .mockResolvedValueOnce(userWordsWordReminders2);
+      const mockScheduleWordReminder = jest
+        .spyOn(wordReminders, "scheduleWordReminder")
         .mockImplementation(jest.fn());
       jest.spyOn(global.Date, "now").mockImplementation(() => {
         return new Date(0).valueOf();
@@ -178,38 +170,6 @@ describe("update_auto_word_reminder", () => {
           reminder: autoWordReminder.reminder,
         }
       );
-      expect(mockUserWordGetByUserWords).toHaveBeenCalledTimes(1);
-      expect(mockUserWordGetByUserWords).toHaveBeenCalledWith({
-        user_id: userId,
-        word_count: autoWordReminderParams.word_count,
-        has_learned_words: autoWordReminderParams.has_learned_words,
-        sort_mode: autoWordReminderParams.sort_mode,
-      });
-      expect(mockWordReminderCreate).toHaveBeenCalledTimes(1);
-      expect(mockWordReminderCreate).toHaveBeenCalledWith({
-        ...wordReminderParams,
-        finish: new Date(autoWordReminderParams.duration),
-      });
-      expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledTimes(2);
-      expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledWith({
-        user_word_id: userWordsWordReminders1.user_word_id,
-        word_reminder_id: userWordsWordReminders1.word_reminder_id,
-      });
-      expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledWith({
-        user_word_id: userWordsWordReminders2.user_word_id,
-        word_reminder_id: userWordsWordReminders2.word_reminder_id,
-      });
-      expect(mockScheduleWordReminder).toHaveBeenCalledTimes(1);
-      expect(mockScheduleWordReminder).toHaveBeenCalledWith({
-        user_id: String(userId),
-        is_active: autoWordReminder.is_active,
-        has_reminder_onload: autoWordReminder.has_reminder_onload,
-        user_words: [userWord1, userWord2],
-        reminder: autoWordReminder.reminder,
-        finish: new Date(autoWordReminder.duration),
-        queueName,
-        word_reminder_id: wordReminder.id,
-      });
       expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
       expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);
       expect(mockSchedule).toHaveBeenCalledTimes(1);
@@ -225,28 +185,18 @@ describe("update_auto_word_reminder", () => {
         },
         capturedCallback
       );
-      expect(mockNotifyWorker).toHaveBeenCalledTimes(1);
-      expect(mockNotifyWorker).toHaveBeenCalledWith(workerId);
       expect(mockDeactivate).not.toHaveBeenCalled();
       expect(mockOffWork).not.toHaveBeenCalled();
+      expect(mockUserWordGetByUserWords).not.toHaveBeenCalled();
+      expect(mockWordReminderCreate).not.toHaveBeenCalled();
+      expect(mockUserWordsWordRemindersCreate).not.toHaveBeenCalled();
+      expect(mockScheduleWordReminder).not.toHaveBeenCalled();
     });
 
     it("calls the functions inside of scheduled work callback", async () => {
       const mockAutoWordReminderUpdateById = jest
         .spyOn(autoWordReminderQueries, "updateById")
         .mockResolvedValue(autoWordReminder);
-      const mockUserWordGetByUserWords = jest
-        .spyOn(userWordQueries, "getUserWords")
-        .mockResolvedValue(userWords);
-      const mockUserWordsWordRemindersCreate = jest
-        .spyOn(userWordsWordRemindersQueries, "create")
-        .mockResolvedValueOnce(userWordsWordReminders1)
-        .mockResolvedValueOnce(userWordsWordReminders2)
-        .mockResolvedValueOnce(userWordsWordReminders1)
-        .mockResolvedValueOnce(userWordsWordReminders2);
-      const mockWordReminderCreate = jest
-        .spyOn(wordReminderQueries, "create")
-        .mockResolvedValue(wordReminder);
       const mockPurgeQueue = jest
         .spyOn(boss, "purgeQueue")
         .mockImplementation(jest.fn());
@@ -254,25 +204,34 @@ describe("update_auto_word_reminder", () => {
         .spyOn(boss, "schedule")
         .mockImplementation(jest.fn());
       let capturedCallback: any;
-      const workerId = "1";
       const mockWork = jest
         .spyOn(boss, "work")
         .mockImplementation(async (queueName, options, callback) => {
           capturedCallback = callback;
-          capturedCallback();
-          return workerId;
+          capturedCallback([]); // always called on call
+          capturedCallback([]); // called on interval
+          return "";
         });
-      const mockScheduleWordReminder = jest
-        .spyOn(wordReminders, "scheduleWordReminder")
-        .mockImplementation(jest.fn());
-      const mockNotifyWorker = jest
-        .spyOn(boss, "notifyWorker")
+      const mockDeactivate = jest
+        .spyOn(wordReminderQueries, "deactivate")
         .mockImplementation(jest.fn());
       const mockOffWork = jest
         .spyOn(boss, "offWork")
         .mockImplementation(jest.fn());
-      const mockDeactivate = jest
-        .spyOn(wordReminderQueries, "deactivate")
+      const mockUserWordGetByUserWords = jest
+        .spyOn(userWordQueries, "getUserWords")
+        .mockResolvedValue(userWords);
+      const mockWordReminderCreate = jest
+        .spyOn(wordReminderQueries, "create")
+        .mockResolvedValue(wordReminder);
+      const mockUserWordsWordRemindersCreate = jest
+        .spyOn(userWordsWordRemindersQueries, "create")
+        .mockResolvedValueOnce(userWordsWordReminders1)
+        .mockResolvedValueOnce(userWordsWordReminders2)
+        .mockResolvedValueOnce(userWordsWordReminders1)
+        .mockResolvedValueOnce(userWordsWordReminders2);
+      const mockScheduleWordReminder = jest
+        .spyOn(wordReminders, "scheduleWordReminder")
         .mockImplementation(jest.fn());
       jest.spyOn(global.Date, "now").mockImplementation(() => {
         return new Date(0).valueOf();
@@ -305,6 +264,27 @@ describe("update_auto_word_reminder", () => {
           duration: autoWordReminder.duration,
           reminder: autoWordReminder.reminder,
         }
+      );
+      expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
+      expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);
+      expect(mockSchedule).toHaveBeenCalledTimes(1);
+      expect(mockSchedule).toHaveBeenCalledWith(
+        queueName,
+        autoWordReminder.reminder
+      );
+      expect(mockWork).toHaveBeenCalledTimes(1);
+      expect(mockWork).toHaveBeenCalledWith(
+        queueName,
+        {
+          pollingIntervalSeconds: Math.round(autoWordReminder.duration / 1000),
+        },
+        capturedCallback
+      );
+      expect(mockDeactivate).toHaveBeenCalledTimes(2);
+      expect(mockDeactivate).toHaveBeenCalledWith();
+      expect(mockOffWork).toHaveBeenCalledTimes(2);
+      expect(mockOffWork).toHaveBeenCalledWith(
+        `${userId}-${wordReminderQueuePostfix}`
       );
       expect(mockUserWordGetByUserWords).toHaveBeenCalledTimes(2);
       expect(mockUserWordGetByUserWords).toHaveBeenCalledWith({
@@ -313,40 +293,22 @@ describe("update_auto_word_reminder", () => {
         has_learned_words: autoWordReminderParams.has_learned_words,
         sort_mode: autoWordReminderParams.sort_mode,
       });
-      expect(mockUserWordGetByUserWords).toHaveBeenCalledWith({
-        user_id: userId,
-        word_count: autoWordReminderParams.word_count,
-        has_learned_words: autoWordReminderParams.has_learned_words,
-        sort_mode: autoWordReminderParams.sort_mode,
-      });
       expect(mockWordReminderCreate).toHaveBeenCalledTimes(2);
-      expect(mockWordReminderCreate).toHaveBeenNthCalledWith(1, {
-        ...wordReminderParams,
-        finish: new Date(autoWordReminderParams.duration),
-      });
-      expect(mockWordReminderCreate).toHaveBeenNthCalledWith(2, {
+      expect(mockWordReminderCreate).toHaveBeenCalledWith({
         ...wordReminderParams,
         finish: new Date(autoWordReminderParams.duration),
       });
       expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledTimes(4);
-      expect(mockUserWordsWordRemindersCreate).toHaveBeenNthCalledWith(1, {
+      expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledWith({
         user_word_id: userWordsWordReminders1.user_word_id,
         word_reminder_id: userWordsWordReminders1.word_reminder_id,
       });
-      expect(mockUserWordsWordRemindersCreate).toHaveBeenNthCalledWith(2, {
-        user_word_id: userWordsWordReminders2.user_word_id,
-        word_reminder_id: userWordsWordReminders2.word_reminder_id,
-      });
-      expect(mockUserWordsWordRemindersCreate).toHaveBeenNthCalledWith(3, {
-        user_word_id: userWordsWordReminders1.user_word_id,
-        word_reminder_id: userWordsWordReminders1.word_reminder_id,
-      });
-      expect(mockUserWordsWordRemindersCreate).toHaveBeenNthCalledWith(4, {
+      expect(mockUserWordsWordRemindersCreate).toHaveBeenCalledWith({
         user_word_id: userWordsWordReminders2.user_word_id,
         word_reminder_id: userWordsWordReminders2.word_reminder_id,
       });
       expect(mockScheduleWordReminder).toHaveBeenCalledTimes(2);
-      expect(mockScheduleWordReminder).toHaveBeenNthCalledWith(1, {
+      expect(mockScheduleWordReminder).toHaveBeenCalledWith({
         user_id: String(userId),
         is_active: autoWordReminder.is_active,
         has_reminder_onload: autoWordReminder.has_reminder_onload,
@@ -356,39 +318,6 @@ describe("update_auto_word_reminder", () => {
         queueName,
         word_reminder_id: wordReminder.id,
       });
-      expect(mockScheduleWordReminder).toHaveBeenNthCalledWith(2, {
-        user_id: String(userId),
-        is_active: autoWordReminder.is_active,
-        has_reminder_onload: autoWordReminder.has_reminder_onload,
-        user_words: [userWord1, userWord2],
-        reminder: autoWordReminder.reminder,
-        finish: new Date(Date.now() + autoWordReminder.duration),
-        queueName,
-        word_reminder_id: wordReminder.id,
-      });
-      expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
-      expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);
-      expect(mockSchedule).toHaveBeenCalledTimes(1);
-      expect(mockSchedule).toHaveBeenCalledWith(
-        queueName,
-        autoWordReminder.reminder
-      );
-      expect(mockWork).toHaveBeenCalledTimes(1);
-      expect(mockWork).toHaveBeenCalledWith(
-        queueName,
-        {
-          pollingIntervalSeconds: Math.round(autoWordReminder.duration / 1000),
-        },
-        capturedCallback
-      );
-      expect(mockNotifyWorker).toHaveBeenCalledTimes(1);
-      expect(mockNotifyWorker).toHaveBeenCalledWith(workerId);
-      expect(mockDeactivate).toHaveBeenCalledTimes(1);
-      expect(mockDeactivate).toHaveBeenCalledWith();
-      expect(mockOffWork).toHaveBeenCalledTimes(1);
-      expect(mockOffWork).toHaveBeenCalledWith(
-        `${userId}-${wordReminderQueuePostfix}`
-      );
     });
   });
 
@@ -397,6 +326,25 @@ describe("update_auto_word_reminder", () => {
       const mockAutoWordReminderUpdateById = jest
         .spyOn(autoWordReminderQueries, "updateById")
         .mockResolvedValue(autoWordReminder);
+      const mockPurgeQueue = jest
+        .spyOn(boss, "purgeQueue")
+        .mockImplementation(jest.fn());
+      const mockSchedule = jest
+        .spyOn(boss, "schedule")
+        .mockImplementation(jest.fn());
+      let capturedCallback: any;
+      const mockWork = jest
+        .spyOn(boss, "work")
+        .mockImplementation(async (queueName, options, callback) => {
+          capturedCallback = callback;
+          return "";
+        });
+      const mockDeactivate = jest
+        .spyOn(wordReminderQueries, "deactivate")
+        .mockImplementation(jest.fn());
+      const mockOffWork = jest
+        .spyOn(boss, "offWork")
+        .mockImplementation(jest.fn());
       const mockUserWordGetByUserWords = jest
         .spyOn(userWordQueries, "getUserWords")
         .mockResolvedValue(userWords);
@@ -409,31 +357,8 @@ describe("update_auto_word_reminder", () => {
         .mockResolvedValueOnce(userWordsWordReminders2)
         .mockResolvedValueOnce(userWordsWordReminders1)
         .mockResolvedValueOnce(userWordsWordReminders2);
-      const mockPurgeQueue = jest
-        .spyOn(boss, "purgeQueue")
-        .mockImplementation(jest.fn());
-      const mockSchedule = jest
-        .spyOn(boss, "schedule")
-        .mockImplementation(jest.fn());
-      let capturedCallback: any;
-      const workerId = "1";
-      const mockWork = jest
-        .spyOn(boss, "work")
-        .mockImplementation(async (queueName, options, callback) => {
-          capturedCallback = callback;
-          return workerId;
-        });
       const mockScheduleWordReminder = jest
         .spyOn(wordReminders, "scheduleWordReminder")
-        .mockImplementation(jest.fn());
-      const mockNotifyWorker = jest
-        .spyOn(boss, "notifyWorker")
-        .mockImplementation(jest.fn());
-      const mockOffWork = jest
-        .spyOn(boss, "offWork")
-        .mockImplementation(jest.fn());
-      const mockDeactivate = jest
-        .spyOn(wordReminderQueries, "deactivate")
         .mockImplementation(jest.fn());
 
       const response = await request(app)
@@ -479,19 +404,39 @@ describe("update_auto_word_reminder", () => {
         },
         capturedCallback
       );
+      expect(mockDeactivate).not.toHaveBeenCalled();
+      expect(mockOffWork).not.toHaveBeenCalled();
       expect(mockUserWordGetByUserWords).not.toHaveBeenCalled();
       expect(mockWordReminderCreate).not.toHaveBeenCalled();
       expect(mockUserWordsWordRemindersCreate).not.toHaveBeenCalled();
       expect(mockScheduleWordReminder).not.toHaveBeenCalled();
-      expect(mockNotifyWorker).not.toHaveBeenCalled();
-      expect(mockDeactivate).not.toHaveBeenCalled();
-      expect(mockOffWork).not.toHaveBeenCalled();
     });
 
     it("calls the functions inside of scheduled work callback", async () => {
       const mockAutoWordReminderUpdateById = jest
         .spyOn(autoWordReminderQueries, "updateById")
         .mockResolvedValue(autoWordReminder);
+      const mockPurgeQueue = jest
+        .spyOn(boss, "purgeQueue")
+        .mockImplementation(jest.fn());
+      const mockSchedule = jest
+        .spyOn(boss, "schedule")
+        .mockImplementation(jest.fn());
+      let capturedCallback: any;
+      const mockWork = jest
+        .spyOn(boss, "work")
+        .mockImplementation(async (queueName, options, callback) => {
+          capturedCallback = callback;
+          capturedCallback([]); // always called on call
+          capturedCallback([]); // called on interval
+          return "";
+        });
+      const mockDeactivate = jest
+        .spyOn(wordReminderQueries, "deactivate")
+        .mockImplementation(jest.fn());
+      const mockOffWork = jest
+        .spyOn(boss, "offWork")
+        .mockImplementation(jest.fn());
       const mockUserWordGetByUserWords = jest
         .spyOn(userWordQueries, "getUserWords")
         .mockResolvedValue(userWords);
@@ -504,32 +449,8 @@ describe("update_auto_word_reminder", () => {
         .mockResolvedValueOnce(userWordsWordReminders2)
         .mockResolvedValueOnce(userWordsWordReminders1)
         .mockResolvedValueOnce(userWordsWordReminders2);
-      const mockPurgeQueue = jest
-        .spyOn(boss, "purgeQueue")
-        .mockImplementation(jest.fn());
-      const mockSchedule = jest
-        .spyOn(boss, "schedule")
-        .mockImplementation(jest.fn());
-      let capturedCallback: any;
-      const workerId = "1";
-      const mockWork = jest
-        .spyOn(boss, "work")
-        .mockImplementation(async (queueName, options, callback) => {
-          capturedCallback = callback;
-          capturedCallback([]);
-          return workerId;
-        });
       const mockScheduleWordReminder = jest
         .spyOn(wordReminders, "scheduleWordReminder")
-        .mockImplementation(jest.fn());
-      const mockNotifyWorker = jest
-        .spyOn(boss, "notifyWorker")
-        .mockImplementation(jest.fn());
-      const mockOffWork = jest
-        .spyOn(boss, "offWork")
-        .mockImplementation(jest.fn());
-      const mockDeactivate = jest
-        .spyOn(wordReminderQueries, "deactivate")
         .mockImplementation(jest.fn());
 
       const response = await request(app)
@@ -559,6 +480,27 @@ describe("update_auto_word_reminder", () => {
           duration: autoWordReminder.duration,
           reminder: autoWordReminder.reminder,
         }
+      );
+      expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
+      expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);
+      expect(mockSchedule).toHaveBeenCalledTimes(1);
+      expect(mockSchedule).toHaveBeenCalledWith(
+        queueName,
+        autoWordReminder.reminder
+      );
+      expect(mockWork).toHaveBeenCalledTimes(1);
+      expect(mockWork).toHaveBeenCalledWith(
+        queueName,
+        {
+          pollingIntervalSeconds: Math.round(autoWordReminder.duration / 1000),
+        },
+        capturedCallback
+      );
+      expect(mockDeactivate).toHaveBeenCalledTimes(1);
+      expect(mockDeactivate).toHaveBeenCalledWith();
+      expect(mockOffWork).toHaveBeenCalledTimes(1);
+      expect(mockOffWork).toHaveBeenCalledWith(
+        `${userId}-${wordReminderQueuePostfix}`
       );
       expect(mockUserWordGetByUserWords).toHaveBeenCalledTimes(1);
       expect(mockUserWordGetByUserWords).toHaveBeenCalledWith({
@@ -592,28 +534,6 @@ describe("update_auto_word_reminder", () => {
         queueName,
         word_reminder_id: wordReminder.id,
       });
-      expect(mockPurgeQueue).toHaveBeenCalledTimes(1);
-      expect(mockPurgeQueue).toHaveBeenCalledWith(queueName);
-      expect(mockSchedule).toHaveBeenCalledTimes(1);
-      expect(mockSchedule).toHaveBeenCalledWith(
-        queueName,
-        autoWordReminder.reminder
-      );
-      expect(mockWork).toHaveBeenCalledTimes(1);
-      expect(mockWork).toHaveBeenCalledWith(
-        queueName,
-        {
-          pollingIntervalSeconds: Math.round(autoWordReminder.duration / 1000),
-        },
-        capturedCallback
-      );
-      expect(mockDeactivate).toHaveBeenCalledTimes(1);
-      expect(mockDeactivate).toHaveBeenCalledWith();
-      expect(mockOffWork).toHaveBeenCalledTimes(1);
-      expect(mockOffWork).toHaveBeenCalledWith(
-        `${userId}-${wordReminderQueuePostfix}`
-      );
-      expect(mockNotifyWorker).not.toHaveBeenCalled();
     });
   });
 });

@@ -13,9 +13,9 @@ import { UserWord } from "common";
 // @access Private
 export const create_auto_word_reminder = asyncHandler(async (req, res) => {
   const userId = Number(req.params.userId);
+  let { create_now } = req.body;
   const {
     is_active,
-    create_now,
     has_reminder_onload,
     reminder,
     duration,
@@ -23,8 +23,6 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
     sort_mode,
     has_learned_words,
   } = req.body;
-
-  const addToDuration = new Date(Date.now() + duration);
 
   const autoWordReminder = await autoWordReminderQueries.create({
     user_id: userId,
@@ -37,7 +35,20 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
     duration,
   });
 
-  if (create_now) {
+  const queueName = res.locals.queueName;
+
+  await boss.schedule(queueName, reminder);
+
+  const pollingIntervalMs = duration;
+  const pollingIntervalSeconds = Math.round(pollingIntervalMs / 1000);
+  await boss.work(queueName, { pollingIntervalSeconds }, async () => {
+    if (!create_now) {
+      create_now = true;
+      return;
+    }
+    await wordReminderQueries.deactivate();
+    const wordReminderQueueName = `${userId}-word-reminder-queue`;
+    await boss.offWork(wordReminderQueueName);
     // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
     const randomUserWords = await userWordQueries.getUserWords({
       user_id: userId,
@@ -45,12 +56,13 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
       has_learned_words,
       sort_mode,
     });
+    const newAddToDuration = new Date(Date.now() + duration);
 
     const wordReminder = await wordReminderQueries.create({
       user_id: Number(userId),
       is_active: is_active,
       has_reminder_onload: has_reminder_onload,
-      finish: addToDuration,
+      finish: newAddToDuration,
       reminder,
     });
 
@@ -67,65 +79,11 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
       is_active,
       has_reminder_onload,
       reminder,
-      finish: new Date(addToDuration + duration),
+      finish: newAddToDuration,
       user_words: randomUserWords,
       queueName: res.locals.queueName,
     });
-  }
-
-  const queueName = res.locals.queueName;
-
-  await boss.schedule(queueName, reminder);
-
-  const pollingIntervalMs = duration;
-  const pollingIntervalSeconds = Math.round(pollingIntervalMs / 1000);
-  const worker = await boss.work(
-    queueName,
-    { pollingIntervalSeconds },
-    async () => {
-      await wordReminderQueries.deactivate();
-      const wordReminderQueueName = `${userId}-word-reminder-queue`;
-      await boss.offWork(wordReminderQueueName);
-      // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
-      const randomUserWords = await userWordQueries.getUserWords({
-        user_id: userId,
-        word_count,
-        has_learned_words,
-        sort_mode,
-      });
-      const newAddToDuration = new Date(Date.now() + duration);
-
-      const wordReminder = await wordReminderQueries.create({
-        user_id: Number(userId),
-        is_active: is_active,
-        has_reminder_onload: has_reminder_onload,
-        finish: newAddToDuration,
-        reminder,
-      });
-
-      randomUserWords.forEach(async (user_word: UserWord) => {
-        await userWordsWordRemindersQueries.create({
-          user_word_id: user_word.id,
-          word_reminder_id: wordReminder.id,
-        });
-      });
-
-      await scheduleWordReminder({
-        word_reminder_id: wordReminder.id,
-        user_id: String(userId),
-        is_active,
-        has_reminder_onload,
-        reminder,
-        finish: newAddToDuration,
-        user_words: randomUserWords,
-        queueName: res.locals.queueName,
-      });
-    }
-  );
-
-  if (create_now) {
-    boss.notifyWorker(worker);
-  }
+  });
 
   res.status(200).json({
     autoWordReminder,
@@ -170,9 +128,9 @@ export const delete_auto_word_reminder = asyncHandler(async (req, res) => {
 export const update_auto_word_reminder = asyncHandler(async (req, res) => {
   const userId = Number(req.params.userId);
   const autoWordReminderId = Number(req.params.autoWordReminderId);
+  let { create_now } = req.body;
   const {
     is_active,
-    create_now,
     has_reminder_onload,
     reminder,
     duration,
@@ -180,8 +138,6 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
     sort_mode,
     has_learned_words,
   } = req.body;
-
-  const addToDuration = new Date(Date.now() + duration);
 
   const autoWordReminder = await autoWordReminderQueries.updateById(
     autoWordReminderId,
@@ -196,42 +152,6 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
     }
   );
 
-  if (create_now) {
-    // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
-    const randomUserWords = await userWordQueries.getUserWords({
-      user_id: userId,
-      word_count,
-      has_learned_words,
-      sort_mode,
-    });
-
-    const wordReminder = await wordReminderQueries.create({
-      user_id: Number(userId),
-      is_active: is_active,
-      has_reminder_onload: has_reminder_onload,
-      finish: addToDuration,
-      reminder,
-    });
-
-    randomUserWords.forEach(async (user_word: UserWord) => {
-      await userWordsWordRemindersQueries.create({
-        user_word_id: user_word.id,
-        word_reminder_id: wordReminder.id,
-      });
-    });
-
-    await scheduleWordReminder({
-      word_reminder_id: wordReminder.id,
-      user_id: String(userId),
-      is_active,
-      has_reminder_onload,
-      reminder,
-      finish: addToDuration,
-      user_words: randomUserWords,
-      queueName: res.locals.queueName,
-    });
-  }
-
   const queueName = res.locals.queueName;
 
   await boss.purgeQueue(queueName);
@@ -240,10 +160,14 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
 
   const pollingIntervalMs = duration;
   const pollingIntervalSeconds = Math.round(pollingIntervalMs / 1000);
-  const workerId = await boss.work(
+  await boss.work(
     queueName,
     { pollingIntervalSeconds },
     async () => {
+      if (!create_now) {
+        create_now = true;
+        return;
+      }
       await wordReminderQueries.deactivate();
       const wordReminderQueueName = `${userId}-word-reminder-queue`;
       await boss.offWork(wordReminderQueueName);
@@ -283,10 +207,6 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
       });
     }
   );
-
-  if (create_now) {
-    boss.notifyWorker(workerId);
-  }
 
   res.status(200).json({
     autoWordReminder,
