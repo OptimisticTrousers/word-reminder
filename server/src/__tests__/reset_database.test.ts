@@ -5,6 +5,7 @@ import { Client } from "pg";
 import { variables } from "../config/variables";
 import { reset_database } from "../controllers/testing_controller";
 import * as db from "../db";
+import { boss } from "../db/boss";
 
 const { TEST_DATABASE_URL } = variables;
 
@@ -38,6 +39,9 @@ describe("reset_database", () => {
           ...originalModule,
         };
       });
+    const mockClearStorage = jest
+      .spyOn(boss, "clearStorage")
+      .mockImplementation(jest.fn());
 
     const response = await request(app)
       .delete("/api/testing/reset")
@@ -59,5 +63,7 @@ describe("reset_database", () => {
     expect(mockPopulate).toHaveBeenCalledWith();
     expect(mockStopConnection).toHaveBeenCalledTimes(1);
     expect(mockStopConnection).toHaveBeenCalledWith();
+    expect(mockClearStorage).toHaveBeenCalledTimes(1);
+    expect(mockClearStorage).toHaveBeenCalledWith();
   });
 });
