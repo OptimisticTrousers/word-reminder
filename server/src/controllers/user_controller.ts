@@ -12,6 +12,7 @@ import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
 import { subscriptionQueries } from "../db/subscription_queries";
+import { boss } from "../db/boss";
 
 const { SALT } = variables;
 
@@ -54,6 +55,8 @@ export const delete_user = asyncHandler(async (req, _res, next) => {
   await wordReminderQueries.deleteByUserId(userId);
   await autoWordReminderQueries.deleteByUserId(userId);
   await userQueries.deleteById(userId);
+  await boss.offWork(`${userId}-word-reminder-queue`);
+  await boss.offWork(`${userId}-auto-word-reminder-queue`);
   next();
 });
 

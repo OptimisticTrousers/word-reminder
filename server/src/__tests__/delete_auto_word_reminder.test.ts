@@ -38,9 +38,7 @@ describe("delete_auto_word_reminder", () => {
   const mockAutoWordReminderDeleteById = jest
     .spyOn(autoWordReminderQueries, "deleteById")
     .mockResolvedValue(autoWordReminder);
-  const mockDeleteQueue = jest
-    .spyOn(boss, "deleteQueue")
-    .mockImplementation(jest.fn());
+  const mockOffWork = jest.spyOn(boss, "offWork").mockImplementation(jest.fn());
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -65,7 +63,7 @@ describe("delete_auto_word_reminder", () => {
     expect(mockAutoWordReminderDeleteById).toHaveBeenCalledWith(
       autoWordReminderId
     );
-    expect(mockDeleteQueue).toHaveBeenCalledTimes(1);
-    expect(mockDeleteQueue).toHaveBeenCalledWith(queueName);
+    expect(mockOffWork).toHaveBeenCalledTimes(1);
+    expect(mockOffWork).toHaveBeenCalledWith(queueName);
   });
 });

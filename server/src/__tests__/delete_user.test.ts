@@ -7,6 +7,7 @@ import { userQueries } from "../db/user_queries";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { subscriptionQueries } from "../db/subscription_queries";
+import { boss } from "../db/boss";
 
 const userId = 1;
 const message = "Success!";
@@ -33,6 +34,9 @@ describe("delete_user", () => {
     const mockDeleteById = jest
       .spyOn(userQueries, "deleteById")
       .mockImplementation(jest.fn());
+    const mockOffWork = jest
+      .spyOn(boss, "offWork")
+      .mockImplementation(jest.fn());
 
     const response = await request(app)
       .delete(`/api/users/${userId}`)
@@ -51,5 +55,10 @@ describe("delete_user", () => {
     expect(mockAutoWordReminderDeleteByUserId).toHaveBeenCalledWith(userId);
     expect(mockDeleteById).toHaveBeenCalledTimes(1);
     expect(mockDeleteById).toHaveBeenCalledWith(userId);
+    expect(mockOffWork).toHaveBeenCalledTimes(2);
+    expect(mockOffWork).toHaveBeenCalledWith(`${userId}-word-reminder-queue`);
+    expect(mockOffWork).toHaveBeenCalledWith(
+      `${userId}-auto-word-reminder-queue`
+    );
   });
 });
