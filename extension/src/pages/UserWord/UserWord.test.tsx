@@ -18,6 +18,14 @@ vi.mock("../../components/ui/ImageCarousel", () => {
   };
 });
 
+vi.mock("../../components/modals/DeleteUserWordModal", () => {
+  return {
+    DeleteUserWordModal: function () {
+      return <div data-testid="modal"></div>;
+    },
+  };
+});
+
 describe("UserWord component", () => {
   const testUser = {
     id: "1",
@@ -204,6 +212,85 @@ describe("UserWord component", () => {
       userWordId,
     });
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("it opens delete modal", async () => {
+    const json = {
+      userWord: {
+        created_at,
+        learned: true,
+        images: [
+          { src: "/image1", caption: "Image 1" },
+          { src: "/image2", caption: "Image 2" },
+        ],
+        word: {
+          details: [
+            {
+              word: "word",
+              phonetic: "/wɜːd/",
+              origin: "The foundation of a language.",
+              phonetics: [
+                {
+                  text: "/wɜːd/",
+                  audio: "",
+                },
+                {
+                  text: "/wɝd/",
+                  audio:
+                    "https://api.dictionaryapi.dev/media/pronunciations/en/word-us.mp3",
+                  sourceUrl:
+                    "https://commons.wikimedia.org/w/index.php?curid=1197728",
+                  license: {
+                    name: "BY-SA 3.0",
+                    url: "https://creativecommons.org/licenses/by-sa/3.0",
+                  },
+                },
+              ],
+              meanings: [
+                {
+                  partOfSpeech: "noun",
+                  definitions: [
+                    {
+                      definition: "News; tidings (used without an article).",
+                      synonyms: [],
+                      antonyms: [],
+                      example: "Have you had any word from John yet?",
+                    },
+                    {
+                      definition: "A promise; an oath or guarantee.",
+                      synonyms: ["promise"],
+                      antonyms: ["false promise"],
+                      example:
+                        "I give you my word that I will be there on time.",
+                    },
+                  ],
+                  synonyms: ["Bible", "Logos", "vocable"],
+                  antonyms: ["silence"],
+                },
+              ],
+              license: {
+                name: "CC BY-SA 3.0",
+                url: "https://creativecommons.org/licenses/by-sa/3.0",
+              },
+              sourceUrls: ["https://en.wiktionary.org/wiki/word"],
+            },
+          ],
+        },
+      },
+    };
+    vi.spyOn(userWordService, "getUserWord").mockImplementation(async () => {
+      return { json, status };
+    });
+    setup();
+    const user = userEvent.setup();
+
+    const deleteButton = await screen.findByRole("button", {
+      name: "Open delete user word modal",
+    });
+    await user.click(deleteButton);
+
+    const deleteModal = screen.getByTestId("modal");
+    expect(deleteModal).toBeInTheDocument();
   });
 
   describe("learned", () => {

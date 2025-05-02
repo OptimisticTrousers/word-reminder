@@ -8,7 +8,7 @@ import {
   Word,
   Image,
 } from "common";
-import { Play } from "lucide-react";
+import { Play, Trash } from "lucide-react";
 import CSSModules from "react-css-modules";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +18,8 @@ import { Error500 } from "../Error500";
 import { userWordService } from "../../services/user_word_service";
 import styles from "./UserWord.module.css";
 import { ImageCarousel } from "../../components/ui/ImageCarousel";
+import { useState } from "react";
+import { DeleteUserWordModal } from "../../components/modals/DeleteUserWordModal";
 
 export const UserWord = CSSModules(
   function () {
@@ -34,6 +36,7 @@ export const UserWord = CSSModules(
         });
       },
     });
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     if (failureReason) {
       return <Error500 message={failureReason.message} />;
@@ -48,6 +51,10 @@ export const UserWord = CSSModules(
       audio.play();
     }
 
+    function toggleDeleteModal() {
+      setIsDeleteModalOpen((prevIsDeleteModalOpen) => !prevIsDeleteModalOpen);
+    }
+
     const json = data?.json;
     const userWord: (IUserWord & { word: Word; images: Image[] }) | undefined =
       json?.userWord;
@@ -57,6 +64,12 @@ export const UserWord = CSSModules(
     return (
       details && (
         <div styleName="word">
+          {isDeleteModalOpen && (
+            <DeleteUserWordModal
+              toggleModal={toggleDeleteModal}
+              userWordId={String(userWord.id)}
+            />
+          )}
           {<h2 styleName="word__heading">{details[0].word}</h2>}
           {
             <p styleName="word__learned">
@@ -69,6 +82,16 @@ export const UserWord = CSSModules(
             </p>
           }
           {<ImageCarousel images={images} />}
+          <div styleName="word__buttons">
+            <button
+              styleName="word__delete word__button--delete"
+              onClick={toggleDeleteModal}
+              aria-haspopup={true}
+              aria-label="Open delete user word modal"
+            >
+              <Trash styleName="word__icon" />
+            </button>
+          </div>
           {details.map((detail: Detail, index: number) => {
             return (
               <div key={index} styleName="word_content">
