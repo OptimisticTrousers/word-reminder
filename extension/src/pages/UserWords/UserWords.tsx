@@ -20,7 +20,12 @@ import {
   useOutletContext,
   useSearchParams,
 } from "react-router-dom";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { PaginatedList } from "../../components/ui/PaginatedList";
 import { UserWord } from "../../components/words/UserWord";
@@ -43,6 +48,7 @@ export const UserWords = CSSModules(
     const inputRef = useRef(null);
     const navigate = useNavigate();
     const submitButtonRef = useRef(null);
+    const queryClient = useQueryClient();
     const [file, setFile] = useState<File | null>(null);
     const [searchParams, setSearchParams] = useSearchParams({
       page: "1",
@@ -72,7 +78,7 @@ export const UserWords = CSSModules(
         return { formData: data.formData };
       },
       mutationFn: userWordService.createUserWord,
-      onSuccess: (response, _variables, context) => {
+      onSuccess: async (response, _variables, context) => {
         const formData = context.formData;
         const word = formData.get("word") as string;
         if (file && file.size > 0) {
@@ -85,8 +91,11 @@ export const UserWords = CSSModules(
             NOTIFICATION_ACTIONS.SUCCESS,
             WORD_NOTIFICATION_MSGS.addWord()
           );
+          navigate(`/userWords/${response.json.userWord.id}`);
         }
-        navigate(`/userWords/${response.json.userWord.id}`);
+        await queryClient.invalidateQueries({
+          queryKey: ["userWords"],
+        });
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);

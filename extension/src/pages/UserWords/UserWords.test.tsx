@@ -203,6 +203,10 @@ describe("UserWords component", () => {
               status,
             };
           });
+        const mockInvalidateQueries = vi.spyOn(
+          queryClient,
+          "invalidateQueries"
+        );
         const { user } = setup();
 
         const wordInput = screen.getByLabelText("Word", {
@@ -224,6 +228,10 @@ describe("UserWords component", () => {
         expect(mockWordServiceCreateWord).toHaveBeenCalledWith({
           userId: String(testUser.id),
           formData,
+        });
+        expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+        expect(mockInvalidateQueries).toHaveBeenCalledWith({
+          queryKey: ["userWords"],
         });
         expect(notification).toBeInTheDocument();
       });
@@ -341,6 +349,10 @@ describe("UserWords component", () => {
               status,
             };
           });
+        const mockInvalidateQueries = vi.spyOn(
+          queryClient,
+          "invalidateQueries"
+        );
         const { user } = setup();
 
         const wordInput = screen.getByLabelText("Word", {
@@ -355,6 +367,12 @@ describe("UserWords component", () => {
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
+        const userWordPage = screen.getByTestId("user-word");
+        expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+        expect(mockInvalidateQueries).toHaveBeenCalledWith({
+          queryKey: ["userWords"],
+        });
+        expect(userWordPage).toBeInTheDocument();
         expect(mockWordServiceCreate).toHaveBeenCalledTimes(1);
         expect(mockWordServiceCreate).toHaveBeenCalledWith({
           userId: String(testUser.id),
@@ -440,6 +458,10 @@ describe("UserWords component", () => {
             .mockImplementation(async () => {
               return { json: { message: "1 word has been created." }, status };
             });
+          const mockInvalidateQueries = vi.spyOn(
+            queryClient,
+            "invalidateQueries"
+          );
 
           const importWordsInput: HTMLInputElement = screen.getByLabelText(
             "Import Words",
@@ -452,7 +474,13 @@ describe("UserWords component", () => {
           const notification = screen.getByRole("dialog", {
             name: "You have successfully added multiple words to your dictionary.",
           });
+          const userWordPage = screen.queryByTestId("user-word");
+          expect(userWordPage).not.toBeInTheDocument();
           expect(notification).toBeInTheDocument();
+          expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+          expect(mockInvalidateQueries).toHaveBeenCalledWith({
+            queryKey: ["userWords"],
+          });
           expect(mockWordServiceCreate).toHaveBeenCalledTimes(1);
           expect(mockWordServiceCreate).toHaveBeenCalledWith({
             userId: String(testUser.id),
