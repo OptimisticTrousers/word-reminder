@@ -23,14 +23,14 @@ export const UserWord = CSSModules(
     id: number;
   }) {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const toggleAccordion = () => {
       setIsAccordionOpen((prevValue) => !prevValue);
     };
 
-    function toggleModal() {
-      setIsModalOpen((prevIsModalOpen) => !prevIsModalOpen);
+    function toggleDeleteModal() {
+      setIsDeleteModalOpen((prevIsDeleteModalOpen) => !prevIsDeleteModalOpen);
     }
 
     return (
@@ -60,7 +60,7 @@ export const UserWord = CSSModules(
               </button>
               <button
                 styleName="word__delete word__button--delete"
-                onClick={toggleModal}
+                onClick={toggleDeleteModal}
                 aria-haspopup={true}
                 aria-label="Open delete user word modal"
               >
@@ -82,9 +82,9 @@ export const UserWord = CSSModules(
             </div>
           )}
         </div>
-        {isModalOpen && (
+        {isDeleteModalOpen && (
           <DeleteUserWordModal
-            toggleModal={toggleModal}
+            toggleModal={toggleDeleteModal}
             userWordId={String(id)}
           />
         )}
