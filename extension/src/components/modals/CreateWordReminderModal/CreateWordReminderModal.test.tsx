@@ -115,7 +115,6 @@ describe("CreateWordReminderModal component", () => {
     toggleModal: Mock;
     queryClient: QueryClient;
   }) {
-    const searchParams = new URLSearchParams();
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -130,10 +129,7 @@ describe("CreateWordReminderModal component", () => {
                 <ErrorBoundary>
                   <NotificationProvider>
                     <QueryClientProvider client={queryClient}>
-                      <CreateWordReminderModal
-                        searchParams={searchParams}
-                        toggleModal={toggleModal}
-                      />
+                      <CreateWordReminderModal toggleModal={toggleModal} />
                     </QueryClientProvider>
                   </NotificationProvider>
                 </ErrorBoundary>
@@ -250,8 +246,7 @@ describe("CreateWordReminderModal component", () => {
     });
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
-      exact: true,
+      queryKey: ["wordReminders"],
     });
   });
 

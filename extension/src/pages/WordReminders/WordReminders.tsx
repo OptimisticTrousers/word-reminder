@@ -90,7 +90,7 @@ export const WordReminders = CSSModules(
     return (
       <div styleName="words-reminder">
         <AutoCreateWordReminder />
-        <CreateWordReminder searchParams={searchParams} />
+        <CreateWordReminder />
         <form styleName="word-reminder__form" onSubmit={handleQuery}>
           <fieldset styleName="words__sort sort">
             <label styleName="sort__label">
@@ -135,7 +135,6 @@ export const WordReminders = CSSModules(
               return (
                 <WordReminder
                   key={wordReminder.id}
-                  searchParams={searchParams}
                   wordReminder={wordReminder}
                 />
               );

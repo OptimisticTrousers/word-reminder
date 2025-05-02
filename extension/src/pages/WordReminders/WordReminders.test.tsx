@@ -129,8 +129,6 @@ describe("WordReminders component", () => {
 
   const PAGINATION_LIMIT = "10";
 
-  const searchParams = new URLSearchParams();
-
   function setup() {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
@@ -189,14 +187,8 @@ describe("WordReminders component", () => {
       name: "Word Reminders",
       totalRows: wordReminders.length,
       list: [
-        <WordReminder
-          searchParams={searchParams}
-          wordReminder={wordReminder1}
-        />,
-        <WordReminder
-          searchParams={searchParams}
-          wordReminder={wordReminder2}
-        />,
+        <WordReminder wordReminder={wordReminder1} />,
+        <WordReminder wordReminder={wordReminder2} />,
       ],
       isLoading: false,
       isSuccess: true,

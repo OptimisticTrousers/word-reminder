@@ -14,14 +14,13 @@ import styles from "./WordReminder.module.css";
 import { Link } from "react-router-dom";
 
 export interface Props {
-  searchParams: URLSearchParams;
   wordReminder: IWordReminder & {
     user_words: (UserWordI & { details: Detail[] })[];
   };
 }
 
 export const WordReminder = CSSModules(
-  function ({ searchParams, wordReminder }: Props) {
+  function ({ wordReminder }: Props) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
@@ -93,7 +92,6 @@ export const WordReminder = CSSModules(
         {isUpdateModalOpen && (
           <UpdateWordReminderModal
             wordReminder={wordReminder}
-            searchParams={searchParams}
             toggleModal={toggleUpdateModal}
           />
         )}

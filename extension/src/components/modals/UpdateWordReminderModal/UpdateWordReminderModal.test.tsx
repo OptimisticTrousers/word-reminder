@@ -101,7 +101,6 @@ describe("UpdateWordReminderModal component", () => {
     toggleModal: Mock;
     queryClient: QueryClient;
   }) {
-    const searchParams = new URLSearchParams();
     const Stub = createRoutesStub([
       {
         path: "/",
@@ -118,7 +117,6 @@ describe("UpdateWordReminderModal component", () => {
                     <QueryClientProvider client={queryClient}>
                       <UpdateWordReminderModal
                         wordReminder={wordReminder}
-                        searchParams={searchParams}
                         toggleModal={toggleModal}
                       />
                     </QueryClientProvider>
@@ -258,8 +256,7 @@ describe("UpdateWordReminderModal component", () => {
     });
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ["wordReminders", Object.fromEntries(new URLSearchParams())],
-      exact: true,
+      queryKey: ["wordReminders"],
     });
   });
 
@@ -299,8 +296,8 @@ describe("UpdateWordReminderModal component", () => {
     });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const updateButton = screen.getByRole("button", { name: "Update" });
 
+    const updateButton = screen.getByRole("button", { name: "Update" });
     await user.click(updateButton);
 
     const notification = screen.getByRole("dialog", {
@@ -333,7 +330,7 @@ describe("UpdateWordReminderModal component", () => {
     const mockUpdateWordReminder = vi
       .spyOn(wordReminderService, "updateWordReminder")
       .mockImplementation(async () => {
-        const delay = 500;
+        const delay = 50;
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve({ json: { wordReminder }, status });
@@ -346,8 +343,8 @@ describe("UpdateWordReminderModal component", () => {
     });
     const mockInvalidateQueries = vi.spyOn(queryClient, "invalidateQueries");
     const { user } = setup({ toggleModal: mockToggleModal, queryClient });
-    const updateButton = screen.getByRole("button", { name: "Update" });
 
+    const updateButton = screen.getByRole("button", { name: "Update" });
     await user.click(updateButton);
 
     expect(updateButton).toBeDisabled();

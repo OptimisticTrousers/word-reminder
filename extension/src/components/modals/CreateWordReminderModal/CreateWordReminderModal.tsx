@@ -17,12 +17,11 @@ import { ToggleModal } from "../types";
 import { Reminder } from "../../ui/Reminder";
 
 interface Props {
-  searchParams: URLSearchParams;
   toggleModal: ToggleModal;
 }
 
 export const CreateWordReminderModal = CSSModules(
-  function ({ toggleModal, searchParams }: Props) {
+  function ({ toggleModal }: Props) {
     const { user }: { user: User } = useOutletContext();
     const [reminder, setReminder] = useState("");
     const userId = String(user.id);
@@ -46,10 +45,8 @@ export const CreateWordReminderModal = CSSModules(
           NOTIFICATION_ACTIONS.SUCCESS,
           CREATE_WORD_REMINDER_NOTIFICATION_MSGS.createWordReminder()
         );
-        const searchParamsObject = Object.fromEntries(searchParams);
         queryClient.invalidateQueries({
-          queryKey: ["wordReminders", searchParamsObject],
-          exact: true,
+          queryKey: ["wordReminders"],
         });
       },
       onError: showNotificationError,

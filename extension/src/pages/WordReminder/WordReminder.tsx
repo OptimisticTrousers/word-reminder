@@ -34,10 +34,7 @@ export const WordReminder = CSSModules(
 
     return (
       <div styleName="word-reminder">
-        <WordReminderItem
-          searchParams={new URLSearchParams()}
-          wordReminder={data?.json.wordReminder}
-        />
+        <WordReminderItem wordReminder={data?.json.wordReminder} />
       </div>
     );
   },

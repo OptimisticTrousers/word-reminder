@@ -6,12 +6,8 @@ import { ThemeContext } from "../../../context/Theme";
 import { CreateWordReminderModal } from "../../modals/CreateWordReminderModal";
 import styles from "./CreateWordReminder.module.css";
 
-interface Props {
-  searchParams: URLSearchParams;
-}
-
 export const CreateWordReminder = CSSModules(
-  function ({ searchParams }: Props) {
+  function () {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { theme } = useContext(ThemeContext);
@@ -22,12 +18,7 @@ export const CreateWordReminder = CSSModules(
 
     return (
       <>
-        {isModalOpen && (
-          <CreateWordReminderModal
-            searchParams={searchParams}
-            toggleModal={toggleModal}
-          />
-        )}
+        {isModalOpen && <CreateWordReminderModal toggleModal={toggleModal} />}
         <button
           styleName={`create create--${theme}`}
           onClick={toggleModal}

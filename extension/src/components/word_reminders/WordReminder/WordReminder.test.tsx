@@ -169,12 +169,10 @@ describe("wordReminder component", () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-    const searchParams = new URLSearchParams();
 
     const { asFragment } = render(
       <MemoryRouter>
         <WordReminder
-          searchParams={searchParams}
           wordReminder={{ ...wordReminder, user_words: userWords }}
         />
       </MemoryRouter>
@@ -225,12 +223,10 @@ describe("wordReminder component", () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-    const searchParams = new URLSearchParams();
 
     render(
       <MemoryRouter>
         <WordReminder
-          searchParams={searchParams}
           wordReminder={{ ...wordReminder, user_words: userWords }}
         />
       </MemoryRouter>
@@ -253,12 +249,10 @@ describe("wordReminder component", () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-    const searchParams = new URLSearchParams();
 
     render(
       <MemoryRouter>
         <WordReminder
-          searchParams={searchParams}
           wordReminder={{ ...wordReminder, user_words: userWords }}
         />
       </MemoryRouter>
@@ -283,12 +277,10 @@ describe("wordReminder component", () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-    const searchParams = new URLSearchParams();
 
     render(
       <MemoryRouter>
         <WordReminder
-          searchParams={searchParams}
           wordReminder={{ ...wordReminder, user_words: userWords }}
         />
       </MemoryRouter>
@@ -314,12 +306,10 @@ describe("wordReminder component", () => {
         created_at: new Date(),
         updated_at: new Date(),
       };
-      const searchParams = new URLSearchParams();
 
       const { asFragment } = render(
         <MemoryRouter>
           <WordReminder
-            searchParams={searchParams}
             wordReminder={{ ...wordReminder, user_words: userWords }}
           />
         </MemoryRouter>
@@ -366,12 +356,10 @@ describe("wordReminder component", () => {
       created_at: new Date(),
       updated_at: new Date(),
     };
-    const searchParams = new URLSearchParams();
 
     const { asFragment } = render(
       <MemoryRouter>
         <WordReminder
-          searchParams={searchParams}
           wordReminder={{ ...wordReminder, user_words: userWords }}
         />
       </MemoryRouter>

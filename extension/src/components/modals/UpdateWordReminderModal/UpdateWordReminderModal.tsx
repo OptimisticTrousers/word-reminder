@@ -17,7 +17,6 @@ import { ToggleModal } from "../types";
 import { Reminder } from "../../ui/Reminder";
 
 interface Props {
-  searchParams: URLSearchParams;
   toggleModal: ToggleModal;
   wordReminder: WordReminder & {
     user_words: (UserWord & { details: Detail[] })[];
@@ -25,7 +24,7 @@ interface Props {
 }
 
 export const UpdateWordReminderModal = CSSModules(
-  function ({ searchParams, toggleModal, wordReminder }: Props) {
+  function ({ toggleModal, wordReminder }: Props) {
     const { user }: { user: User } = useOutletContext();
     const [reminder, setReminder] = useState(wordReminder.reminder);
     const userId = String(user.id);
@@ -43,17 +42,20 @@ export const UpdateWordReminderModal = CSSModules(
       },
       throwOnError: true,
     });
-    const { isPending, mutate } = useMutation({
+    const {
+      isPending,
+      status,
+      data: bob,
+      mutate,
+    } = useMutation({
       mutationFn: wordReminderService.updateWordReminder,
       onSuccess: () => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
           UPDATE_WORD_REMINDER_NOTIFICATION_MSGS.updateWordReminder()
         );
-        const searchParamsObject = Object.fromEntries(searchParams);
         queryClient.invalidateQueries({
-          queryKey: ["wordReminders", searchParamsObject],
-          exact: true,
+          queryKey: ["wordReminders"],
         });
       },
       onError: showNotificationError,
@@ -61,6 +63,8 @@ export const UpdateWordReminderModal = CSSModules(
         toggleModal();
       },
     });
+
+    console.log(status, bob);
 
     function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
       setReminder(event.target.value);
@@ -132,7 +136,7 @@ export const UpdateWordReminderModal = CSSModules(
               User Words
             </label>
             <input
-              type="email"
+              type="text"
               multiple
               name="user_words"
               id="user_words"
@@ -146,6 +150,12 @@ export const UpdateWordReminderModal = CSSModules(
                 const type = event.target.type;
                 if (type === "email") {
                   event.target.type = "text";
+                }
+              }}
+              onChange={(event) => {
+                const type = event.target.type;
+                if (type === "text") {
+                  event.target.type = "email";
                 }
               }}
               list="words"

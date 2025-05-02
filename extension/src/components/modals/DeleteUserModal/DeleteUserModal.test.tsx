@@ -110,7 +110,7 @@ describe("DeleteUserModal component", () => {
     const deleteButton = screen.getByRole("button", { name: "Delete" });
     await user.click(deleteButton);
 
-    const login = screen.getByTestId("login");
+    const login = await screen.findByTestId("login");
     const notification = screen.queryByRole("dialog");
     expect(notification).not.toBeInTheDocument();
     expect(login).toBeInTheDocument();
