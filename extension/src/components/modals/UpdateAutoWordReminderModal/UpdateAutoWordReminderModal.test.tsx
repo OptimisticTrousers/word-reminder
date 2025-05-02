@@ -179,7 +179,10 @@ describe("UpdateAutoWordReminderModal component", () => {
       name: "Your auto word reminder preferences have been updated!",
     });
     expect(notification).toBeInTheDocument();
-    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+    expect(mockInvalidateQueries).toHaveBeenCalledTimes(2);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["wordReminders"],
+    });
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
       queryKey: ["autoWordReminders"],
       exact: true,

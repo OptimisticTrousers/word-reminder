@@ -37,6 +37,9 @@ export const UpdateAutoWordReminderModal = CSSModules(
           UPDATE_AUTO_WORD_REMINDER_NOTIFICATION_MSGS.updateAutoWordReminder()
         );
         queryClient.invalidateQueries({
+          queryKey: ["wordReminders"],
+        });
+        queryClient.invalidateQueries({
           queryKey: ["autoWordReminders"],
           exact: true,
         });

@@ -167,7 +167,10 @@ describe("CreateAutoWordReminderModal component", () => {
       name: "Word reminders will now be created automatically!",
     });
     expect(notification).toBeInTheDocument();
-    expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
+    expect(mockInvalidateQueries).toHaveBeenCalledTimes(2);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["wordReminders"],
+    });
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
       queryKey: ["autoWordReminders"],
       exact: true,
