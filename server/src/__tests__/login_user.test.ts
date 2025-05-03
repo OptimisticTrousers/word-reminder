@@ -5,8 +5,10 @@ import request from "supertest";
 
 import { login_user } from "../controllers/session_controller";
 import { errorHandler } from "../middleware/error_handler";
+import * as createQueueUtils from "../utils/create_queue";
 
 const user = {
+  id: "1",
   email: "email@protonmail.com",
   password: "password",
 };
@@ -144,9 +146,14 @@ describe("login_user", () => {
       capturedLoginCallback = callback;
       capturedLoginCallback(null);
     });
+    const mockCreateQueue = jest
+      .spyOn(createQueueUtils, "createQueue")
+      .mockImplementation(jest.fn());
     const app = express();
     app.use(express.json());
+    let capturedLocals: any;
     app.use((req: Request, res: Response, next: NextFunction) => {
+      capturedLocals = res.locals;
       req.logIn = mockLogin;
       next();
     });
@@ -167,6 +174,22 @@ describe("login_user", () => {
     );
     expect(mockLogin).toHaveBeenCalledTimes(1);
     expect(mockLogin).toHaveBeenCalledWith(user, capturedLoginCallback);
+    expect(mockCreateQueue).toHaveBeenCalledTimes(3);
+    expect(mockCreateQueue).toHaveBeenCalledWith(
+      capturedLocals,
+      user.id,
+      "auto-word-reminder-queue"
+    );
+    expect(mockCreateQueue).toHaveBeenCalledWith(
+      capturedLocals,
+      user.id,
+      "word-reminder-queue"
+    );
+    expect(mockCreateQueue).toHaveBeenCalledWith(
+      capturedLocals,
+      user.id,
+      "email-queue"
+    );
   });
 
   describe("form validation", () => {

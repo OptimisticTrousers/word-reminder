@@ -1,21 +1,16 @@
 import express from "express";
 import request from "supertest";
 
-import { delete_word_reminder } from "../controllers/word_reminder_controller";
-import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
-import { wordReminderQueries } from "../db/word_reminder_queries";
 import { delete_auto_word_reminder } from "../controllers/auto_word_reminder_controller";
 import { SortMode } from "common";
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { boss } from "../db/boss";
-import { createQueue } from "../middleware/create_queue";
 
 const queuePostfix = "auto-word-reminder-queue";
 const app = express();
 app.use(express.json());
 app.delete(
   "/api/users/:userId/autoWordReminders/:autoWordReminderId",
-  createQueue(queuePostfix),
   delete_auto_word_reminder
 );
 
@@ -39,6 +34,9 @@ describe("delete_auto_word_reminder", () => {
     .spyOn(autoWordReminderQueries, "deleteById")
     .mockResolvedValue(autoWordReminder);
   const mockOffWork = jest.spyOn(boss, "offWork").mockImplementation(jest.fn());
+  const mockUnschedule = jest
+    .spyOn(boss, "unschedule")
+    .mockImplementation(jest.fn());
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -63,6 +61,8 @@ describe("delete_auto_word_reminder", () => {
     expect(mockAutoWordReminderDeleteById).toHaveBeenCalledWith(
       autoWordReminderId
     );
+    expect(mockUnschedule).toHaveBeenCalledTimes(1);
+    expect(mockUnschedule).toHaveBeenCalledWith(queueName);
     expect(mockOffWork).toHaveBeenCalledTimes(1);
     expect(mockOffWork).toHaveBeenCalledWith(queueName);
   });

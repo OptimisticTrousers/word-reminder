@@ -4,15 +4,17 @@ import request from "supertest";
 import { delete_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
-import { boss } from "../db/boss";
-import { createQueue } from "../middleware/create_queue";
 
 const queuePostfix = "word-reminder-queue";
 const app = express();
 app.use(express.json());
 app.delete(
   "/api/users/:userId/wordReminders/:wordReminderId",
-  createQueue(queuePostfix),
+  (req, res, next) => {
+    const userId = req.params.userId;
+    res.locals.queueName = `${userId}-${queuePostfix}`;
+    next();
+  },
   delete_word_reminder
 );
 
@@ -71,15 +73,11 @@ describe("delete_word_reminder", () => {
       .mockImplementation(async () => {
         return wordReminder;
       });
-    const mockOffWork = jest
-      .spyOn(boss, "offWork")
-      .mockImplementation(jest.fn());
 
     const response = await request(app).delete(
       `/api/users/${userId}/wordReminders/${wordReminder.id}`
     );
 
-    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
@@ -97,45 +95,5 @@ describe("delete_word_reminder", () => {
     expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder.id);
     expect(deleteByIdMock).toHaveBeenCalledTimes(1);
     expect(deleteByIdMock).toHaveBeenCalledWith(wordReminder.id);
-    expect(mockOffWork).toHaveBeenCalledTimes(1);
-    expect(mockOffWork).toHaveBeenCalledWith(queueName);
-  });
-
-  it("does not delete queue if word reminder is not active", async () => {
-    const deleteByWordReminderIdMock = jest
-      .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
-      .mockResolvedValue(deletedUserWordsWordReminders);
-    const deleteByIdMock = jest
-      .spyOn(wordReminderQueries, "deleteById")
-      .mockImplementation(async () => {
-        return { ...wordReminder, is_active: false };
-      });
-    const mockOffWork = jest
-      .spyOn(boss, "offWork")
-      .mockImplementation(jest.fn());
-
-    const response = await request(app).delete(
-      `/api/users/${userId}/wordReminders/${wordReminder.id}`
-    );
-
-    expect(response.headers["content-type"]).toMatch(/json/);
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      wordReminder: {
-        ...wordReminder,
-        is_active: false,
-        updated_at: wordReminder.updated_at.toISOString(),
-        created_at: wordReminder.created_at.toISOString(),
-        finish: wordReminder.finish.toISOString(),
-      },
-      userWordsWordReminders: deletedUserWordsWordReminders,
-    });
-    expect(deleteByWordReminderIdMock).toHaveBeenCalledTimes(1);
-    expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder.id);
-    expect(deleteByWordReminderIdMock).toHaveBeenCalledTimes(1);
-    expect(deleteByWordReminderIdMock).toHaveBeenCalledWith(wordReminder.id);
-    expect(deleteByIdMock).toHaveBeenCalledTimes(1);
-    expect(deleteByIdMock).toHaveBeenCalledWith(wordReminder.id);
-    expect(mockOffWork).not.toHaveBeenCalled();
   });
 });

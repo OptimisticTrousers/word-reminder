@@ -6,9 +6,10 @@ import {
 } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-import { scheduleWordReminder } from "../utils/word_reminder";
 import { boss } from "../db/boss";
-import { UserWord } from "common";
+import { Detail, UserWord } from "common";
+
+const queuePostfix = "word-reminder-queue";
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders
@@ -26,22 +27,27 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
     reminder,
   });
 
-  user_words.forEach(async (user_word: UserWord) => {
-    await userWordsWordRemindersQueries.create({
-      user_word_id: user_word.id,
-      word_reminder_id: wordReminder.id,
-    });
-  });
+  const wordPromises: Promise<string>[] = user_words.map(
+    async (user_word: UserWord & { details: Detail[] }) => {
+      await userWordsWordRemindersQueries.create({
+        user_word_id: user_word.id,
+        word_reminder_id: wordReminder.id,
+      });
+      return user_word.details[0].word;
+    }
+  );
 
-  await scheduleWordReminder({
+  const words: string[] = await Promise.all(wordPromises);
+
+  const queueName = `${userId}-${queuePostfix}`;
+
+  await boss.schedule(queueName, reminder, {
     word_reminder_id: wordReminder.id,
     user_id: userId,
-    is_active,
+    words,
+    finish,
     has_reminder_onload,
     reminder,
-    finish,
-    user_words,
-    queueName: res.locals.queueName,
   });
 
   res.status(200).json({
@@ -58,10 +64,6 @@ export const delete_word_reminders = asyncHandler(async (req, res) => {
     await userWordsWordRemindersQueries.deleteByUserId(userId);
 
   const deletedWordReminders = await wordReminderQueries.deleteByUserId(userId);
-
-  const queueName = res.locals.queueName;
-
-  await boss.offWork(queueName);
 
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
@@ -81,12 +83,6 @@ export const delete_word_reminder = asyncHandler(async (req, res) => {
   const deletedWordReminder = await wordReminderQueries.deleteById(
     wordReminderId
   );
-
-  const queueName = res.locals.queueName;
-
-  if (deletedWordReminder?.is_active) {
-    await boss.offWork(queueName);
-  }
 
   res.status(200).json({
     userWordsWordReminders: deletedUserWordsWordReminders,
@@ -115,7 +111,6 @@ export const get_word_reminder = asyncHandler(async (req, res) => {
 export const update_word_reminder = [
   errorValidationHandler,
   asyncHandler(async (req, res) => {
-    const userId = Number(req.params.userId);
     const wordReminderId = Number(req.params.wordReminderId);
     const { is_active, has_reminder_onload, reminder, finish, user_words } =
       req.body;
@@ -127,25 +122,13 @@ export const update_word_reminder = [
       finish,
     });
 
+    await userWordsWordRemindersQueries.deleteByWordReminderId(wordReminder.id);
+
     user_words.forEach(async (user_word: UserWord) => {
       await userWordsWordRemindersQueries.create({
         user_word_id: user_word.id,
         word_reminder_id: wordReminder.id,
       });
-    });
-
-    const queueName = res.locals.queueName;
-    await boss.offWork(queueName);
-
-    await scheduleWordReminder({
-      word_reminder_id: wordReminder.id,
-      user_id: String(userId),
-      is_active,
-      has_reminder_onload,
-      reminder,
-      finish,
-      user_words,
-      queueName: res.locals.queueName,
     });
 
     res.status(200).json({

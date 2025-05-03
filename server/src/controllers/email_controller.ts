@@ -98,12 +98,6 @@ export const send_email = [
     const queueName = `${userId}-email-queue`;
     await boss.sendAfter(queueName, { token }, {}, date);
 
-    await boss.work(queueName, async (jobs: Job<Token>[]) => {
-      const tokens = jobs.map((job) => {
-        return job.data.token;
-      });
-      await tokenQueries.deleteAll(tokens);
-    });
 
     res.status(200).json({ info });
   }),

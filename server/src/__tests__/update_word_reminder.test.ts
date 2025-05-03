@@ -4,10 +4,6 @@ import request from "supertest";
 import { update_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
-import { boss } from "../db/boss";
-import { subscriptionQueries } from "../db/subscription_queries";
-import * as triggerWebPush from "../utils/trigger_web_push_msg";
-import * as wordReminders from "../utils/word_reminder";
 
 describe("update_word_reminder", () => {
   const userId = 1;
@@ -136,23 +132,14 @@ describe("update_word_reminder", () => {
     const wordReminderUpdateMock = jest
       .spyOn(wordReminderQueries, "updateById")
       .mockResolvedValue(wordReminder);
+    const mockDeleteByWordReminderId = jest
+      .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
+      .mockImplementation(jest.fn());
     const userWordsWordRemindersMock = jest
       .spyOn(userWordsWordRemindersQueries, "create")
       .mockResolvedValueOnce(userWordsWordReminders1)
       .mockResolvedValueOnce(userWordsWordReminders2)
       .mockResolvedValueOnce(userWordsWordReminders3);
-    const mockSubscriptionGetByUserId = jest
-      .spyOn(subscriptionQueries, "getByUserId")
-      .mockResolvedValue(subscription1);
-    const mockOffWork = jest
-      .spyOn(boss, "offWork")
-      .mockImplementation(jest.fn());
-    const mockTriggerWebPushMsg = jest
-      .spyOn(triggerWebPush, "triggerWebPushMsg")
-      .mockImplementation(jest.fn());
-    const mockScheduleWordReminder = jest
-      .spyOn(wordReminders, "scheduleWordReminder")
-      .mockImplementation(jest.fn());
     const body = {
       finish: wordReminder.finish,
       user_words: [userWord1, userWord2],
@@ -184,6 +171,8 @@ describe("update_word_reminder", () => {
       has_reminder_onload: body.has_reminder_onload,
       finish: body.finish.toISOString(),
     });
+    expect(mockDeleteByWordReminderId).toHaveBeenCalledTimes(1);
+    expect(mockDeleteByWordReminderId).toHaveBeenCalledWith(wordReminder.id);
     expect(userWordsWordRemindersMock).toHaveBeenCalledTimes(2);
     expect(userWordsWordRemindersMock).toHaveBeenCalledWith({
       user_word_id: userWord1.id,
@@ -193,31 +182,5 @@ describe("update_word_reminder", () => {
       user_word_id: userWord2.id,
       word_reminder_id: wordReminder.id,
     });
-    expect(mockOffWork).toHaveBeenCalledTimes(1);
-    expect(mockOffWork).toHaveBeenCalledWith(queueName);
-    expect(mockScheduleWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockScheduleWordReminder).toHaveBeenCalledWith({
-      user_id: String(userId),
-      is_active: body.is_active,
-      has_reminder_onload: body.has_reminder_onload,
-      user_words: [
-        {
-          ...userWord1,
-          updated_at: userWord1.updated_at.toISOString(),
-          created_at: userWord1.created_at.toISOString(),
-        },
-        {
-          ...userWord2,
-          updated_at: userWord2.updated_at.toISOString(),
-          created_at: userWord2.created_at.toISOString(),
-        },
-      ],
-      reminder: body.reminder,
-      finish: body.finish.toISOString(),
-      queueName,
-      word_reminder_id: wordReminder.id,
-    });
-    expect(mockSubscriptionGetByUserId).not.toHaveBeenCalled();
-    expect(mockTriggerWebPushMsg).not.toHaveBeenCalled();
   });
 });

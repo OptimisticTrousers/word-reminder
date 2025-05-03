@@ -47,24 +47,6 @@ const mockSendAfter = jest
   .spyOn(boss, "sendAfter")
   .mockImplementation(jest.fn());
 
-let capturedCallback: any;
-
-const mockWork = jest
-  .spyOn(boss, "work")
-  .mockImplementation(async (queueName, callback) => {
-    capturedCallback = callback; // Capture the callback
-    return "";
-  });
-
-const mockDeleteAll = jest
-  .spyOn(tokenQueries, "deleteAll")
-  .mockImplementation(jest.fn());
-
-const mockJobs = [
-  { data: { token: "token1" } },
-  { data: { token: "token2" } },
-] as unknown as Job<{ token: string }>[];
-
 jest.spyOn(global.Date, "now").mockImplementation(() => {
   return new Date(0).valueOf();
 });
@@ -253,7 +235,6 @@ describe("send_email", () => {
       .post(`/api/users/${userId}/emails`)
       .set("Accept", "application/json")
       .send(body);
-    await capturedCallback(mockJobs);
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
@@ -275,10 +256,6 @@ describe("send_email", () => {
       {},
       new Date(ms)
     );
-    expect(mockWork).toHaveBeenCalledTimes(1);
-    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
-    expect(mockDeleteAll).toHaveBeenCalledTimes(1);
-    expect(mockDeleteAll).toHaveBeenCalledWith(["token1", "token2"]);
   });
 
   it("calls the functions to send email with 'change_password' template", async () => {
@@ -296,7 +273,6 @@ describe("send_email", () => {
       .post(`/api/users/${userId}/emails`)
       .set("Accept", "application/json")
       .send(body);
-    await capturedCallback(mockJobs);
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
@@ -319,10 +295,6 @@ describe("send_email", () => {
       {},
       new Date(ms)
     );
-    expect(mockWork).toHaveBeenCalledTimes(1);
-    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
-    expect(mockDeleteAll).toHaveBeenCalledTimes(1);
-    expect(mockDeleteAll).toHaveBeenCalledWith(["token1", "token2"]);
   });
 
   it("calls the functions to send email with 'forgot_password' template when userId is undefined", async () => {
@@ -343,7 +315,6 @@ describe("send_email", () => {
       .post(`/api/users/${undefined}/emails`)
       .set("Accept", "application/json")
       .send(body);
-    await capturedCallback(mockJobs);
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
@@ -368,10 +339,6 @@ describe("send_email", () => {
       {},
       new Date(ms)
     );
-    expect(mockWork).toHaveBeenCalledTimes(1);
-    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
-    expect(mockDeleteAll).toHaveBeenCalledTimes(1);
-    expect(mockDeleteAll).toHaveBeenCalledWith(["token1", "token2"]);
   });
 
   it("calls the functions to send email with 'change_email' template", async () => {
@@ -389,7 +356,6 @@ describe("send_email", () => {
       .post(`/api/users/${userId}/emails`)
       .set("Accept", "application/json")
       .send(body);
-    await capturedCallback(mockJobs);
 
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
@@ -411,9 +377,5 @@ describe("send_email", () => {
       {},
       new Date(ms)
     );
-    expect(mockWork).toHaveBeenCalledTimes(1);
-    expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
-    expect(mockDeleteAll).toHaveBeenCalledTimes(1);
-    expect(mockDeleteAll).toHaveBeenCalledWith(["token1", "token2"]);
   });
 });

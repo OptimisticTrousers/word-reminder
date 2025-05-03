@@ -1,10 +1,11 @@
 import { User } from "common";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Locals } from "express";
 import { body } from "express-validator";
 import passport from "passport";
 
 import { EMAIL_MAX, PASSWORD_MAX } from "../db/user_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
+import { createQueue } from "../utils/create_queue";
 
 // @desc    Get the current user (public details)
 // @route   GET /api/sessions
@@ -44,7 +45,11 @@ export const login_user = [
   (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate(
       "local",
-      (err: Error, user: Express.User, info: { message: string }) => {
+      (
+        err: Error,
+        user: Express.User & { id: number },
+        info: { message: string }
+      ) => {
         if (err) {
           return next(err);
         }
@@ -53,10 +58,25 @@ export const login_user = [
           return res.status(401).json({ user: null, message: info.message });
         }
 
-        req.logIn(user, (err) => {
+        req.logIn(user, async (err) => {
           if (err) {
             return next(err);
           }
+          await createQueue(
+            res.locals as Locals & { queueName: string },
+            user.id,
+            "auto-word-reminder-queue"
+          );
+          await createQueue(
+            res.locals as Locals & { queueName: string },
+            user.id,
+            "word-reminder-queue"
+          );
+          await createQueue(
+            res.locals as Locals & { queueName: string },
+            user.id,
+            "email-queue"
+          );
           res.status(200).json({ user });
         });
       }

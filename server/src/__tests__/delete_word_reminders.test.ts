@@ -4,15 +4,17 @@ import request from "supertest";
 import { delete_word_reminders } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
-import { boss } from "../db/boss";
-import { createQueue } from "../middleware/create_queue";
 
 const queuePostfix = "word-reminder-queue";
 const app = express();
 app.use(express.json());
 app.delete(
   "/api/users/:userId/wordReminders",
-  createQueue(queuePostfix),
+  (req, res, next) => {
+    const userId = req.params.userId;
+    res.locals.queueName = `${userId}-${queuePostfix}`;
+    next();
+  },
   delete_word_reminders
 );
 
@@ -60,7 +62,6 @@ const mockUserWordsWordRemindersDeleteById = jest
 const mockWordReminderDeleteByUserId = jest
   .spyOn(wordReminderQueries, "deleteByUserId")
   .mockResolvedValue(wordReminders);
-const mockOffWork = jest.spyOn(boss, "offWork").mockImplementation(jest.fn());
 
 describe("delete_word_reminders", () => {
   beforeEach(() => {
@@ -72,7 +73,6 @@ describe("delete_word_reminders", () => {
       .delete(`/api/users/${userId}/wordReminders`)
       .set("Accept", "application/json");
 
-    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
@@ -94,7 +94,5 @@ describe("delete_word_reminders", () => {
     expect(mockUserWordsWordRemindersDeleteById).toHaveBeenCalledWith(userId);
     expect(mockWordReminderDeleteByUserId).toHaveBeenCalledTimes(1);
     expect(mockWordReminderDeleteByUserId).toHaveBeenCalledWith(userId);
-    expect(mockOffWork).toHaveBeenCalledTimes(1);
-    expect(mockOffWork).toHaveBeenCalledWith(queueName);
   });
 });

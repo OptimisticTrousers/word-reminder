@@ -42,6 +42,8 @@ describe("reset_database", () => {
     const mockClearStorage = jest
       .spyOn(boss, "clearStorage")
       .mockImplementation(jest.fn());
+    const mockStop = jest.spyOn(boss, "stop").mockImplementation(jest.fn());
+    const mockStart= jest.spyOn(boss, "start").mockImplementation(jest.fn());
 
     const response = await request(app)
       .delete("/api/testing/reset")
@@ -64,6 +66,14 @@ describe("reset_database", () => {
     expect(mockStopConnection).toHaveBeenCalledTimes(1);
     expect(mockStopConnection).toHaveBeenCalledWith();
     expect(mockClearStorage).toHaveBeenCalledTimes(1);
+    expect(mockClearStorage).toHaveBeenCalledWith();
+    expect(mockStop).toHaveBeenCalledTimes(1);
+    expect(mockStop).toHaveBeenCalledWith({
+      close: false,
+      graceful: false,
+      wait: false,
+    });
+    expect(mockStart).toHaveBeenCalledTimes(1);
     expect(mockClearStorage).toHaveBeenCalledWith();
   });
 });

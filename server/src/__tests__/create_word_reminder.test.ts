@@ -2,9 +2,9 @@ import express from "express";
 import request from "supertest";
 
 import { create_word_reminder } from "../controllers/word_reminder_controller";
-import * as wordReminders from "../utils/word_reminder";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
+import { boss } from "../db/boss";
 
 describe("create_word_reminder", () => {
   const userId = 1;
@@ -99,15 +99,7 @@ describe("create_word_reminder", () => {
 
   const app = express();
   app.use(express.json());
-  app.post(
-    "/api/users/:userId/wordReminders",
-    (req, res, next) => {
-      const userId = req.params.userId;
-      res.locals.queueName = `${userId}-${queuePostfix}`;
-      next();
-    },
-    create_word_reminder
-  );
+  app.post("/api/users/:userId/wordReminders", create_word_reminder);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -121,8 +113,8 @@ describe("create_word_reminder", () => {
       .spyOn(userWordsWordRemindersQueries, "create")
       .mockResolvedValueOnce(userWordsWordReminders1)
       .mockResolvedValueOnce(userWordsWordReminders2);
-    const mockScheduleWordReminder = jest
-      .spyOn(wordReminders, "scheduleWordReminder")
+    const mockSchedule = jest
+      .spyOn(boss, "schedule")
       .mockImplementation(jest.fn());
 
     const body = {
@@ -164,27 +156,18 @@ describe("create_word_reminder", () => {
       user_word_id: userWordsWordReminders2.user_word_id,
       word_reminder_id: userWordsWordReminders2.word_reminder_id,
     });
-    expect(mockScheduleWordReminder).toHaveBeenCalledTimes(1);
-    expect(mockScheduleWordReminder).toHaveBeenCalledWith({
-      user_id: String(userId),
-      is_active: body.is_active,
-      has_reminder_onload: body.has_reminder_onload,
-      user_words: [
-        {
-          ...userWord1,
-          updated_at: userWord1.updated_at.toISOString(),
-          created_at: userWord1.created_at.toISOString(),
-        },
-        {
-          ...userWord2,
-          updated_at: userWord2.updated_at.toISOString(),
-          created_at: userWord2.created_at.toISOString(),
-        },
-      ],
-      reminder: body.reminder,
-      finish: body.finish.toISOString(),
+    expect(mockSchedule).toHaveBeenCalledTimes(1);
+    expect(mockSchedule).toHaveBeenCalledWith(
       queueName,
-      word_reminder_id: wordReminder.id,
-    });
+      wordReminder.reminder,
+      {
+        word_reminder_id: wordReminder.id,
+        user_id: String(userId),
+        words: [word1.details[0].word, word2.details[0].word],
+        finish: wordReminder.finish.toISOString(),
+        has_reminder_onload: wordReminder.has_reminder_onload,
+        reminder: wordReminder.reminder,
+      }
+    );
   });
 });

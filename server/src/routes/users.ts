@@ -9,7 +9,6 @@ import {
   update_user,
 } from "../controllers/user_controller";
 import { emailRouter } from "./emails";
-import { createQueue } from "../middleware/create_queue";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { isAuthenticated } from "../middleware/is_authenticated";
 import { validateUserId } from "../middleware/validate_user_id";
@@ -53,7 +52,6 @@ userRouter.use(
   isAuthenticated,
   validateUserId,
   errorValidationHandler,
-  createQueue("word-reminder-queue"),
   wordReminderRouter
 );
 
@@ -62,7 +60,6 @@ userRouter.use(
   isAuthenticated,
   validateUserId,
   errorValidationHandler,
-  createQueue("auto-word-reminder-queue"),
   autoWordReminderRouter
 );
 

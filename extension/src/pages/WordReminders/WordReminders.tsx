@@ -37,7 +37,7 @@ export const WordReminders = CSSModules(
           params: searchParamsObject,
         });
       },
-      staleTime: 60000, // stale after 1 minute since the smallest reminder is every minute
+      staleTime: 70000, // stale after 1 minute and change since the smallest reminder is every minute
     });
 
     function handleQuery(event: FormEvent<HTMLFormElement>) {

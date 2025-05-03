@@ -33,6 +33,7 @@ test.describe("Word Reminder page", () => {
   test.describe("Auto Word Reminders", () => {
     test("that a word reminder is created when the user chooses to create a word reminder immediately which is the default option", async ({
       page,
+      extensionId,
     }) => {
       const createAutoWordReminderButton = page.getByRole("button", {
         name: "Create Auto Word Reminder",
@@ -40,19 +41,78 @@ test.describe("Word Reminder page", () => {
       });
       await createAutoWordReminderButton.click();
       const reminder = page.getByLabel("Reminder", { exact: true });
-      await reminder.fill("0 */2 * * *"); // every 2 hours
       const weeks = page.getByLabel("Weeks");
-      await weeks.fill("1");
       const wordCount = page.getByLabel("Word Count");
-      await wordCount.fill("7");
       const createButton = page.getByRole("button", {
         name: "Create",
         exact: true,
       });
+
+      await reminder.fill("0 */2 * * *"); // every 2 hours
+      await weeks.fill("1");
+      await wordCount.fill("7");
       await createButton.click();
+      await page.waitForTimeout(10000); // wait 10 seconds to wait for word reminder to be created.
+      await goto(page, extensionId);
+      const wordRemindersLink = page.getByRole("link", {
+        name: "Word Reminders",
+      });
+      await wordRemindersLink.click();
 
       const autoWordReminderHeading = page.getByRole("heading", {
         name: "Auto Word Reminder",
+        exact: true,
+      });
+      const wordReminderDetails = page.getByText("More Word Reminder Details");
+      await expect(autoWordReminderHeading).toBeVisible();
+      await expect(wordReminderDetails).toBeVisible();
+      await expect(createAutoWordReminderButton).not.toBeVisible();
+    });
+
+    test("that a word reminder is created when the user chooses to create a word reminder immediately when updating which is the default option", async ({
+      page,
+      extensionId,
+    }) => {
+      const createAutoWordReminderButton = page.getByRole("button", {
+        name: "Create Auto Word Reminder",
+        exact: true,
+      });
+      await createAutoWordReminderButton.click();
+      const reminder = page.getByLabel("Reminder", { exact: true });
+      const weeks = page.getByLabel("Weeks");
+      const wordCount = page.getByLabel("Word Count");
+      const createButton = page.getByRole("button", {
+        name: "Create",
+        exact: true,
+      });
+      await reminder.fill("0 */2 * * *"); // every 2 hours
+      await weeks.fill("1");
+      await wordCount.fill("7");
+      await page.getByLabel("Create Now").click(); // clicking sets create now to false
+      await createButton.click();
+
+      const updateButton = page.getByRole("button", {
+        name: "Update",
+        exact: true,
+      });
+      await updateButton.click();
+      const modalUpdateButton = page
+        .getByRole("button", {
+          name: "Update",
+          exact: true,
+        })
+        .last();
+      await modalUpdateButton.click();
+      await page.waitForTimeout(10000); // wait 10 seconds to wait for word reminder to be created.
+      await goto(page, extensionId);
+      const wordRemindersLink = page.getByRole("link", {
+        name: "Word Reminders",
+      });
+      await wordRemindersLink.click();
+
+      const autoWordReminderHeading = page.getByRole("heading", {
+        name: "Auto Word Reminder",
+        exact: true,
       });
       const wordReminderDetails = page.getByText("More Word Reminder Details");
       await expect(autoWordReminderHeading).toBeVisible();
@@ -69,17 +129,18 @@ test.describe("Word Reminder page", () => {
       });
       await createAutoWordReminderButton.click();
       const reminder = page.getByLabel("Reminder", { exact: true });
-      await reminder.fill("* * * * *"); // every minute
       const weeks = page.getByLabel("Weeks");
-      await weeks.fill("1");
       const wordCount = page.getByLabel("Word Count");
-      await wordCount.fill("7");
       const createNow = page.getByLabel("Create Now");
-      await createNow.click(); // clicking sets create now to false
       const createButton = page.getByRole("button", {
         name: "Create",
         exact: true,
       });
+
+      await reminder.fill("* * * * *"); // every minute
+      await weeks.fill("1");
+      await wordCount.fill("7");
+      await createNow.click(); // clicking sets create now to false
       await createButton.click();
 
       const autoWordReminderHeading = page.getByRole("heading", {
@@ -98,26 +159,27 @@ test.describe("Word Reminder page", () => {
         name: "Create Auto Word Reminder",
         exact: true,
       });
-      await createAutoWordReminderButton.click();
       const reminder = page.getByLabel("Reminder", { exact: true });
-      await reminder.fill("* * * * *"); // every minute
       const weeks = page.getByLabel("Weeks");
-      await weeks.fill("1");
       const wordCount = page.getByLabel("Word Count");
-      await wordCount.fill("7");
-      const createNow = page.getByLabel("Create Now");
-      await createNow.click();
       const createButton = page.getByRole("button", {
         name: "Create",
         exact: true,
       });
+      await createAutoWordReminderButton.click();
+      await reminder.fill("* * * * *"); // every minute
+      await weeks.fill("1");
+      await wordCount.fill("7");
+      await page.getByLabel("Create Now").click(); // clicking sets create now to false
       await createButton.click();
+
       const updateButton = page.getByRole("button", {
         name: "Update",
         exact: true,
       });
       await updateButton.click();
       await page.getByLabel("Word Count").fill("8");
+      await page.getByLabel("Create Now").click(); // clicking sets create now to false
       const modalUpdateButton = page
         .getByRole("button", {
           name: "Update",
@@ -139,20 +201,21 @@ test.describe("Word Reminder page", () => {
         name: "Create Auto Word Reminder",
         exact: true,
       });
-      await createAutoWordReminderButton.click();
       const reminder = page.getByLabel("Reminder", { exact: true });
-      await reminder.fill("* * * * *"); // every minute
       const weeks = page.getByLabel("Weeks");
-      await weeks.fill("1");
       const wordCount = page.getByLabel("Word Count");
-      await wordCount.fill("7");
       const createNow = page.getByLabel("Create Now");
-      await createNow.click();
       const createButton = page.getByRole("button", {
         name: "Create",
         exact: true,
       });
+      await createAutoWordReminderButton.click();
+      await reminder.fill("* * * * *"); // every minute
+      await weeks.fill("1");
+      await wordCount.fill("7");
+      await createNow.click(); // clicking sets create now to false
       await createButton.click();
+
       const deleteButton = page.getByRole("button", {
         name: "Delete",
         exact: true,
@@ -182,29 +245,82 @@ test.describe("Word Reminder page", () => {
         name: "Create Auto Word Reminder",
         exact: true,
       });
-      await createAutoWordReminderButton.click();
       const reminder = page.getByLabel("Reminder", { exact: true });
-      await reminder.fill("* * * * *"); // every minute
-      const weeks = page.getByLabel("Minutes");
-      await weeks.fill("1");
+      const minutes = page.getByLabel("Minutes");
       const wordCount = page.getByLabel("Word Count");
-      await wordCount.fill("7");
       const createNow = page.getByLabel("Create Now");
-      await createNow.click(); // clicking sets create now to false
       const createButton = page.getByRole("button", {
         name: "Create",
         exact: true,
       });
+
+      await createAutoWordReminderButton.click();
+      await reminder.fill("* * * * *"); // every minute
+      await minutes.fill("1");
+      await wordCount.fill("7");
+      await createNow.click(); // clicking sets create now to false
       await createButton.click();
 
-      await page.waitForTimeout(70000); // wait 70 seconds to prevent flakiness and race conditions
+      await page.waitForTimeout(70_000); // 1 minute and change to prevent flakiness
       await goto(page, extensionId);
       const wordRemindersLink = page.getByRole("link", {
         name: "Word Reminders",
       });
       await wordRemindersLink.click();
 
-      const wordReminderDetails = page.getByText("More Word Reminder Details");
+      const wordReminderDetails = page.getByRole("link", {
+        name: "More Word Reminder Details",
+      });
+      await expect(wordReminderDetails).toBeVisible();
+    });
+
+    test("that a word reminder is updated based on the duration (every minute) when the user chooses not to create a word reminder immediately", async ({
+      page,
+      extensionId,
+    }) => {
+      const createAutoWordReminderButton = page.getByRole("button", {
+        name: "Create Auto Word Reminder",
+        exact: true,
+      });
+      const reminder = page.getByLabel("Reminder", { exact: true });
+      const minutes = page.getByLabel("Minutes");
+      const wordCount = page.getByLabel("Word Count");
+      const createButton = page.getByRole("button", {
+        name: "Create",
+        exact: true,
+      });
+      await createAutoWordReminderButton.click();
+      await reminder.fill("* * * * *"); // every minute
+      await minutes.fill("2");
+      await wordCount.fill("7");
+      await page.getByLabel("Create Now").click(); // clicking sets create now to false
+      await createButton.click();
+
+      const updateButton = page.getByRole("button", {
+        name: "Update",
+        exact: true,
+      });
+      await updateButton.click();
+      await page.getByLabel("Minutes", { exact: true }).fill("1");
+      await page.getByLabel("Create Now").click(); // clicking sets create now to false
+      const modalUpdateButton = page
+        .getByRole("button", {
+          name: "Update",
+          exact: true,
+        })
+        .last();
+      await modalUpdateButton.click();
+
+      await page.waitForTimeout(70_000); // 1 minute and change to prevent flakiness
+      await goto(page, extensionId);
+      const wordRemindersLink = page.getByRole("link", {
+        name: "Word Reminders",
+      });
+      await wordRemindersLink.click();
+
+      const wordReminderDetails = page.getByRole("link", {
+        name: "More Word Reminder Details",
+      });
       await expect(wordReminderDetails).toBeVisible();
     });
   });

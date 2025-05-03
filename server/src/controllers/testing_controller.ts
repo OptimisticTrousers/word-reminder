@@ -22,5 +22,9 @@ export const reset_database = asyncHandler(async (_req, res) => {
 
   await boss.clearStorage();
 
+  await boss.stop({ close: false, graceful: false, wait: false }); // need to stop to stop workers
+
+  await boss.start();
+
   res.status(204).end();
 });

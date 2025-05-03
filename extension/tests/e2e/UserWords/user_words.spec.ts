@@ -108,7 +108,7 @@ test.describe("User Words page", () => {
     await expect(word2).toBeVisible();
   });
 
-  test("that a user word can be a deleted", async ({ page }) => {
+  test("that a user word can be deleted", async ({ page }) => {
     const response = await loginWith(page, testUser.email, testUser.password);
     const json = await response.json();
     const user = json.user;
@@ -136,7 +136,9 @@ test.describe("User Words page", () => {
       .last();
     await modalDeleteButton.click();
 
-    const userWordDetails = page.getByText("More Word Reminder Details");
-    await expect(userWordDetails).not.toBeVisible();
+    const userWordWord = page.getByRole("heading", {
+      name: word,
+    });
+    await expect(userWordWord).not.toBeVisible();
   });
 });

@@ -56,43 +56,6 @@ describe("wordReminderQueries", () => {
     });
   });
 
-  describe("deactivate", () => {
-    it("inactives the active word reminder", async () => {
-      await userQueries.create(userParams);
-
-      await wordReminderQueries.create(wordReminderParams);
-      const wordReminder = await wordReminderQueries.deactivate();
-
-      const createdAtTimestamp = new Date(wordReminder.created_at).getTime();
-      const updatedAtTimestamp = new Date(wordReminder.updated_at).getTime();
-      const nowTimestamp = Date.now();
-      expect(wordReminder).toEqual({
-        id: wordReminderId,
-        user_id: wordReminderParams.user_id,
-        is_active: !wordReminderParams.is_active,
-        reminder: wordReminderParams.reminder,
-        has_reminder_onload: wordReminderParams.has_reminder_onload,
-        finish: wordReminderParams.finish,
-        created_at: expect.any(Date),
-        updated_at: expect.any(Date),
-      });
-      expect(Math.abs(createdAtTimestamp - nowTimestamp)).toBeLessThan(1000);
-      expect(Math.abs(updatedAtTimestamp - nowTimestamp)).toBeLessThan(1000);
-    });
-
-    it("does not activate the active word reminders when no active word reminder is present", async () => {
-      await userQueries.create(userParams);
-
-      await wordReminderQueries.create({
-        ...wordReminderParams,
-        is_active: false,
-      });
-      const wordReminder = await wordReminderQueries.deactivate();
-
-      expect(wordReminder).toBeUndefined();
-    });
-  });
-
   describe("deleteByUserId", () => {
     it("deletes all of the user's word reminders", async () => {
       await userQueries.create(userParams);
