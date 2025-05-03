@@ -33,7 +33,8 @@ describe("triggerWebPushMsg", () => {
         auth: subscription1.auth,
         userId: subscription1.userId,
       },
-      words
+      words,
+      { TTL: 172800 } // 2 days
     );
 
     expect(mockSendNotification).toHaveBeenCalledTimes(1);
@@ -42,7 +43,8 @@ describe("triggerWebPushMsg", () => {
         endpoint: subscription1.endpoint,
         keys: { p256dh: subscription1.p256dh, auth: subscription1.auth },
       },
-      words
+      words,
+      { TTL: 172800 } // 2 days
     );
     expect(mockDeleteById).not.toHaveBeenCalled();
   });
@@ -67,7 +69,8 @@ describe("triggerWebPushMsg", () => {
         auth: subscription1.auth,
         userId: subscription1.userId,
       },
-      words
+      words,
+      { TTL: 172800 } // 2 days
     );
 
     expect(mockSendNotification).toHaveBeenCalledTimes(1);
@@ -76,7 +79,8 @@ describe("triggerWebPushMsg", () => {
         endpoint: subscription1.endpoint,
         keys: { p256dh: subscription1.p256dh, auth: subscription1.auth },
       },
-      words
+      words,
+      { TTL: 172800 } // 2 days
     );
     expect(mockDeleteById).toHaveBeenCalledTimes(1);
     expect(mockDeleteById).toHaveBeenCalledWith(subscription1.id);

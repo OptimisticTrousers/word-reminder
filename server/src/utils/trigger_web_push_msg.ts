@@ -5,7 +5,8 @@ import { subscriptionQueries } from "../db/subscription_queries";
 
 export async function triggerWebPushMsg(
   subscription: Subscription,
-  dataToSend: string | Buffer | null
+  dataToSend: string | Buffer | null,
+  options: webpush.RequestOptions
 ): Promise<void> {
   try {
     await webpush.sendNotification(
@@ -16,7 +17,8 @@ export async function triggerWebPushMsg(
           auth: subscription.auth,
         },
       },
-      dataToSend
+      dataToSend,
+      options
     );
   } catch (error: any) {
     if (error.statusCode === 410) {

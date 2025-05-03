@@ -717,7 +717,7 @@ describe("createQueue", () => {
         expect(mockTriggerWebPushMsg).not.toHaveBeenCalled();
       });
 
-      it("sends web push notification", async () => {
+      it("sends web push notification with 2 days TTL when user wants to see the reminder when they load their browser", async () => {
         const queuePostfix = "word-reminder-queue";
         const app = express();
         app.use(express.json());
@@ -753,7 +753,11 @@ describe("createQueue", () => {
           });
         const mockWordRemindersGetById = jest
           .spyOn(wordReminderQueries, "getById")
-          .mockResolvedValue({ ...wordReminder, finish: new Date(1000) });
+          .mockResolvedValue({
+            ...wordReminder,
+            has_reminder_onload: true,
+            finish: new Date(1000),
+          });
         const mockComplete = jest
           .spyOn(boss, "complete")
           .mockImplementation(jest.fn());
@@ -815,7 +819,115 @@ describe("createQueue", () => {
           JSON.stringify({
             id: wordReminder.id,
             words: `${word1.details[0].word}, ${word2.details[0].word}`,
-          })
+          }),
+          { TTL: 172800 }
+        );
+      });
+
+      it("sends web push notification with 0 seconds TTL when the user does not want to see queued notifications", async () => {
+        const queuePostfix = "word-reminder-queue";
+        const app = express();
+        app.use(express.json());
+        app.post(
+          "/api/users/:userId/wordReminders/:wordReminderId",
+          async (req, res) => {
+            await createQueue(
+              res.locals as Locals & { queueName: string },
+              userId,
+              queuePostfix
+            );
+            res.status(200).json({ queueName: res.locals.queueName });
+          }
+        );
+        const mockCreateQueue = jest
+          .spyOn(boss, "createQueue")
+          .mockImplementation(jest.fn());
+        let capturedCallback: any;
+        const jobId = "1";
+        const mockWork = jest
+          .spyOn(boss, "work")
+          .mockImplementation(async (queueName, callback) => {
+            capturedCallback = callback;
+            capturedCallback([
+              {
+                data: {
+                  word_reminder_id: wordReminder.id,
+                },
+                id: jobId,
+              },
+            ]);
+            return "";
+          });
+        const mockWordRemindersGetById = jest
+          .spyOn(wordReminderQueries, "getById")
+          .mockResolvedValue({
+            ...wordReminder,
+            has_reminder_onload: false,
+            finish: new Date(1000),
+          });
+        const mockComplete = jest
+          .spyOn(boss, "complete")
+          .mockImplementation(jest.fn());
+        const mockWordReminderUpdateById = jest
+          .spyOn(wordReminderQueries, "updateById")
+          .mockResolvedValue(wordReminder);
+        const mockUserWordsWordReminderGetByWordReminderId = jest
+          .spyOn(userWordsWordRemindersQueries, "getByWordReminderId")
+          .mockResolvedValue({
+            ...wordReminder,
+            user_words: [
+              {
+                details: word1.details,
+                learned: userWord1.learned,
+              },
+              {
+                details: word2.details,
+                learned: userWord2.learned,
+              },
+            ],
+          });
+        const mockSubscriptionQueriesGetByUserId = jest
+          .spyOn(subscriptionQueries, "getByUserId")
+          .mockResolvedValue(subscription1);
+        const mockTriggerWebPushMsg = jest
+          .spyOn(triggerWebPush, "triggerWebPushMsg")
+          .mockImplementation(jest.fn());
+        jest.spyOn(global.Date, "now").mockImplementation(() => {
+          return new Date(0).valueOf();
+        });
+
+        const response = await request(app)
+          .post(`/api/users/${userId}/wordReminders/${wordReminder.id}`)
+          .set("Accept", "application/json");
+
+        const queueName = `${userId}-${queuePostfix}`;
+        expect(response.headers["content-type"]).toMatch(/json/);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ queueName });
+        expect(mockCreateQueue).toHaveBeenCalledTimes(1);
+        expect(mockCreateQueue).toHaveBeenCalledWith(queueName);
+        expect(mockWork).toHaveBeenCalledTimes(1);
+        expect(mockWork).toHaveBeenCalledWith(queueName, capturedCallback);
+        expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
+        expect(mockWordRemindersGetById).toHaveBeenCalledWith(wordReminder.id);
+        expect(mockComplete).not.toHaveBeenCalled();
+        expect(mockWordReminderUpdateById).not.toHaveBeenCalled();
+        expect(
+          mockUserWordsWordReminderGetByWordReminderId
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          mockUserWordsWordReminderGetByWordReminderId
+        ).toHaveBeenCalledWith(wordReminder.id);
+        expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledTimes(1);
+        expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledWith(userId);
+        expect(mockTriggerWebPushMsg).toHaveBeenCalledTimes(1);
+        expect(mockTriggerWebPushMsg).toHaveBeenCalledWith(
+          subscription1,
+          JSON.stringify({
+            id: wordReminder.id,
+            words: `${word1.details[0].word}, ${word2.details[0].word}`,
+          }),
+          { TTL: 0 }
         );
       });
     });

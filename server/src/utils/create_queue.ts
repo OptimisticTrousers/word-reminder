@@ -148,7 +148,10 @@ export async function createQueue(
           const subscription = await subscriptionQueries.getByUserId(
             Number(wordReminder.user_id)
           );
-          await triggerWebPushMsg(subscription, JSON.stringify(data));
+          const twoDaysMs = 172800;
+          await triggerWebPushMsg(subscription, JSON.stringify(data), {
+            TTL: wordReminder.has_reminder_onload ? twoDaysMs : 0, // 2 days if the user wants to see the notification once they open their browser and 0 if they never want to see it if their browser is closed
+          });
         }
       }
     );
