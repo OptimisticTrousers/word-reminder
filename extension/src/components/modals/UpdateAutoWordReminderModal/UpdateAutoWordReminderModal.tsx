@@ -67,16 +67,14 @@ export const UpdateAutoWordReminderModal = CSSModules(
         autoWordReminderId: String(autoWordReminder.id),
         body: {
           reminder: formData.get("reminder") as string,
-          create_now: Boolean(formData.get("create_now") as string),
+          create_now: (formData.get("create_now") as string) === "on",
           duration: unitsToMs(time),
           word_count: Number(formData.get("word_count") as string),
-          is_active: Boolean(formData.get("is_active") as string),
-          has_reminder_onload: Boolean(
-            formData.get("has_reminder_onload") as string
-          ),
-          has_learned_words: Boolean(
-            formData.get("has_learned_words") as string
-          ),
+          is_active: (formData.get("is_active") as string) === "on",
+          has_reminder_onload:
+            (formData.get("has_reminder_onload") as string) === "on",
+          has_learned_words:
+            (formData.get("has_learned_words") as string) === "on",
           sort_mode: formData.get("sort_mode") as SortMode,
         },
       });

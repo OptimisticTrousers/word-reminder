@@ -42,12 +42,7 @@ export const UpdateWordReminderModal = CSSModules(
       },
       throwOnError: true,
     });
-    const {
-      isPending,
-      status,
-      data: bob,
-      mutate,
-    } = useMutation({
+    const { isPending, mutate } = useMutation({
       mutationFn: wordReminderService.updateWordReminder,
       onSuccess: () => {
         showNotification(
@@ -63,8 +58,6 @@ export const UpdateWordReminderModal = CSSModules(
         toggleModal();
       },
     });
-
-    console.log(status, bob);
 
     function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
       setReminder(event.target.value);
@@ -99,10 +92,9 @@ export const UpdateWordReminderModal = CSSModules(
         body: {
           reminder: formData.get("reminder") as string,
           finish: new Date(formData.get("finish") as string),
-          is_active: Boolean(formData.get("is_active") as string),
-          has_reminder_onload: Boolean(
-            formData.get("has_reminder_onload") as string
-          ),
+          is_active: (formData.get("is_active") as string) === "on",
+          has_reminder_onload:
+            (formData.get("has_reminder_onload") as string) === "on",
           user_words: userWordsData,
         },
       });
