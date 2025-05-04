@@ -151,16 +151,14 @@ describe("userWordQueries", () => {
     it("changes the learned property on the user word to true", async () => {
       const newWord = await wordQueries.create({ json });
       const newUser = await userQueries.create(userParams);
-      await userWordQueries.create({
+      const newUserWord = await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord.id,
         learned: false,
       });
 
       // Set the 'learned' property to true since it is false by default
-      const userWord = await userWordQueries.setLearned({
-        user_id: newUser!.id,
-        word_id: newWord.id,
+      const userWord = await userWordQueries.setLearned(newUserWord.id, {
         learned: true,
       });
 
@@ -182,16 +180,14 @@ describe("userWordQueries", () => {
     it("changes the learned property on the user word to false if already set to true", async () => {
       const newWord = await wordQueries.create({ json });
       const newUser = await userQueries.create(userParams);
-      await userWordQueries.create({
+      const newUserWord = await userWordQueries.create({
         user_id: newUser!.id,
         word_id: newWord.id,
         learned: true,
       });
 
       // Set the 'learned' property to true since it is false by default
-      const userWord = await userWordQueries.setLearned({
-        user_id: newUser!.id,
-        word_id: newWord.id,
+      const userWord = await userWordQueries.setLearned(newUserWord.id, {
         learned: false,
       });
 

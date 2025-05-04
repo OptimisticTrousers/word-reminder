@@ -1,7 +1,7 @@
 import { service, Params } from "../service";
 
 export const userWordService = (function (service) {
-  const { get, post, remove, VITE_API_DOMAIN } = service;
+  const { get, post, put, remove, VITE_API_DOMAIN } = service;
 
   function getUserWordList({
     userId,
@@ -46,6 +46,30 @@ export const userWordService = (function (service) {
     });
   }
 
+  function updateUserWord({
+    userId,
+    userWordId,
+    body,
+  }: {
+    userId: string;
+    userWordId: string;
+    body: {
+      learned: boolean;
+    };
+  }) {
+    return put({
+      url: `${VITE_API_DOMAIN}/users/${userId}/userWords/${userWordId}`,
+      options: {
+        body: JSON.stringify(body),
+        credentials: "include",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    });
+  }
+
   function deleteUserWord({
     userId,
     userWordId,
@@ -59,5 +83,11 @@ export const userWordService = (function (service) {
     });
   }
 
-  return { getUserWordList, getUserWord, createUserWord, deleteUserWord };
+  return {
+    getUserWordList,
+    getUserWord,
+    createUserWord,
+    updateUserWord,
+    deleteUserWord,
+  };
 })(service);

@@ -143,6 +143,38 @@ describe("wordService", () => {
     });
   });
 
+  describe("updateUserWord", () => {
+    it("deletes using the correct API endpoint", async () => {
+      const mockPut = vi.spyOn(service, "put").mockImplementation(async () => {
+        return { json, status };
+      });
+
+      const body = { learned: false };
+      const response = await userWordService.updateUserWord({
+        userId,
+        userWordId,
+        body,
+      });
+
+      expect(mockPut).toHaveBeenCalledTimes(1);
+      expect(mockPut).toHaveBeenCalledWith({
+        url: `${VITE_API_DOMAIN}/users/${userId}/userWords/${userWordId}`,
+        options: {
+          body: JSON.stringify(body),
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "cors",
+        },
+      });
+      expect(response).toEqual({
+        json,
+        status,
+      });
+    });
+  });
+
   describe("deleteUserWord", () => {
     it("deletes using the correct API endpoint", async () => {
       const mockRemove = vi

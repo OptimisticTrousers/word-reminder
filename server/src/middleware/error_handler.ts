@@ -10,6 +10,7 @@ export const errorHandler: ErrorRequestHandler = (
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
+  console.log(err);
   res.status(err.status || 500).json({
     message: err.message || "Internal Server Error.",
     stack: err.stack,

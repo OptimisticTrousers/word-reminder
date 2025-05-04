@@ -7,14 +7,14 @@ export const validateOptions = [
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'has_reminder_onload' must be specified.")
     .bail()
-    .isBoolean()
+    .isBoolean({ loose: false })
     .toBoolean()
     .withMessage("'has_reminder_onload' must be a boolean."),
   body("is_active")
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'is_active' must be specified.")
     .bail()
-    .isBoolean()
+    .isBoolean({ loose: false })
     .toBoolean()
     .withMessage("'is_active' must be a boolean."),
   body("reminder")
@@ -56,7 +56,7 @@ export const validateAutoWordReminder = [
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'create_now' must be specified.")
     .bail()
-    .isBoolean()
+    .isBoolean({ loose: false })
     .toBoolean()
     .withMessage("'create_now' must be a boolean."),
   body("duration")
@@ -70,7 +70,7 @@ export const validateAutoWordReminder = [
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'has_learned_words' must be specified.")
     .bail()
-    .isBoolean()
+    .isBoolean({ loose: false })
     .toBoolean()
     .withMessage("'has_learned_words' must be a boolean."),
   body("sort_mode")

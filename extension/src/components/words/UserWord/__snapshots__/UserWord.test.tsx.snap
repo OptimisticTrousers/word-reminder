@@ -23,14 +23,14 @@ exports[`UserWord component > it opens the accordion 1`] = `
       >
         Updated At: 12/17/1995, 3:24:00 AM
       </p>
-      <p
-        class="_word__name_a41cd7"
-      >
-        Learned: 
-      </p>
       <div
         class="_word__divider_a41cd7"
       />
+      <p
+        class="_word__name_a41cd7"
+      >
+        Learned: No
+      </p>
       <div
         class="_word__buttons_a41cd7"
       >
@@ -67,6 +67,24 @@ exports[`UserWord component > it opens the accordion 1`] = `
             />
           </svg>
         </button>
+        <form
+          class="_word__form_a41cd7"
+        >
+          <input
+            class="_word__input_a41cd7 _word__input--checkbox_a41cd7"
+            id="learned"
+            name="learned"
+            required=""
+            type="hidden"
+            value="true"
+          />
+          <button
+            class="_word__button_a41cd7 _word__button--learned_a41cd7"
+            type="submit"
+          >
+            Toggle Learned
+          </button>
+        </form>
         <button
           aria-haspopup="true"
           aria-label="Open delete user word modal"

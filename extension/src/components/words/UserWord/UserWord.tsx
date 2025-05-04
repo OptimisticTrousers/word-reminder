@@ -1,12 +1,15 @@
-import { Detail } from "common";
+import { Detail, User } from "common";
 import { Info, Trash } from "lucide-react";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import CSSModules from "react-css-modules";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 
 import { DeleteUserWordModal } from "../../modals/DeleteUserWordModal";
 import { CondensedWord } from "../CondensedWord";
 import styles from "./UserWord.module.css";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { userWordService } from "../../../services/user_word_service";
+import { useNotificationError } from "../../../hooks/useNotificationError";
 
 export const UserWord = CSSModules(
   function ({
@@ -25,6 +28,21 @@ export const UserWord = CSSModules(
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+    const queryClient = useQueryClient();
+    const { user }: { user: User } = useOutletContext();
+    const userId = String(user.id);
+    const { showNotificationError } = useNotificationError();
+
+    const { isPending, mutate } = useMutation({
+      mutationFn: userWordService.updateUserWord,
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["userWords"],
+        });
+      },
+      onError: showNotificationError,
+    });
+
     const toggleAccordion = () => {
       setIsAccordionOpen((prevValue) => !prevValue);
     };
@@ -32,6 +50,20 @@ export const UserWord = CSSModules(
     function toggleDeleteModal() {
       setIsDeleteModalOpen((prevIsDeleteModalOpen) => !prevIsDeleteModalOpen);
     }
+
+    function handleLearned(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      mutate({
+        userId,
+        userWordId: String(id),
+        body: {
+          learned: (formData.get("learned") as string) === "true",
+        },
+      });
+    }
+
+    const disabled = isPending;
 
     return (
       <>
@@ -44,8 +76,8 @@ export const UserWord = CSSModules(
             <p styleName="word__name">
               Updated At: {updated_at.toLocaleString()}
             </p>
-            <p styleName="word__name">Learned: {learned}</p>
             <div styleName="word__divider"></div>
+            <p styleName="word__name">Learned: {learned ? "Yes" : "No"}</p>
             <div styleName="word__buttons">
               <button
                 id="accordion-button"
@@ -58,6 +90,23 @@ export const UserWord = CSSModules(
               >
                 <Info styleName="word__icon" />
               </button>
+              <form styleName="word__form" onSubmit={handleLearned}>
+                <input
+                  styleName="word__input word__input--checkbox"
+                  type="hidden"
+                  id="learned"
+                  name="learned"
+                  required
+                  defaultValue={String(!learned)}
+                />
+                <button
+                  styleName="word__button word__button--learned"
+                  type="submit"
+                  disabled={disabled}
+                >
+                  {disabled ? "Toggling Learned..." : "Toggle Learned"}
+                </button>
+              </form>
               <button
                 styleName="word__delete word__button--delete"
                 onClick={toggleDeleteModal}

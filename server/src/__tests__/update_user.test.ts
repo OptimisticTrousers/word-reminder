@@ -1,14 +1,10 @@
-import bcrypt from "bcryptjs";
 import express from "express";
 import path from "path";
 import request from "supertest";
 
-import { variables } from "../config/variables";
 import { update_user } from "../controllers/user_controller";
 import { userQueries } from "../db/user_queries";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
-
-const { SALT } = variables;
 
 jest.mock("../utils/email_does_not_exist", () => ({
   emailDoesNotExist: jest.fn().mockResolvedValue(true),

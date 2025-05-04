@@ -207,24 +207,22 @@ export const userWordQueries = (function () {
     return rows;
   };
 
-  const setLearned = async ({
-    user_id,
-    word_id,
-    learned,
-  }: {
-    user_id: number;
-    word_id: number;
-    learned: boolean;
-  }) => {
+  const setLearned = async (
+    id: number,
+    {
+      learned,
+    }: {
+      learned: boolean;
+    }
+  ) => {
     const { rows }: QueryResult<UserWord> = await db.query(
       `
     UPDATE ${table}
-    SET learned = $1
-    WHERE user_id = $2
-    AND word_id = $3
+    SET learned = $2
+    WHERE id = $1
     RETURNING ${columns};
       `,
-      [learned, user_id, word_id]
+      [id, learned]
     );
 
     return rows[0];

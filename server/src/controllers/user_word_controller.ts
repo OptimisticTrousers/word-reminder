@@ -198,6 +198,20 @@ export const create_user_word = [
   }),
 ];
 
+// @desc Updates a user word
+// @route PUT /api/users/:userId/userWords/:userWordId
+// @access Private
+export const update_user_word = asyncHandler(async (req, res) => {
+  const userWordId = Number(req.params.userWordId);
+  const { learned } = req.body;
+
+  const userWord = await userWordQueries.setLearned(userWordId, {
+    learned,
+  });
+
+  res.status(200).json({ userWord });
+});
+
 // @desc    Delete single user word
 // @route   DELETE /api/users/:userId/userWords/:userWordId
 // @access  Private
@@ -229,7 +243,7 @@ export const get_user_word = asyncHandler(async (req, res) => {
 export const user_word_list = [
   query("learned")
     .optional({ values: "falsy" })
-    .isBoolean()
+    .isBoolean({ loose: false })
     .toBoolean()
     .withMessage("'learned' must be a boolean."),
   query("search")

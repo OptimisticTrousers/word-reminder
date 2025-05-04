@@ -11,21 +11,23 @@ import {
 import { Play, Trash } from "lucide-react";
 import CSSModules from "react-css-modules";
 import { Link, useOutletContext, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Loading } from "../../components/ui/Loading";
 import { Error500 } from "../Error500";
 import { userWordService } from "../../services/user_word_service";
 import styles from "./UserWord.module.css";
 import { ImageCarousel } from "../../components/ui/ImageCarousel";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { DeleteUserWordModal } from "../../components/modals/DeleteUserWordModal";
+import { useNotificationError } from "../../hooks/useNotificationError";
 
 export const UserWord = CSSModules(
   function () {
     const { user }: { user: User } = useOutletContext();
     const { userWordId } = useParams();
     const userId = String(user.id);
+    const queryClient = useQueryClient();
 
     const { data, isLoading, failureReason } = useQuery({
       queryKey: ["userWords", userWordId],
@@ -37,6 +39,31 @@ export const UserWord = CSSModules(
       },
     });
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const { showNotificationError } = useNotificationError();
+
+    const { isPending, mutate } = useMutation({
+      mutationFn: userWordService.updateUserWord,
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["userWords"],
+        });
+      },
+      onError: showNotificationError,
+    });
+
+    function handleLearned(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      mutate({
+        userId,
+        userWordId: String(userWordId),
+        body: {
+          learned: (formData.get("learned") as string) === "true",
+        },
+      });
+    }
+
+    const disabled = isPending;
 
     if (failureReason) {
       return <Error500 message={failureReason.message} />;
@@ -83,6 +110,23 @@ export const UserWord = CSSModules(
           }
           {<ImageCarousel images={images} />}
           <div styleName="word__buttons">
+            <form styleName="word__form" onSubmit={handleLearned}>
+              <input
+                styleName="word__input word__input--hidden"
+                type="hidden"
+                id="learned"
+                name="learned"
+                required
+                defaultValue={String(!userWord.learned)}
+              />
+              <button
+                styleName="word__button word__button--learned"
+                type="submit"
+                disabled={disabled}
+              >
+                {disabled ? "Toggling Learned..." : "Toggle Learned"}
+              </button>
+            </form>
             <button
               styleName="word__delete word__button--delete"
               onClick={toggleDeleteModal}
