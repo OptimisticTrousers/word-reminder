@@ -237,7 +237,7 @@ test.describe("Word Reminder page", () => {
       await expect(autoWordReminderHeading).not.toBeVisible();
     });
 
-    test("that a word reminder is created based on the duration (every minute) when the user chooses not to create a word reminder immediately", async ({
+    test("that a word reminder is created based on the duration (every minute) when the user chooses not to create a word reminder immediately while creating", async ({
       page,
       extensionId,
     }) => {
@@ -274,7 +274,7 @@ test.describe("Word Reminder page", () => {
       await expect(wordReminderDetails).toBeVisible();
     });
 
-    test("that a word reminder is updated based on the duration (every minute) when the user chooses not to create a word reminder immediately", async ({
+    test("that a word reminder is created based on the duration (every minute) when the user chooses not to create a word reminder immediately while updating", async ({
       page,
       extensionId,
     }) => {

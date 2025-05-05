@@ -70,15 +70,7 @@ describe("create_auto_word_reminder", () => {
     expect(mockSendAfter).toHaveBeenCalledWith(
       queueName,
       {
-        duration: autoWordReminderParams.duration,
-        has_learned_words: autoWordReminderParams.has_learned_words,
-        has_reminder_onload: autoWordReminderParams.has_reminder_onload,
-        is_active: autoWordReminderParams.is_active,
-        reminder: autoWordReminderParams.reminder,
-        sort_mode: autoWordReminderParams.sort_mode,
-        word_count: autoWordReminderParams.word_count,
-        userId: autoWordReminderParams.user_id,
-        create_now: true,
+        auto_word_reminder_id: autoWordReminder.id,
       },
       {},
       new Date(0)
@@ -119,15 +111,7 @@ describe("create_auto_word_reminder", () => {
     expect(mockSendAfter).toHaveBeenCalledWith(
       queueName,
       {
-        duration: autoWordReminderParams.duration,
-        has_learned_words: autoWordReminderParams.has_learned_words,
-        has_reminder_onload: autoWordReminderParams.has_reminder_onload,
-        is_active: autoWordReminderParams.is_active,
-        reminder: autoWordReminderParams.reminder,
-        sort_mode: autoWordReminderParams.sort_mode,
-        word_count: autoWordReminderParams.word_count,
-        userId: autoWordReminderParams.user_id,
-        create_now: false,
+        auto_word_reminder_id: autoWordReminder.id,
       },
       {},
       new Date(autoWordReminderParams.duration)

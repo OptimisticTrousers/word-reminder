@@ -33,10 +33,6 @@ describe("delete_auto_word_reminder", () => {
   const mockAutoWordReminderDeleteById = jest
     .spyOn(autoWordReminderQueries, "deleteById")
     .mockResolvedValue(autoWordReminder);
-  const mockOffWork = jest.spyOn(boss, "offWork").mockImplementation(jest.fn());
-  const mockUnschedule = jest
-    .spyOn(boss, "unschedule")
-    .mockImplementation(jest.fn());
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,7 +43,6 @@ describe("delete_auto_word_reminder", () => {
       `/api/users/${userId}/autoWordReminders/${autoWordReminderId}`
     );
 
-    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
@@ -61,9 +56,5 @@ describe("delete_auto_word_reminder", () => {
     expect(mockAutoWordReminderDeleteById).toHaveBeenCalledWith(
       autoWordReminderId
     );
-    expect(mockUnschedule).toHaveBeenCalledTimes(1);
-    expect(mockUnschedule).toHaveBeenCalledWith(queueName);
-    expect(mockOffWork).toHaveBeenCalledTimes(1);
-    expect(mockOffWork).toHaveBeenCalledWith(queueName);
   });
 });

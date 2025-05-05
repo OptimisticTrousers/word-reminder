@@ -39,15 +39,7 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
   await boss.sendAfter(
     queueName,
     {
-      create_now,
-      userId,
-      word_count,
-      has_learned_words,
-      has_reminder_onload,
-      sort_mode,
-      duration,
-      reminder,
-      is_active,
+      auto_word_reminder_id: autoWordReminder.id,
     },
     {},
     create_now ? new Date(Date.now()) : newAddToDuration
@@ -75,17 +67,11 @@ export const get_auto_word_reminder = asyncHandler(async (req, res) => {
 // @route POST /api/users/:userId/autoWordReminders/:autoWordReminderId
 // @access Private
 export const delete_auto_word_reminder = asyncHandler(async (req, res) => {
-  const userId = Number(req.params.userId);
   const autoWordReminderId = Number(req.params.autoWordReminderId);
 
   const deletedAutoWordReminder = await autoWordReminderQueries.deleteById(
     autoWordReminderId
   );
-
-  const queueName = `${userId}-${queuePostfix}`;
-
-  await boss.unschedule(queueName);
-  await boss.offWork(queueName);
 
   res.status(200).json({
     autoWordReminder: deletedAutoWordReminder,
@@ -126,20 +112,10 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
 
   const newAddToDuration = new Date(Date.now() + duration);
 
-  await boss.purgeQueue(queueName);
-
   await boss.sendAfter(
     queueName,
     {
-      create_now,
-      userId,
-      word_count,
-      has_learned_words,
-      has_reminder_onload,
-      sort_mode,
-      duration,
-      reminder,
-      is_active,
+      auto_word_reminder_id: autoWordReminder.id,
     },
     {},
     create_now ? new Date(Date.now()) : newAddToDuration

@@ -5,22 +5,16 @@ import { boss } from "../db/boss";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 import { userWordQueries } from "../db/user_word_queries";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
-import { Detail, SortMode, Token, UserWord } from "common";
+import { Detail, Token, UserWord } from "common";
 import { subscriptionQueries } from "../db/subscription_queries";
 import { triggerWebPushMsg } from "./trigger_web_push_msg";
 import { wordQueries } from "../db/word_queries";
 import { tokenQueries } from "../db/token_queries";
+import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 
 interface AutoWordReminderJobData {
   create_now: boolean;
-  userId: number;
-  word_count: number;
-  has_learned_words: boolean;
-  has_reminder_onload: boolean;
-  sort_mode: SortMode;
-  duration: number;
-  reminder: string;
-  is_active: boolean;
+  auto_word_reminder_id: number;
 }
 
 interface WordReminderJobData {
@@ -40,9 +34,16 @@ export async function createQueue(
     await boss.work(
       queueName,
       async ([job]: PgBoss.Job<AutoWordReminderJobData>[]) => {
+        const { auto_word_reminder_id } = job.data;
+        const autoWordReminder = await autoWordReminderQueries.getById(
+          auto_word_reminder_id
+        );
+        if (!autoWordReminder) {
+          await boss.complete(queueName, job.id);
+          return;
+        }
         const {
-          create_now,
-          userId,
+          user_id,
           word_count,
           has_learned_words,
           has_reminder_onload,
@@ -50,18 +51,18 @@ export async function createQueue(
           duration,
           reminder,
           is_active,
-        } = job.data;
+        } = autoWordReminder;
+
+        const newAddToDuration = new Date(Date.now() + duration);
         // the created words by duration will be one week long with seven words to match Miller's Law of words that the human mind can remember
         const randomUserWords = await userWordQueries.getUserWords({
-          user_id: userId,
+          user_id,
           word_count,
           has_learned_words,
           sort_mode,
         });
-        const newAddToDuration = new Date(Date.now() + duration);
-
         const wordReminder = await wordReminderQueries.create({
-          user_id: Number(userId),
+          user_id: Number(user_id),
           is_active: is_active,
           has_reminder_onload: has_reminder_onload,
           finish: newAddToDuration,
@@ -84,9 +85,9 @@ export async function createQueue(
 
         const words: string[] = await Promise.all(wordPromises);
 
-        await boss.schedule(`${userId}-${queuePostfix}`, reminder, {
+        await boss.schedule(`${user_id}-${queuePostfix}`, reminder, {
           word_reminder_id: wordReminder.id,
-          user_id: userId,
+          user_id,
           words,
           finish: newAddToDuration,
           has_reminder_onload,
@@ -96,15 +97,7 @@ export async function createQueue(
         await boss.sendAfter(
           queueName,
           {
-            create_now,
-            userId,
-            word_count,
-            has_learned_words,
-            has_reminder_onload,
-            sort_mode,
-            duration,
-            reminder,
-            is_active,
+            auto_word_reminder_id,
           },
           {},
           newAddToDuration
