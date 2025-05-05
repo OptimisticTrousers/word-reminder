@@ -218,10 +218,10 @@ describe("UserWords component", () => {
         });
         await user.click(addButton);
 
+        const userWordPage = await screen.findByTestId("user-word");
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
-        const userWordPage = screen.getByTestId("user-word");
         expect(userWordPage).toBeInTheDocument();
         expect(userWordPage).toHaveTextContent(String(userWord1.id));
         expect(mockWordServiceCreateWord).toHaveBeenCalledTimes(1);
@@ -364,10 +364,10 @@ describe("UserWords component", () => {
         });
         await user.click(addButton);
 
+        const userWordPage = await screen.findByTestId("user-word");
         const notification = screen.getByRole("dialog", {
           name: "You have successfully added a word to your dictionary.",
         });
-        const userWordPage = screen.getByTestId("user-word");
         expect(mockInvalidateQueries).toHaveBeenCalledTimes(1);
         expect(mockInvalidateQueries).toHaveBeenCalledWith({
           queryKey: ["userWords"],
