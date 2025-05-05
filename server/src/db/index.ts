@@ -152,22 +152,22 @@ export const createPopulateDb = function (client: Client) {
       END;
       $$ LANGUAGE plpgsql;
 
-      CREATE OR REPLACE TRIGGER set_timestamp
+      CREATE OR REPLACE TRIGGER set_timestamp_users
       BEFORE UPDATE ON users
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
 
-      CREATE OR REPLACE TRIGGER set_timestamp
+      CREATE OR REPLACE TRIGGER set_timestamp_user_words
       BEFORE UPDATE ON user_words
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
 
-      CREATE OR REPLACE TRIGGER set_timestamp
+      CREATE OR REPLACE TRIGGER set_timestamp_word_reminders
       BEFORE UPDATE ON word_reminders
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
 
-      CREATE OR REPLACE TRIGGER set_timestamp
+      CREATE OR REPLACE TRIGGER set_timestamp_auto_word_reminders
       BEFORE UPDATE ON auto_word_reminders
       FOR EACH ROW
       EXECUTE PROCEDURE trigger_set_timestamp();
