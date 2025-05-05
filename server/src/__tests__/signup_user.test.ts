@@ -1,12 +1,11 @@
 import bcrypt from "bcryptjs";
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import request from "supertest";
 
 import { signup_user } from "../controllers/user_controller";
 import { userQueries } from "../db/user_queries";
 import { variables } from "../config/variables";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
-import * as createQueueUtils from "../utils/create_queue";
 
 const { SALT } = variables;
 
@@ -35,9 +34,6 @@ describe("signup_user", () => {
     const mockCreateUser = jest
       .spyOn(userQueries, "create")
       .mockResolvedValue(user);
-    const mockCreateQueue = jest
-      .spyOn(createQueueUtils, "createQueue")
-      .mockImplementation(jest.fn());
 
     const response = await request(app)
       .post("/api/users")
@@ -62,17 +58,5 @@ describe("signup_user", () => {
       email: body.email,
       password: expect.any(String),
     });
-    expect(mockCreateQueue).toHaveBeenCalledTimes(3);
-    expect(mockCreateQueue).toHaveBeenCalledWith(
-      {},
-      user.id,
-      "auto-word-reminder-queue"
-    );
-    expect(mockCreateQueue).toHaveBeenCalledWith(
-      {},
-      user.id,
-      "word-reminder-queue"
-    );
-    expect(mockCreateQueue).toHaveBeenCalledWith({}, user.id, "email-queue");
   });
 });

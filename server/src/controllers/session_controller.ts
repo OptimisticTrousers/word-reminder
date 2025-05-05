@@ -1,11 +1,10 @@
 import { User } from "common";
-import { Request, Response, NextFunction, Locals } from "express";
+import { Request, Response, NextFunction } from "express";
 import { body } from "express-validator";
 import passport from "passport";
 
 import { EMAIL_MAX, PASSWORD_MAX } from "../db/user_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
-import { createQueue } from "../utils/create_queue";
 
 // @desc    Get the current user (public details)
 // @route   GET /api/sessions

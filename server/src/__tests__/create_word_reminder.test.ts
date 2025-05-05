@@ -95,7 +95,7 @@ describe("create_word_reminder", () => {
     user_word_id: userWord2.id,
   };
 
-  const queuePostfix = "word-reminder-queue";
+  const queueName = "word-reminder-queue";
 
   const app = express();
   app.use(express.json());
@@ -131,7 +131,6 @@ describe("create_word_reminder", () => {
       .set("Accept", "application/json")
       .send(body);
 
-    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
@@ -162,11 +161,6 @@ describe("create_word_reminder", () => {
       wordReminder.reminder,
       {
         word_reminder_id: wordReminder.id,
-        user_id: String(userId),
-        words: [word1.details[0].word, word2.details[0].word],
-        finish: wordReminder.finish.toISOString(),
-        has_reminder_onload: wordReminder.has_reminder_onload,
-        reminder: wordReminder.reminder,
       }
     );
   });

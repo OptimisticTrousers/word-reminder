@@ -2,7 +2,6 @@ import { query } from "express-validator";
 
 import { CustomBadRequestError } from "../errors/custom_bad_request_error";
 import { Column } from "common";
-import { errorValidationHandler } from "./error_validation_handler";
 
 export const validateSortQuery = [
   query("column")

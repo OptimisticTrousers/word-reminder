@@ -147,9 +147,7 @@ describe("login_user", () => {
     });
     const app = express();
     app.use(express.json());
-    let capturedLocals: any;
     app.use((req: Request, res: Response, next: NextFunction) => {
-      capturedLocals = res.locals;
       req.logIn = mockLogin;
       next();
     });

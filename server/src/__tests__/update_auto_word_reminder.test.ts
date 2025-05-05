@@ -25,7 +25,7 @@ const autoWordReminder = {
   updated_at: new Date(0),
 };
 
-const queuePostfix = "auto-word-reminder-queue";
+const queueName = "auto-word-reminder-queue";
 
 const app = express();
 app.use(express.json());
@@ -55,7 +55,6 @@ describe("update_auto_word_reminder", () => {
       .set("Accept", "application/json")
       .send({ ...autoWordReminderParams, create_now: true });
 
-    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
@@ -105,7 +104,6 @@ describe("update_auto_word_reminder", () => {
       .set("Accept", "application/json")
       .send({ ...autoWordReminderParams, create_now: false });
 
-    const queueName = `${userId}-${queuePostfix}`;
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({

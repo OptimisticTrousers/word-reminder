@@ -2,7 +2,6 @@ import express from "express";
 import request from "supertest";
 
 import { get_word_reminder } from "../controllers/word_reminder_controller";
-import { wordReminderQueries } from "../db/word_reminder_queries";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 
 const app = express();

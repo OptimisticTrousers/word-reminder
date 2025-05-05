@@ -13,6 +13,7 @@ import { errorHandler } from "./middleware/error_handler";
 import { apiRouter } from "./routes/api";
 import { viewRouter } from "./routes/views";
 import { webPush } from "./middleware/web_push";
+import { createWorkers } from "./middleware/create_workers";
 
 export const app = express();
 
@@ -31,6 +32,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(webPush);
+
+app.use(createWorkers);
 
 app.use(logger("dev"));
 

@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { boss } from "../db/boss";
 
-const queuePostfix = "auto-word-reminder-queue";
+const queueName = "auto-word-reminder-queue";
 
 // @desc Create a auto word reminder
 // @route POST /api/users/:userId/autoWordReminders
@@ -31,8 +31,6 @@ export const create_auto_word_reminder = asyncHandler(async (req, res) => {
     reminder,
     duration,
   });
-
-  const queueName = `${userId}-${queuePostfix}`;
 
   const newAddToDuration = new Date(Date.now() + duration);
 
@@ -107,8 +105,6 @@ export const update_auto_word_reminder = asyncHandler(async (req, res) => {
       duration,
     }
   );
-
-  const queueName = `${userId}-${queuePostfix}`;
 
   const newAddToDuration = new Date(Date.now() + duration);
 

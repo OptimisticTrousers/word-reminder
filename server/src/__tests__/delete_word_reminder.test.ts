@@ -5,16 +5,10 @@ import { delete_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 
-const queuePostfix = "word-reminder-queue";
 const app = express();
 app.use(express.json());
 app.delete(
   "/api/users/:userId/wordReminders/:wordReminderId",
-  (req, res, next) => {
-    const userId = req.params.userId;
-    res.locals.queueName = `${userId}-${queuePostfix}`;
-    next();
-  },
   delete_word_reminder
 );
 

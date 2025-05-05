@@ -9,7 +9,7 @@ import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { boss } from "../db/boss";
 import { Detail, UserWord } from "common";
 
-const queuePostfix = "word-reminder-queue";
+const queueName = "word-reminder-queue";
 
 // @desc Create a new word reminder
 // @route POST /api/users/:userId/wordReminders
@@ -27,27 +27,15 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
     reminder,
   });
 
-  const wordPromises: Promise<string>[] = user_words.map(
-    async (user_word: UserWord & { details: Detail[] }) => {
-      await userWordsWordRemindersQueries.create({
-        user_word_id: user_word.id,
-        word_reminder_id: wordReminder.id,
-      });
-      return user_word.details[0].word;
-    }
-  );
-
-  const words: string[] = await Promise.all(wordPromises);
-
-  const queueName = `${userId}-${queuePostfix}`;
+  user_words.forEach(async (user_word: UserWord & { details: Detail[] }) => {
+    await userWordsWordRemindersQueries.create({
+      user_word_id: user_word.id,
+      word_reminder_id: wordReminder.id,
+    });
+  });
 
   await boss.schedule(queueName, reminder, {
     word_reminder_id: wordReminder.id,
-    user_id: userId,
-    words,
-    finish,
-    has_reminder_onload,
-    reminder,
   });
 
   res.status(200).json({
