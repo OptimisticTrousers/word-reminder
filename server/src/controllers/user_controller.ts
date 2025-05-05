@@ -13,6 +13,8 @@ import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
 import { subscriptionQueries } from "../db/subscription_queries";
 import { boss } from "../db/boss";
+import { createQueue } from "../utils/create_queue";
+import { Locals } from "express";
 
 const { SALT } = variables;
 
@@ -98,6 +100,21 @@ export const signup_user = [
       email: req.body.email,
       password: hashedPassword,
     });
+    await createQueue(
+      res.locals as Locals & { queueName: string },
+      user!.id,
+      "auto-word-reminder-queue"
+    );
+    await createQueue(
+      res.locals as Locals & { queueName: string },
+      user!.id,
+      "word-reminder-queue"
+    );
+    await createQueue(
+      res.locals as Locals & { queueName: string },
+      user!.id,
+      "email-queue"
+    );
 
     res.status(200).json({ user });
   }),

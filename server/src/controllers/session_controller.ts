@@ -62,21 +62,6 @@ export const login_user = [
           if (err) {
             return next(err);
           }
-          await createQueue(
-            res.locals as Locals & { queueName: string },
-            user.id,
-            "auto-word-reminder-queue"
-          );
-          await createQueue(
-            res.locals as Locals & { queueName: string },
-            user.id,
-            "word-reminder-queue"
-          );
-          await createQueue(
-            res.locals as Locals & { queueName: string },
-            user.id,
-            "email-queue"
-          );
           res.status(200).json({ user });
         });
       }
