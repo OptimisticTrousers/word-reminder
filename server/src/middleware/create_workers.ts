@@ -100,14 +100,16 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
     const wordReminder = await wordReminderQueries.getById(word_reminder_id);
     if (!wordReminder) {
       await boss.complete(wordReminderQueueName, job.id);
-    } else if (wordReminder.finish.getTime() <= Date.now()) {
-      await wordReminderQueries.updateById(word_reminder_id, {
-        is_active: false,
-        has_reminder_onload: wordReminder.has_reminder_onload,
-        reminder: wordReminder.reminder,
-        finish: wordReminder.finish,
-      });
     } else if (wordReminder.is_active) {
+      if (wordReminder.finish.getTime() <= Date.now()) {
+        await wordReminderQueries.updateById(word_reminder_id, {
+          is_active: false,
+          has_reminder_onload: wordReminder.has_reminder_onload,
+          reminder: wordReminder.reminder,
+          finish: wordReminder.finish,
+        });
+        return;
+      }
       const { user_words } =
         await userWordsWordRemindersQueries.getByWordReminderId(
           word_reminder_id
