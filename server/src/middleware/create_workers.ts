@@ -101,7 +101,6 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
     if (!wordReminder) {
       await boss.complete(wordReminderQueueName, job.id);
     } else if (wordReminder.finish.getTime() <= Date.now()) {
-      await boss.complete(wordReminderQueueName, job.id);
       await wordReminderQueries.updateById(word_reminder_id, {
         is_active: false,
         has_reminder_onload: wordReminder.has_reminder_onload,

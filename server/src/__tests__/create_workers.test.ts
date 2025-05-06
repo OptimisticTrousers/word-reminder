@@ -817,8 +817,7 @@ describe("createWorkers", () => {
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
         expect(mockWordRemindersGetById).toHaveBeenCalledWith(wordReminder.id);
-        expect(mockComplete).toHaveBeenCalledTimes(1);
-        expect(mockComplete).toHaveBeenCalledWith(wordReminderQueueName, jobId);
+        expect(mockComplete).not.toHaveBeenCalled();
         expect(mockWordReminderUpdateById).toHaveBeenCalledTimes(1);
         expect(mockWordReminderUpdateById).toHaveBeenCalledWith(
           wordReminder.id,
