@@ -128,27 +128,16 @@ export const UpdateWordReminderModal = CSSModules(
               User Words
             </label>
             <input
-              type="text"
+              type="email"
               multiple
               name="user_words"
               id="user_words"
+              autoFocus
               onFocus={(event) => {
-                const type = event.target.type;
-                if (type === "text") {
-                  event.target.type = "email";
-                }
+                event.target.type = "email";
               }}
               onBlur={(event) => {
-                const type = event.target.type;
-                if (type === "email") {
-                  event.target.type = "text";
-                }
-              }}
-              onChange={(event) => {
-                const type = event.target.type;
-                if (type === "text") {
-                  event.target.type = "email";
-                }
+                event.target.type = "text";
               }}
               list="words"
               required

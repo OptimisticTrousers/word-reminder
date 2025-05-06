@@ -124,17 +124,12 @@ export const CreateWordReminderModal = CSSModules(
               multiple
               name="user_words"
               id="user_words"
+              autoFocus
               onFocus={(event) => {
-                const type = event.target.type;
-                if (type === "text") {
-                  event.target.type = "email";
-                }
+                event.target.type = "email";
               }}
               onBlur={(event) => {
-                const type = event.target.type;
-                if (type === "email") {
-                  event.target.type = "text";
-                }
+                event.target.type = "text";
               }}
               list="words"
               required
