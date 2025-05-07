@@ -559,6 +559,104 @@ describe("createWorkers", () => {
               {
                 data: {
                   word_reminder_id: wordReminder.id,
+                  reminder: wordReminder.reminder,
+                },
+                id: jobId,
+              },
+            ]);
+            return "";
+          })
+          .mockImplementationOnce(jest.fn());
+        const mockWordRemindersGetById = jest
+          .spyOn(wordReminderQueries, "getById")
+          .mockResolvedValue(undefined);
+        const mockComplete = jest
+          .spyOn(boss, "complete")
+          .mockImplementation(jest.fn());
+        const mockWordReminderUpdateById = jest
+          .spyOn(wordReminderQueries, "updateById")
+          .mockResolvedValue(wordReminder);
+        const mockUserWordsWordReminderGetByWordReminderId = jest
+          .spyOn(userWordsWordRemindersQueries, "getByWordReminderId")
+          .mockResolvedValue({
+            ...wordReminder,
+            user_words: [
+              {
+                details: word1.details,
+                learned: userWord1.learned,
+              },
+              {
+                details: word2.details,
+                learned: userWord2.learned,
+              },
+            ],
+          });
+        const mockSubscriptionQueriesGetByUserId = jest
+          .spyOn(subscriptionQueries, "getByUserId")
+          .mockResolvedValue(subscription1);
+        const mockTriggerWebPushMsg = jest
+          .spyOn(triggerWebPush, "triggerWebPushMsg")
+          .mockImplementation(jest.fn());
+        jest.spyOn(global.Date, "now").mockImplementation(() => {
+          return new Date(0).valueOf();
+        });
+
+        const response = await request(app)
+          .post("/api")
+          .set("Accept", "application/json");
+
+        expect(response.headers["content-type"]).toMatch(/json/);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message });
+        expect(mockCreateQueue).toHaveBeenCalledTimes(3);
+        expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
+        expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
+        expect(mockCreateQueue).toHaveBeenCalledWith(emailQueueName);
+        expect(mockWork).toHaveBeenCalledTimes(3);
+        expect(mockWork).toHaveBeenCalledWith(
+          autoWordReminderQueueName,
+          expect.any(Function)
+        );
+        expect(mockWork).toHaveBeenCalledWith(
+          wordReminderQueueName,
+          expect.any(Function)
+        );
+        expect(mockWork).toHaveBeenCalledWith(
+          emailQueueName,
+          expect.any(Function)
+        );
+        expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
+        expect(mockWordRemindersGetById).toHaveBeenCalledWith(wordReminder.id);
+        expect(mockComplete).toHaveBeenCalledTimes(1);
+        expect(mockComplete).toHaveBeenCalledWith(wordReminderQueueName, jobId);
+        expect(mockWordReminderUpdateById).not.toHaveBeenCalled();
+        expect(
+          mockUserWordsWordReminderGetByWordReminderId
+        ).not.toHaveBeenCalled();
+        expect(mockSubscriptionQueriesGetByUserId).not.toHaveBeenCalled();
+        expect(mockTriggerWebPushMsg).not.toHaveBeenCalled();
+      });
+
+      it("completes job when word reminder reminder is different from the reminder sent through the data for when the word reminder is updated", async () => {
+        const message = "Success!";
+        const app = express();
+        app.use(createWorkers);
+        app.post("/api", (req, res, next) => {
+          res.json({ message });
+        });
+        const mockCreateQueue = jest
+          .spyOn(boss, "createQueue")
+          .mockImplementation(jest.fn());
+        const jobId = "1";
+        const mockWork = jest
+          .spyOn(boss, "work")
+          .mockImplementationOnce(jest.fn())
+          .mockImplementationOnce(async (queueName, callback: any) => {
+            callback([
+              {
+                data: {
+                  word_reminder_id: wordReminder.id,
+                  reminder: "0 15 * * *",
                 },
                 id: jobId,
               },
@@ -655,6 +753,7 @@ describe("createWorkers", () => {
               {
                 data: {
                   word_reminder_id: wordReminder.id,
+                  reminder: wordReminder.reminder,
                 },
                 id: jobId,
               },
@@ -750,6 +849,7 @@ describe("createWorkers", () => {
               {
                 data: {
                   word_reminder_id: wordReminder.id,
+                  reminder: wordReminder.reminder,
                 },
                 id: jobId,
               },
@@ -858,6 +958,7 @@ describe("createWorkers", () => {
               {
                 data: {
                   word_reminder_id: wordReminder.id,
+                  reminder: wordReminder.reminder,
                 },
                 id: jobId,
               },
@@ -957,6 +1058,7 @@ describe("createWorkers", () => {
               {
                 data: {
                   word_reminder_id: wordReminder.id,
+                  reminder: wordReminder.reminder,
                 },
                 id: jobId,
               },
@@ -1068,6 +1170,7 @@ describe("createWorkers", () => {
               {
                 data: {
                   word_reminder_id: wordReminder.id,
+                  reminder: wordReminder.reminder,
                 },
                 id: jobId,
               },

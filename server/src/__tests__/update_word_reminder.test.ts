@@ -4,6 +4,7 @@ import request from "supertest";
 import { update_word_reminder } from "../controllers/word_reminder_controller";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
+import { boss } from "../db/boss";
 
 describe("update_word_reminder", () => {
   const userId = 1;
@@ -110,6 +111,8 @@ describe("update_word_reminder", () => {
     word_reminder_id: wordReminder.id,
   };
 
+  const queueName = "word-reminder-queue";
+
   const app = express();
   app.use(express.json());
   app.put(
@@ -133,6 +136,9 @@ describe("update_word_reminder", () => {
       .mockResolvedValueOnce(userWordsWordReminders1)
       .mockResolvedValueOnce(userWordsWordReminders2)
       .mockResolvedValueOnce(userWordsWordReminders3);
+    const mockSchedule = jest
+      .spyOn(boss, "schedule")
+      .mockImplementation(jest.fn());
     const body = {
       finish: wordReminder.finish,
       user_words: [userWord1, userWord2],
@@ -174,5 +180,14 @@ describe("update_word_reminder", () => {
       user_word_id: userWord2.id,
       word_reminder_id: wordReminder.id,
     });
+    expect(mockSchedule).toHaveBeenCalledTimes(1);
+    expect(mockSchedule).toHaveBeenCalledWith(
+      queueName,
+      wordReminder.reminder,
+      {
+        word_reminder_id: wordReminder.id,
+        reminder: wordReminder.reminder,
+      }
+    );
   });
 });

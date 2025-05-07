@@ -161,6 +161,7 @@ describe("create_word_reminder", () => {
       wordReminder.reminder,
       {
         word_reminder_id: wordReminder.id,
+        reminder: wordReminder.reminder,
       }
     );
   });

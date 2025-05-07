@@ -36,6 +36,7 @@ export const create_word_reminder = asyncHandler(async (req, res) => {
 
   await boss.schedule(queueName, reminder, {
     word_reminder_id: wordReminder.id,
+    reminder,
   });
 
   res.status(200).json({
@@ -117,6 +118,11 @@ export const update_word_reminder = [
         user_word_id: user_word.id,
         word_reminder_id: wordReminder.id,
       });
+    });
+
+    await boss.schedule(queueName, reminder, {
+      word_reminder_id: wordReminder.id,
+      reminder,
     });
 
     res.status(200).json({

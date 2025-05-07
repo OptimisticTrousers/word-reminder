@@ -11,7 +11,6 @@ import { Detail, Token, UserWord } from "common";
 import { subscriptionQueries } from "../db/subscription_queries";
 import { triggerWebPushMsg } from "../utils/trigger_web_push_msg";
 import { tokenQueries } from "../db/token_queries";
-import { NextFunction } from "express";
 
 interface AutoWordReminderJobData {
   auto_word_reminder_id: number;
@@ -19,6 +18,7 @@ interface AutoWordReminderJobData {
 
 interface WordReminderJobData {
   word_reminder_id: number;
+  reminder: string;
 }
 
 export const createWorkers = asyncHandler(async (_req, _res, next) => {
@@ -96,9 +96,9 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
 
   const wordReminderQueueName = "word-reminder-queue";
   async function wordReminderCallback([job]: Job<WordReminderJobData>[]) {
-    const { word_reminder_id } = job.data;
+    const { word_reminder_id, reminder } = job.data;
     const wordReminder = await wordReminderQueries.getById(word_reminder_id);
-    if (!wordReminder) {
+    if (!wordReminder || wordReminder.reminder != reminder) {
       await boss.complete(wordReminderQueueName, job.id);
     } else if (wordReminder.is_active) {
       if (wordReminder.finish.getTime() <= Date.now()) {
