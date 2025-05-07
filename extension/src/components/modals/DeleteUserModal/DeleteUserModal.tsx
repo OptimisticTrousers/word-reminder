@@ -27,12 +27,12 @@ export const DeleteUserModal = CSSModules(
     const queryClient = useQueryClient();
     const { isPending, mutate } = useMutation({
       mutationFn: userService.deleteUser,
-      onSuccess: async () => {
+      onSuccess: () => {
         showNotification(
           NOTIFICATION_ACTIONS.SUCCESS,
           USER_NOTIFICATION_MSGS.deleteUser()
         );
-        await chrome.storage.sync.remove("userId");
+        chrome.storage.sync.remove("userId");
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);

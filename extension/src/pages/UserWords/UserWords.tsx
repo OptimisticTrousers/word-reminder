@@ -91,7 +91,7 @@ export const UserWords = CSSModules(
             NOTIFICATION_ACTIONS.SUCCESS,
             WORD_NOTIFICATION_MSGS.addWord()
           );
-          navigate(`/userWords/${response.json.userWord.id}`);
+          await navigate(`/userWords/${response.json.userWord.id}`);
         }
         await queryClient.invalidateQueries({
           queryKey: ["userWords"],

@@ -14,8 +14,8 @@ export const Navigation = CSSModules(
     const navigate = useNavigate();
     const { isPending, mutate } = useMutation({
       mutationFn: sessionService.logoutUser,
-      onSettled: async () => {
-        await chrome.storage.sync.remove("userId");
+      onSettled: () => {
+        chrome.storage.sync.remove("userId");
       },
       onError: showNotificationError,
     });
