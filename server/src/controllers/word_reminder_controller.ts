@@ -104,6 +104,7 @@ export const update_word_reminder = [
     const { is_active, has_reminder_onload, reminder, finish, user_words } =
       req.body;
 
+    const oldWordReminder = await wordReminderQueries.getById(wordReminderId);
     const wordReminder = await wordReminderQueries.updateById(wordReminderId, {
       is_active,
       reminder,
@@ -120,10 +121,12 @@ export const update_word_reminder = [
       });
     });
 
-    await boss.schedule(queueName, reminder, {
-      word_reminder_id: wordReminder.id,
-      reminder,
-    });
+    if (oldWordReminder!.reminder !== reminder) {
+      await boss.schedule(queueName, reminder, {
+        word_reminder_id: wordReminder.id,
+        reminder,
+      });
+    }
 
     res.status(200).json({
       wordReminder,

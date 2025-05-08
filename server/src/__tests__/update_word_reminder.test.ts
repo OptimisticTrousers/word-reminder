@@ -124,7 +124,10 @@ describe("update_word_reminder", () => {
     jest.clearAllMocks();
   });
 
-  it("calls the functions to update the word reminder with the user words in it", async () => {
+  it("calls the functions to update the word reminder with the user words in it when the new reminder is new", async () => {
+    const wordReminderGetByIdMock = jest
+      .spyOn(wordReminderQueries, "getById")
+      .mockResolvedValue({ ...wordReminder, reminder: "*/30 * * * *" });
     const wordReminderUpdateMock = jest
       .spyOn(wordReminderQueries, "updateById")
       .mockResolvedValue(wordReminder);
@@ -162,6 +165,8 @@ describe("update_word_reminder", () => {
         updated_at: wordReminder.updated_at.toISOString(),
       },
     });
+    expect(wordReminderGetByIdMock).toHaveBeenCalledTimes(1);
+    expect(wordReminderGetByIdMock).toHaveBeenCalledWith(wordReminder.id);
     expect(wordReminderUpdateMock).toHaveBeenCalledTimes(1);
     expect(wordReminderUpdateMock).toHaveBeenCalledWith(wordReminder.id, {
       reminder: body.reminder,
@@ -189,5 +194,69 @@ describe("update_word_reminder", () => {
         reminder: wordReminder.reminder,
       }
     );
+  });
+
+  it("calls the functions to update the word reminder with the user words in it when the new reminder is the same", async () => {
+    const wordReminderGetByIdMock = jest
+      .spyOn(wordReminderQueries, "getById")
+      .mockResolvedValue(wordReminder);
+    const wordReminderUpdateMock = jest
+      .spyOn(wordReminderQueries, "updateById")
+      .mockResolvedValue(wordReminder);
+    const mockDeleteByWordReminderId = jest
+      .spyOn(userWordsWordRemindersQueries, "deleteByWordReminderId")
+      .mockImplementation(jest.fn());
+    const userWordsWordRemindersMock = jest
+      .spyOn(userWordsWordRemindersQueries, "create")
+      .mockResolvedValueOnce(userWordsWordReminders1)
+      .mockResolvedValueOnce(userWordsWordReminders2)
+      .mockResolvedValueOnce(userWordsWordReminders3);
+    const mockSchedule = jest
+      .spyOn(boss, "schedule")
+      .mockImplementation(jest.fn());
+    const body = {
+      finish: wordReminder.finish,
+      user_words: [userWord1, userWord2],
+      is_active: wordReminder.is_active,
+      has_reminder_onload: wordReminder.has_reminder_onload,
+      reminder: wordReminder.reminder,
+    };
+
+    const response = await request(app)
+      .put(`/api/users/${userId}/wordReminders/${wordReminder.id}`)
+      .set("Accept", "application/json")
+      .send(body);
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      wordReminder: {
+        ...wordReminder,
+        finish: wordReminder.finish.toISOString(),
+        created_at: wordReminder.created_at.toISOString(),
+        updated_at: wordReminder.updated_at.toISOString(),
+      },
+    });
+    expect(wordReminderGetByIdMock).toHaveBeenCalledTimes(1);
+    expect(wordReminderGetByIdMock).toHaveBeenCalledWith(wordReminder.id);
+    expect(wordReminderUpdateMock).toHaveBeenCalledTimes(1);
+    expect(wordReminderUpdateMock).toHaveBeenCalledWith(wordReminder.id, {
+      reminder: body.reminder,
+      is_active: body.is_active,
+      has_reminder_onload: body.has_reminder_onload,
+      finish: body.finish.toISOString(),
+    });
+    expect(mockDeleteByWordReminderId).toHaveBeenCalledTimes(1);
+    expect(mockDeleteByWordReminderId).toHaveBeenCalledWith(wordReminder.id);
+    expect(userWordsWordRemindersMock).toHaveBeenCalledTimes(2);
+    expect(userWordsWordRemindersMock).toHaveBeenCalledWith({
+      user_word_id: userWord1.id,
+      word_reminder_id: wordReminder.id,
+    });
+    expect(userWordsWordRemindersMock).toHaveBeenCalledWith({
+      user_word_id: userWord2.id,
+      word_reminder_id: wordReminder.id,
+    });
+    expect(mockSchedule).not.toHaveBeenCalled();
   });
 });
