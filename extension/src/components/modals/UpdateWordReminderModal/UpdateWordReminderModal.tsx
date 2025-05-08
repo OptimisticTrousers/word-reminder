@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ModalContainer } from "../ModalContainer";
 import { userWordService } from "../../../services/user_word_service";
 import styles from "./UpdateWordReminderModal.module.css";
-import { ChangeEvent, ReactNode, useContext, useMemo, useState } from "react";
+import { ReactNode, useContext, useMemo } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
@@ -26,7 +26,6 @@ interface Props {
 export const UpdateWordReminderModal = CSSModules(
   function ({ toggleModal, wordReminder }: Props) {
     const { user }: { user: User } = useOutletContext();
-    const [reminder, setReminder] = useState(wordReminder.reminder);
     const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const queryClient = useQueryClient();
@@ -58,10 +57,6 @@ export const UpdateWordReminderModal = CSSModules(
         toggleModal();
       },
     });
-
-    function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
-      setReminder(event.target.value);
-    }
 
     const [wordToUserWord, words] = useMemo(() => {
       const wordToUserWord: { [key: string]: UserWord } = {};
@@ -103,11 +98,7 @@ export const UpdateWordReminderModal = CSSModules(
     return (
       <ModalContainer title="Update Word Reminder" toggleModal={toggleModal}>
         <form styleName="modal__form" action={handleUpdate}>
-          <Reminder
-            disabled={false}
-            value={reminder}
-            handleChange={handleReminderChange}
-          />
+          <Reminder disabled={false} value={wordReminder.reminder} />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="finish">
               Finish

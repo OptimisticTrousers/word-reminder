@@ -1,22 +1,27 @@
 import cronstrue from "cronstrue";
 import CSSModules from "react-css-modules";
 
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import styles from "./Reminder.module.css";
 
 interface Props {
   disabled: boolean;
   value: string;
-  handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const Reminder = CSSModules(
-  function ({ disabled, value, handleChange }: Props) {
+  function ({ disabled, value }: Props) {
+    const [reminder, setReminder] = useState(value);
+
+    function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
+      setReminder(event.target.value);
+    }
+
     return (
       <div styleName="reminder">
         <a href="https://cronprompt.com/">Visit cronprompt for more details</a>
         <p styleName="reminder__description">
-          {value &&
+          {reminder &&
             cronstrue.toString(value, {
               throwExceptionOnParseError: false,
             })}
@@ -29,8 +34,8 @@ export const Reminder = CSSModules(
             name="reminder"
             required={true}
             disabled={disabled}
-            onChange={handleChange}
-            value={value}
+            onChange={handleReminderChange}
+            value={reminder}
             placeholder="Enter a valid cron expression (ie. * * * * * or */5 * * * *)"
           />
         </label>

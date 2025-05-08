@@ -4,7 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import { useNotificationError } from "../../../hooks/useNotificationError";
 import { ToggleModal } from "../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChangeEvent, useContext, useState } from "react";
+import { useContext } from "react";
 import {
   NOTIFICATION_ACTIONS,
   NotificationContext,
@@ -24,7 +24,6 @@ interface Props {
 export const UpdateAutoWordReminderModal = CSSModules(
   function ({ toggleModal, autoWordReminder }: Props) {
     const { user }: { user: User } = useOutletContext();
-    const [reminder, setReminder] = useState(autoWordReminder.reminder);
     const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
@@ -49,10 +48,6 @@ export const UpdateAutoWordReminderModal = CSSModules(
         toggleModal();
       },
     });
-
-    function handleReminderChange(event: ChangeEvent<HTMLInputElement>) {
-      setReminder(event.target.value);
-    }
 
     function handleUpdate(formData: FormData) {
       const time = {
@@ -86,11 +81,7 @@ export const UpdateAutoWordReminderModal = CSSModules(
         toggleModal={toggleModal}
       >
         <form styleName="modal__form" action={handleUpdate}>
-          <Reminder
-            disabled={false}
-            value={reminder}
-            handleChange={handleReminderChange}
-          />
+          <Reminder disabled={false} value={autoWordReminder.reminder} />
           <Duration
             disabled={false}
             defaultValues={msToUnits(autoWordReminder.duration)}
