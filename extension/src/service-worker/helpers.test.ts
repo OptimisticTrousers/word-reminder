@@ -88,7 +88,9 @@ describe("Service Worker Suite", async () => {
       it("handles responding to the 'push' event", async () => {
         const promise = Promise.resolve();
         const mockShowNotification = vi.fn().mockReturnValue(promise);
-        const mockClose = vi.fn();
+        const mockWaitUntil = vi.fn();
+        const words = ["hello", "welcome"];
+        const wordReminderId = "1";
         const mockSelf = {
           registration: {
             showNotification: mockShowNotification,
@@ -98,15 +100,18 @@ describe("Service Worker Suite", async () => {
           },
           addEventListener: vi
             .fn()
-            .mockImplementation(async (_event, callback) => {
-              const mockEvent = {
-                action: "navigate-to-word-reminder",
-                notification: {
-                  close: mockClose,
+            .mockImplementationOnce(async (_event, callback) => {
+              const event = {
+                data: {
+                  json: function () {
+                    return { words, id: wordReminderId };
+                  },
                 },
-              } as unknown as NotificationEvent;
-              await callback(mockEvent);
-            }),
+                waitUntil: mockWaitUntil,
+              } as unknown as PushEvent;
+              await callback(event);
+            })
+            .mockImplementation(vi.fn()),
         } as unknown as ServiceWorkerGlobalScope;
 
         const mockHandleNavigate = vi.fn();
@@ -115,33 +120,11 @@ describe("Service Worker Suite", async () => {
             actions: [],
           },
         } as any;
-        const webpushService = createWebpushService(
-          mockSelf,
-          mockHandleNavigate
-        );
-        const words = ["hello", "welcome"];
-        const mockWaitUntil = vi.fn();
-        const wordReminderId = "1";
-        const event = {
-          data: {
-            json: function () {
-              return { words, id: wordReminderId };
-            },
-          },
-          waitUntil: mockWaitUntil,
-        } as unknown as PushEvent;
-        webpushService.handlePush(event);
+        createWebpushService(mockSelf, mockHandleNavigate);
 
         await new Promise((resolve) => setTimeout(resolve, 0));
         expect(mockWaitUntil).toHaveBeenCalledTimes(1);
         expect(mockWaitUntil).toHaveBeenCalledWith(promise);
-        expect(mockClose).toHaveBeenCalledTimes(1);
-        expect(mockClose).toHaveBeenCalledWith();
-        expect(mockHandleNavigate).toHaveBeenCalledTimes(1);
-        expect(mockHandleNavigate).toHaveBeenCalledWith(
-          "wordReminders",
-          wordReminderId
-        );
         expect(mockShowNotification).toHaveBeenCalledTimes(1);
         expect(mockShowNotification).toHaveBeenCalledWith(
           `Word Reminder Chrome Extension: your active word reminder has these words:`,
@@ -157,12 +140,15 @@ describe("Service Worker Suite", async () => {
             ],
           }
         );
+        expect(mockHandleNavigate).not.toHaveBeenCalled();
       });
 
       it("handles responding to the 'push' event when notification actions are not supported", async () => {
         const promise = Promise.resolve();
         const mockShowNotification = vi.fn().mockReturnValue(promise);
         const mockClose = vi.fn();
+        const mockWaitUntil = vi.fn();
+        const words = ["hello", "welcome"];
         const mockSelf = {
           registration: {
             showNotification: mockShowNotification,
@@ -172,37 +158,26 @@ describe("Service Worker Suite", async () => {
           },
           addEventListener: vi
             .fn()
-            .mockImplementation(async (_event, callback) => {
-              const mockEvent = {
-                action: undefined,
-                notification: {
-                  close: mockClose,
+            .mockImplementationOnce(async (_event, callback) => {
+              const wordReminderId = "1";
+              const event = {
+                data: {
+                  json: function () {
+                    return { words, id: wordReminderId };
+                  },
                 },
-              } as unknown as NotificationEvent;
-              await callback(mockEvent);
-            }),
+                waitUntil: mockWaitUntil,
+              } as unknown as PushEvent;
+              await callback(event);
+            })
+            .mockImplementation(vi.fn()),
         } as unknown as ServiceWorkerGlobalScope;
 
         const mockHandleNavigate = vi.fn();
         window.Notification = {
           prototype: {},
         } as any;
-        const webpushService = createWebpushService(
-          mockSelf,
-          mockHandleNavigate
-        );
-        const words = ["hello", "welcome"];
-        const mockWaitUntil = vi.fn();
-        const wordReminderId = "1";
-        const event = {
-          data: {
-            json: function () {
-              return { words, id: wordReminderId };
-            },
-          },
-          waitUntil: mockWaitUntil,
-        } as unknown as PushEvent;
-        webpushService.handlePush(event);
+        createWebpushService(mockSelf, mockHandleNavigate);
 
         await new Promise((resolve) => setTimeout(resolve, 0));
         expect(mockWaitUntil).toHaveBeenCalledTimes(1);
@@ -222,6 +197,7 @@ describe("Service Worker Suite", async () => {
       it("does not handle responding to the 'push' event when there is no payload", async () => {
         const promise = Promise.resolve();
         const mockShowNotification = vi.fn().mockReturnValue(promise);
+        const mockWaitUntil = vi.fn();
         const mockSelf = {
           registration: {
             showNotification: mockShowNotification,
@@ -229,21 +205,23 @@ describe("Service Worker Suite", async () => {
           navigator: {
             serviceWorker: {},
           },
-          addEventListener: vi.fn(),
+          addEventListener: vi
+            .fn()
+            .mockImplementationOnce(async (_event, callback) => {
+              const event = {
+                data: null,
+                waitUntil: mockWaitUntil,
+              } as unknown as PushEvent;
+
+              await callback(event);
+            })
+            .mockImplementation(vi.fn()),
         } as unknown as ServiceWorkerGlobalScope;
 
         const mockHandleNavigate = vi.fn();
-        const webpushService = createWebpushService(
-          mockSelf,
-          mockHandleNavigate
-        );
-        const mockWaitUntil = vi.fn();
-        const event = {
-          data: null,
-          waitUntil: mockWaitUntil,
-        } as unknown as PushEvent;
-        webpushService.handlePush(event);
+        createWebpushService(mockSelf, mockHandleNavigate);
 
+        await new Promise((resolve) => setTimeout(resolve, 0));
         expect(mockShowNotification).not.toHaveBeenCalled();
         expect(mockWaitUntil).not.toHaveBeenCalled();
       });
@@ -279,18 +257,17 @@ describe("Service Worker Suite", async () => {
           },
           addEventListener: vi
             .fn()
-            .mockImplementation(async (_event, callback) => {
+            .mockImplementationOnce(vi.fn())
+            .mockImplementationOnce(async (_event, callback) => {
               await callback();
-            }),
+            })
+            .mockImplementationOnce(vi.fn()),
         } as unknown as ServiceWorkerGlobalScope;
 
         const mockHandleNavigate = vi.fn();
-        const webpushService = createWebpushService(
-          mockSelf,
-          mockHandleNavigate
-        );
-        await webpushService.handlePushSubscriptionChange();
+        createWebpushService(mockSelf, mockHandleNavigate);
 
+        await new Promise((resolve) => setTimeout(resolve, 0));
         expect(mockSubscribe).toHaveBeenCalledTimes(1);
         expect(mockSubscribe).toHaveBeenCalledWith({
           userVisibleOnly: true,
@@ -333,18 +310,17 @@ describe("Service Worker Suite", async () => {
           },
           addEventListener: vi
             .fn()
-            .mockImplementation(async (_event, callback) => {
+            .mockImplementationOnce(vi.fn())
+            .mockImplementationOnce(async (_event, callback) => {
               await callback();
-            }),
+            })
+            .mockImplementationOnce(vi.fn()),
         } as unknown as ServiceWorkerGlobalScope;
 
         const mockHandleNavigate = vi.fn();
-        const webpushService = createWebpushService(
-          mockSelf,
-          mockHandleNavigate
-        );
-        await webpushService.handlePushSubscriptionChange();
+        createWebpushService(mockSelf, mockHandleNavigate);
 
+        await new Promise((resolve) => setTimeout(resolve, 0));
         expect(mockSubscribe).toHaveBeenCalledTimes(1);
         expect(mockSubscribe).toHaveBeenCalledWith({
           userVisibleOnly: true,
@@ -382,18 +358,17 @@ describe("Service Worker Suite", async () => {
           },
           addEventListener: vi
             .fn()
-            .mockImplementation(async (_event, callback) => {
+            .mockImplementationOnce(vi.fn())
+            .mockImplementationOnce(async (_event, callback) => {
               await callback();
-            }),
+            })
+            .mockImplementationOnce(vi.fn()),
         } as unknown as ServiceWorkerGlobalScope;
 
         const mockHandleNavigate = vi.fn();
-        const webpushService = createWebpushService(
-          mockSelf,
-          mockHandleNavigate
-        );
-        await webpushService.handlePushSubscriptionChange();
+        createWebpushService(mockSelf, mockHandleNavigate);
 
+        await new Promise((resolve) => setTimeout(resolve, 0));
         expect(mockSubscribe).toHaveBeenCalledTimes(1);
         expect(mockSubscribe).toHaveBeenCalledWith({
           userVisibleOnly: true,
@@ -402,6 +377,84 @@ describe("Service Worker Suite", async () => {
         expect(mockGet).toHaveBeenCalledTimes(1);
         expect(mockGet).toHaveBeenCalledWith(["userId"]);
         expect(mockCreateSubscription).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("Notification Click Events", () => {
+      it("handles responding to the 'notificationclick' event", async () => {
+        const mockSubscription = {
+          endpoint: "https://random-push-service.com/unique-id-1234/",
+          getKey: function () {},
+        } as unknown as PushSubscription;
+        const mockSubscribe = vi.fn().mockResolvedValue(mockSubscription);
+        const mockClose = vi.fn();
+        const mockSelf = {
+          registration: {
+            pushManager: {
+              subscribe: mockSubscribe,
+            },
+          },
+          navigator: {
+            serviceWorker: {},
+          },
+          addEventListener: vi
+            .fn()
+            .mockImplementationOnce(vi.fn())
+            .mockImplementationOnce(vi.fn())
+            .mockImplementationOnce(async (_event, callback) => {
+              const mockEvent = {
+                action: "navigate-to-word-reminder",
+                notification: {
+                  close: mockClose,
+                },
+              };
+              await callback(mockEvent);
+            }),
+        } as unknown as ServiceWorkerGlobalScope;
+
+        const mockHandleNavigate = vi.fn();
+        createWebpushService(mockSelf, mockHandleNavigate);
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(mockHandleNavigate).toHaveBeenCalledTimes(1);
+        expect(mockHandleNavigate).toHaveBeenCalledWith("wordReminders", "1");
+        expect(mockClose).toHaveBeenCalledTimes(1);
+        expect(mockClose).toHaveBeenCalledWith();
+      });
+
+      it("does nothing when 'notificationclick' is a normal notification click with no action", async () => {
+        const mockClose = vi.fn();
+        const mockSubscribe = vi.fn().mockResolvedValue(null);
+        const mockSelf = {
+          registration: {
+            pushManager: {
+              subscribe: mockSubscribe,
+            },
+          },
+          navigator: {
+            serviceWorker: {},
+          },
+          addEventListener: vi
+            .fn()
+            .mockImplementationOnce(vi.fn())
+            .mockImplementationOnce(vi.fn())
+            .mockImplementation(async (_event, callback) => {
+              const mockEvent = {
+                notification: {
+                  close: mockClose,
+                },
+              };
+              await callback(mockEvent);
+            })
+            .mockImplementationOnce(vi.fn()),
+        } as unknown as ServiceWorkerGlobalScope;
+
+        const mockHandleNavigate = vi.fn();
+        createWebpushService(mockSelf, mockHandleNavigate);
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(mockHandleNavigate).not.toHaveBeenCalled();
+        expect(mockClose).not.toHaveBeenCalled();
       });
     });
   });
@@ -524,17 +577,13 @@ describe("Service Worker Suite", async () => {
         } as unknown as PushSubscription;
         return mockSubscription;
       });
-      const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
-      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
           handleNavigate = callback;
           return {
             subscribe: mockSubscribe,
-            handlePush: mockHandlePush,
-            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -617,10 +666,6 @@ describe("Service Worker Suite", async () => {
       expect(mockOnMessageAddListener).toHaveBeenCalledWith(
         expect.any(Function)
       );
-      expect(mockHandlePush).toHaveBeenCalledTimes(1);
-      expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
       expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
       expect(mockCreateWebpushService).toHaveBeenCalledWith(
         mockSelf,
@@ -683,17 +728,13 @@ describe("Service Worker Suite", async () => {
         } as unknown as PushSubscription;
         return mockSubscription;
       });
-      const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
-      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
           handleNavigate = callback;
           return {
             subscribe: mockSubscribe,
-            handlePush: mockHandlePush,
-            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -776,10 +817,6 @@ describe("Service Worker Suite", async () => {
       expect(mockOnMessageAddListener).toHaveBeenCalledWith(
         expect.any(Function)
       );
-      expect(mockHandlePush).toHaveBeenCalledTimes(1);
-      expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
       expect(mockCreateWebpushService).toHaveBeenCalledTimes(1);
       expect(mockCreateWebpushService).toHaveBeenCalledWith(
         mockSelf,
@@ -834,17 +871,13 @@ describe("Service Worker Suite", async () => {
       const mockSubscribe = vi.fn().mockImplementation(async () => {
         return null;
       });
-      const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
-      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
           handleNavigate = callback;
           return {
             subscribe: mockSubscribe,
-            handlePush: mockHandlePush,
-            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -923,10 +956,6 @@ describe("Service Worker Suite", async () => {
       expect(mockOnMessageAddListener).toHaveBeenCalledWith(
         expect.any(Function)
       );
-      expect(mockHandlePush).toHaveBeenCalledTimes(1);
-      expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith(["userId"]);
       expect(mockCreateContextMenuService).toHaveBeenCalledTimes(1);
@@ -997,17 +1026,13 @@ describe("Service Worker Suite", async () => {
         } as unknown as PushSubscription;
         return mockSubscription;
       });
-      const mockHandlePush = vi.fn();
       let handleNavigate = vi.fn();
-      const mockHandlePushSubscriptionChange = vi.fn();
       const mockCreateWebpushService = vi
         .fn()
         .mockImplementation((_self, callback) => {
           handleNavigate = callback;
           return {
             subscribe: mockSubscribe,
-            handlePush: mockHandlePush,
-            handlePushSubscriptionChange: mockHandlePushSubscriptionChange,
           };
         });
       const mockOnClickedCallback = vi.fn();
@@ -1112,10 +1137,6 @@ describe("Service Worker Suite", async () => {
         },
         userId,
       });
-      expect(mockHandlePush).toHaveBeenCalledTimes(1);
-      expect(mockHandlePush).toHaveBeenCalledWith(mockEvent);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledTimes(1);
-      expect(mockHandlePushSubscriptionChange).toHaveBeenCalledWith();
     });
   });
 });

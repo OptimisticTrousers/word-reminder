@@ -11,8 +11,6 @@ type CreateWebPushService = (
   handleNavigate: HandleNavigate
 ) => {
   subscribe: () => Promise<PushSubscription | null>;
-  handlePush: (event: PushEvent) => void;
-  handlePushSubscriptionChange: () => Promise<void>;
 };
 
 export const createWebpushService: CreateWebPushService = (
@@ -125,9 +123,11 @@ export const createWebpushService: CreateWebPushService = (
     clickedNotification.close();
   }
 
+  self.addEventListener("push", handlePush);
+  self.addEventListener("pushsubscriptionchange", handlePushSubscriptionChange);
   self.addEventListener("notificationclick", handleNotificationClick);
 
-  return { subscribe, handlePush, handlePushSubscriptionChange };
+  return { subscribe };
 };
 
 type CreateContextMenuService = (
@@ -195,12 +195,6 @@ export const startServiceWorkerService: CreateServiceWorkerService = (
   }
 
   const webpushService = createWebpushService(self, handleNavigate);
-
-  self.addEventListener("push", webpushService.handlePush);
-  self.addEventListener(
-    "pushsubscriptionchange",
-    webpushService.handlePushSubscriptionChange
-  );
 
   chrome.runtime.onInstalled.addListener(() => {
     chrome.runtime.onMessage.addListener(async (_message, sender) => {
