@@ -90,7 +90,11 @@ export const createWebpushService: CreateWebPushService = (
         return;
       }
 
-      await handleNavigate("wordReminders", wordReminderId);
+      try {
+        await handleNavigate("wordReminders", wordReminderId);
+      } catch (error) {
+        console.error("Notification click error: ", error);
+      }
       clickedNotification.close();
     });
 
