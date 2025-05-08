@@ -32,6 +32,7 @@ describe("Service Worker Suite", async () => {
           navigator: {
             serviceWorker: {},
           },
+          addEventListener: vi.fn(),
         } as unknown as ServiceWorkerGlobalScope;
         const mockHandleNavigate = vi.fn();
 
@@ -63,6 +64,7 @@ describe("Service Worker Suite", async () => {
           navigator: {
             serviceWorker: {},
           },
+          addEventListener: vi.fn(),
         } as unknown as ServiceWorkerGlobalScope;
         const mockHandleNavigate = vi.fn();
 
@@ -227,6 +229,7 @@ describe("Service Worker Suite", async () => {
           navigator: {
             serviceWorker: {},
           },
+          addEventListener: vi.fn(),
         } as unknown as ServiceWorkerGlobalScope;
 
         const mockHandleNavigate = vi.fn();
@@ -486,6 +489,18 @@ describe("Service Worker Suite", async () => {
         chrome.runtime.onInstalled,
         "addListener"
       );
+      const mockFocusedWindow = {
+        id: "2",
+      } as any;
+      const mockUpdateWindow = {
+        id: "3",
+      } as any;
+      const mockGetLastFocused = vi
+        .spyOn(chrome.windows, "getLastFocused")
+        .mockResolvedValue(mockFocusedWindow);
+      const mockUpdate = vi
+        .spyOn(chrome.windows, "update")
+        .mockResolvedValue(mockUpdateWindow);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi
@@ -579,8 +594,16 @@ describe("Service Worker Suite", async () => {
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
+      expect(mockGetLastFocused).toHaveBeenCalledTimes(1);
+      expect(mockGetLastFocused).toHaveBeenCalledWith();
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(mockFocusedWindow.id, {
+        focused: true,
+      });
       expect(mockOpenPopup).toHaveBeenCalledTimes(1);
-      expect(mockOpenPopup).toHaveBeenCalledWith();
+      expect(mockOpenPopup).toHaveBeenCalledWith({
+        windowId: mockUpdateWindow.id,
+      });
       expect(mockSendMessage).toHaveBeenCalledTimes(1);
       expect(mockSendMessage).toHaveBeenCalledWith({
         resource: "userWords",
@@ -615,6 +638,18 @@ describe("Service Worker Suite", async () => {
         chrome.runtime.onInstalled,
         "addListener"
       );
+      const mockFocusedWindow = {
+        id: "2",
+      } as any;
+      const mockUpdateWindow = {
+        id: "3",
+      } as any;
+      const mockGetLastFocused = vi
+        .spyOn(chrome.windows, "getLastFocused")
+        .mockResolvedValue(mockFocusedWindow);
+      const mockUpdate = vi
+        .spyOn(chrome.windows, "update")
+        .mockResolvedValue(mockUpdateWindow);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi
@@ -718,8 +753,16 @@ describe("Service Worker Suite", async () => {
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
+      expect(mockGetLastFocused).toHaveBeenCalledTimes(1);
+      expect(mockGetLastFocused).toHaveBeenCalledWith();
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(mockFocusedWindow.id, {
+        focused: true,
+      });
       expect(mockOpenPopup).toHaveBeenCalledTimes(1);
-      expect(mockOpenPopup).toHaveBeenCalledWith();
+      expect(mockOpenPopup).toHaveBeenCalledWith({
+        windowId: mockUpdateWindow.id,
+      });
       expect(mockSendMessage).toHaveBeenCalledTimes(1);
       expect(mockSendMessage).toHaveBeenCalledWith({
         resource: "userWords",
@@ -755,6 +798,18 @@ describe("Service Worker Suite", async () => {
         chrome.runtime.onInstalled,
         "addListener"
       );
+      const mockFocusedWindow = {
+        id: "2",
+      } as any;
+      const mockUpdateWindow = {
+        id: "3",
+      } as any;
+      const mockGetLastFocused = vi
+        .spyOn(chrome.windows, "getLastFocused")
+        .mockResolvedValue(mockFocusedWindow);
+      const mockUpdate = vi
+        .spyOn(chrome.windows, "update")
+        .mockResolvedValue(mockUpdateWindow);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi
@@ -845,8 +900,16 @@ describe("Service Worker Suite", async () => {
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
+      expect(mockGetLastFocused).toHaveBeenCalledTimes(1);
+      expect(mockGetLastFocused).toHaveBeenCalledWith();
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(mockFocusedWindow.id, {
+        focused: true,
+      });
       expect(mockOpenPopup).toHaveBeenCalledTimes(1);
-      expect(mockOpenPopup).toHaveBeenCalledWith();
+      expect(mockOpenPopup).toHaveBeenCalledWith({
+        windowId: mockUpdateWindow.id,
+      });
       expect(mockSendMessage).toHaveBeenCalledTimes(1);
       expect(mockSendMessage).toHaveBeenCalledWith({
         resource: "userWords",
@@ -889,6 +952,18 @@ describe("Service Worker Suite", async () => {
         chrome.runtime.onInstalled,
         "addListener"
       );
+      const mockFocusedWindow = {
+        id: "2",
+      } as any;
+      const mockUpdateWindow = {
+        id: "3",
+      } as any;
+      const mockGetLastFocused = vi
+        .spyOn(chrome.windows, "getLastFocused")
+        .mockResolvedValue(mockFocusedWindow);
+      const mockUpdate = vi
+        .spyOn(chrome.windows, "update")
+        .mockResolvedValue(mockUpdateWindow);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi
@@ -990,8 +1065,16 @@ describe("Service Worker Suite", async () => {
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
+      expect(mockGetLastFocused).toHaveBeenCalledTimes(1);
+      expect(mockGetLastFocused).toHaveBeenCalledWith();
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(mockFocusedWindow.id, {
+        focused: true,
+      });
       expect(mockOpenPopup).toHaveBeenCalledTimes(1);
-      expect(mockOpenPopup).toHaveBeenCalledWith();
+      expect(mockOpenPopup).toHaveBeenCalledWith({
+        windowId: mockUpdateWindow.id,
+      });
       expect(mockSendMessage).toHaveBeenCalledTimes(1);
       expect(mockSendMessage).toHaveBeenCalledWith({
         resource: "userWords",

@@ -52,6 +52,7 @@ export const createWebpushService: CreateWebPushService = (
     }
   }
 
+  const wordReminderId = ["1"];
   function handlePush(event: PushEvent) {
     if (!event.data) {
       return;
@@ -59,7 +60,7 @@ export const createWebpushService: CreateWebPushService = (
 
     const json = event.data.json();
     const words = json.words;
-    const wordReminderId = json.id;
+    wordReminderId[0] = json.id;
     const options: NotificationOptions & {
       actions?: {
         action: string;
@@ -81,22 +82,6 @@ export const createWebpushService: CreateWebPushService = (
         },
       ];
     }
-
-    self.addEventListener("notificationclick", async (event) => {
-      const clickedNotification = event.notification;
-
-      if (!event.action) {
-        // Was a normal notification click
-        return;
-      }
-
-      try {
-        await handleNavigate("wordReminders", wordReminderId);
-      } catch (error) {
-        console.error("Notification click error: ", error);
-      }
-      clickedNotification.close();
-    });
 
     const promiseChain = self.registration.showNotification(
       `Word Reminder Chrome Extension: your active word reminder has these words:`,
@@ -123,6 +108,24 @@ export const createWebpushService: CreateWebPushService = (
       });
     }
   }
+
+  async function handleNotificationClick(event: NotificationEvent) {
+    const clickedNotification = event.notification;
+
+    if (!event.action) {
+      // Was a normal notification click
+      return;
+    }
+
+    try {
+      await handleNavigate("wordReminders", wordReminderId[0]);
+    } catch (error) {
+      console.error("Notification click error: ", error);
+    }
+    clickedNotification.close();
+  }
+
+  self.addEventListener("notificationclick", handleNotificationClick);
 
   return { subscribe, handlePush, handlePushSubscriptionChange };
 };
@@ -180,7 +183,11 @@ export const startServiceWorkerService: CreateServiceWorkerService = (
   self
 ) => {
   async function handleNavigate(resource: string, id: string) {
-    await chrome.action.openPopup();
+    const lastFocused = await chrome.windows.getLastFocused();
+    const window = await chrome.windows.update(lastFocused.id!, {
+      focused: true,
+    });
+    await chrome.action.openPopup({ windowId: window.id });
     await chrome.runtime.sendMessage({
       resource,
       id,

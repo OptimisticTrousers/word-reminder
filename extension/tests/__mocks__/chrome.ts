@@ -16,6 +16,10 @@ global.chrome = {
     sendMessage: vi.fn().mockResolvedValue(),
     getURL: vi.fn(),
   },
+  windows: {
+    getLastFocused: vi.fn(),
+    update: vi.fn(),
+  },
   contextMenus: {
     onClicked: {
       addListener: vi.fn(),
