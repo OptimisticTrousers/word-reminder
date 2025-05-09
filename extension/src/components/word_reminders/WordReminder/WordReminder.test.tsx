@@ -180,7 +180,7 @@ describe("wordReminder component", () => {
 
     const id = screen.getByText(`ID: ${wordReminder.id}`);
     const link = screen.getByRole("link", {
-      name: "More Word Reminder Details",
+      name: "Word Reminder Details",
     });
     const reminder = screen.getByText("Reminder: Every 2 minutes (UTC)");
     const isActive = screen.getByText(

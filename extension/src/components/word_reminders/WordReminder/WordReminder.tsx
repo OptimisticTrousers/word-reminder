@@ -44,7 +44,7 @@ export const WordReminder = CSSModules(
             styleName="word-reminder__link"
             to={`/wordReminders/${wordReminder.id}`}
           >
-            More Word Reminder Details
+            Word Reminder Details
           </Link>
           <div styleName="word-reminder__reminder">
             Reminder: {reminder} (UTC)

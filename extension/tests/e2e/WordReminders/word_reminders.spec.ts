@@ -63,7 +63,7 @@ test.describe("Word Reminder page", () => {
         name: "Auto Word Reminder",
         exact: true,
       });
-      const wordReminderDetails = page.getByText("More Word Reminder Details");
+      const wordReminderDetails = page.getByText("Word Reminder Details");
       await expect(autoWordReminderHeading).toBeVisible();
       await expect(wordReminderDetails).toBeVisible();
       await expect(createAutoWordReminderButton).not.toBeVisible();
@@ -114,7 +114,7 @@ test.describe("Word Reminder page", () => {
         name: "Auto Word Reminder",
         exact: true,
       });
-      const wordReminderDetails = page.getByText("More Word Reminder Details");
+      const wordReminderDetails = page.getByText("Word Reminder Details");
       await expect(autoWordReminderHeading).toBeVisible();
       await expect(wordReminderDetails).toBeVisible();
       await expect(createAutoWordReminderButton).not.toBeVisible();
@@ -146,7 +146,7 @@ test.describe("Word Reminder page", () => {
       const autoWordReminderHeading = page.getByRole("heading", {
         name: "Auto Word Reminder",
       });
-      const wordReminderDetails = page.getByText("More Word Reminder Details");
+      const wordReminderDetails = page.getByText("Word Reminder Details");
       await expect(autoWordReminderHeading).toBeVisible();
       await expect(wordReminderDetails).not.toBeVisible();
       await expect(createAutoWordReminderButton).not.toBeVisible();
@@ -269,7 +269,7 @@ test.describe("Word Reminder page", () => {
       await wordRemindersLink.click();
 
       const wordReminderDetails = page.getByRole("link", {
-        name: "More Word Reminder Details",
+        name: "Word Reminder Details",
       });
       await expect(wordReminderDetails).toBeVisible();
     });
@@ -319,7 +319,7 @@ test.describe("Word Reminder page", () => {
       await wordRemindersLink.click();
 
       const wordReminderDetails = page.getByRole("link", {
-        name: "More Word Reminder Details",
+        name: "Word Reminder Details",
       });
       await expect(wordReminderDetails).toBeVisible();
     });
@@ -349,7 +349,7 @@ test.describe("Word Reminder page", () => {
       });
       await createButton.click();
 
-      const wordReminderDetails = page.getByText("More Word Reminder Details");
+      const wordReminderDetails = page.getByText("Word Reminder Details");
       await expect(wordReminderDetails).toBeVisible();
     });
 
@@ -423,7 +423,7 @@ test.describe("Word Reminder page", () => {
         .last();
       await modalDeleteButton.click();
 
-      const wordReminderDetails = page.getByText("More Word Reminder Details");
+      const wordReminderDetails = page.getByText("Word Reminder Details");
       await expect(wordReminderDetails).not.toBeVisible();
     });
   });
