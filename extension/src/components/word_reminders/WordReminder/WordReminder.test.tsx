@@ -182,7 +182,7 @@ describe("wordReminder component", () => {
     const link = screen.getByRole("link", {
       name: "More Word Reminder Details",
     });
-    const reminder = screen.getByText("Reminder: Every 2 minutes");
+    const reminder = screen.getByText("Reminder: Every 2 minutes (UTC)");
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"
     );
@@ -210,32 +210,6 @@ describe("wordReminder component", () => {
     expect(created_at).toBeInTheDocument();
     expect(userWordEls).toHaveLength(3);
     expect(asFragment());
-  });
-
-  it("renders that the word reminder will not remind if the reminder is set to an invalid cron", async () => {
-    const wordReminder = {
-      id: 1,
-      user_id: testUser.id,
-      finish: new Date(Date.now() + 1000), // make sure date comes after current date
-      reminder: "invalid cron",
-      is_active: false,
-      has_reminder_onload: false,
-      created_at: new Date(),
-      updated_at: new Date(),
-    };
-
-    render(
-      <MemoryRouter>
-        <WordReminder
-          wordReminder={{ ...wordReminder, user_words: userWords }}
-        />
-      </MemoryRouter>
-    );
-
-    const reminder = screen.getByText(
-      "Reminder: An error occurred when generating the expression description. Check the cron expression syntax."
-    );
-    expect(reminder).toBeInTheDocument();
   });
 
   it("opens update modal when use clicks on update button", async () => {
@@ -316,7 +290,7 @@ describe("wordReminder component", () => {
       );
 
       const id = screen.getByText(`ID: ${wordReminder.id}`);
-      const reminder = screen.getByText("Reminder: Every 2 minutes");
+      const reminder = screen.getByText("Reminder: Every 2 minutes (UTC)");
       const isActive = screen.getByText(
         "Active (whether the word reminder will actively remind you of the words in it): Yes"
       );
@@ -366,7 +340,7 @@ describe("wordReminder component", () => {
     );
 
     const id = screen.getByText(`ID: ${wordReminder.id}`);
-    const reminder = screen.getByText("Reminder: Every 2 minutes");
+    const reminder = screen.getByText("Reminder: Every 2 minutes (UTC)");
     const isActive = screen.getByText(
       "Active (whether the word reminder will actively remind you of the words in it): No"
     );

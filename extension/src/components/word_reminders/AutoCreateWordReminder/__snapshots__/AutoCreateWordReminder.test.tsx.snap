@@ -18,7 +18,7 @@ exports[`AutoCreateWordReminder component > when the auto word reminder does exi
     <div
       class="_auto-word-reminder__reminder_f00845"
     >
-      Reminder: Every 5 minutes
+      Reminder: Every 5 minutes (UTC)
     </div>
     <div
       class="_auto-word-reminder__duration_f00845"

@@ -194,7 +194,7 @@ describe("AutoCreateWordReminder component", () => {
 
       const units = msToUnits(autoWordReminder.duration);
       const id = await screen.findByText(`ID: ${autoWordReminder.id}`);
-      const reminder = screen.getByText("Reminder: Every 5 minutes");
+      const reminder = screen.getByText("Reminder: Every 5 minutes (UTC)");
       const duration = screen.getByText(
         `Weeks: ${units.weeks}, Days: ${units.days}, Hours: ${units.hours}, Minutes: ${units.minutes}`
       );

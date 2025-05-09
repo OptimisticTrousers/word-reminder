@@ -19,10 +19,14 @@ export const Reminder = CSSModules(
 
     return (
       <div styleName="reminder">
-        <a href="https://cronprompt.com/">Visit cronprompt for more details</a>
+        <a href="https://cronprompt.com/">
+          Visit cronprompt for more details. Use UTC in your reminder. (ie. If
+          you live in 'America/New_York' and you want to schedule the reminder
+          to show at 4 PM ET, use the 8 PM cron expression).
+        </a>
         <p styleName="reminder__description">
           {reminder &&
-            cronstrue.toString(value, {
+            cronstrue.toString(reminder, {
               throwExceptionOnParseError: false,
             })}
         </p>
@@ -36,7 +40,7 @@ export const Reminder = CSSModules(
             disabled={disabled}
             onChange={handleReminderChange}
             value={reminder}
-            placeholder="Enter a valid cron expression (ie. * * * * * or */5 * * * *)"
+            placeholder="Enter a valid UTC cron expression (ie. * * * * * or */5 * * * *)"
           />
         </label>
       </div>

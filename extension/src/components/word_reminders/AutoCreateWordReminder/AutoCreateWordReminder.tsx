@@ -92,7 +92,7 @@ export const AutoCreateWordReminder = CSSModules(
             ID: {autoWordReminder.id}
           </div>
           <div styleName="auto-word-reminder__reminder">
-            Reminder: {reminder}
+            Reminder: {reminder} (UTC)
           </div>
           <div styleName="auto-word-reminder__duration">
             Weeks: {duration.weeks}, Days: {duration.days}, Hours:{" "}
