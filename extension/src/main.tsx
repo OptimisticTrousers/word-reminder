@@ -6,17 +6,20 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NotificationProvider } from "./context/Notification";
 import { Router } from "./routes/Router";
 import "./index.css";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root") as HTMLDivElement).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <MemoryRouter>
-          <Router />
-        </MemoryRouter>
-      </NotificationProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <NotificationProvider>
+          <MemoryRouter>
+            <Router />
+          </MemoryRouter>
+        </NotificationProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>
 );
