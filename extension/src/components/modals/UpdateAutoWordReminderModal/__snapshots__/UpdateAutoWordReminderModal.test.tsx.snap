@@ -24,7 +24,7 @@ exports[`UpdateAutoWordReminderModal component > renders form with all inputs 1`
           <a
             href="https://cronprompt.com/"
           >
-            Visit cronprompt for more details
+            Visit cronprompt for more details. Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression).
           </a>
           <p
             class="_reminder__description_a2fc7e"
@@ -38,7 +38,7 @@ exports[`UpdateAutoWordReminderModal component > renders form with all inputs 1`
             <input
               class="_reminder__input_a2fc7e"
               name="reminder"
-              placeholder="Enter a valid cron expression (ie. * * * * * or */5 * * * *)"
+              placeholder="Enter a valid UTC cron expression (ie. * * * * * or */5 * * * *)"
               required=""
               type="text"
               value="* * * * *"
