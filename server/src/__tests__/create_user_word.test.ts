@@ -146,6 +146,7 @@ describe("create_user_word", () => {
             details: wordResponse,
             id: wordId,
           },
+          images: [image1, image2],
         },
       });
       expect(mockGetWordByWord).toHaveBeenCalledTimes(1);
@@ -268,6 +269,7 @@ describe("create_user_word", () => {
             details: wordResponse,
             id: wordId,
           },
+          images: [image1, image2, image3, image4],
         },
       });
       expect(mockGetWordByWord).toHaveBeenCalledTimes(1);
@@ -340,6 +342,7 @@ describe("create_user_word", () => {
             details: wordResponse,
             id: wordId,
           },
+          images: [image1, image2],
         },
       });
       expect(mockGetWordByWord).toHaveBeenCalledTimes(1);

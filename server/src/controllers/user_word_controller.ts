@@ -171,6 +171,7 @@ export const create_user_word = [
     const { json: imagesJson }: { json: ImageJson } = await http.get({
       url: API_ENDPOINTS.images(word),
     });
+    const images = [];
 
     // 4 images maximum for each word
     if (imagesJson.query) {
@@ -178,13 +179,14 @@ export const create_user_word = [
       const maximum = Math.min(pages.length, 4);
       for (let i = 0; i < maximum; i++) {
         const page = pages[i];
-        const image = {
+        const imageObject = {
           url: page.imageinfo[0].url,
           descriptionurl: page.imageinfo[0].descriptionurl,
           comment: page.imageinfo[0].comment ?? page.title,
           word_id: newWord.id,
         };
-        await imageQueries.create(image);
+        const image = await imageQueries.create(imageObject);
+        images.push(image);
       }
     }
 
@@ -194,7 +196,7 @@ export const create_user_word = [
       learned: false,
     });
 
-    res.status(200).json({ userWord: { ...userWord, word: newWord } });
+    res.status(200).json({ userWord: { ...userWord, word: newWord, images } });
   }),
 ];
 
