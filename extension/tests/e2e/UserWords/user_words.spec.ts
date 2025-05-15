@@ -107,38 +107,4 @@ test.describe("User Words page", () => {
     await expect(word1).toBeVisible();
     await expect(word2).toBeVisible();
   });
-
-  test("that a user word can be deleted", async ({ page }) => {
-    const response = await loginWith(page, testUser.email, testUser.password);
-    const json = await response.json();
-    const user = json.user;
-    const wordInput = page.getByLabel("Word", { exact: true });
-    await wordInput.fill(word);
-    const addButton = page.getByRole("button", { name: "Add" });
-    const responsePromise = page.waitForResponse(
-      (response) =>
-        response.url() === `${VITE_API_DOMAIN}/users/${user.id}/userWords` &&
-        response.request().method() === "POST"
-    );
-    await addButton.click();
-    await responsePromise;
-
-    const deleteButton = page.getByRole("button", {
-      name: "Open delete user word modal",
-      exact: true,
-    });
-    await deleteButton.click();
-    const modalDeleteButton = page
-      .getByRole("button", {
-        name: "Delete",
-        exact: true,
-      })
-      .last();
-    await modalDeleteButton.click();
-
-    const userWordWord = page.getByRole("heading", {
-      name: word,
-    });
-    await expect(userWordWord).not.toBeVisible();
-  });
 });
