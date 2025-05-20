@@ -31,6 +31,22 @@ describe("csv", () => {
       expect(count).toBe(4);
     });
 
+    it("returns the list of values when the words are in multiple rows and columns", async () => {
+      const fileBuffer = fs.readFileSync(
+        path.resolve(__dirname, "csv", "row_and_column_words.csv")
+      );
+
+      const { records, error, count } = await csv.read(fileBuffer);
+
+      expect(records).toEqual([
+        ["dispensation", "serreptitously"],
+        ["gutatory"],
+        ["patronage"],
+      ]);
+      expect(error).toBeNull();
+      expect(count).toBe(4);
+    });
+
     it("returns an empty list when the file is empty", async () => {
       const fileBuffer = fs.readFileSync(
         path.resolve(__dirname, "csv", "empty.csv")
