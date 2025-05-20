@@ -12,7 +12,6 @@ export const variables: Variables = {};
 for (const variable of [
   "DATABASE_URL",
   "TEST_DATABASE_URL",
-  "FRONTEND_URL",
   "NODE_ENV",
   "SALT",
   "SECRET",
@@ -21,7 +20,6 @@ for (const variable of [
   "VAPID_PRIVATE_KEY",
   "WORD_REMINDER_EMAIL",
   "SERVER_URL",
-  "FRONTEND_VERIFICATION",
   "AWS_ACCESS_KEY_ID",
   "AWS_SECRET_ACCESS_KEY",
 ]) {

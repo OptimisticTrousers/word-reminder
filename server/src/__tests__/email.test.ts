@@ -1,4 +1,4 @@
-import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses";
+import { SESClient } from "@aws-sdk/client-ses";
 
 import { variables } from "../config/variables";
 
