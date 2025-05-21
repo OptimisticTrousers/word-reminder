@@ -8,9 +8,10 @@
   },
   "background": {
     "service_worker": "service-worker.js",
+    "scripts": ["service_worker.js"],
     "type": "module"
   },
-  "permissions": ["scripting", "contextMenus", "notifications", "storage"],
+  "permissions": ["contextMenus", "notifications", "storage"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "icons": {
     "16": "images/word-reminder-16x16.png"
