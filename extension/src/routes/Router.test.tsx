@@ -323,7 +323,7 @@ describe("Router component", () => {
     const mockSessionServiceGetCurrentUser = vi
       .spyOn(sessionService, "getCurrentUser")
       .mockImplementation(async () => {
-        return Promise.reject({ json: { message: errorMessage }, status: 400 });
+        return Promise.reject({ message: errorMessage, status: 400 });
       });
 
     setup({ initialRoute: "/userWords" });

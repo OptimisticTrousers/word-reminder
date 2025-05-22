@@ -12,14 +12,14 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root") as HTMLDivElement).render(
   <StrictMode>
-    <ErrorBoundary>
+    <MemoryRouter>
       <QueryClientProvider client={queryClient}>
         <NotificationProvider>
-          <MemoryRouter>
+          <ErrorBoundary>
             <Router />
-          </MemoryRouter>
+          </ErrorBoundary>
         </NotificationProvider>
       </QueryClientProvider>
-    </ErrorBoundary>
+    </MemoryRouter>
   </StrictMode>
 );

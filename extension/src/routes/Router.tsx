@@ -24,13 +24,7 @@ export function Router() {
   }
 
   if (isError) {
-    return (
-      <Error500
-        message={
-          (error as unknown as { json: { message: string } }).json.message
-        }
-      />
-    );
+    return <Error500 message={error.message} />;
   }
 
   return routing;
