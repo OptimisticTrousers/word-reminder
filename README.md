@@ -107,6 +107,7 @@ There may be confusion as to what the options are when trying to create/update y
 ## Tips
 
 - Use a shortcut to open the chrome extension such as `Shift + Ctrl + W` under your extension keyboard shortcuts to easily open Word Reminder. The word input will automatically focus so you can type in the word you want to add to your dictionary.
+- Press `Escape` to close the extension and open it back up again using a shortcut such as `Shift + Ctrl + W`. It's faster to add another word to your dictionary this way using the keyboard instead of navigating back to the `User Words` page.
 
 ## Format of CSV File
 
