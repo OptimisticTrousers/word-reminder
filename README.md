@@ -306,7 +306,7 @@ With Edge, open the [edge://extensions/](edge://extensions/) page and click on t
    cd extension/ && npm run e2e
    ```
 
-5. If you make any changes to the `service-worker` folder under `extension`, `npm run extension` will not watch for those changes so you must re-run this command manually when making changes.
+5. If you make any changes to the `service-worker` folder under `extension`, `npm run extension` will not watch for those changes. Use the `npm run sw` command simultaneously with `npm run extension` in order to watch for service-worker changes.
 6. Send a pull request and bug the maintainer until it gets merged and published. :) Make sure to add yourself to CONTRIBUTORS.txt.
 
 ## Next Steps
