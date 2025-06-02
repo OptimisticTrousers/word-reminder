@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "prebuild": "npm run sw",
-    "extension": "tsc -b && vite build --mode development --watch",
+    "build": "tsc -b && vite build && vite build --config vite.sw.config.ts",
+    "extension": "NODE_ENV=development tsc -b && vite build --mode development --watch",
     "sw": "vite build --config vite.sw.config.ts --watch",
     "coverage": "vitest run --coverage",
     "test": "vitest",
