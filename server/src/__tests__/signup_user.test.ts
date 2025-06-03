@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import bcrypt from "bcryptjs";
 import express from "express";
 import request from "supertest";

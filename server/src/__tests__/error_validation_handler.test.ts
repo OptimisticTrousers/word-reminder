@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express from "express";
 import { body } from "express-validator";
 import request from "supertest";

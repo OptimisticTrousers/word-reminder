@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express from "express";
 import request from "supertest";
 
@@ -21,15 +22,17 @@ describe("errorHandler", () => {
   describe("User error", () => {
     it("should handle user errors and return status 400", async () => {
       const response = await request(app).get("/user-error");
-      
+
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
         message: "User error occurred",
         stack: expect.any(String),
       });
-      expect(response.body.stack.includes("Error: User error occurred")).toBe(
-        true
-      );
+      expect(
+        (response.body as { stack: string }).stack.includes(
+          "Error: User error occurred"
+        )
+      ).toBe(true);
     });
   });
 
@@ -42,7 +45,9 @@ describe("errorHandler", () => {
         message: "Internal Server Error.",
         stack: expect.any(String),
       });
-      expect(response.body.stack.includes("Error:")).toBe(true);
+      expect(
+        (response.body as { stack: string }).stack.includes("Error:")
+      ).toBe(true);
     });
   });
 });

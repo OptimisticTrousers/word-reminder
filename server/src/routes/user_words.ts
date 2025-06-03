@@ -20,12 +20,7 @@ export const userWordRouter = Router({
 
 userWordRouter
   .route("/")
-  .get(
-    validatePageQuery,
-    validateSortQuery,
-    errorValidationHandler,
-    user_word_list
-  )
+  .get(validatePageQuery, validateSortQuery, user_word_list)
   .post(create_user_word);
 
 userWordRouter

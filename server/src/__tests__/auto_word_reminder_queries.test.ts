@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { SortMode } from "common";
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { userQueries } from "../db/user_queries";
@@ -32,10 +33,10 @@ describe("autoWordReminderQueries", () => {
       );
 
       const createdAtTimestamp = new Date(
-        autoWordReminder!.created_at
+        autoWordReminder.created_at
       ).getTime();
       const updatedAtTimestamp = new Date(
-        autoWordReminder!.updated_at
+        autoWordReminder.updated_at
       ).getTime();
       const nowTimestamp = Date.now();
       expect(autoWordReminder).toEqual({
@@ -107,8 +108,8 @@ describe("autoWordReminderQueries", () => {
         newAutoWordReminderParams
       );
 
-      const createdAtTimestamp = new Date(wordReminder!.created_at).getTime();
-      const updatedAtTimestamp = new Date(wordReminder!.updated_at).getTime();
+      const createdAtTimestamp = new Date(wordReminder.created_at).getTime();
+      const updatedAtTimestamp = new Date(wordReminder.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(wordReminder).toEqual({
         id: autoWordReminderId,

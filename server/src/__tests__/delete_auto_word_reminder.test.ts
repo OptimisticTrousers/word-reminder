@@ -4,9 +4,7 @@ import request from "supertest";
 import { delete_auto_word_reminder } from "../controllers/auto_word_reminder_controller";
 import { SortMode } from "common";
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
-import { boss } from "../db/boss";
 
-const queuePostfix = "auto-word-reminder-queue";
 const app = express();
 app.use(express.json());
 app.delete(

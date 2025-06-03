@@ -62,8 +62,8 @@ describe("user_word_list", () => {
         direction: "-1",
       });
       const learned = true;
-      const limit = 6;
-      const page = 1;
+      const limit = "6";
+      const page = "1";
       const search = "bob";
 
       const response = await request(app)
@@ -77,7 +77,7 @@ describe("user_word_list", () => {
         sort: {
           column: "created_at",
           table: "user_words",
-          direction: -1,
+          direction: "-1",
         },
         learned,
         limit,

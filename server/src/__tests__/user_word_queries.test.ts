@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Word, UserWord, SortMode } from "common";
 import { userQueries } from "../db/user_queries";
 import { userWordQueries } from "../db/user_word_queries";
@@ -76,8 +77,8 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const createdAtTimestamp = new Date(userWord!.created_at).getTime();
-      const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
+      const createdAtTimestamp = new Date(userWord.created_at).getTime();
+      const updatedAtTimestamp = new Date(userWord.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(userWord).toEqual({
         id: 1,
@@ -101,8 +102,8 @@ describe("userWordQueries", () => {
         learned: true,
       });
 
-      const createdAtTimestamp = new Date(userWord!.created_at).getTime();
-      const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
+      const createdAtTimestamp = new Date(userWord.created_at).getTime();
+      const updatedAtTimestamp = new Date(userWord.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(userWord).toEqual({
         id: 1,
@@ -131,8 +132,8 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const createdAtTimestamp = new Date(userWord!.created_at).getTime();
-      const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
+      const createdAtTimestamp = new Date(userWord.created_at).getTime();
+      const updatedAtTimestamp = new Date(userWord.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(userWord).toEqual({
         id: 1,
@@ -162,8 +163,8 @@ describe("userWordQueries", () => {
         learned: true,
       });
 
-      const createdAtTimestamp = new Date(userWord!.created_at).getTime();
-      const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
+      const createdAtTimestamp = new Date(userWord.created_at).getTime();
+      const updatedAtTimestamp = new Date(userWord.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(userWord).toEqual({
         id: 1,
@@ -191,8 +192,8 @@ describe("userWordQueries", () => {
         learned: false,
       });
 
-      const createdAtTimestamp = new Date(userWord!.created_at).getTime();
-      const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
+      const createdAtTimestamp = new Date(userWord.created_at).getTime();
+      const updatedAtTimestamp = new Date(userWord.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(userWord).toEqual({
         id: 1,
@@ -220,8 +221,8 @@ describe("userWordQueries", () => {
       const result = await userWordQueries.getByUserId(newUser!.id);
 
       const userWord = result.userWords[0];
-      const createdAtTimestamp = new Date(userWord!.created_at).getTime();
-      const updatedAtTimestamp = new Date(userWord!.updated_at).getTime();
+      const createdAtTimestamp = new Date(userWord.created_at).getTime();
+      const updatedAtTimestamp = new Date(userWord.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(result).toEqual({
         totalRows: 1,

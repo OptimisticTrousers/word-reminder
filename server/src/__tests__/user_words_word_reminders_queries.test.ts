@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { userQueries } from "../db/user_queries";
 import { userWordQueries } from "../db/user_word_queries";
 import { userWordsWordRemindersQueries } from "../db/user_words_word_reminders_queries";

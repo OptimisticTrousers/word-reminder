@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express from "express";
 import request from "supertest";
 import { validateToken } from "../middleware/validate_token";

@@ -1,7 +1,10 @@
 import { Template } from "common";
 import { Request, Response } from "express";
 
-export const change_password = (req: Request, res: Response) => {
+export const change_password = (
+  req: Request<{ userId: string; token: string }>,
+  res: Response
+) => {
   const { userId, token } = req.params;
 
   res.render(`pages/${Template.CHANGE_PASSWORD}`, {
@@ -12,7 +15,10 @@ export const change_password = (req: Request, res: Response) => {
   });
 };
 
-export const confirm_account = (req: Request, res: Response) => {
+export const confirm_account = (
+  req: Request<{ userId: string; token: string }>,
+  res: Response
+) => {
   const { userId, token } = req.params;
 
   res.render(`pages/${Template.CONFIRM_ACCOUNT}`, {
@@ -21,7 +27,10 @@ export const confirm_account = (req: Request, res: Response) => {
   });
 };
 
-export const change_email = (req: Request, res: Response) => {
+export const change_email = (
+  req: Request<{ userId: string; token: string }, unknown, unknown>,
+  res: Response
+) => {
   const { userId, token } = req.params;
 
   res.render(`pages/${Template.CHANGE_EMAIL}`, {

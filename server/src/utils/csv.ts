@@ -18,7 +18,7 @@ export const csv = (function () {
 
     parser.on("readable", () => {
       let record: string[];
-      while ((record = parser.read()) !== null) {
+      while ((record = parser.read() as string[]) !== null) {
         const trimmedRecord = removeDuplicates(record);
         count += trimmedRecord.length;
         records.push(trimmedRecord);

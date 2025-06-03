@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express from "express";
 import request from "supertest";
 
@@ -145,7 +147,7 @@ describe("createWorkers", () => {
       const message = "Success!";
       const app = express();
       app.use(createWorkers);
-      app.post("/api", (req, res, next) => {
+      app.post("/api", (req, res) => {
         res.json({ message });
       });
       const mockCreateQueue = jest
@@ -218,7 +220,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -227,7 +229,7 @@ describe("createWorkers", () => {
         const jobId = "1";
         const mockWork = jest
           .spyOn(boss, "work")
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -237,7 +239,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn())
           .mockImplementationOnce(jest.fn());
@@ -321,7 +323,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -330,7 +332,7 @@ describe("createWorkers", () => {
         const jobId = "1";
         const mockWork = jest
           .spyOn(boss, "work")
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -339,7 +341,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn())
           .mockImplementationOnce(jest.fn());
@@ -464,7 +466,7 @@ describe("createWorkers", () => {
       const message = "Success!";
       const app = express();
       app.use(createWorkers);
-      app.post("/api", (req, res, next) => {
+      app.post("/api", (req, res) => {
         res.json({ message });
       });
       const mockCreateQueue = jest
@@ -544,7 +546,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -554,7 +556,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -564,7 +566,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn());
         const mockWordRemindersGetById = jest
@@ -641,7 +643,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -651,7 +653,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -661,7 +663,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn());
         const mockWordRemindersGetById = jest
@@ -738,7 +740,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -748,7 +750,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -758,7 +760,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn());
         const mockWordRemindersGetById = jest
@@ -834,7 +836,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -844,7 +846,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -854,7 +856,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn());
         const mockWordRemindersGetById = jest
@@ -943,7 +945,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -953,7 +955,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -963,7 +965,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn());
         const mockWordRemindersGetById = jest
@@ -1043,7 +1045,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -1053,7 +1055,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -1063,7 +1065,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn());
         const mockWordRemindersGetById = jest
@@ -1155,7 +1157,7 @@ describe("createWorkers", () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
-        app.post("/api", (req, res, next) => {
+        app.post("/api", (req, res) => {
           res.json({ message });
         });
         const mockCreateQueue = jest
@@ -1165,7 +1167,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce(async (queueName, callback: any) => {
+          .mockImplementationOnce((queueName, callback: any) => {
             callback([
               {
                 data: {
@@ -1175,7 +1177,7 @@ describe("createWorkers", () => {
                 id: jobId,
               },
             ]);
-            return "";
+            return Promise.resolve("");
           })
           .mockImplementationOnce(jest.fn());
         const mockWordRemindersGetById = jest
@@ -1270,7 +1272,7 @@ describe("createWorkers", () => {
       const message = "Success!";
       const app = express();
       app.use(createWorkers);
-      app.post("/api", (req, res, next) => {
+      app.post("/api", (req, res) => {
         res.json({ message });
       });
       const mockCreateQueue = jest
@@ -1346,7 +1348,7 @@ describe("createWorkers", () => {
       const message = "Success!";
       const app = express();
       app.use(createWorkers);
-      app.post("/api", (req, res, next) => {
+      app.post("/api", (req, res) => {
         res.json({ message });
       });
       const mockCreateQueue = jest
@@ -1360,9 +1362,9 @@ describe("createWorkers", () => {
         .spyOn(boss, "work")
         .mockImplementationOnce(jest.fn())
         .mockImplementationOnce(jest.fn())
-        .mockImplementationOnce(async (queueName, callback: any) => {
+        .mockImplementationOnce((queueName, callback: any) => {
           callback(mockJobs);
-          return "";
+          return Promise.resolve("");
         });
       const mockUserWordGetByUserWords = jest
         .spyOn(userWordQueries, "getUserWords")

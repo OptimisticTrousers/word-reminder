@@ -54,7 +54,7 @@ describe("confirmAccount", () => {
       .mockResolvedValue(user);
     const mockUpdateById = jest
       .spyOn(userQueries, "updateById")
-      .mockImplementation(async () => {
+      .mockImplementation(() => {
         throw new Error("cannot confirm user");
       });
 

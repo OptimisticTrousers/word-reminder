@@ -18,7 +18,7 @@ describe("isAuthenticated", () => {
         (req: Request, res: Response, next: NextFunction) => {
           req.isUnauthenticated = function () {
             return true;
-          } as any;
+          } as never;
           next();
         },
         isAuthenticated,
@@ -44,7 +44,7 @@ describe("isAuthenticated", () => {
         (req: Request, res: Response, next: NextFunction) => {
           req.isUnauthenticated = function () {
             return false;
-          } as any;
+          } as never;
           next();
         },
         isAuthenticated,

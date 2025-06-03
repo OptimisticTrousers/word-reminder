@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="vitest/globals" />
 import { subscriptionService } from "../services/subscription_service";
 import { userWordService } from "../services/user_word_service";
@@ -119,7 +118,7 @@ describe("Service Worker Suite", async () => {
           prototype: {
             actions: [],
           },
-        } as any;
+        } as never;
         createWebpushService(mockSelf, mockHandleNavigate);
 
         await new Promise((resolve) => setTimeout(resolve, 0));
@@ -176,7 +175,7 @@ describe("Service Worker Suite", async () => {
         const mockHandleNavigate = vi.fn();
         window.Notification = {
           prototype: {},
-        } as any;
+        } as never;
         createWebpushService(mockSelf, mockHandleNavigate);
 
         await new Promise((resolve) => setTimeout(resolve, 0));
@@ -544,16 +543,16 @@ describe("Service Worker Suite", async () => {
       );
       const mockFocusedWindow = {
         id: "2",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockUpdateWindow = {
         id: "3",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockGetLastFocused = vi
         .spyOn(chrome.windows, "getLastFocused")
         .mockResolvedValue(mockFocusedWindow);
       const mockUpdate = vi
         .spyOn(chrome.windows, "update")
-        .mockResolvedValue(mockUpdateWindow);
+        .mockResolvedValue(mockUpdateWindow as never);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi
@@ -685,16 +684,16 @@ describe("Service Worker Suite", async () => {
       );
       const mockFocusedWindow = {
         id: "2",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockUpdateWindow = {
         id: "3",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockGetLastFocused = vi
         .spyOn(chrome.windows, "getLastFocused")
         .mockResolvedValue(mockFocusedWindow);
       const mockUpdate = vi
         .spyOn(chrome.windows, "update")
-        .mockResolvedValue(mockUpdateWindow);
+        .mockResolvedValue(mockUpdateWindow as never);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi
@@ -837,16 +836,16 @@ describe("Service Worker Suite", async () => {
       );
       const mockFocusedWindow = {
         id: "2",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockUpdateWindow = {
         id: "3",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockGetLastFocused = vi
         .spyOn(chrome.windows, "getLastFocused")
         .mockResolvedValue(mockFocusedWindow);
       const mockUpdate = vi
         .spyOn(chrome.windows, "update")
-        .mockResolvedValue(mockUpdateWindow);
+        .mockResolvedValue(mockUpdateWindow as never);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi
@@ -983,16 +982,16 @@ describe("Service Worker Suite", async () => {
       );
       const mockFocusedWindow = {
         id: "2",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockUpdateWindow = {
         id: "3",
-      } as any;
+      } as unknown as chrome.windows.Window;
       const mockGetLastFocused = vi
         .spyOn(chrome.windows, "getLastFocused")
         .mockResolvedValue(mockFocusedWindow);
       const mockUpdate = vi
         .spyOn(chrome.windows, "update")
-        .mockResolvedValue(mockUpdateWindow);
+        .mockResolvedValue(mockUpdateWindow as never);
       const mockOpenPopup = vi.spyOn(chrome.action, "openPopup");
       const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
       const mockOnMessageAddListener = vi

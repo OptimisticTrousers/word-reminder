@@ -166,8 +166,6 @@ const userWord3 = {
   updated_at: new Date(),
 };
 
-const userWords = [userWord1, userWord2, userWord3];
-
 describe("get_word_reminder", () => {
   const mockUserWordsWordReminderGetByWordReminderId = jest
     .spyOn(userWordsWordRemindersQueries, "getByWordReminderId")

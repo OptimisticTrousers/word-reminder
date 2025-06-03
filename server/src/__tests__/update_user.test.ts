@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express from "express";
 import path from "path";
 import request from "supertest";
@@ -137,7 +138,7 @@ describe("update_user", () => {
         const errorMessage = "cannot update email";
         const mockUpdateById = jest
           .spyOn(userQueries, "updateById")
-          .mockImplementation(async () => {
+          .mockImplementation(() => {
             throw new Error(errorMessage);
           });
 
@@ -244,7 +245,7 @@ describe("update_user", () => {
         const errorMessage = "cannot update password";
         const mockUpdateById = jest
           .spyOn(userQueries, "updateById")
-          .mockImplementation(async () => {
+          .mockImplementation(() => {
             throw new Error(errorMessage);
           });
 

@@ -1,5 +1,7 @@
+import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { body } from "express-validator";
+import { PushSubscription } from "web-push";
 
 import { subscriptionQueries } from "../db/subscription_queries";
 import { errorValidationHandler } from "../middleware/error_validation_handler";
@@ -24,11 +26,16 @@ export const create_subscription = [
     .isLength({ min: 1 })
     .withMessage("P256dh must be specified."),
   errorValidationHandler,
-  asyncHandler(async (req, res) => {
-    const userId = Number(req.params.userId);
-    const subscription = req.body;
-    await subscriptionQueries.create({ userId, subscription });
+  asyncHandler(
+    async (
+      req: Request<{ userId: string }, unknown, PushSubscription>,
+      res: Response<{ data: { success: boolean } }>
+    ) => {
+      const userId = Number(req.params.userId);
+      const subscription = req.body;
+      await subscriptionQueries.create({ userId, subscription });
 
-    res.status(200).json({ data: { success: true } });
-  }),
+      res.status(200).json({ data: { success: true } });
+    }
+  ),
 ];

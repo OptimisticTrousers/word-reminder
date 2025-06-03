@@ -13,8 +13,8 @@ export const validatePageQuery = [
     .withMessage("'page' must be a positive integer."),
   query().custom((_value, { req }) => {
     const query = req.query;
-    const page = query?.page;
-    const limit = query?.limit;
+    const page = query?.page as string | undefined;
+    const limit = query?.limit as string | undefined;
     const hasPaginationParams = page || limit;
     const allPaginationParamsProvided = page && limit;
 

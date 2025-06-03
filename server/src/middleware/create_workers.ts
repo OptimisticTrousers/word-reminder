@@ -115,8 +115,8 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
           word_reminder_id
         );
       const wordPromises: Promise<string>[] = user_words.map(
-        async (user_word: { details: Detail[]; learned: boolean }) => {
-          return user_word.details[0].word;
+        (user_word: { details: Detail[]; learned: boolean }) => {
+          return Promise.resolve(user_word.details[0].word);
         }
       );
 

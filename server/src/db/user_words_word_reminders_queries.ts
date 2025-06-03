@@ -210,7 +210,7 @@ export const userWordsWordRemindersQueries = (function () {
     // calculate the length of the rows before applying a limit on it to see how many rows match the query
     const totalRows = totalRowsResult[0].total;
 
-    let result: Result = { wordReminders: rows };
+    const result: Result = { wordReminders: rows };
 
     if (startIndex > 0) {
       result.previous = {

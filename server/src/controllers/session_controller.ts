@@ -1,5 +1,5 @@
 import { User } from "common";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { body } from "express-validator";
 import passport from "passport";
 
@@ -42,28 +42,30 @@ export const login_user = [
     ),
   errorValidationHandler,
   (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate(
-      "local",
-      (
-        err: Error,
-        user: Express.User & { id: number },
-        info: { message: string }
-      ) => {
-        if (err) {
-          return next(err);
-        }
-
-        if (!user) {
-          return res.status(401).json({ user: null, message: info.message });
-        }
-
-        req.logIn(user, async (err) => {
+    (
+      passport.authenticate(
+        "local",
+        (
+          err: Error,
+          user: Express.User & { id: number },
+          info: { message: string }
+        ) => {
           if (err) {
             return next(err);
           }
-          res.status(200).json({ user });
-        });
-      }
+
+          if (!user) {
+            return res.status(401).json({ user: null, message: info.message });
+          }
+
+          req.logIn(user, (err) => {
+            if (err) {
+              return next(err);
+            }
+            res.status(200).json({ user });
+          });
+        }
+      ) as RequestHandler
     )(req, res, next);
   },
 ];

@@ -140,10 +140,10 @@ describe("word_reminder_list", () => {
     it("calls the functions to get the user's words with none of the query options", async () => {
       const mockGetByUserId = jest
         .spyOn(userWordsWordRemindersQueries, "getByUserId")
-        .mockImplementation(async () => {
-          return {
+        .mockImplementation(() => {
+          return Promise.resolve({
             wordReminders: [{ ...wordReminder, user_words: userWords }],
-          };
+          });
         });
 
       const response = await request(app)
@@ -189,8 +189,8 @@ describe("word_reminder_list", () => {
     it("calls the functions to get the user's worth with the page number and page limit query", async () => {
       const mockGetByUserId = jest
         .spyOn(userWordsWordRemindersQueries, "getByUserId")
-        .mockImplementation(async () => {
-          return {
+        .mockImplementation(() => {
+          return Promise.resolve({
             wordReminders: [
               {
                 ...wordReminder,
@@ -201,7 +201,7 @@ describe("word_reminder_list", () => {
               page: 2,
               limit: 2,
             },
-          };
+          });
         });
 
       const page = 1;

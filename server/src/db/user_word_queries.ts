@@ -148,7 +148,7 @@ export const userWordQueries = (function () {
       queryParams
     );
 
-    let result: Result = { userWords: rows, totalRows };
+    const result: Result = { userWords: rows, totalRows };
 
     if (startIndex > 0) {
       result.previous = {

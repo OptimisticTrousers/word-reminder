@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { userQueries } from "../db/user_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 // Import db setup and teardown functionality

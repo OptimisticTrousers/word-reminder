@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import ejs from "ejs";
 import express from "express";
 import { SentMessageInfo } from "nodemailer";
 import { readFile } from "node:fs/promises";
 import path from "path";
-import { Job } from "pg-boss";
 import request from "supertest";
 
 import { send_email } from "../controllers/email_controller";

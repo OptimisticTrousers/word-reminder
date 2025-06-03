@@ -8,7 +8,7 @@ const { DATABASE_URL, TEST_DATABASE_URL, NODE_ENV } = variables;
 
 export interface Db {
   stopConnection: () => Promise<void>;
-  query: (text: string, values?: unknown[]) => Promise<QueryResult<any>>;
+  query: (text: string, values?: unknown[]) => Promise<QueryResult<never>>;
 }
 
 const pool = new Pool({
@@ -26,7 +26,7 @@ export const db: Db = (function (pool: Pool) {
   const query = async (
     text: string,
     values?: unknown[]
-  ): Promise<QueryResult<any>> => {
+  ): Promise<QueryResult<never>> => {
     return pool.query(text, values);
   };
 

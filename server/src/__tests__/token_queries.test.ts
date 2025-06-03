@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { tokenQueries } from "../db/token_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
@@ -33,7 +34,7 @@ describe("tokenQueries", () => {
 
     it("returns a token when the token is invalid", async () => {
       const token = await tokenQueries.create();
-      token.token = `${token}invalidtoken`;
+      token.token = `invalidtoken`;
 
       const verified = await tokenQueries.verify(token.token);
 

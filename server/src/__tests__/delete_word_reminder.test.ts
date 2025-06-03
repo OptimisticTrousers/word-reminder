@@ -64,8 +64,8 @@ describe("delete_word_reminder", () => {
       .mockResolvedValue(deletedUserWordsWordReminders);
     const deleteByIdMock = jest
       .spyOn(wordReminderQueries, "deleteById")
-      .mockImplementation(async () => {
-        return wordReminder;
+      .mockImplementation(() => {
+        return Promise.resolve(wordReminder);
       });
 
     const response = await request(app).delete(

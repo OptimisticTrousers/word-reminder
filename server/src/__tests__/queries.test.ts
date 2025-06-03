@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
 import { userQueries } from "../db/user_queries";

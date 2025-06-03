@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { userQueries } from "../db/user_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
@@ -81,8 +82,8 @@ describe("userQueries", () => {
         confirmed: true,
       });
 
-      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
-      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const createdAtTimestamp = new Date(updatedUser.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(updatedUser).toEqual({
         id: 1,
@@ -103,8 +104,8 @@ describe("userQueries", () => {
         email,
       });
 
-      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
-      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const createdAtTimestamp = new Date(updatedUser.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(updatedUser).toEqual({
         id: 1,
@@ -124,8 +125,8 @@ describe("userQueries", () => {
         password: "newpassword",
       });
 
-      const createdAtTimestamp = new Date(updatedUser!.created_at).getTime();
-      const updatedAtTimestamp = new Date(updatedUser!.updated_at).getTime();
+      const createdAtTimestamp = new Date(updatedUser.created_at).getTime();
+      const updatedAtTimestamp = new Date(updatedUser.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(updatedUser).toEqual({
         id: 1,
@@ -145,8 +146,8 @@ describe("userQueries", () => {
 
       const user = await userQueries.getByIdWithPassword(userId);
 
-      const createdAtTimestamp = new Date(user!.created_at).getTime();
-      const updatedAtTimestamp = new Date(user!.updated_at).getTime();
+      const createdAtTimestamp = new Date(user.created_at).getTime();
+      const updatedAtTimestamp = new Date(user.updated_at).getTime();
       const nowTimestamp = Date.now();
       expect(user).toEqual({
         id: 1,

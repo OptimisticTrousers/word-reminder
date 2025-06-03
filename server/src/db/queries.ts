@@ -45,5 +45,5 @@ export const createQueries = <T>(
   return Object.assign(Object.create(queriesProto), {
     columns: columns.join(", "),
     table,
-  });
+  }) as Queries<T>;
 };

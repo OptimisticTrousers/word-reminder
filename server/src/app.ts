@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import bcrypt from "bcryptjs";
 import cors from "cors";
 import express from "express";
@@ -14,6 +15,8 @@ import { apiRouter } from "./routes/api";
 import { viewRouter } from "./routes/views";
 import { webPush } from "./middleware/web_push";
 import { createWorkers } from "./middleware/create_workers";
+import { QueryResult } from "pg";
+import { User } from "common";
 
 export const app = express();
 
@@ -58,10 +61,8 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     async (email, password, done) => {
       try {
-        const { rows } = await db.query(
-          "SELECT * FROM users WHERE email = $1",
-          [email]
-        );
+        const { rows }: QueryResult<User & { password: string }> =
+          await db.query("SELECT * FROM users WHERE email = $1", [email]);
         const user = rows[0];
         if (!user) {
           return done(null, false, { message: "Incorrect email." });
@@ -69,7 +70,7 @@ passport.use(
         const match = await bcrypt.compare(password, user.password);
         if (match) {
           // passwords match! log user in
-          delete user.password;
+          delete (user as User & { password?: string }).password;
           return done(null, user);
         }
         // passwords do not match!

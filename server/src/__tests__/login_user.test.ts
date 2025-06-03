@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { EMAIL_MAX, PASSWORD_MAX } from "common";
 import express, { NextFunction, Request, Response } from "express";
 import passport from "passport";
@@ -48,7 +51,11 @@ describe("login_user", () => {
       message: errorMessage,
       stack: expect.any(String),
     });
-    expect(response.body.stack.includes(`Error: ${errorMessage}`)).toBe(true);
+    expect(
+      (response.body as { stack: string }).stack.includes(
+        `Error: ${errorMessage}`
+      )
+    ).toBe(true);
     expect(mockAuthenticate).toHaveBeenCalledTimes(1);
     expect(mockAuthenticate).toHaveBeenCalledWith(
       strategy,
@@ -96,7 +103,7 @@ describe("login_user", () => {
           capturedAuthenticateCallback(null, user, { message: "" });
         });
       });
-    let capturedLoginCallback: any;
+    let capturedLoginCallback;
     const mockLogin = jest.fn().mockImplementation((_, callback) => {
       capturedLoginCallback = callback;
       capturedLoginCallback(error);
@@ -121,7 +128,11 @@ describe("login_user", () => {
       message: errorMessage,
       stack: expect.any(String),
     });
-    expect(response.body.stack.includes(`Error: ${errorMessage}`)).toBe(true);
+    expect(
+      (response.body as { stack: string }).stack.includes(
+        `Error: ${errorMessage}`
+      )
+    ).toBe(true);
     expect(mockAuthenticate).toHaveBeenCalledTimes(1);
     expect(mockAuthenticate).toHaveBeenCalledWith(
       strategy,
@@ -140,7 +151,7 @@ describe("login_user", () => {
           capturedAuthenticateCallback(null, user, { message: "Success!" });
         });
       });
-    let capturedLoginCallback: any;
+    let capturedLoginCallback;
     const mockLogin = jest.fn().mockImplementation((_, callback) => {
       capturedLoginCallback = callback;
       capturedLoginCallback(null);

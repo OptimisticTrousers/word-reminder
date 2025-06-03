@@ -22,7 +22,7 @@ export const validateOptions = [
     .isLength({ min: 1 })
     .withMessage("'reminder' must be specified.")
     .bail()
-    .custom((value) => {
+    .custom((value: string) => {
       const validation = validateCronExpression(value);
       if (validation.valid) {
         return true;
@@ -77,7 +77,11 @@ export const validateAutoWordReminder = [
     .notEmpty({ ignore_whitespace: true })
     .withMessage("'sort_mode' must be specified.")
     .bail()
-    .custom((value) => Object.values<string>(SortMode).includes(value))
+    .custom((value: string): value is SortMode =>
+      Object.values(SortMode)
+        .map((sortMode) => sortMode.toString())
+        .includes(value)
+    )
     .withMessage(
       `'sort_mode' must be a value in this enum: ${Object.values(SortMode)}.`
     ),

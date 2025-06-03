@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express from "express";
 import request from "supertest";
 
@@ -21,9 +22,11 @@ describe("notFoundHandler", () => {
         message: "Not found",
         stack: expect.any(String),
       });
-      expect(response.body.stack.includes("NotFoundError: Not found")).toBe(
-        true
-      );
+      expect(
+        (response.body as { stack: string }).stack.includes(
+          "NotFoundError: Not found"
+        )
+      ).toBe(true);
     });
   });
 });

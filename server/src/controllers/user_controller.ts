@@ -1,4 +1,4 @@
-import { Template, User } from "common";
+import { User } from "common";
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import { body, validationResult } from "express-validator";
@@ -13,52 +13,61 @@ import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { emailDoesNotExist } from "../utils/email_does_not_exist";
 import { subscriptionQueries } from "../db/subscription_queries";
 import { boss } from "../db/boss";
+import { Request, Response } from "express";
 
 const { SALT } = variables;
 
 // @desc Confirms a user's account
 // @route POST /api/users/verify/:userId&:token
 // @access Private
-export const confirm_account = asyncHandler(async (req, res) => {
-  const userId = Number(req.params.userId);
+export const confirm_account = asyncHandler(
+  async (
+    req: Request<{ userId: string }>,
+    res: Response<{ message: string }>
+  ) => {
+    const userId = Number(req.params.userId);
 
-  const user = await userQueries.getById(userId);
-  if (user!.confirmed === false) {
-    try {
-      await userQueries.updateById(userId, {
-        confirmed: true,
-      });
-    } catch (error) {
-      res.render("pages/error", {
-        errors: [
-          {
-            msg: "Server Error. Unable to confirm your account. Please log into WordReminder and try again.",
-          },
-        ],
-      });
-      return;
+    const user = await userQueries.getById(userId);
+    if (user!.confirmed === false) {
+      try {
+        await userQueries.updateById(userId, {
+          confirmed: true,
+        });
+      } catch (error: unknown) {
+        console.error(error);
+        res.render("pages/error", {
+          errors: [
+            {
+              msg: "Server Error. Unable to confirm your account. Please log into WordReminder and try again.",
+            },
+          ],
+        });
+        return;
+      }
     }
-  }
 
-  res.render("pages/success", {
-    message: "You have successfully confirmed your account!",
-  });
-});
+    res.render("pages/success", {
+      message: "You have successfully confirmed your account!",
+    });
+  }
+);
 
 // @desc    Delete single user
 // @route   DELETE /api/users/:userId
 // @access  Private
-export const delete_user = asyncHandler(async (req, _res, next) => {
-  const userId = Number(req.params.userId);
-  await subscriptionQueries.deleteByUserId(userId);
-  await userWordQueries.deleteByUserId(userId);
-  await wordReminderQueries.deleteByUserId(userId);
-  await autoWordReminderQueries.deleteByUserId(userId);
-  await userQueries.deleteById(userId);
-  await boss.offWork(`${userId}-word-reminder-queue`);
-  await boss.offWork(`${userId}-auto-word-reminder-queue`);
-  next();
-});
+export const delete_user = asyncHandler(
+  async (req: Request<{ userId: string }>, _res, next) => {
+    const userId = Number(req.params.userId);
+    await subscriptionQueries.deleteByUserId(userId);
+    await userWordQueries.deleteByUserId(userId);
+    await wordReminderQueries.deleteByUserId(userId);
+    await autoWordReminderQueries.deleteByUserId(userId);
+    await userQueries.deleteById(userId);
+    await boss.offWork(`${userId}-word-reminder-queue`);
+    await boss.offWork(`${userId}-auto-word-reminder-queue`);
+    next();
+  }
+);
 
 // @desc    Register new user
 // @route   POST /api/users
@@ -77,7 +86,7 @@ export const signup_user = [
     .isEmail()
     .withMessage(`'email' must be a valid email.`)
     .bail()
-    .custom((value) => {
+    .custom((value: string) => {
       return emailDoesNotExist(value);
     }),
   body("password")
@@ -91,16 +100,21 @@ export const signup_user = [
       `'password' cannot be greater than ${PASSWORD_MAX} characters.`
     ),
   errorValidationHandler,
-  asyncHandler(async (req, res) => {
-    const hashedPassword = await bcrypt.hash(req.body.password, Number(SALT));
+  asyncHandler(
+    async (
+      req: Request<unknown, unknown, { password: string; email: string }>,
+      res: Response<{ user: User | null }>
+    ) => {
+      const hashedPassword = await bcrypt.hash(req.body.password, Number(SALT));
 
-    const user: User | null = await userQueries.create({
-      email: req.body.email,
-      password: hashedPassword,
-    });
+      const user: User | null = await userQueries.create({
+        email: req.body.email,
+        password: hashedPassword,
+      });
 
-    res.status(200).json({ user });
-  }),
+      res.status(200).json({ user });
+    }
+  ),
 ];
 
 // @desc    Update user details
@@ -121,7 +135,7 @@ export const update_user = [
     .isEmail()
     .withMessage(`email must be a valid email.`)
     .bail()
-    .custom((value) => {
+    .custom((value: string) => {
       return emailDoesNotExist(value);
     }),
   body("newPassword")
@@ -133,12 +147,13 @@ export const update_user = [
       `newPassword cannot be greater than ${PASSWORD_MAX} characters.`
     )
     .custom((value, { req }) => {
-      if (value && !req.body.newPasswordConfirmation) {
+      const body = req.body as { newPasswordConfirmation: string };
+      if (value && !body.newPasswordConfirmation) {
         throw new CustomBadRequestError(
           "newPassword requires newPasswordConfirmation to be provided."
         );
       }
-      if (value !== req.body.newPasswordConfirmation) {
+      if (value !== body.newPasswordConfirmation) {
         throw new CustomBadRequestError(
           "newPassword and newPasswordConfirmation must be equal."
         );
@@ -154,68 +169,84 @@ export const update_user = [
       `newPasswordConfirmation cannot be greater than ${PASSWORD_MAX} characters.`
     )
     .bail()
-    .custom((value, { req }) => {
-      if (value && !req.body.newPassword) {
+    .custom((value: string, { req }) => {
+      const body = req.body as { newPassword: string };
+      if (value && !body.newPassword) {
         throw new CustomBadRequestError(
           "newPasswordConfirmation requires newPassword to be provided."
         );
       }
       return true;
     }),
-  body().custom((value) => {
-    if (Object.keys(value).length === 0) {
-      throw new CustomBadRequestError("Request body should not be empty.");
+  body().custom(
+    (value: {
+      newPassword: string;
+      newPasswordConfirmation: string;
+      email: string;
+    }) => {
+      if (Object.keys(value).length === 0) {
+        throw new CustomBadRequestError("Request body should not be empty.");
+      }
+      return true;
     }
-    return true;
-  }),
-  asyncHandler(async (req, res) => {
-    const token = req.params.token;
-    const userId = Number(req.params.userId);
+  ),
+  asyncHandler(
+    async (
+      req: Request<
+        { token: string; userId: string },
+        unknown,
+        { newPassword: string; email: string }
+      >,
+      res
+    ) => {
+      const token = req.params.token;
+      const userId = Number(req.params.userId);
 
-    const errors = validationResult(req);
+      const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      res.render("pages/error", {
-        errors: errors.array(),
-      });
-      return;
-    }
+      if (!errors.isEmpty()) {
+        res.render("pages/error", {
+          errors: errors.array(),
+        });
+        return;
+      }
 
-    const { newPassword, email } = req.body;
+      const { newPassword, email } = req.body;
 
-    if (newPassword) {
-      const newHashedPassword = await bcrypt.hash(newPassword, Number(SALT));
+      if (newPassword) {
+        const newHashedPassword = await bcrypt.hash(newPassword, Number(SALT));
+
+        try {
+          await userQueries.updateById(userId, {
+            password: newHashedPassword,
+          });
+        } catch (error) {
+          res.render("pages/change_password", {
+            userId,
+            token,
+            message: `Unable to change your password. ${error}. Please try again.`,
+          });
+        }
+
+        res.render("pages/success", {
+          message: "You have successfully updated your password!",
+        });
+        return;
+      }
 
       try {
-        await userQueries.updateById(userId, {
-          password: newHashedPassword,
-        });
+        await userQueries.updateById(userId, { email });
       } catch (error) {
-        res.render("pages/change_password", {
+        res.render("pages/change_email", {
           userId,
           token,
-          message: `Unable to change your password. ${error}. Please try again.`,
+          message: `Unable to change your email. ${error}. Please try again.`,
         });
       }
 
       res.render("pages/success", {
-        message: "You have successfully updated your password!",
-      });
-      return;
-    }
-
-    try {
-      await userQueries.updateById(userId, { email });
-    } catch (error) {
-      res.render("pages/change_email", {
-        userId,
-        token,
-        message: `Unable to change your email. ${error}. Please try again.`,
+        message: "You have successfully updated your email!",
       });
     }
-
-    res.render("pages/success", {
-      message: "You have successfully updated your email!",
-    });
-  }),
+  ),
 ];

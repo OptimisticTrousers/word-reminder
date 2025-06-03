@@ -20,11 +20,13 @@ export async function triggerWebPushMsg(
       dataToSend,
       options
     );
-  } catch (error: any) {
-    if (error.statusCode === 410) {
-      await subscriptionQueries.deleteById(subscription.id);
-    } else {
-      console.log("Subscription is no longer valid: ", error);
+  } catch (error: unknown) {
+    if (error instanceof Error && "statusCode" in error) {
+      if (error.statusCode === 410) {
+        await subscriptionQueries.deleteById(subscription.id);
+      } else {
+        console.log("Subscription is no longer valid: ", error);
+      }
     }
   }
 }

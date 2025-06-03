@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import request from "supertest";
 
 import { update_word_reminder } from "../controllers/word_reminder_controller";
@@ -18,15 +18,6 @@ describe("update_word_reminder", () => {
     has_reminder_onload: true,
     created_at: new Date("December 17, 1995 03:24:00"),
     updated_at: new Date("December 17, 1995 03:24:00"),
-  };
-
-  const subscription1 = {
-    id: 1,
-    userId,
-    endpoint: "https://random-push-service.com/unique-id-1234/",
-    p256dh:
-      "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM=",
-    auth: "tBHItJI5svbpez7KI4CCXg==",
   };
 
   const wordId1 = 1;
