@@ -98,6 +98,7 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
   async function wordReminderCallback([job]: Job<WordReminderJobData>[]) {
     const { word_reminder_id, reminder } = job.data;
     const wordReminder = await wordReminderQueries.getById(word_reminder_id);
+    // if the word reminder has been deleted or the 'reminder' field has been updated, then complete this job. Another job would have started if the 'reminder' field was updated so this current job is not needed.
     if (!wordReminder || wordReminder.reminder != reminder) {
       await boss.complete(wordReminderQueueName, job.id);
     } else if (wordReminder.is_active) {
