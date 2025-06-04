@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 
 import { Theme, ThemeContext } from "./Context";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -13,14 +13,20 @@ export interface ThemeContext {
 }
 
 export function ThemeProvider({ children }: Props) {
-  const [theme, setTheme] = useLocalStorage("theme", Theme.Dark);
+  const [theme, setTheme] = useLocalStorage("theme", Theme.Dark) as [
+    Theme,
+    Dispatch<SetStateAction<Theme>>
+  ];
 
   function toggleTheme() {
-    setTheme((prevTheme: string) => {
-      if (prevTheme === "light") {
-        return "dark";
-      } else if (prevTheme === "dark") {
-        return "light";
+    setTheme((prevTheme) => {
+      switch (prevTheme) {
+        case Theme.Light:
+          return Theme.Dark;
+        case Theme.Dark:
+          return Theme.Light;
+        default:
+          return Theme.Dark;
       }
     });
   }
