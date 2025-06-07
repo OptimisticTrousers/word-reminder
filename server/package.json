@@ -12,7 +12,7 @@
     "seed": "ts-node src/db/populatedb",
     "start": "ts-node src/server.ts",
     "start:test": "NODE_ENV=test ts-node src/server.ts",
-    "test": "jest --watch --runInBand",
+    "test": "jest --runInBand --watchAll",
     "lint": "eslint ."
   },
   "keywords": [],
