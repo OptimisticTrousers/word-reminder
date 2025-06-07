@@ -166,17 +166,19 @@ describe("validateQuery", () => {
 
     describe("page number and page limit query", () => {
       it("calls the functions to get the user's word reminders with the page number and page limit query", async () => {
-        const page = 1;
-        const limit = 6;
+        const params = new URLSearchParams({
+          page: "1",
+          limit: "6",
+        });
 
         const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?page=${page}&limit=${limit}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(mockGetByUserId).toHaveBeenCalledTimes(1);
         expect(mockGetByUserId).toHaveBeenCalledWith(userId, {
-          page,
-          limit,
+          page: 1,
+          limit: 6,
         });
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
@@ -235,12 +237,13 @@ describe("validateQuery", () => {
       });
 
       it("returns errors with status code 400 when the page size is not a number and the page limit is provided", async () => {
-        const limit = 6;
+        const params = new URLSearchParams({
+          limit: "6",
+          page: "undefined",
+        });
 
         const response = await request(app)
-          .get(
-            `/api/users/${userId}/wordReminders?page=${undefined}&limit=${limit}`
-          )
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(mockGetByUserId).not.toHaveBeenCalled();
@@ -260,12 +263,13 @@ describe("validateQuery", () => {
       });
 
       it("returns errors with status code 400 when the page limit is not a number and the page size is provided", async () => {
-        const page = 1;
+        const params = new URLSearchParams({
+          page: "1",
+          limit: "undefined",
+        });
 
         const response = await request(app)
-          .get(
-            `/api/users/${userId}/wordReminders?page=${page}&limit=${undefined}`
-          )
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(mockGetByUserId).not.toHaveBeenCalled();
@@ -285,10 +289,12 @@ describe("validateQuery", () => {
       });
 
       it("returns errors with 400 status code when the page limit is provided and the page size is not provided", async () => {
-        const limit = 6;
+        const params = new URLSearchParams({
+          limit: "6",
+        });
 
         const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?limit=${limit}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(mockGetByUserId).not.toHaveBeenCalled();
@@ -302,7 +308,7 @@ describe("validateQuery", () => {
               path: "",
               type: "field",
               value: {
-                limit: "6",
+                limit: 6,
               },
             },
           ],
@@ -310,10 +316,12 @@ describe("validateQuery", () => {
       });
 
       it("returns errors with 400 status code when the page limit is not provided and the page size is provided", async () => {
-        const page = 1;
+        const params = new URLSearchParams({
+          page: "1",
+        });
 
         const response = await request(app)
-          .get(`/api/users/${userId}/wordReminders?page=${page}`)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
           .set("Accept", "application/json");
 
         expect(mockGetByUserId).not.toHaveBeenCalled();
@@ -327,7 +335,7 @@ describe("validateQuery", () => {
               path: "",
               type: "field",
               value: {
-                page: "1",
+                page: 1,
               },
             },
           ],
@@ -499,7 +507,7 @@ describe("validateQuery", () => {
               path: "",
               type: "field",
               value: {
-                direction: "1",
+                direction: 1,
               },
             },
           ],

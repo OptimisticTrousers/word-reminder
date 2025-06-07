@@ -24,13 +24,18 @@ export const validateSortQuery = [
     .trim()
     .escape()
     .isInt({ min: -1, max: 1 })
+    .toInt()
     .withMessage("'direction' must be an integer between -1 and 1."),
   query().custom((_value, { req }) => {
     const query = req.query;
-    const column = query?.column as string | undefined;
-    const direction = query?.direction as string | undefined;
-    const hasSortingParams = column || direction;
-    const allSortingParamsProvided = column && direction;
+    if (!query) {
+      return true;
+    }
+
+    const hasColumn = "column" in query;
+    const hasDirection = "direction" in query;
+    const hasSortingParams = hasColumn || hasDirection;
+    const allSortingParamsProvided = hasColumn && hasDirection;
 
     if (hasSortingParams && !allSortingParamsProvided) {
       throw new CustomBadRequestError(
