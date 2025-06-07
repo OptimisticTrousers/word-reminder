@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Word, UserWord, SortMode } from "common";
+import { Word, UserWord, SortMode, Column } from "common";
 import { userQueries } from "../db/user_queries";
 import { userWordQueries } from "../db/user_word_queries";
 import { wordQueries } from "../db/word_queries";
@@ -483,7 +483,11 @@ describe("userWordQueries", () => {
       it("returns correct user words when all queries are provided", async () => {
         const result = await userWordQueries.getByUserId(userId, {
           learned: true,
-          sort: { column: "created_at", table: "user_words", direction: 1 },
+          sort: {
+            column: Column.CREATED_AT,
+            table: "user_words",
+            direction: 1,
+          },
           search: "ad",
           page: 1,
           limit: 2,
@@ -583,7 +587,11 @@ describe("userWordQueries", () => {
 
         it("returns user words in ascending order for when the user words were created", async () => {
           const result = await userWordQueries.getByUserId(userId, {
-            sort: { table: "user_words", column: "created_at", direction: 1 },
+            sort: {
+              table: "user_words",
+              column: Column.CREATED_AT,
+              direction: 1,
+            },
           });
 
           expect(result).toEqual({
@@ -610,7 +618,7 @@ describe("userWordQueries", () => {
           const result = await userWordQueries.getByUserId(userId, {
             sort: {
               table: "user_words",
-              column: "created_at",
+              column: Column.CREATED_AT,
               direction: -1,
             },
           });

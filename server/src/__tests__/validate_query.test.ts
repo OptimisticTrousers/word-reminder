@@ -357,7 +357,7 @@ describe("validateQuery", () => {
     describe("sort query", () => {
       it("calls the functions to get the user's words reminders with the sort query options", async () => {
         const params = new URLSearchParams({
-          column: "created_at",
+          column: Column.CREATED_AT,
           direction: "1",
         });
 
@@ -368,7 +368,7 @@ describe("validateQuery", () => {
         expect(mockGetByUserId).toHaveBeenCalledTimes(1);
         expect(mockGetByUserId).toHaveBeenCalledWith(userId, {
           sort: {
-            column: "created_at",
+            column: Column.CREATED_AT,
             direction: 1,
             table: "word_reminders",
           },
@@ -464,7 +464,7 @@ describe("validateQuery", () => {
 
       it("returns errors with status code 400 when the the sort query options do not have the 'direction' field", async () => {
         const params = new URLSearchParams({
-          column: "created_at",
+          column: Column.CREATED_AT,
         });
 
         const response = await request(app)
@@ -481,7 +481,7 @@ describe("validateQuery", () => {
               msg: "'column' and 'direction' must be provided together for sorting.",
               path: "",
               type: "field",
-              value: { column: "created_at" },
+              value: { column: Column.CREATED_AT },
             },
           ],
         });
@@ -581,7 +581,7 @@ describe("validateQuery", () => {
 
       it("returns errors with status code 400 when the direction is not a number within -1 and 1", async () => {
         const params = new URLSearchParams({
-          column: "created_at",
+          column: Column.CREATED_AT,
           direction: "true",
         });
 

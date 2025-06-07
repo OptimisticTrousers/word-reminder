@@ -1,3 +1,4 @@
+import { Column } from "common";
 import { service } from "../service";
 import { wordReminderService } from "./word_reminder_service";
 
@@ -35,7 +36,7 @@ describe("wordReminderService", () => {
   describe("getWordReminderList", () => {
     it("gets using the correct API endpoint with query params", async () => {
       const params = new URLSearchParams({
-        column: "created_at",
+        column: Column.CREATED_AT,
         direction: "-1",
       });
       const paramsObject = Object.fromEntries(params);

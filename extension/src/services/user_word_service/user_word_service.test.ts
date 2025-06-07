@@ -1,3 +1,4 @@
+import { Column } from "common";
 import { service } from "../service";
 import { userWordService } from "./user_word_service";
 
@@ -88,7 +89,7 @@ describe("wordService", () => {
   describe("getUserWordList", () => {
     it("gets using the correct API endpoint with params", async () => {
       const params = new URLSearchParams({
-        column: "created_at",
+        column: Column.CREATED_AT,
         direction: "-1",
       });
       const paramsObject = Object.fromEntries(params);

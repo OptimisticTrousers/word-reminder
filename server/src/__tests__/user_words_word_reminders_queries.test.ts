@@ -6,6 +6,7 @@ import { wordQueries } from "../db/word_queries";
 import { wordReminderQueries } from "../db/word_reminder_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";
+import { Column } from "common";
 
 const userId = 1;
 const userParams = {
@@ -502,7 +503,7 @@ describe("userWordsWordRemindersQueries", () => {
             page: 1,
             limit: 2,
             sort: {
-              column: "created_at",
+              column: Column.CREATED_AT,
               direction: 1,
               table: "word_reminders",
             },
@@ -866,7 +867,7 @@ describe("userWordsWordRemindersQueries", () => {
           user!.id,
           {
             sort: {
-              column: "created_at",
+              column: Column.CREATED_AT,
               direction: 1,
               table: "word_reminders",
             },
@@ -984,7 +985,7 @@ describe("userWordsWordRemindersQueries", () => {
           user!.id,
           {
             sort: {
-              column: "created_at",
+              column: Column.CREATED_AT,
               direction: -1,
               table: "word_reminders",
             },
@@ -1102,7 +1103,7 @@ describe("userWordsWordRemindersQueries", () => {
           user!.id,
           {
             sort: {
-              column: "updated_at",
+              column: Column.UPDATED_AT,
               direction: 1,
               table: "word_reminders",
             },
@@ -1220,7 +1221,7 @@ describe("userWordsWordRemindersQueries", () => {
           user!.id,
           {
             sort: {
-              column: "updated_at",
+              column: Column.UPDATED_AT,
               direction: -1,
               table: "word_reminders",
             },

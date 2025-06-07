@@ -3,6 +3,7 @@ import request from "supertest";
 
 import { user_word_list } from "../controllers/user_word_controller";
 import { userWordQueries } from "../db/user_word_queries";
+import { Column } from "common";
 
 describe("user_word_list", () => {
   const userId = 1;
@@ -58,7 +59,7 @@ describe("user_word_list", () => {
     it("calls the functions to get the user's words with all of the query options", async () => {
       const params = new URLSearchParams({
         table: "user_words",
-        column: "created_at",
+        column: Column.CREATED_AT,
         direction: "-1",
       });
       const learned = true;
@@ -75,7 +76,7 @@ describe("user_word_list", () => {
       expect(mockUserWordGetByUserId).toHaveBeenCalledTimes(1);
       expect(mockUserWordGetByUserId).toHaveBeenCalledWith(userId, {
         sort: {
-          column: "created_at",
+          column: Column.CREATED_AT,
           table: "user_words",
           direction: "-1",
         },
