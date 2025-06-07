@@ -1,7 +1,7 @@
 import { Column, WORD_MAX } from "common";
 import { createRoutesStub, Outlet, useParams } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { AUTH_NOTIFICATION_MSGS } from "../Auth/constants";
@@ -419,8 +419,8 @@ describe("UserWords component", () => {
               limit: "10",
               search: "",
               learned: "",
-              column: "",
-              direction: "",
+              column: Column.CREATED_AT,
+              direction: "-1",
             },
           });
           expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
@@ -803,25 +803,34 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-          expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search,
-              learned: "",
-              column: "",
-              direction: "",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search,
+            learned: "",
+            column: "",
+            direction: "",
+          },
         });
       });
     });
 
     describe("sorting", () => {
-      it("does not call the functions to filter by featured because it is the default option on first fetch", async () => {
+      it("calls the functions to filter by featured ", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
           .spyOn(userWordService, "getUserWordList")
@@ -837,23 +846,32 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "",
-              column: "",
-              direction: "",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: "",
+            direction: "",
+          },
         });
       });
 
-      it(`calls the functions to sort by newest based on '${Column.CREATED_AT}' field`, async () => {
+      it(`calls the functions to sort by newest based on '${Column.CREATED_AT}' field once because it is the default option on first fetch`, async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
           .spyOn(userWordService, "getUserWordList")
@@ -869,19 +887,17 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-          expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "",
-              column: Column.CREATED_AT,
-              direction: "-1",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
         });
       });
 
@@ -901,19 +917,28 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-          expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "",
-              column: Column.CREATED_AT,
-              direction: "1",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "1",
+          },
         });
       });
 
@@ -933,19 +958,28 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-          expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "",
-              column: Column.UPDATED_AT,
-              direction: "-1",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.UPDATED_AT,
+            direction: "-1",
+          },
         });
       });
 
@@ -965,25 +999,34 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-          expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "",
-              column: Column.UPDATED_AT,
-              direction: "1",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.UPDATED_AT,
+            direction: "1",
+          },
         });
       });
     });
 
     describe("filtering", () => {
-      it("does not call the functions to sort based on any words because it is the default on first fetch", async () => {
+      it("calls the functions to sort based on any words", async () => {
         const status = 200;
         const mockWordServiceGetUserWords = vi
           .spyOn(userWordService, "getUserWordList")
@@ -999,19 +1042,28 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(1);
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "",
-              column: "",
-              direction: "",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: "",
+            direction: "",
+          },
         });
       });
 
@@ -1031,19 +1083,28 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-          expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "true",
-              column: "",
-              direction: "",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "true",
+            column: "",
+            direction: "",
+          },
         });
       });
 
@@ -1063,19 +1124,28 @@ describe("UserWords component", () => {
         const filterButton = screen.getByRole("button", { name: "Filter" });
         await user.click(filterButton);
 
-        await waitFor(() => {
-          expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
-          expect(mockWordServiceGetUserWords).toHaveBeenLastCalledWith({
-            userId: String(testUser.id),
-            params: {
-              page: "1",
-              limit: PAGINATION_LIMIT,
-              search: "",
-              learned: "false",
-              column: "",
-              direction: "",
-            },
-          });
+        expect(mockWordServiceGetUserWords).toHaveBeenCalledTimes(2);
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(1, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
+          },
+        });
+        expect(mockWordServiceGetUserWords).toHaveBeenNthCalledWith(2, {
+          userId: String(testUser.id),
+          params: {
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            search: "",
+            learned: "false",
+            column: "",
+            direction: "",
+          },
         });
       });
     });

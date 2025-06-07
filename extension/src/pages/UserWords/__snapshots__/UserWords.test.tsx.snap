@@ -158,6 +158,7 @@ exports[`UserWords component > renders two forms that have fields for creating a
                   </option>
                   <option
                     class="_sort__option_727679"
+                    selected=""
                     value="-1"
                   >
                     Newest Created

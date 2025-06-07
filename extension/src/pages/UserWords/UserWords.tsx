@@ -55,9 +55,10 @@ export const UserWords = CSSModules(
       limit: PAGINATION_LIMIT,
       search: "",
       learned: "",
-      column: "",
-      direction: "",
+      column: Column.CREATED_AT,
+      direction: "-1",
     });
+    // newest created words as the default params
     const searchParamsObject = Object.fromEntries(searchParams);
 
     const { data, error, isLoading, isSuccess } = useQuery({
@@ -275,6 +276,8 @@ export const UserWords = CSSModules(
                     styleName="sort__select"
                     disabled={disabled}
                     onChange={handleSelectChange}
+                    defaultValue="-1"
+                    // the first option in the DOM with value "-1" gets selected
                   >
                     <option styleName="sort__option" value="">
                       Featured
