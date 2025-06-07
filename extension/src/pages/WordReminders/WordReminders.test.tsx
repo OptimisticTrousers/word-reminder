@@ -211,8 +211,8 @@ describe("WordReminders component", () => {
       params: {
         page: "1",
         limit: "10",
-        column: "",
-        direction: "",
+        column: Column.CREATED_AT,
+        direction: "-1",
       },
     });
     expect(asFragment()).toMatchSnapshot();
@@ -242,8 +242,19 @@ describe("WordReminders component", () => {
       await user.selectOptions(select, ["Featured"]);
       await user.click(button);
 
-      expect(mockGetWordReminderList).toHaveBeenCalledTimes(1);
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(1, {
+        userId: String(testUser.id),
+        params: Object.fromEntries(
+          new URLSearchParams({
+            page: "1",
+            limit: PAGINATION_LIMIT,
+            column: Column.CREATED_AT,
+            direction: "-1",
+          })
+        ),
+      });
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(2, {
         userId: String(testUser.id),
         params: Object.fromEntries(
           new URLSearchParams({
@@ -282,18 +293,7 @@ describe("WordReminders component", () => {
       const filterButton = screen.getByRole("button", { name: "Filter" });
       await user.click(filterButton);
 
-      expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
-        userId: String(testUser.id),
-        params: Object.fromEntries(
-          new URLSearchParams({
-            page: "1",
-            limit: PAGINATION_LIMIT,
-            column: "",
-            direction: "",
-          })
-        ),
-      });
+      expect(mockGetWordReminderList).toHaveBeenCalledTimes(1);
       expect(mockGetWordReminderList).toHaveBeenCalledWith({
         userId: String(testUser.id),
         params: Object.fromEntries(
@@ -334,18 +334,18 @@ describe("WordReminders component", () => {
       await user.click(filterButton);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(1, {
         userId: String(testUser.id),
         params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
-            column: "",
-            direction: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
           })
         ),
       });
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(2, {
         userId: String(testUser.id),
         params: Object.fromEntries(
           new URLSearchParams({
@@ -385,18 +385,18 @@ describe("WordReminders component", () => {
       await user.click(filterButton);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(1, {
         userId: String(testUser.id),
         params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
-            column: "",
-            direction: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
           })
         ),
       });
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(2, {
         userId: String(testUser.id),
         params: Object.fromEntries(
           new URLSearchParams({
@@ -436,18 +436,18 @@ describe("WordReminders component", () => {
       await user.click(filterButton);
 
       expect(mockGetWordReminderList).toHaveBeenCalledTimes(2);
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(1, {
         userId: String(testUser.id),
         params: Object.fromEntries(
           new URLSearchParams({
             page: "1",
             limit: PAGINATION_LIMIT,
-            column: "",
-            direction: "",
+            column: Column.CREATED_AT,
+            direction: "-1",
           })
         ),
       });
-      expect(mockGetWordReminderList).toHaveBeenCalledWith({
+      expect(mockGetWordReminderList).toHaveBeenNthCalledWith(2, {
         userId: String(testUser.id),
         params: Object.fromEntries(
           new URLSearchParams({

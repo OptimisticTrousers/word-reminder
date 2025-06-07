@@ -24,8 +24,8 @@ export const WordReminders = CSSModules(
     const [searchParams, setSearchParams] = useSearchParams({
       page: "1",
       limit: PAGINATION_LIMIT,
-      column: "",
-      direction: "",
+      column: Column.CREATED_AT,
+      direction: "-1",
     });
     const searchParamsObject = Object.fromEntries(searchParams);
     const { data, error, isLoading, isSuccess } = useQuery({
