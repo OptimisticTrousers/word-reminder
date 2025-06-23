@@ -6,6 +6,7 @@ import { configDefaults } from "vitest/config";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: { include: ["common"] },
   test: {
     globals: true,
     environment: "jsdom",
