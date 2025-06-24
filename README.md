@@ -29,9 +29,9 @@
     - [Creating a word](#creating-a-word)
   - [Self-Host](#self-host)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-      - [Chrome](#chrome)
-      - [Firefox](#firefox)
-      - [Edge](#edge)
+    - [Chrome](#chrome)
+    - [Firefox](#firefox)
+    - [Edge](#edge)
   - [Contribute](#contribute)
   - [Next Steps](#next-steps)
   - [Support](#support)
@@ -154,13 +154,13 @@ Word Reminder extension uses Storage API (see [Storage API for Chrome](https://d
 To check out current storage data, right click on the extension icon and select "Inspect pop-up". In the dev console run:
 
 ```js
-chrome.storage.local.get(console.log);
+chrome.storage.sync.get(console.log);
 ```
 
 To clear storage run the following code in the dev console:
 
 ```js
-chrome.storage.local.clear(() => {
+chrome.storage.sync.clear(() => {
   console.log("Cleared!");
 });
 ```
@@ -170,13 +170,13 @@ chrome.storage.local.clear(() => {
 Head over to the [about:debugging#/runtime/this-firefox](about:debugging#/runtime/this-firefox) page and click on the "Inspect" button next to the "Word Reminder" extension.
 
 ```js
-browser.storage.local.get(console.log);
+browser.storage.sync.get(console.log);
 ```
 
 To clear storage run the following code in the dev console:
 
 ```js
-browser.storage.local.clear(() => {
+browser.storage.sync.clear(() => {
   console.log("Cleared!");
 });
 ```
