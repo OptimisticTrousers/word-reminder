@@ -1,55 +1,76 @@
-.navigation {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 80px;
-    margin: 0;
-    margin-bottom: 1rem;
-    border-radius: 8px;
+.navigation__top {
+  display: flex;
+  background-color: var(--top-navigation-bkg-color);
+  padding: 0.75rem;
+  border-bottom-right-radius: 8px;
+  margin-bottom: 0.5rem;
 }
 
-.navigation__link--tab {
-    border-radius: 0;
-    background: transparent;
-    width: 50%;
-    height: 80px;
-    position: relative;
-    overflow: hidden;
-    transition: 0.3s ease;
-    text-align: center;
-    font-size: 24px;
+.navigation__image,
+.navigation__link,
+.navigation__item--bottom {
+  margin-right: 8px;
 }
 
-.navigation__link--tab:focus,
-.navigation__link--tab:focus-visible {
-    outline: 0;
+.navigation__logo {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
 }
 
-.navigation__link--tab:before {
-    /* Gradient */
-    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    content: "";
-    width: 100%;
-    height: 0px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: 0.3s ease-in-out;
-    z-index: 2;
+.navigation__image {
+  width: 50px;
+  height: 50px;
 }
 
-.navigation__link--tab--active {
-    z-index: 0;
-    border-right: 0px;
-    border-left: 0px;
-    bottom: 0px;
-    overflow: hidden;
+.navigation__heading {
+  font-size: 1.2rem;
+  line-height: 1.1;
 }
 
-.navigation__link--tab--active:before {
-    content: "";
-    width: 100%;
-    height: 5px;
-    top: 0;
-    left: 0;
+.navigation__list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+.navigation__link {
+  padding: 0.5rem;
+  display: block;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.navigation__link.navigation__link--bottom {
+  color: var(--secondary-anchor-color);
+}
+
+.navigation__link--settings {
+  font-size: 1.75rem;
+}
+
+.navigation__link--active {
+  background-color: var(--active-navigation-bkg-color);
+}
+
+.navigation__list--bottom,
+button.navigation__button--new-tab {
+  padding: 0.5rem;
+  background-color: var(--bottom-navigation-bkg-color);
+}
+
+.navigation__item--bottom {
+  text-align: center;
+  flex: 1;
+  border-radius: 4px;
+  transition: 0.3s ease;
+}
+
+.navigation__link--bottom:hover,
+button.navigation__button--new-tab:hover {
+  background-color: #c2c8cd;
+}
+
+.navigation__button:hover {
+  opacity: 0.7;
 }

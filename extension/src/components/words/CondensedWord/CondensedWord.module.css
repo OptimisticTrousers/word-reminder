@@ -1,0 +1,32 @@
+.word__phonetic,
+.word__button,
+.word__meanings,
+.word__subtitle,
+.word__block,
+.word__line,
+.word__definition {
+  margin-top: 0.75rem;
+}
+
+.word__button {
+  display: flex;
+  align-items: center;
+}
+
+.word__item,
+.word__definition,
+.word__phonetic {
+  list-style: none;
+}
+
+.word__block,
+.word__definition {
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-card-bkg-color);
+}
+
+.word__text {
+  margin-right: 0.75rem;
+}

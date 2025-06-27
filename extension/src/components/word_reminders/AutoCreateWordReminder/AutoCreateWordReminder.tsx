@@ -1,5 +1,5 @@
 import { CirclePlus } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import cronstrue from "cronstrue";
 import CSSModules from "react-css-modules";
 
@@ -14,11 +14,13 @@ import { UpdateAutoWordReminderModal } from "../../modals/UpdateAutoWordReminder
 import { DeleteAutoWordReminderModal } from "../../modals/DeleteAutoWordReminderModal";
 import { msToUnits } from "../../../utils/date/date";
 import { ErrorMessage } from "../../ui/ErrorMessage";
+import { ThemeContext } from "../../../context/Theme";
 
 export const AutoCreateWordReminder = CSSModules(
   function () {
     const { user }: { user: User } = useOutletContext();
     const userId = String(user.id);
+    const { theme } = useContext(ThemeContext);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -58,7 +60,7 @@ export const AutoCreateWordReminder = CSSModules(
             <CreateAutoWordReminderModal toggleModal={toggleCreateModal} />
           )}
           <button
-            styleName="create"
+            styleName={`create create--${theme}`}
             onClick={toggleCreateModal}
             aria-haspopup="dialog"
             aria-labelledby="autowordreminder-title"

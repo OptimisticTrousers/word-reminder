@@ -1,0 +1,7 @@
+.settings__buttons {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}

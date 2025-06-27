@@ -16,34 +16,65 @@ exports[`UpdateAutoWordReminderModal component > renders form with all inputs 1`
     <div>
       <form
         action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
-        class="_modal__form_c266e3"
+        class="_modal_c266e3"
       >
         <div
           class="_reminder_a2fc7e"
         >
-          <a
-            href="https://cronprompt.com/"
+          <div
+            class="_reminder__top_a2fc7e"
           >
-            Visit cronprompt for more details. Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression).
-          </a>
-          <p
-            class="_reminder__description_a2fc7e"
+            <p
+              class="_reminder__note_a2fc7e"
+            >
+              <span
+                class="_reminder__bold_a2fc7e"
+              >
+                Important:
+              </span>
+               Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression).
+            </p>
+            <a
+              class="_reminder__link_a2fc7e"
+              href="https://cronprompt.com/"
+            >
+              Visit cronprompt to enter a valid reminder.
+            </a>
+          </div>
+          <div
+            class="_reminder__control_a2fc7e"
           >
-            Every minute
-          </p>
-          <label
-            class="_reminder__label_a2fc7e"
-          >
-            Reminder
+            <label
+              class="_reminder__label_a2fc7e"
+              for="reminder"
+            >
+              Reminder
+            </label>
             <input
               class="_reminder__input_a2fc7e"
+              id="reminder"
               name="reminder"
               placeholder="Enter a valid UTC cron expression (ie. * * * * * or */5 * * * *)"
               required=""
               type="text"
               value="* * * * *"
             />
-          </label>
+          </div>
+          <p
+            class="_reminder__description_a2fc7e"
+          >
+            <span
+              class="_reminder__text_a2fc7e"
+            >
+              * * * * *
+            </span>
+            is equivalent to
+            <span
+              class="_reminder__text_a2fc7e"
+            >
+              Every minute
+            </span>
+          </p>
         </div>
         <fieldset
           class="_duration_03697c"

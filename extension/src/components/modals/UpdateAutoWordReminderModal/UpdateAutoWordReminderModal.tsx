@@ -80,7 +80,7 @@ export const UpdateAutoWordReminderModal = CSSModules(
         title="Update Auto Word Reminder"
         toggleModal={toggleModal}
       >
-        <form styleName="modal__form" action={handleUpdate}>
+        <form styleName="modal" action={handleUpdate}>
           <Reminder disabled={false} value={autoWordReminder.reminder} />
           <Duration
             disabled={false}

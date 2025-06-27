@@ -7,9 +7,10 @@ export const Footer = CSSModules(
   function () {
     return (
       <footer styleName="footer">
+        <p styleName="footer__copyright">© Tony Isern 2024</p>
         <a
           styleName="footer__link"
-          href="https://github.com/OptimisticTrousers/word-storer"
+          href="https://github.com/OptimisticTrousers/word-reminder"
           aria-label="View source on Github (new tab)"
           target="_blank"
         >

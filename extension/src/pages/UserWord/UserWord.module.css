@@ -1,0 +1,51 @@
+.word__heading,
+.word__learned,
+.word__created-at,
+.word__phonetic,
+.word__phonetics,
+.word__button,
+.word__text,
+.word__license,
+.word__top,
+.word__meanings,
+.word__line,
+.word__subtitle,
+.word__definition,
+.word__line,
+.word__block,
+.word__part-of-speech {
+  margin-bottom: 0.5rem;
+}
+
+.word__buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.word__button {
+  display: flex;
+  align-items: center;
+}
+
+.word__text {
+  margin-right: 0.5rem;
+}
+
+.word__definition,
+.word__block {
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-card-bkg-color);
+}
+
+.word__synonym,
+.word__antonym,
+.word__item,
+.word__definition {
+  list-style: none;
+}
+
+.word__span {
+  font-weight: 600;
+}

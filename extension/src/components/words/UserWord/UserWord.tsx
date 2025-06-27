@@ -69,14 +69,16 @@ export const UserWord = CSSModules(
       <>
         <div styleName="user-word">
           <article styleName="user-word__word word">
-            <p styleName="word__name">Word: {details[0].word}</p>
+            <div styleName="user-word__header">
+              <h3 styleName="word__name">{details[0].word}</h3>
+              <Link to={`/userWords/${id}`}>More Word Details</Link>
+            </div>
             <p styleName="word__name">
               Created At: {created_at.toLocaleString()}
             </p>
             <p styleName="word__name">
               Updated At: {updated_at.toLocaleString()}
             </p>
-            <div styleName="word__divider"></div>
             <p styleName="word__name">Learned: {learned ? "Yes" : "No"}</p>
             <div styleName="word__buttons">
               <button
@@ -92,7 +94,7 @@ export const UserWord = CSSModules(
               </button>
               <form styleName="word__form" onSubmit={handleLearned}>
                 <input
-                  styleName="word__input word__input--checkbox"
+                  styleName="word__input"
                   type="hidden"
                   id="learned"
                   name="learned"
@@ -100,7 +102,7 @@ export const UserWord = CSSModules(
                   defaultValue={String(!learned)}
                 />
                 <button
-                  styleName="word__button word__button--learned"
+                  styleName="word__button"
                   type="submit"
                   disabled={disabled}
                 >
@@ -108,14 +110,13 @@ export const UserWord = CSSModules(
                 </button>
               </form>
               <button
-                styleName="word__delete word__button--delete"
+                styleName="word__delete"
                 onClick={toggleDeleteModal}
                 aria-haspopup={true}
                 aria-label="Open delete user word modal"
               >
                 <Trash styleName="word__icon" />
               </button>
-              <Link to={`/userWords/${id}`}>More Word Details</Link>
             </div>
           </article>
           {isAccordionOpen && (

@@ -1,0 +1,48 @@
+.auto-word-reminder,
+button.create {
+  background-color: var(--card-bkg-color);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+button.create:hover {
+  background-color: var(--hover-bkg-color);
+}
+
+.create__container {
+  display: flex;
+  align-items: center;
+}
+
+.create__icon {
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.create__text {
+  text-align: start;
+}
+
+.create__title {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+}
+
+.create__description {
+  line-height: 1.5rem;
+  color: var(--secondary-text-color);
+}
+
+.auto-word-reminder__buttons {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.auto-word-reminder__button {
+  flex: 1;
+}

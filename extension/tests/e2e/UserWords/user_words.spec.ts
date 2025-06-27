@@ -33,6 +33,7 @@ test.describe("User Words page", () => {
 
     const userWordWord = page.getByRole("heading", {
       name: word,
+      exact: true,
     });
     await expect(userWordWord).toBeVisible();
   });
@@ -56,7 +57,9 @@ test.describe("User Words page", () => {
 
     // Start waiting for download before clicking. Note no await
     const downloadPromise = page.waitForEvent("download");
-    const exportWordsButton = page.getByLabel("Export Words");
+    const exportWordsButton = page.getByRole("button", {
+      name: "Export Words",
+    });
     await exportWordsButton.click();
     const download = await downloadPromise;
     const readable = await download.createReadStream();

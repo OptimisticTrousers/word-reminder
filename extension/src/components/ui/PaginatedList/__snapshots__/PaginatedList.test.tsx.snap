@@ -13,7 +13,7 @@ exports[`PaginatedList component > pagination > renders no pagination links when
     <p
       class="_paginated__count_78cfc4"
     >
-      3
+      Count: 3
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -22,6 +22,9 @@ exports[`PaginatedList component > pagination > renders no pagination links when
       <li />
       <li />
     </ul>
+    <div
+      class="_paginated__buttons_78cfc4"
+    />
   </div>
 </DocumentFragment>
 `;
@@ -39,7 +42,7 @@ exports[`PaginatedList component > pagination > renders pagination links when th
     <p
       class="_paginated__count_78cfc4"
     >
-      3
+      Count: 3
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -48,16 +51,20 @@ exports[`PaginatedList component > pagination > renders pagination links when th
       <li />
       <li />
     </ul>
-    <button
-      class="_paginated__link_78cfc4"
+    <div
+      class="_paginated__buttons_78cfc4"
     >
-      Previous
-    </button>
-    <button
-      class="_paginated__link_78cfc4"
-    >
-      Next
-    </button>
+      <button
+        class="_paginated__button_78cfc4"
+      >
+        Previous
+      </button>
+      <button
+        class="_paginated__button_78cfc4"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </DocumentFragment>
 `;
@@ -75,7 +82,7 @@ exports[`PaginatedList component > pagination > renders the next pagination link
     <p
       class="_paginated__count_78cfc4"
     >
-      3
+      Count: 3
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -84,11 +91,15 @@ exports[`PaginatedList component > pagination > renders the next pagination link
       <li />
       <li />
     </ul>
-    <button
-      class="_paginated__link_78cfc4"
+    <div
+      class="_paginated__buttons_78cfc4"
     >
-      Next
-    </button>
+      <button
+        class="_paginated__button_78cfc4"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </DocumentFragment>
 `;
@@ -106,7 +117,7 @@ exports[`PaginatedList component > pagination > renders the previous pagination 
     <p
       class="_paginated__count_78cfc4"
     >
-      3
+      Count: 3
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -115,11 +126,15 @@ exports[`PaginatedList component > pagination > renders the previous pagination 
       <li />
       <li />
     </ul>
-    <button
-      class="_paginated__link_78cfc4"
+    <div
+      class="_paginated__buttons_78cfc4"
     >
-      Previous
-    </button>
+      <button
+        class="_paginated__button_78cfc4"
+      >
+        Previous
+      </button>
+    </div>
   </div>
 </DocumentFragment>
 `;
@@ -137,7 +152,7 @@ exports[`PaginatedList component > when it is loading > renders that it is loadi
     <p
       class="_paginated__count_78cfc4"
     >
-      0
+      Count: 0
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -147,6 +162,9 @@ exports[`PaginatedList component > when it is loading > renders that it is loadi
     >
       Loading...
     </div>
+    <div
+      class="_paginated__buttons_78cfc4"
+    />
   </div>
 </DocumentFragment>
 `;
@@ -164,7 +182,7 @@ exports[`PaginatedList component > when it is successful > renders list 1`] = `
     <p
       class="_paginated__count_78cfc4"
     >
-      3
+      Count: 3
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -173,6 +191,9 @@ exports[`PaginatedList component > when it is successful > renders list 1`] = `
       <li />
       <li />
     </ul>
+    <div
+      class="_paginated__buttons_78cfc4"
+    />
   </div>
 </DocumentFragment>
 `;
@@ -190,7 +211,7 @@ exports[`PaginatedList component > when it is successful > renders that there ar
     <p
       class="_paginated__count_78cfc4"
     >
-      0
+      Count: 0
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -202,6 +223,9 @@ exports[`PaginatedList component > when it is successful > renders that there ar
         User Words
       </p>
     </ul>
+    <div
+      class="_paginated__buttons_78cfc4"
+    />
   </div>
 </DocumentFragment>
 `;
@@ -219,7 +243,7 @@ exports[`PaginatedList component > when there is an error > renders error messag
     <p
       class="_paginated__count_78cfc4"
     >
-      0
+      Count: 0
     </p>
     <ul
       class="_paginated__list_78cfc4"
@@ -229,6 +253,9 @@ exports[`PaginatedList component > when there is an error > renders error messag
     >
       Error message
     </div>
+    <div
+      class="_paginated__buttons_78cfc4"
+    />
   </div>
 </DocumentFragment>
 `;

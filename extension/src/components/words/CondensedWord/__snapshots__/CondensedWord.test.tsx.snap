@@ -97,7 +97,7 @@ exports[`CondensedWord > renders meanings with part of speech, definitions, exam
                 class="_word__definition_09a47a"
               >
                 <p
-                  class="_word__definition_09a47a"
+                  class="_word__content_09a47a"
                 >
                   News; tidings (used without an article).
                 </p>
@@ -111,7 +111,7 @@ exports[`CondensedWord > renders meanings with part of speech, definitions, exam
                 class="_word__definition_09a47a"
               >
                 <p
-                  class="_word__definition_09a47a"
+                  class="_word__content_09a47a"
                 >
                   An order; a request or instruction; an expression of will.
                 </p>
@@ -150,7 +150,7 @@ exports[`CondensedWord > renders meanings with part of speech, definitions, exam
                 class="_word__definition_09a47a"
               >
                 <p
-                  class="_word__definition_09a47a"
+                  class="_word__content_09a47a"
                 >
                   To say or write (something) using particular words; to phrase (something).
                 </p>
@@ -164,7 +164,7 @@ exports[`CondensedWord > renders meanings with part of speech, definitions, exam
                 class="_word__definition_09a47a"
               >
                 <p
-                  class="_word__definition_09a47a"
+                  class="_word__content_09a47a"
                 >
                   To flatter with words, to cajole.
                 </p>
@@ -198,7 +198,7 @@ exports[`CondensedWord > renders meanings with part of speech, definitions, exam
                 class="_word__definition_09a47a"
               >
                 <p
-                  class="_word__definition_09a47a"
+                  class="_word__content_09a47a"
                 >
                   (stereotypically) An abbreviated form of word up; a statement of the acknowledgment of fact with a hint of nonchalant approval.
                 </p>
@@ -300,7 +300,7 @@ exports[`CondensedWord > renders meanings with part of speech, definitions, exam
                 class="_word__definition_09a47a"
               >
                 <p
-                  class="_word__definition_09a47a"
+                  class="_word__content_09a47a"
                 >
                   (except in set phrases) To be, become, betide.
                 </p>

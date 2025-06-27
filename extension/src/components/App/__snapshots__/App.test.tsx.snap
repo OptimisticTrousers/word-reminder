@@ -2,36 +2,44 @@
 
 exports[`App component > when MODE !== 'production' > renders main element and footer 1`] = `
 <DocumentFragment>
-  <main
-    class="_main_2f9351 _main--dark_2f9351"
+  <div
+    class="_app_2f9351"
   >
     <div
       data-testid="navigation"
     />
-    <div
-      data-testid="outlet"
-    />
+    <main
+      class="_app__main_2f9351"
+    >
+      <div
+        data-testid="outlet"
+      />
+    </main>
     <div
       data-testid="footer"
     />
-  </main>
+  </div>
 </DocumentFragment>
 `;
 
 exports[`App component > when MODE === 'production' > renders main element and footer when the user is confirmed 1`] = `
 <DocumentFragment>
-  <main
-    class="_main_2f9351 _main--dark_2f9351"
+  <div
+    class="_app_2f9351"
   >
     <div
       data-testid="navigation"
     />
-    <div
-      data-testid="outlet"
-    />
+    <main
+      class="_app__main_2f9351"
+    >
+      <div
+        data-testid="outlet"
+      />
+    </main>
     <div
       data-testid="footer"
     />
-  </main>
+  </div>
 </DocumentFragment>
 `;

@@ -40,32 +40,34 @@ export const PaginatedList = CSSModules(
         <h2 styleName="paginated__heading">
           {name[0].toUpperCase() + name.slice(1)}
         </h2>
-        <p styleName="paginated__count">{totalRows}</p>
+        <p styleName="paginated__count">Count: {totalRows}</p>
         <ul styleName="paginated__list">
           {isSuccess && list.length === 0 ? <NoMore name={name} /> : list}
         </ul>
         {error && <ErrorMessage message={error.message} />}
         {isLoading && <Loading />}
-        {previous && (
-          <button
-            styleName="paginated__link"
-            onClick={() => {
-              setPagination(previous.limit, previous.page);
-            }}
-          >
-            Previous
-          </button>
-        )}
-        {next && (
-          <button
-            styleName="paginated__link"
-            onClick={() => {
-              setPagination(next.limit, next.page);
-            }}
-          >
-            Next
-          </button>
-        )}
+        <div styleName="paginated__buttons">
+          {previous && (
+            <button
+              styleName="paginated__button"
+              onClick={() => {
+                setPagination(previous.limit, previous.page);
+              }}
+            >
+              Previous
+            </button>
+          )}
+          {next && (
+            <button
+              styleName="paginated__button"
+              onClick={() => {
+                setPagination(next.limit, next.page);
+              }}
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
     );
   },

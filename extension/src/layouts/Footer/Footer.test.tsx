@@ -10,7 +10,7 @@ describe("Footer component", () => {
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute(
       "href",
-      "https://github.com/OptimisticTrousers/word-storer"
+      "https://github.com/OptimisticTrousers/word-reminder"
     );
     expect(asFragment()).toMatchSnapshot();
   });

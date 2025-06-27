@@ -64,7 +64,7 @@ exports[`DeleteUserModal component > renders the form with alert and message 1`]
         <p
           class="_modal__alert_919de9"
         >
-          Are you sure you want to delete your user?
+          Are you sure you want to delete your account?
         </p>
         <p
           class="_modal__message_919de9"

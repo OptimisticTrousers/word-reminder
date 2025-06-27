@@ -83,7 +83,7 @@ exports[`AutoCreateWordReminder component > when the auto word reminder does not
   <button
     aria-haspopup="dialog"
     aria-labelledby="autowordreminder-title"
-    class="_create_f00845"
+    class="_create_f00845 _create--dark_f00845"
   >
     <div
       class="_create__container_f00845"

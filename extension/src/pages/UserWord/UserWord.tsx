@@ -104,7 +104,7 @@ export const UserWord = CSSModules(
             </p>
           }
           {
-            <p styleName="word__created_at">
+            <p styleName="word__created-at">
               {userWord.created_at.toLocaleString()}
             </p>
           }
@@ -112,7 +112,7 @@ export const UserWord = CSSModules(
           <div styleName="word__buttons">
             <form styleName="word__form" onSubmit={handleLearned}>
               <input
-                styleName="word__input word__input--hidden"
+                styleName="word__input"
                 type="hidden"
                 id="learned"
                 name="learned"
@@ -120,7 +120,7 @@ export const UserWord = CSSModules(
                 defaultValue={String(!userWord.learned)}
               />
               <button
-                styleName="word__button word__button--learned"
+                styleName="word__button"
                 type="submit"
                 disabled={disabled}
               >
@@ -128,7 +128,7 @@ export const UserWord = CSSModules(
               </button>
             </form>
             <button
-              styleName="word__delete word__button--delete"
+              styleName="word__delete"
               onClick={toggleDeleteModal}
               aria-haspopup={true}
               aria-label="Open delete user word modal"
@@ -193,26 +193,32 @@ export const UserWord = CSSModules(
                   </div>
                 </div>
                 <div styleName="word__container">
-                  <div styleName="word__block">
-                    <h3 styleName="word__subtitle">Origin</h3>
-                    <p styleName="word__description">{detail.origin}</p>
-                  </div>
+                  {detail.origin && (
+                    <div styleName="word__block">
+                      <h3 styleName="word__subtitle">Origin</h3>
+                      <p styleName="word__description">{detail.origin}</p>
+                    </div>
+                  )}
                   {detail.meanings.map((meaning: Meaning, index: number) => (
                     <div styleName="word__meanings" key={index}>
-                      <span styleName="word__part-of-speech">
+                      <p styleName="word__part-of-speech">
                         {meaning.partOfSpeech} <hr styleName="word__line" />
-                      </span>
+                      </p>
                       <div styleName="word__block">
                         <h3 styleName="word__subtitle">Meanings</h3>
                         <ul styleName="word__definitions">
                           {meaning.definitions.map(
                             (definition: Definition, index: number) => (
                               <li styleName="word__definition" key={index}>
-                                <p styleName="word__definition">
+                                <p styleName="word__content">
+                                  <span styleName="word__bold">
+                                    Definition:
+                                  </span>{" "}
                                   {definition.definition}
                                 </p>
                                 {definition.example && (
                                   <p styleName="word__example">
+                                    <span styleName="word__bold">Example:</span>{" "}
                                     {definition.example}
                                   </p>
                                 )}
@@ -286,7 +292,7 @@ export const UserWord = CSSModules(
                       {detail.license && (
                         <div styleName="word__license">
                           <p styleName="word__name">{detail.license.name}</p>
-                          <Link to={detail.license.url} styleName="word__url">
+                          <Link to={detail.license.url} styleName="word__link">
                             Word License
                           </Link>
                         </div>

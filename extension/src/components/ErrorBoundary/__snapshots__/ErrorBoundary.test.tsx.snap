@@ -14,7 +14,7 @@ exports[`ErrorBoundary component > renders title, message, and link 1`] = `
         An error occurred.
       </h2>
       <p
-        stylename="boundary__message"
+        class="boundary__message"
       >
         Oops. Error!
       </p>

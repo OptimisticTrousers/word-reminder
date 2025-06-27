@@ -53,7 +53,7 @@ describe("DeleteUserModal component", () => {
 
     const notification = screen.getByRole("dialog");
     const alert = screen.getByText(
-      "Are you sure you want to delete your user?"
+      "Are you sure you want to delete your account?"
     );
     const message = screen.getByText("You can't undo this action.");
     expect(notification).toBeInTheDocument();

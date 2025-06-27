@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { autoWordReminderService } from "../../../services/auto_word_reminder_service/auto_word_reminder_service";
 import { SortMode } from "common";
 import { msToUnits } from "../../../utils/date/date";
+import { Theme, ThemeContext } from "../../../context/Theme/Context";
 
 vi.mock("../../modals/CreateAutoWordReminderModal", () => {
   return {
@@ -80,7 +81,7 @@ const autoWordReminder = {
 const status = 200;
 
 describe("AutoCreateWordReminder component", () => {
-  function setup() {
+  function setup(theme: Theme) {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -95,9 +96,11 @@ describe("AutoCreateWordReminder component", () => {
             path: "/wordReminders",
             Component: function () {
               return (
-                <QueryClientProvider client={queryClient}>
-                  <AutoCreateWordReminder />
-                </QueryClientProvider>
+                <ThemeContext.Provider value={{ theme, toggleTheme: vi.fn() }}>
+                  <QueryClientProvider client={queryClient}>
+                    <AutoCreateWordReminder />
+                  </QueryClientProvider>
+                </ThemeContext.Provider>
               );
             },
           },
@@ -122,7 +125,7 @@ describe("AutoCreateWordReminder component", () => {
           return { json: { autoWordReminder: undefined }, status };
         });
 
-      const { asFragment } = setup();
+      const { asFragment } = setup(Theme.Dark);
 
       const createButton = await screen.findByRole("button", {
         name: "Create Auto Word Reminder",
@@ -135,13 +138,31 @@ describe("AutoCreateWordReminder component", () => {
       expect(asFragment()).toMatchSnapshot();
     });
 
+    it("has light class", async () => {
+      setup(Theme.Light);
+
+      const button = await screen.findByRole("button", {
+        name: "Create Auto Word Reminder",
+      });
+      expect(button.getAttribute("class")).toContain(`create--${Theme.Light}`);
+    });
+
+    it("has dark class", async () => {
+      setup(Theme.Dark);
+
+      const button = await screen.findByRole("button", {
+        name: "Create Auto Word Reminder",
+      });
+      expect(button.getAttribute("class")).toContain(`create--${Theme.Dark}`);
+    });
+
     it("opens the 'CreateAutoWordReminderModal' when the user clicks the button to create an auto word reminder", async () => {
       const mockGetAutoWordReminder = vi
         .spyOn(autoWordReminderService, "getAutoWordReminder")
         .mockImplementation(async () => {
           return { json: { autoWordReminder: undefined }, status };
         });
-      const { user } = setup();
+      const { user } = setup(Theme.Dark);
 
       const createAutoWordReminderButton = await screen.findByRole("button", {
         name: "Create Auto Word Reminder",
@@ -162,7 +183,7 @@ describe("AutoCreateWordReminder component", () => {
         .mockImplementation(async () => {
           return { json: { autoWordReminder: undefined }, status };
         });
-      const { user } = setup();
+      const { user } = setup(Theme.Dark);
 
       const createAutoWordReminderButton = await screen.findByRole("button", {
         name: "Create Auto Word Reminder",
@@ -190,7 +211,7 @@ describe("AutoCreateWordReminder component", () => {
           return { json: { autoWordReminder }, status };
         });
 
-      const { asFragment } = setup();
+      const { asFragment } = setup(Theme.Dark);
 
       const units = msToUnits(autoWordReminder.duration);
       const id = await screen.findByText(`ID: ${autoWordReminder.id}`);
@@ -252,7 +273,7 @@ describe("AutoCreateWordReminder component", () => {
           };
         });
 
-      setup();
+      setup(Theme.Dark);
 
       const active = await screen.findByText(
         "Active (whether the word reminder will actively remind you of the words in it): No"
@@ -279,7 +300,7 @@ describe("AutoCreateWordReminder component", () => {
           };
         });
 
-      setup();
+      setup(Theme.Dark);
 
       const hasReminderOnload = await screen.findByText(
         "Has Reminder Onload (reminds you of these words when you open your browser): No"
@@ -306,7 +327,7 @@ describe("AutoCreateWordReminder component", () => {
           };
         });
 
-      setup();
+      setup(Theme.Dark);
 
       const hasLearned = await screen.findByText(
         "Has Learned (whether to include words that you have already learned): No"
@@ -329,7 +350,7 @@ describe("AutoCreateWordReminder component", () => {
             status,
           };
         });
-      const { user } = setup();
+      const { user } = setup(Theme.Dark);
 
       const updateButton = await screen.findByRole("button", {
         name: "Update",
@@ -355,7 +376,7 @@ describe("AutoCreateWordReminder component", () => {
             status,
           };
         });
-      const { user } = setup();
+      const { user } = setup(Theme.Dark);
 
       const updateButton = await screen.findByRole("button", {
         name: "Update",
@@ -385,7 +406,7 @@ describe("AutoCreateWordReminder component", () => {
             status,
           };
         });
-      const { user } = setup();
+      const { user } = setup(Theme.Dark);
 
       const deleteButton = await screen.findByRole("button", {
         name: "Delete",
@@ -411,7 +432,7 @@ describe("AutoCreateWordReminder component", () => {
             status,
           };
         });
-      const { user } = setup();
+      const { user } = setup(Theme.Dark);
 
       const deleteButton = await screen.findByRole("button", {
         name: "Delete",
@@ -440,7 +461,7 @@ describe("AutoCreateWordReminder component", () => {
         return Promise.reject({ json: { message }, status });
       });
 
-    setup();
+    setup(Theme.Dark);
 
     const errorMessage = await screen.findByTestId("error-message");
     expect(errorMessage).toBeInTheDocument();
@@ -462,7 +483,7 @@ describe("AutoCreateWordReminder component", () => {
         });
       });
 
-    setup();
+    setup(Theme.Dark);
 
     const loading = await screen.findByTestId("loading");
     expect(loading).toBeInTheDocument();

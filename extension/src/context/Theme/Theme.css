@@ -1,0 +1,124 @@
+.container {
+  background-color: var(--bkg-color);
+  color: var(--text-color);
+}
+
+.container--light {
+  --bkg-color: #fff;
+  --hover-bkg-color: rgb(12, 11, 9);
+  --text-color: #222;
+  --anchor-color: #0033cc;
+  --input-bkg-color: #fff;
+  --label-color: none;
+  --shadow-color: none;
+  --input-color: none;
+  --primary-card-bkg-color: none;
+  --secondary-card-bkg-color: none;
+  --accordion-bkg-color: none;
+  --control-bkg-color: none;
+  --border-color: none;
+  --icon-color: none;
+  --navigation-bkg-color: none;
+  --bottom-navigation-bkg-color: none;
+  --active-navigation-bkg-color: none;
+  --modal-bkg-color: rgba(245, 245, 245, 0.8);
+  --break-color: #dedede;
+  --secondary-icon-color: #606770;
+  --hover-icon-color: rgb(59, 130, 246);
+  --alert-text-color: rgb(185, 28, 28);
+  --alert-bkg-color: rgb(254, 226, 226);
+  --white-text-color: rgb(31, 41, 55);
+  --white-bkg-color: rgb(243, 244, 246);
+  --hover-white-bkg-color: rgb(229, 231, 235);
+  --red-bkg-color: rgb(239, 68, 68);
+  --hover-red-bkg-color: rgb(220, 38, 38);
+}
+
+.container--dark {
+  --bkg-color: #242424;
+  --text-color: #eee;
+  --secondary-text-color: rgb(107, 114, 128);
+  --tertiary-text-color: rgb(175, 170, 156);
+  --anchor-color: #809fff;
+  --secondary-anchor-color: #181819;
+  --input-bkg-color: #2a2a2a;
+  --label-color: #bac0ce;
+  --shadow-color: #757575;
+  --input-color: #a3a3a3;
+  --card-bkg-color: #2a2a2a;
+  --secondary-card-bkg-color: #161d3a;
+  --accordion-bkg-color: #1f1e22;
+  --top-navigation-bkg-color: #010001;
+  --control-bkg-color: #2f343d;
+  --border-color: #333;
+  --icon-color: #efefef;
+  --bottom-navigation-bkg-color: #f8f8f8;
+  --active-navigation-bkg-color: #d3d3d3;
+  --modal-bkg-color: rgba(42, 42, 42, 0.8);
+  --break-color: #dedede;
+  --secondary-icon-color: #606770;
+  --hover-icon-color: rgb(59, 130, 246);
+  --alert-text-color: rgb(185, 28, 28);
+  --alert-bkg-color: rgb(254, 226, 226);
+  --white-text-color: rgb(31, 41, 55);
+  --white-bkg-color: rgb(243, 244, 246);
+  --hover-white-bkg-color: rgb(229, 231, 235);
+  --red-bkg-color: rgb(239, 68, 68);
+  --hover-red-bkg-color: rgb(220, 38, 38);
+
+  /* --color-control-bg: #2f343d;
+  --color-word-bg: #161d3a;
+  --color-base-text: white;
+  --color-input-bg: #fff;
+  --color-input-text: #a3a3a3;
+  --color-button-bg: #7f8ff4;
+  --color-button-text: #fff;
+  --color-options-text: black;
+  --color-accordion-bg: #1f1e22;
+  --color-word-text: white;
+  --color-accordion-text: white;
+  --color-shadow: #757575;
+  --color-label-text: #bac0ce; */
+}
+
+.container a {
+  color: var(--anchor-color);
+}
+
+.container button,
+.container input[type="button"] {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--primary-bkg-color);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.container button:hover,
+.container input:hover[type="button"] {
+  background-color: var(--primary-bkg-hover-color);
+}
+
+.container button:focus,
+.container input:focus,
+.container select:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--primary-color);
+}
+
+.container img {
+  filter: brightness(0.8) contrast(1.2);
+}
+
+.container input {
+  border: 1px solid var(--border-color);
+}
+
+.container input,
+.container select,
+.container fieldset {
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: var(--input-bkg-color);
+}

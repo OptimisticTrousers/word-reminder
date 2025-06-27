@@ -5,10 +5,15 @@ exports[`Footer component > renders link to the github page 1`] = `
   <footer
     class="_footer_c5c965"
   >
+    <p
+      class="_footer__copyright_c5c965"
+    >
+      © Tony Isern 2024
+    </p>
     <a
       aria-label="View source on Github (new tab)"
       class="_footer__link_c5c965"
-      href="https://github.com/OptimisticTrousers/word-storer"
+      href="https://github.com/OptimisticTrousers/word-reminder"
       target="_blank"
     >
       <svg

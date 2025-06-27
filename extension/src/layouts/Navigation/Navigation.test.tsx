@@ -64,11 +64,9 @@ describe("Navigation component", () => {
     };
   }
 
-  it("renders two links to words and word reminders pages respectively", async () => {
+  it("renders navigation component", async () => {
     const { asFragment } = setup("/");
 
-    const navigation = screen.getByRole("navigation");
-    expect(navigation).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 
@@ -104,23 +102,6 @@ describe("Navigation component", () => {
     );
     expect(wordReminders).toBeInTheDocument();
     expect(wordRemindersLink).toHaveAttribute("aria-current", "page");
-  });
-
-  it("adds the active class to the settings page when on the settings page", async () => {
-    const { user } = setup("/userWords");
-
-    const settingsLink = screen.getByRole("link", {
-      name: "Settings",
-      current: false,
-    });
-    await user.click(settingsLink);
-
-    const settings = screen.getByTestId("settings");
-    expect(settingsLink.getAttribute("class")).toContain(
-      "navigation__link--active"
-    );
-    expect(settings).toBeInTheDocument();
-    expect(settingsLink).toHaveAttribute("aria-current", "page");
   });
 
   it("logs out the user when the 'Log Out' button is clicked", async () => {

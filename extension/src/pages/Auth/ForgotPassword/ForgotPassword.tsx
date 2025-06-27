@@ -43,29 +43,29 @@ export const ForgotPassword = CSSModules(
     const disabled = isPending;
 
     return (
-      <div styleName="enter-email">
-        <h2 styleName="enter-email__heading">Reset your password</h2>
-        <p styleName="enter-email__description">
+      <div styleName="forgot-password">
+        <h2 styleName="forgot-password__heading">Reset your password</h2>
+        <p styleName="forgot-password__description">
           Enter your email address and we'll send you a link to reset your
           password.
         </p>
-        <form styleName="enter-email__form" action={handleSubmit}>
-          <div styleName="enter-email__control">
-            <label htmlFor="email" styleName="enter-email__label">
+        <form styleName="forgot-password__form" action={handleSubmit}>
+          <div styleName="forgot-password__control">
+            <label htmlFor="email" styleName="forgot-password__label">
               Email
             </label>
             <input
               type="email"
               id="email"
               name="email"
-              styleName="enter-email__input"
+              styleName="forgot-password__input"
               required={true}
               disabled={disabled}
               maxLength={EMAIL_MAX}
             />
           </div>
           <button
-            styleName="enter-email__button"
+            styleName="forgot-password__button"
             type="submit"
             disabled={disabled}
           >
@@ -74,7 +74,7 @@ export const ForgotPassword = CSSModules(
               : "Send verification email"}
           </button>
         </form>
-        <Link styleName="enter-email__link" to="/login">
+        <Link styleName="forgot-password__link" to="/login">
           Go back to login
         </Link>
       </div>

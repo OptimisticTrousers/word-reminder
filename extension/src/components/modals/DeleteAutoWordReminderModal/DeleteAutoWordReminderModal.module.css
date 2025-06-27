@@ -1,0 +1,53 @@
+.modal {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  font-size: 1.25rem;
+}
+
+.modal__alert {
+  color: var(--alert-text-color);
+  font-weight: 600;
+  padding: 1rem;
+  background-color: var(--alert-bkg-color);
+  border-radius: 4px;
+}
+
+.modal__message {
+  align-self: flex-start;
+  margin-top: 1rem;
+  color: var(--text-color);
+}
+
+.modal__buttons {
+  width: 100%;
+  display: flex;
+  margin-top: auto;
+}
+
+button.modal__button {
+  font-size: 1.5rem;
+  padding: 0.5rem 2rem;
+  margin-right: 0.5rem;
+  transition: background-color 0.2s ease-out;
+  flex: 1;
+}
+
+button.modal__button--cancel {
+  color: var(--white-text-color);
+  background-color: var(--white-bkg-color);
+}
+
+button.modal__button--cancel:hover {
+  background-color: var(--hover-white-bkg-color);
+}
+
+button.modal__button--delete {
+  background-color: var(--red-bkg-color);
+}
+
+button.modal__button--delete:hover {
+  background-color: var(--hover-red-bkg-color);
+}

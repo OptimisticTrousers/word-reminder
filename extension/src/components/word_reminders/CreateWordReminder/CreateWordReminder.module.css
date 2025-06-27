@@ -1,55 +1,39 @@
-.create {
-  background-color: transparent;
-  border: none;
+button.create {
+  background-color: var(--bkg-color);
   width: 100%;
-  color: white;
-  height: min-content;
-  margin-bottom: 2rem;
+  margin: 1rem 0;
+  border: 1px solid var(--border-color);
+  padding: 0;
 }
 
-.create--light > div:hover {
-  background-color: var(--light-hover);
-}
-
-.create > div {
-  margin-bottom: 0;
-}
-
-.create > div:hover {
-  cursor: pointer;
-}
-
-.create--dark > div:hover {
-  background-color: rgb(12, 11, 9);
+button.create:hover {
+  background-color: var(--hover-bkg-color);
 }
 
 .create__container {
   display: flex;
   align-items: center;
+  padding: 0.75rem;
 }
 
 .create__icon {
-  width: 3rem;
-  height: 3rem;
+  width: 48px;
+  height: 48px;
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .create__text {
-  display: flex;
-  flex-direction: column;
+  text-align: start;
 }
 
 .create__title {
   font-size: 1.125rem;
   line-height: 1.75rem;
   font-weight: 600;
-  margin-bottom: 0;
-  text-align: start;
 }
 
 .create__description {
-  margin-top: 0;
-  font-size: 1rem;
   line-height: 1.5rem;
-  color: rgb(107, 114, 128);
+  color: var(--secondary-text-color);
 }

@@ -14,7 +14,7 @@ export const Error500 = CSSModules(
       <div styleName="error">
         <div styleName="error__container">
           <img styleName="error__image" src={robotImage} alt="" />
-          <h2 styleName="error__number">500</h2>
+          <h2 styleName="error__number">500 Error</h2>
           <hr styleName="error__break" />
           <p styleName="error__message">Internal Server Error: {message}</p>
           <Link styleName="error__link" to="/">

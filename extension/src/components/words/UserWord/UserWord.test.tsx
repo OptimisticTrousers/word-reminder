@@ -89,7 +89,7 @@ describe("UserWord component", () => {
     });
     setup({ userWord: { ...props, learned: true }, queryClient });
 
-    const word = screen.getByText(`Word: ${props.details[0].word}`);
+    const word = screen.getByText(`${props.details[0].word}`);
     const createdAt = screen.getByText(
       `Created At: ${props.created_at.toLocaleString()}`
     );
@@ -125,7 +125,7 @@ describe("UserWord component", () => {
     });
     setup({ userWord: { ...props, learned: false }, queryClient });
 
-    const word = screen.getByText(`Word: ${props.details[0].word}`);
+    const word = screen.getByText(`${props.details[0].word}`);
     const createdAt = screen.getByText(
       `Created At: ${props.created_at.toLocaleString()}`
     );
@@ -331,7 +331,7 @@ describe("UserWord component", () => {
     });
     setup({ userWord: props, queryClient });
 
-    const word = screen.getByText("Word: exemplary");
+    const word = screen.getByText("exemplary");
     const createdAt = screen.getByText(
       `Created At: ${props.created_at.toLocaleString()}`
     );
@@ -373,7 +373,7 @@ describe("UserWord component", () => {
 
     const details = screen.getByTestId("details");
     expect(details).toHaveTextContent(JSON.stringify(props.details));
-    const word = screen.getByText("Word: exemplary");
+    const word = screen.getByText("exemplary");
     const createdAt = screen.getByText(
       `Created At: ${props.created_at.toLocaleString()}`
     );

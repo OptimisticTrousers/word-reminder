@@ -19,22 +19,25 @@ export const Reminder = CSSModules(
 
     return (
       <div styleName="reminder">
-        <a href="https://cronprompt.com/">
-          Visit cronprompt for more details. Use UTC in your reminder. (ie. If
-          you live in 'America/New_York' and you want to schedule the reminder
-          to show at 4 PM ET, use the 8 PM cron expression).
-        </a>
-        <p styleName="reminder__description">
-          {reminder &&
-            cronstrue.toString(reminder, {
-              throwExceptionOnParseError: false,
-            })}
-        </p>
-        <label styleName="reminder__label">
-          Reminder
+        <div styleName="reminder__top">
+          <p styleName="reminder__note">
+            <span styleName="reminder__bold">Important:</span> Use UTC in your
+            reminder. (ie. If you live in 'America/New_York' and you want to
+            schedule the reminder to show at 4 PM ET, use the 8 PM cron
+            expression).
+          </p>
+          <a styleName="reminder__link" href="https://cronprompt.com/">
+            Visit cronprompt to enter a valid reminder.
+          </a>
+        </div>
+        <div styleName="reminder__control">
+          <label styleName="reminder__label" htmlFor="reminder">
+            Reminder
+          </label>
           <input
             styleName="reminder__input"
             type="text"
+            id="reminder"
             name="reminder"
             required={true}
             disabled={disabled}
@@ -42,7 +45,18 @@ export const Reminder = CSSModules(
             value={reminder}
             placeholder="Enter a valid UTC cron expression (ie. * * * * * or */5 * * * *)"
           />
-        </label>
+        </div>
+        {reminder && (
+          <p styleName="reminder__description">
+            <span styleName="reminder__text">{reminder}</span>
+            is equivalent to
+            <span styleName="reminder__text">
+              {cronstrue.toString(reminder, {
+                throwExceptionOnParseError: false,
+              })}
+            </span>
+          </p>
+        )}
       </div>
     );
   },

@@ -29,7 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="boundary">
           <div className="boundary__container">
             <h2 className="boundary__title">An error occurred.</h2>
-            <p styleName="boundary__message">{this.state.error.message}</p>
+            <p className="boundary__message">{this.state.error.message}</p>
             <Link to="/" className="boundary__link">
               Go back to the home page.
             </Link>

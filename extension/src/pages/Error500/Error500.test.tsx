@@ -12,7 +12,7 @@ describe("Error500 component", () => {
       </MemoryRouter>
     );
 
-    const status = screen.getByText("500");
+    const status = screen.getByText("500 Error");
     const errorMessage = screen.getByText(`Internal Server Error: ${message}`);
     const link = screen.getByRole("link", {
       name: "Go back to the home page.",

@@ -20,26 +20,36 @@ exports[`UserWords component > renders two forms that have fields for creating a
           >
             <label
               class="_words__label_727679"
+              for="word"
             >
               Word
-              <input
-                class="_words__input_727679 _words__input--add_727679"
-                maxlength="45"
-                name="word"
-                placeholder="Add a new word to your dictionary..."
-                type="text"
-              />
             </label>
+            <input
+              class="_words__input_727679"
+              id="word"
+              maxlength="45"
+              name="word"
+              placeholder="Add a new word to your dictionary..."
+              type="text"
+            />
+          </div>
+          <div
+            class="_words__or_727679"
+          >
+            <hr />
+            OR
+            <hr />
           </div>
           <div
             class="_words__control_727679"
           >
             <label
               class="_words__label_727679"
+              for="csv"
             >
               Import Words
               <svg
-                class="lucide lucide-import _word__icon_727679"
+                class="lucide lucide-import _words__icon_727679"
                 fill="none"
                 height="24"
                 stroke="currentColor"
@@ -60,16 +70,17 @@ exports[`UserWords component > renders two forms that have fields for creating a
                   d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"
                 />
               </svg>
-              <input
-                accept="text/csv"
-                class="_words__button_727679 _words__button--import_727679"
-                name="csv"
-                type="file"
-              />
             </label>
+            <input
+              accept="text/csv"
+              class="_words__button_727679 _words__button--import_727679"
+              id="csv"
+              name="csv"
+              type="file"
+            />
           </div>
           <button
-            class="_words__button_727679 _words__button--add_727679"
+            class="_words__button_727679"
             type="submit"
           >
             Add
@@ -83,145 +94,147 @@ exports[`UserWords component > renders two forms that have fields for creating a
           >
             <label
               class="_words__label_727679"
-            >
-              Export Words
-              <svg
-                class="lucide lucide-download _word__icon_727679"
-                fill="none"
-                height="24"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-                />
-                <polyline
-                  points="7 10 12 15 17 10"
-                />
-                <line
-                  x1="12"
-                  x2="12"
-                  y1="15"
-                  y2="3"
-                />
-              </svg>
-              <input
-                class="_words__button_727679 _words__button--import_727679"
-                type="button"
-              />
-            </label>
-          </div>
-          <div
-            class="_words__control_727679"
-          >
-            <label
-              class="_words__label_727679"
+              for="search"
             >
               Search
-              <input
-                class="_words__input_727679 _words__input--search_727679"
-                name="search"
-                placeholder="Search for words in your dictionary..."
-                type="search"
-              />
             </label>
+            <input
+              class="_words__input_727679"
+              id="search"
+              name="search"
+              placeholder="Search for words in your dictionary..."
+              type="search"
+            />
           </div>
           <fieldset
             class="_words__sort_727679 _sort_727679"
           >
             <label
               class="_sort__label_727679"
+              for="sort"
             >
               Sort by:
-              <select
-                class="_sort__select_727679"
+            </label>
+            <select
+              class="_sort__select_727679"
+              id="sort"
+            >
+              <option
+                class="_sort__option_727679"
+                value=""
+              >
+                Featured
+              </option>
+              <optgroup
+                label="Created At"
               >
                 <option
                   class="_sort__option_727679"
-                  value=""
+                  value="1"
                 >
-                  Featured
+                  Oldest Created
                 </option>
-                <optgroup
-                  label="Created At"
+                <option
+                  class="_sort__option_727679"
+                  selected=""
+                  value="-1"
                 >
-                  <option
-                    class="_sort__option_727679"
-                    value="1"
-                  >
-                    Oldest Created
-                  </option>
-                  <option
-                    class="_sort__option_727679"
-                    selected=""
-                    value="-1"
-                  >
-                    Newest Created
-                  </option>
-                </optgroup>
-                <optgroup
-                  label="Updated At"
+                  Newest Created
+                </option>
+              </optgroup>
+              <optgroup
+                label="Updated At"
+              >
+                <option
+                  class="_sort__option_727679"
+                  value="1"
                 >
-                  <option
-                    class="_sort__option_727679"
-                    value="1"
-                  >
-                    Oldest Updated
-                  </option>
-                  <option
-                    class="_sort__option_727679"
-                    value="-1"
-                  >
-                    Newest Updated
-                  </option>
-                </optgroup>
-              </select>
-            </label>
+                  Oldest Updated
+                </option>
+                <option
+                  class="_sort__option_727679"
+                  value="-1"
+                >
+                  Newest Updated
+                </option>
+              </optgroup>
+            </select>
           </fieldset>
           <div
             class="_words__control_727679"
           >
             <label
               class="_words__label_727679"
+              for="learned"
             >
               Filter by:
-              <select
-                class="_words__select_727679"
-                name="learned"
-              >
-                <option
-                  class="_words__option_727679"
-                  value=""
-                >
-                  Any
-                </option>
-                <option
-                  class="_words__option_727679"
-                  value="true"
-                >
-                  Learned
-                </option>
-                <option
-                  class="_words__option_727679"
-                  value="false"
-                >
-                  Unlearned
-                </option>
-              </select>
             </label>
+            <select
+              class="_words__select_727679"
+              id="learned"
+              name="learned"
+            >
+              <option
+                class="_words__option_727679"
+                value=""
+              >
+                Any
+              </option>
+              <option
+                class="_words__option_727679"
+                value="true"
+              >
+                Learned
+              </option>
+              <option
+                class="_words__option_727679"
+                value="false"
+              >
+                Unlearned
+              </option>
+            </select>
           </div>
           <button
-            class="_words__button_727679 _words__button--add_727679"
+            class="_words__button_727679"
             type="submit"
           >
             Filter
           </button>
         </form>
+        <div
+          class="_words__row_727679"
+        >
+          <button
+            class="_words__button_727679"
+          >
+            <svg
+              class="lucide lucide-download _words__icon_727679"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+              />
+              <polyline
+                points="7 10 12 15 17 10"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="15"
+                y2="3"
+              />
+            </svg>
+            Export Words
+          </button>
+        </div>
       </div>
     </div>
     <div

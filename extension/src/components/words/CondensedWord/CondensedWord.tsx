@@ -64,7 +64,7 @@ export const CondensedWord = CSSModules(
                         {meaning.definitions.map(
                           (definition: Definition, index: number) => (
                             <li styleName="word__definition" key={index}>
-                              <p styleName="word__definition">
+                              <p styleName="word__content">
                                 {definition.definition}
                               </p>
                               {definition.example && (

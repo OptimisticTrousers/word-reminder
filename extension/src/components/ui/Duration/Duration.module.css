@@ -1,0 +1,9 @@
+.duration {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.duration__label {
+  display: block;
+}

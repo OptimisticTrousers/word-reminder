@@ -53,7 +53,7 @@ export const Signup = CSSModules(
     const disabled = status === "pending";
 
     return (
-      <section styleName="auth auth--register">
+      <section styleName="auth">
         <div styleName="auth__hero">
           <h2 styleName="auth__heading">Word Reminder</h2>
           <p styleName="auth__description">
@@ -62,12 +62,12 @@ export const Signup = CSSModules(
         </div>
         <form styleName="auth__form" action={handleSubmit}>
           <nav styleName="auth__navigation">
-            <p styleName="auth__redirect">
+            <div styleName="auth__redirect">
               Already have an account?{" "}
-              <Link styleName="auth___link" to="/login">
+              <Link styleName="auth__link" to="/login">
                 Login
               </Link>
-            </p>
+            </div>
             <h3 styleName="auth__title">Create account</h3>
             <button styleName="auth__button" type="submit" disabled={disabled}>
               {disabled ? "Signing up..." : "Signup"}
@@ -87,12 +87,12 @@ export const Signup = CSSModules(
               maxLength={EMAIL_MAX}
             />
           </div>
-          <div className={`${styles.auth__control}`}>
-            <label htmlFor="password" className={`${styles.auth__label}`}>
+          <div className="auth__control">
+            <label htmlFor="password" className="auth__label">
               Password <span styleName="auth__required">(required)</span>
             </label>
             <input
-              className={`${styles.auth__input}`}
+              styleName="auth__input"
               id="password"
               type="password"
               name="password"
@@ -101,10 +101,6 @@ export const Signup = CSSModules(
               maxLength={PASSWORD_MAX}
             />
           </div>
-          <p className={`${styles.auth__help}`}>
-            <b>Important:</b> Your password cannot be recovered if you forget
-            it!
-          </p>
         </form>
       </section>
     );

@@ -2,6 +2,7 @@ import { Dispatch, ReactNode, SetStateAction } from "react";
 
 import { Theme, ThemeContext } from "./Context";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import "./Theme.css";
 
 interface Props {
   children: ReactNode;
@@ -33,7 +34,9 @@ export function ThemeProvider({ children }: Props) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <div data-testid="container" className={`container container--${theme}`}>
+        {children}
+      </div>
     </ThemeContext.Provider>
   );
 }

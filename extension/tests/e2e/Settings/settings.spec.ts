@@ -17,7 +17,9 @@ test.describe("Settings page", () => {
   });
 
   test("submitting request to change email ", async ({ page }) => {
-    const changeEmailButton = page.getByLabel("Change Email");
+    const changeEmailButton = page.getByRole("button", {
+      name: "Change Email",
+    });
     await changeEmailButton.click();
 
     const notification = page.getByRole("dialog", {
@@ -27,7 +29,9 @@ test.describe("Settings page", () => {
   });
 
   test("submitting request to change password", async ({ page }) => {
-    const changePasswordButton = page.getByLabel("Change Password");
+    const changePasswordButton = page.getByRole("button", {
+      name: "Change Password",
+    });
     await changePasswordButton.click();
 
     const notification = page.getByRole("dialog", {
@@ -37,10 +41,16 @@ test.describe("Settings page", () => {
   });
 
   test("submitting request to delete user", async ({ page }) => {
-    const deleteUserButton = page.getByLabel("Delete User");
+    const deleteUserButton = page.getByRole("button", {
+      name: "Delete User",
+      exact: true,
+    });
     await deleteUserButton.click();
 
-    const deleteUserModalButton = page.getByRole("button", { name: "Delete" });
+    const deleteUserModalButton = page.getByRole("button", {
+      name: "Delete",
+      exact: true,
+    });
     const responsePromise = page.waitForResponse(
       (response) =>
         response.url() === `${VITE_API_DOMAIN}/users/${user.id}` &&

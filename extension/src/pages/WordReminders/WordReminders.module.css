@@ -1,6 +1,13 @@
-.words-by-durations {
-  height: 100%;
+.word-reminder__form,
+.word-reminder__sort,
+.word-reminder__buttons {
+  margin-bottom: 0.75rem;
 }
-.words-by-durations__title {
-  text-align: center;
+
+.sort {
+  padding: 0.75rem;
+}
+
+.sort__select {
+  margin-left: 0.5rem;
 }

@@ -5,6 +5,7 @@ import styles from "./Navigation.module.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { sessionService } from "../../services/session_service";
 import { useNotificationError } from "../../hooks/useNotificationError";
+import { LogOut } from "lucide-react";
 
 export const Navigation = CSSModules(
   function () {
@@ -49,47 +50,78 @@ export const Navigation = CSSModules(
     const disabled = isPending;
 
     return (
-      <nav styleName="navigation">
-        <Link
-          to="/userWords"
-          styleName={`navigation__link ${
-            isUserWordsActive && "navigation__link--active"
-          }`}
-          aria-current={isUserWordsActive && "page"}
-        >
-          User Words
-        </Link>
-        <Link
-          to="/wordReminders"
-          styleName={`navigation__link ${
-            isWordRemindersActive && "navigation__link--active"
-          }`}
-          aria-current={isWordRemindersActive && "page"}
-        >
-          Word Reminders
-        </Link>
-        <Link
-          to="/settings"
-          styleName={`navigation__link ${
-            isSettingsActive && "navigation__link--active"
-          }`}
-          aria-current={isSettingsActive && "page"}
-        >
-          Settings
-        </Link>
-        {inPopup && (
-          <button onClick={handleNewTab} styleName="navigation__button">
-            Open in New Tab
-          </button>
-        )}
-        <button
-          styleName="navigation__button"
-          onClick={handleLogout}
-          disabled={disabled}
-        >
-          Log Out
-        </button>
-      </nav>
+      <div styleName="navigation">
+        <div styleName="navigation__top">
+          <div styleName="navigation__logo">
+            <img
+              styleName="navigation__image"
+              src="images/word-reminder.png"
+              alt="lightbulb followed by the word reminder"
+            />
+            <h1 styleName="navigation__heading">Word Reminder</h1>
+          </div>
+          <nav styleName="navigation__nav">
+            <ul styleName="navigation__list">
+              <li styleName="navigation__item">
+                <Link
+                  to="/settings"
+                  styleName="navigation__link navigation__link--settings"
+                  aria-current={isSettingsActive && "page"}
+                  aria-label="Settings"
+                >
+                  ⚙️
+                </Link>
+              </li>
+              <li styleName="navigation__item">
+                <button
+                  styleName="navigation__button"
+                  onClick={handleLogout}
+                  disabled={disabled}
+                  aria-label="Log Out"
+                >
+                  <LogOut styleName="navigation__icon" />
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <nav styleName="navigation__nav">
+          <ul styleName="navigation__list navigation__list--bottom">
+            <li styleName={`navigation__item navigation__item--bottom`}>
+              <Link
+                to="/userWords"
+                styleName={`navigation__link navigation__link--bottom ${
+                  isUserWordsActive && "navigation__link--active"
+                }`}
+                aria-current={isUserWordsActive && "page"}
+              >
+                User Words
+              </Link>
+            </li>
+            <li styleName={`navigation__item navigation__item--bottom`}>
+              <Link
+                to="/wordReminders"
+                styleName={`navigation__link navigation__link--bottom ${
+                  isWordRemindersActive && "navigation__link--active"
+                }`}
+                aria-current={isWordRemindersActive && "page"}
+              >
+                Word Reminders
+              </Link>
+            </li>
+            {inPopup && (
+              <li styleName="navigation__item">
+                <button
+                  onClick={handleNewTab}
+                  styleName="navigation__button navigation__button--new-tab"
+                >
+                  Open in New Tab
+                </button>
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
     );
   },
   styles,

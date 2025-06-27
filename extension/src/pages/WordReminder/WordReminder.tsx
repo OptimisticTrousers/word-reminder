@@ -32,11 +32,7 @@ export const WordReminder = CSSModules(
       return <Loading />;
     }
 
-    return (
-      <div styleName="word-reminder">
-        <WordReminderItem wordReminder={data?.json.wordReminder} />
-      </div>
-    );
+    return <WordReminderItem wordReminder={data?.json.wordReminder} />;
   },
   styles,
   { allowMultiple: true, handleNotFoundStyleName: "log" }

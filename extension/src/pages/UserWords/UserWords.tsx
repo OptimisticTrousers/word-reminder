@@ -105,7 +105,7 @@ export const UserWords = CSSModules(
 
     const disabled = isPending;
 
-    async function handleExport(event: MouseEvent<HTMLInputElement>) {
+    async function handleExport(event: MouseEvent<HTMLButtonElement>) {
       event.preventDefault();
       const { json } = await userWordService.getUserWordList({
         userId,
@@ -207,36 +207,43 @@ export const UserWords = CSSModules(
           <div styleName="words__container">
             <form styleName="words__form" action={handleAdd}>
               <div styleName="words__control">
-                <label styleName="words__label">
+                <label styleName="words__label" htmlFor="word">
                   Word
-                  <input
-                    name="word"
-                    type="text"
-                    placeholder="Add a new word to your dictionary..."
-                    styleName="words__input words__input--add"
-                    maxLength={MAX_WORD_LENGTH}
-                    disabled={disabled}
-                    ref={inputRef}
-                    autoFocus
-                  />
                 </label>
+                <input
+                  id="word"
+                  name="word"
+                  type="text"
+                  placeholder="Add a new word to your dictionary..."
+                  styleName="words__input"
+                  maxLength={MAX_WORD_LENGTH}
+                  disabled={disabled}
+                  ref={inputRef}
+                  autoFocus
+                />
+              </div>
+              <div styleName="words__or">
+                <hr />
+                OR
+                <hr />
               </div>
               <div styleName="words__control">
-                <label styleName="words__label">
+                <label styleName="words__label" htmlFor="csv">
                   Import Words
-                  <Import styleName="word__icon" />
-                  <input
-                    styleName="words__button words__button--import"
-                    type="file"
-                    accept="text/csv"
-                    name="csv"
-                    disabled={disabled}
-                    onChange={handleFile}
-                  />
+                  <Import styleName="words__icon" />
                 </label>
+                <input
+                  id="csv"
+                  styleName="words__button words__button--import"
+                  type="file"
+                  accept="text/csv"
+                  name="csv"
+                  disabled={disabled}
+                  onChange={handleFile}
+                />
               </div>
               <button
-                styleName="words__button words__button--add"
+                styleName="words__button"
                 type="submit"
                 ref={submitButtonRef}
                 disabled={disabled}
@@ -246,89 +253,90 @@ export const UserWords = CSSModules(
             </form>
             <form styleName="words__form" onSubmit={handleQuery}>
               <div styleName="words__control">
-                <label styleName="words__label">
-                  Export Words
-                  <Download styleName="word__icon" />
-                  <input
-                    styleName="words__button words__button--import"
-                    type="button"
-                    disabled={disabled}
-                    onClick={handleExport}
-                  />
-                </label>
-              </div>
-              <div styleName="words__control">
-                <label styleName="words__label">
+                <label styleName="words__label" htmlFor="search">
                   Search
-                  <input
-                    placeholder="Search for words in your dictionary..."
-                    styleName="words__input words__input--search"
-                    type="search"
-                    name="search"
-                    disabled={disabled}
-                  />
                 </label>
+                <input
+                  id="search"
+                  placeholder="Search for words in your dictionary..."
+                  styleName="words__input"
+                  type="search"
+                  name="search"
+                  disabled={disabled}
+                />
               </div>
               <fieldset styleName="words__sort sort">
-                <label styleName="sort__label">
+                <label styleName="sort__label" htmlFor="sort">
                   Sort by:
-                  <select
-                    styleName="sort__select"
-                    disabled={disabled}
-                    onChange={handleSelectChange}
-                    defaultValue="-1"
-                    // the first option in the DOM with value "-1" gets selected
-                  >
-                    <option styleName="sort__option" value="">
-                      Featured
-                    </option>
-                    <optgroup label="Created At">
-                      <option styleName="sort__option" value="1">
-                        Oldest Created
-                      </option>
-                      <option styleName="sort__option" value="-1">
-                        Newest Created
-                      </option>
-                    </optgroup>
-                    <optgroup label="Updated At">
-                      <option styleName="sort__option" value="1">
-                        Oldest Updated
-                      </option>
-                      <option styleName="sort__option" value="-1">
-                        Newest Updated
-                      </option>
-                    </optgroup>
-                  </select>
                 </label>
+                <select
+                  id="sort"
+                  styleName="sort__select"
+                  disabled={disabled}
+                  onChange={handleSelectChange}
+                  defaultValue="-1"
+                  // the first option in the DOM with value "-1" gets selected
+                >
+                  <option styleName="sort__option" value="">
+                    Featured
+                  </option>
+                  <optgroup label="Created At">
+                    <option styleName="sort__option" value="1">
+                      Oldest Created
+                    </option>
+                    <option styleName="sort__option" value="-1">
+                      Newest Created
+                    </option>
+                  </optgroup>
+                  <optgroup label="Updated At">
+                    <option styleName="sort__option" value="1">
+                      Oldest Updated
+                    </option>
+                    <option styleName="sort__option" value="-1">
+                      Newest Updated
+                    </option>
+                  </optgroup>
+                </select>
               </fieldset>
               <div styleName="words__control">
-                <label styleName="words__label">
+                <label styleName="words__label" htmlFor="learned">
                   Filter by:
-                  <select
-                    styleName="words__select"
-                    disabled={disabled}
-                    name="learned"
-                  >
-                    <option styleName="words__option" value="">
-                      Any
-                    </option>
-                    <option styleName="words__option" value="true">
-                      Learned
-                    </option>
-                    <option styleName="words__option" value="false">
-                      Unlearned
-                    </option>
-                  </select>
                 </label>
+                <select
+                  id="learned"
+                  styleName="words__select"
+                  disabled={disabled}
+                  name="learned"
+                >
+                  <option styleName="words__option" value="">
+                    Any
+                  </option>
+                  <option styleName="words__option" value="true">
+                    Learned
+                  </option>
+                  <option styleName="words__option" value="false">
+                    Unlearned
+                  </option>
+                </select>
               </div>
               <button
-                styleName="words__button words__button--add"
+                styleName="words__button"
                 type="submit"
                 disabled={disabled}
               >
                 Filter
               </button>
             </form>
+            <div styleName="words__row">
+              <button
+                styleName="words__button"
+                disabled={disabled}
+                onClick={handleExport}
+              >
+                <Download styleName="words__icon words__icon--export" />
+                Export Words
+              </button>
+            </div>
           </div>
         </div>
         <PaginatedList

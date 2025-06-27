@@ -1,39 +1,115 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Navigation component > renders two links to words and word reminders pages respectively 1`] = `
+exports[`Navigation component > renders navigation component 1`] = `
 <DocumentFragment>
-  <nav
+  <div
     class="_navigation_511cb9"
   >
-    <a
-      aria-current="false"
-      class="_navigation__link_511cb9 _false_511cb9"
-      data-discover="true"
-      href="/userWords"
+    <div
+      class="_navigation__top_511cb9"
     >
-      User Words
-    </a>
-    <a
-      aria-current="false"
-      class="_navigation__link_511cb9 _false_511cb9"
-      data-discover="true"
-      href="/wordReminders"
+      <div
+        class="_navigation__logo_511cb9"
+      >
+        <img
+          alt="lightbulb followed by the word reminder"
+          class="_navigation__image_511cb9"
+          src="images/word-reminder.png"
+        />
+        <h1
+          class="_navigation__heading_511cb9"
+        >
+          Word Reminder
+        </h1>
+      </div>
+      <nav
+        class="_navigation__nav_511cb9"
+      >
+        <ul
+          class="_navigation__list_511cb9"
+        >
+          <li
+            class="_navigation__item_511cb9"
+          >
+            <a
+              aria-current="false"
+              aria-label="Settings"
+              class="_navigation__link_511cb9"
+              data-discover="true"
+              href="/settings"
+            >
+              ⚙️
+            </a>
+          </li>
+          <li
+            class="_navigation__item_511cb9"
+          >
+            <button
+              aria-label="Log Out"
+              class="_navigation__button_511cb9"
+            >
+              <svg
+                class="lucide lucide-log-out _navigation__icon_511cb9"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                />
+                <polyline
+                  points="16 17 21 12 16 7"
+                />
+                <line
+                  x1="21"
+                  x2="9"
+                  y1="12"
+                  y2="12"
+                />
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav
+      class="_navigation__nav_511cb9"
     >
-      Word Reminders
-    </a>
-    <a
-      aria-current="false"
-      class="_navigation__link_511cb9 _false_511cb9"
-      data-discover="true"
-      href="/settings"
-    >
-      Settings
-    </a>
-    <button
-      class="_navigation__button_511cb9"
-    >
-      Log Out
-    </button>
-  </nav>
+      <ul
+        class="_navigation__list_511cb9 _navigation__list--bottom_511cb9"
+      >
+        <li
+          class="_navigation__item_511cb9 _navigation__item--bottom_511cb9"
+        >
+          <a
+            aria-current="false"
+            class="_navigation__link_511cb9 _navigation__link--bottom_511cb9 _false_511cb9"
+            data-discover="true"
+            href="/userWords"
+          >
+            User Words
+          </a>
+        </li>
+        <li
+          class="_navigation__item_511cb9 _navigation__item--bottom_511cb9"
+        >
+          <a
+            aria-current="false"
+            class="_navigation__link_511cb9 _navigation__link--bottom_511cb9 _false_511cb9"
+            data-discover="true"
+            href="/wordReminders"
+          >
+            Word Reminders
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </DocumentFragment>
 `;

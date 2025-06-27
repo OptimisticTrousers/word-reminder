@@ -20,7 +20,7 @@ export const Settings = CSSModules(
     const userId = String(user.id);
     const { showNotificationError } = useNotificationError();
     const { showNotification } = useContext(NotificationContext);
-    const { theme, toggleTheme } = useContext(ThemeContext);
+    const { toggleTheme } = useContext(ThemeContext);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const { isPending, mutate } = useMutation({
       mutationFn: emailService.sendEmail,
@@ -73,62 +73,39 @@ export const Settings = CSSModules(
     const disabled = isPending;
 
     return (
-      <section
-        styleName={`settings settings--${theme}`}
-        aria-labelledby="heading"
-      >
+      <section styleName="settings" aria-labelledby="heading">
         <h2 styleName="settings__heading" id="heading">
           Change Account Details
         </h2>
         <div styleName="settings__buttons">
-          <div styleName="settings__control">
-            <label styleName="settings__label" htmlFor="email">
-              Change Email
-            </label>
-            <input
-              id="email"
-              type="button"
-              name="email"
-              styleName="settings__input"
-              onClick={handleEmailClick}
-              disabled={disabled}
-            />
-          </div>
-          <div styleName="settings__control">
-            <label styleName="settings__label" htmlFor="password">
-              Change Password
-            </label>
-            <input
-              id="password"
-              type="button"
-              name="password"
-              styleName="settings__input"
-              onClick={handleEmailClick}
-              disabled={disabled}
-            />
-          </div>
-          <div styleName="settings__control">
-            <label styleName="settings__label" htmlFor="user">
-              Delete User
-            </label>
-            <input
-              id="user"
-              type="button"
-              name="user"
-              styleName="settings__input"
-              onClick={toggleDeleteModal}
-              disabled={disabled}
-            />
-          </div>
-          <div styleName="settings__control">
-            <button
-              styleName="settings__button"
-              onClick={toggleTheme}
-              role="switch"
-            >
-              Toggle Theme
-            </button>
-          </div>
+          <input
+            id="email"
+            type="button"
+            name="email"
+            styleName="settings__button"
+            onClick={handleEmailClick}
+            disabled={disabled}
+            value="Change Email"
+          />
+          <input
+            id="password"
+            type="button"
+            name="password"
+            styleName="settings__button"
+            onClick={handleEmailClick}
+            disabled={disabled}
+            value="Change Password"
+          />
+          <button styleName="settings__button" onClick={toggleDeleteModal}>
+            Delete User
+          </button>
+          <button
+            styleName="settings__button"
+            onClick={toggleTheme}
+            role="switch"
+          >
+            Toggle Theme
+          </button>
         </div>
         {isDeleteModalOpen && (
           <DeleteUserModal toggleModal={toggleDeleteModal} />

@@ -1,0 +1,14 @@
+.paginated__count {
+  margin-bottom: 0.75rem;
+}
+
+.paginated__buttons {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.paginated__button {
+  flex: 1;
+  font-size: 1.5rem;
+}

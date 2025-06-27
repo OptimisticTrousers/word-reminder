@@ -1,10 +1,5 @@
 .boundary {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  background-color: #17171c;
-  justify-content: center;
-  align-items: center;
+  padding: 1rem;
 }
 
 .boundary__container {
@@ -15,23 +10,16 @@
 }
 
 .boundary__title {
-  font-size: 1.875rem;
+  font-size: 1.75rem;
   font-weight: 600;
-  color: #8b5cf6;
-  margin-bottom: 2rem;
+  color: var(--primary-color);
 }
 
-.boundary__button {
-  background-color: #3b82f6;
-  color: #fff;
-  font-weight: bold;
-  padding: 0.75rem 2rem;
-  border-radius: 0.25rem;
-  border: none;
-  cursor: pointer;
-  width: 9rem;
+.boundary__message {
+  font-size: 1.25rem;
 }
 
-.boundary__button:hover {
-  background-color: #2563eb;
+.boundary__title,
+.boundary__message {
+  margin-bottom: 0.75rem;
 }

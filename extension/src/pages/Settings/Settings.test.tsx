@@ -74,14 +74,12 @@ describe("Settings component", () => {
     const heading = screen.getByRole("heading", {
       name: "Change Account Details",
     });
-    const emailInput = screen.getByLabelText("Change Email", {
-      selector: "input",
+    const emailInput = screen.getByRole("button", { name: "Change Email" });
+    const passwordInput = screen.getByRole("button", {
+      name: "Change Password",
     });
-    const passwordInput = screen.getByLabelText("Change Password", {
-      selector: "input",
-    });
-    const deleteUserButton = screen.getByLabelText("Delete User", {
-      selector: "input",
+    const deleteUserButton = screen.getByRole("button", {
+      name: "Delete User",
     });
     const toggleThemeButton = screen.getByRole("switch", {
       name: "Toggle Theme",
@@ -91,42 +89,12 @@ describe("Settings component", () => {
       name: "Change Account Details",
     });
     expect(section).toBeInTheDocument();
-    expect(section.getAttribute("class")).toContain(`settings--${Theme.Dark}`);
     expect(deleteUserButton).toBeInTheDocument();
     expect(toggleThemeButton).toBeInTheDocument();
     expect(heading).toBeInTheDocument();
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
-  });
-
-  it("toggles theme to light mode", async () => {
-    const { user } = setup({ initialRoute: "/settings" });
-
-    const toggleThemeButton = screen.getByRole("switch", {
-      name: "Toggle Theme",
-    });
-    await user.click(toggleThemeButton);
-
-    const section = screen.getByRole("region", {
-      name: "Change Account Details",
-    });
-    expect(section.getAttribute("class")).toContain(`settings--${Theme.Dark}`);
-  });
-
-  it("toggles theme to dark mode", async () => {
-    const { user } = setup({ initialRoute: "/settings" });
-
-    const toggleThemeButton = screen.getByRole("switch", {
-      name: "Toggle Theme",
-    });
-    await user.click(toggleThemeButton);
-    await user.click(toggleThemeButton);
-
-    const section = screen.getByRole("region", {
-      name: "Change Account Details",
-    });
-    expect(section.getAttribute("class")).toContain(`settings--${Theme.Dark}`);
   });
 
   it("opens the modal to delete the user's account when clicked", async () => {

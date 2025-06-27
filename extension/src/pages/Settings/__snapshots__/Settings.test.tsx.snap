@@ -4,7 +4,7 @@ exports[`Settings component > renders non disabled inputs and heading 1`] = `
 <DocumentFragment>
   <section
     aria-labelledby="heading"
-    class="_settings_9f5ad4 _settings--dark_9f5ad4"
+    class="_settings_9f5ad4"
   >
     <h2
       class="_settings__heading_9f5ad4"
@@ -15,64 +15,31 @@ exports[`Settings component > renders non disabled inputs and heading 1`] = `
     <div
       class="_settings__buttons_9f5ad4"
     >
-      <div
-        class="_settings__control_9f5ad4"
+      <input
+        class="_settings__button_9f5ad4"
+        id="email"
+        name="email"
+        type="button"
+        value="Change Email"
+      />
+      <input
+        class="_settings__button_9f5ad4"
+        id="password"
+        name="password"
+        type="button"
+        value="Change Password"
+      />
+      <button
+        class="_settings__button_9f5ad4"
       >
-        <label
-          class="_settings__label_9f5ad4"
-          for="email"
-        >
-          Change Email
-        </label>
-        <input
-          class="_settings__input_9f5ad4"
-          id="email"
-          name="email"
-          type="button"
-        />
-      </div>
-      <div
-        class="_settings__control_9f5ad4"
+        Delete User
+      </button>
+      <button
+        class="_settings__button_9f5ad4"
+        role="switch"
       >
-        <label
-          class="_settings__label_9f5ad4"
-          for="password"
-        >
-          Change Password
-        </label>
-        <input
-          class="_settings__input_9f5ad4"
-          id="password"
-          name="password"
-          type="button"
-        />
-      </div>
-      <div
-        class="_settings__control_9f5ad4"
-      >
-        <label
-          class="_settings__label_9f5ad4"
-          for="user"
-        >
-          Delete User
-        </label>
-        <input
-          class="_settings__input_9f5ad4"
-          id="user"
-          name="user"
-          type="button"
-        />
-      </div>
-      <div
-        class="_settings__control_9f5ad4"
-      >
-        <button
-          class="_settings__button_9f5ad4"
-          role="switch"
-        >
-          Toggle Theme
-        </button>
-      </div>
+        Toggle Theme
+      </button>
     </div>
   </section>
 </DocumentFragment>

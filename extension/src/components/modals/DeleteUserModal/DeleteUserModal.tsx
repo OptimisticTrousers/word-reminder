@@ -58,7 +58,7 @@ export const DeleteUserModal = CSSModules(
       <ModalContainer title="Delete User" toggleModal={toggleModal}>
         <form styleName="modal" action={handleDelete}>
           <p styleName="modal__alert">
-            Are you sure you want to delete your user?
+            Are you sure you want to delete your account?
           </p>
           <p styleName="modal__message">You can't undo this action.</p>
           <div styleName="modal__buttons">

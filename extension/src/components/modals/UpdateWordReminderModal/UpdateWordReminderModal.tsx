@@ -97,7 +97,7 @@ export const UpdateWordReminderModal = CSSModules(
 
     return (
       <ModalContainer title="Update Word Reminder" toggleModal={toggleModal}>
-        <form styleName="modal__form" action={handleUpdate}>
+        <form styleName="modal" action={handleUpdate}>
           <Reminder disabled={false} value={wordReminder.reminder} />
           <div styleName="modal__control">
             <label styleName="modal__label" htmlFor="finish">
@@ -120,6 +120,7 @@ export const UpdateWordReminderModal = CSSModules(
             </label>
             <input
               type="email"
+              styleName="modal__input"
               multiple
               name="user_words"
               id="user_words"

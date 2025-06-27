@@ -49,7 +49,7 @@ export const Login = CSSModules(
     const disabled = status === "pending";
 
     return (
-      <section styleName="auth auth--login">
+      <section styleName="auth">
         <div styleName="auth__hero">
           <h2 styleName="auth__heading">Word Reminder</h2>
           <p styleName="auth__description">
@@ -85,18 +85,22 @@ export const Login = CSSModules(
               maxLength={PASSWORD_MAX}
             />
           </div>
-          <button styleName="auth__button" type="submit" disabled={disabled}>
+          <button
+            styleName="auth__button auth__button--login"
+            type="submit"
+            disabled={disabled}
+          >
             {disabled ? "Logging in..." : "Login"}
           </button>
         </form>
         <p styleName="auth__redirect">
           New around here?{" "}
-          <Link styleName="auth_link" to="/signup">
+          <Link styleName="auth__link auth__link--create" to="/signup">
             Create account
           </Link>
         </p>
         <p styleName="auth__redirect">
-          <Link styleName="auth_link" to="/forgotPassword">
+          <Link styleName="auth__link" to="/forgotPassword">
             Forgot Password?
           </Link>
         </p>

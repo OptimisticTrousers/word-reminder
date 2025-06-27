@@ -1,0 +1,11 @@
+.email-confirmation {
+  padding: 1rem;
+}
+
+.email-confirmation__heading {
+  margin-bottom: 0.75rem;
+}
+
+.email-confirmation__bold {
+  font-weight: 600;
+}

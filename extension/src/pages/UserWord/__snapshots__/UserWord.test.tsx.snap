@@ -16,7 +16,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
       Word not learned
     </p>
     <p
-      class="_word__created_at_063118"
+      class="_word__created-at_063118"
     >
       5/12/2020, 7:50:21 PM
     </p>
@@ -32,7 +32,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
         class="_word__form_063118"
       >
         <input
-          class="_word__input_063118 _word__input--hidden_063118"
+          class="_word__input_063118"
           id="learned"
           name="learned"
           required=""
@@ -40,7 +40,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
           value="true"
         />
         <button
-          class="_word__button_063118 _word__button--learned_063118"
+          class="_word__button_063118"
           type="submit"
         >
           Toggle Learned
@@ -49,7 +49,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
       <button
         aria-haspopup="true"
         aria-label="Open delete user word modal"
-        class="_word__delete_063118 _word__button--delete_063118"
+        class="_word__delete_063118"
       >
         <svg
           class="lucide lucide-trash _word__icon_063118"
@@ -179,14 +179,15 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
         <div
           class="_word__meanings_063118"
         >
-          <span
+          <p
             class="_word__part-of-speech_063118"
           >
             noun 
-            <hr
-              class="_word__line_063118"
-            />
-          </span>
+          </p>
+          <hr
+            class="_word__line_063118"
+          />
+          <p />
           <div
             class="_word__block_063118"
           >
@@ -202,14 +203,24 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 class="_word__definition_063118"
               >
                 <p
-                  class="_word__definition_063118"
+                  class="_word__content_063118"
                 >
-                  News; tidings (used without an article).
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Definition:
+                  </span>
+                   News; tidings (used without an article).
                 </p>
                 <p
                   class="_word__example_063118"
                 >
-                  Have you had any word from John yet?
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Example:
+                  </span>
+                   Have you had any word from John yet?
                 </p>
                 <ul
                   class="_word__synonyms_063118"
@@ -222,14 +233,24 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 class="_word__definition_063118"
               >
                 <p
-                  class="_word__definition_063118"
+                  class="_word__content_063118"
                 >
-                  A promise; an oath or guarantee.
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Definition:
+                  </span>
+                   A promise; an oath or guarantee.
                 </p>
                 <p
                   class="_word__example_063118"
                 >
-                  I give you my word that I will be there on time.
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Example:
+                  </span>
+                   I give you my word that I will be there on time.
                 </p>
                 <ul
                   class="_word__synonyms_063118"
@@ -307,7 +328,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
               CC BY-SA 3.0
             </p>
             <a
-              class="_word__url_063118"
+              class="_word__link_063118"
               href="https://creativecommons.org/licenses/by-sa/3.0"
             >
               Word License
@@ -350,7 +371,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
       Learned word
     </p>
     <p
-      class="_word__created_at_063118"
+      class="_word__created-at_063118"
     >
       5/12/2020, 7:50:21 PM
     </p>
@@ -366,7 +387,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
         class="_word__form_063118"
       >
         <input
-          class="_word__input_063118 _word__input--hidden_063118"
+          class="_word__input_063118"
           id="learned"
           name="learned"
           required=""
@@ -374,7 +395,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
           value="false"
         />
         <button
-          class="_word__button_063118 _word__button--learned_063118"
+          class="_word__button_063118"
           type="submit"
         >
           Toggle Learned
@@ -383,7 +404,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
       <button
         aria-haspopup="true"
         aria-label="Open delete user word modal"
-        class="_word__delete_063118 _word__button--delete_063118"
+        class="_word__delete_063118"
       >
         <svg
           class="lucide lucide-trash _word__icon_063118"
@@ -513,14 +534,15 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
         <div
           class="_word__meanings_063118"
         >
-          <span
+          <p
             class="_word__part-of-speech_063118"
           >
             noun 
-            <hr
-              class="_word__line_063118"
-            />
-          </span>
+          </p>
+          <hr
+            class="_word__line_063118"
+          />
+          <p />
           <div
             class="_word__block_063118"
           >
@@ -536,14 +558,24 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 class="_word__definition_063118"
               >
                 <p
-                  class="_word__definition_063118"
+                  class="_word__content_063118"
                 >
-                  News; tidings (used without an article).
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Definition:
+                  </span>
+                   News; tidings (used without an article).
                 </p>
                 <p
                   class="_word__example_063118"
                 >
-                  Have you had any word from John yet?
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Example:
+                  </span>
+                   Have you had any word from John yet?
                 </p>
                 <ul
                   class="_word__synonyms_063118"
@@ -556,14 +588,24 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 class="_word__definition_063118"
               >
                 <p
-                  class="_word__definition_063118"
+                  class="_word__content_063118"
                 >
-                  A promise; an oath or guarantee.
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Definition:
+                  </span>
+                   A promise; an oath or guarantee.
                 </p>
                 <p
                   class="_word__example_063118"
                 >
-                  I give you my word that I will be there on time.
+                  <span
+                    class="_word__bold_063118"
+                  >
+                    Example:
+                  </span>
+                   I give you my word that I will be there on time.
                 </p>
                 <ul
                   class="_word__synonyms_063118"
@@ -641,7 +683,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
               CC BY-SA 3.0
             </p>
             <a
-              class="_word__url_063118"
+              class="_word__link_063118"
               href="https://creativecommons.org/licenses/by-sa/3.0"
             >
               Word License

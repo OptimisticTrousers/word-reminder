@@ -8,11 +8,21 @@ exports[`UserWord component > it opens the accordion 1`] = `
     <article
       class="_user-word__word_a41cd7 _word_a41cd7"
     >
-      <p
-        class="_word__name_a41cd7"
+      <div
+        class="_user-word__header_a41cd7"
       >
-        Word: exemplary
-      </p>
+        <h3
+          class="_word__name_a41cd7"
+        >
+          exemplary
+        </h3>
+        <a
+          data-discover="true"
+          href="/userWords/1"
+        >
+          More Word Details
+        </a>
+      </div>
       <p
         class="_word__name_a41cd7"
       >
@@ -23,9 +33,6 @@ exports[`UserWord component > it opens the accordion 1`] = `
       >
         Updated At: 12/17/1995, 3:24:00 AM
       </p>
-      <div
-        class="_word__divider_a41cd7"
-      />
       <p
         class="_word__name_a41cd7"
       >
@@ -71,7 +78,7 @@ exports[`UserWord component > it opens the accordion 1`] = `
           class="_word__form_a41cd7"
         >
           <input
-            class="_word__input_a41cd7 _word__input--checkbox_a41cd7"
+            class="_word__input_a41cd7"
             id="learned"
             name="learned"
             required=""
@@ -79,7 +86,7 @@ exports[`UserWord component > it opens the accordion 1`] = `
             value="true"
           />
           <button
-            class="_word__button_a41cd7 _word__button--learned_a41cd7"
+            class="_word__button_a41cd7"
             type="submit"
           >
             Toggle Learned
@@ -88,7 +95,7 @@ exports[`UserWord component > it opens the accordion 1`] = `
         <button
           aria-haspopup="true"
           aria-label="Open delete user word modal"
-          class="_word__delete_a41cd7 _word__button--delete_a41cd7"
+          class="_word__delete_a41cd7"
         >
           <svg
             class="lucide lucide-trash _word__icon_a41cd7"
@@ -113,12 +120,6 @@ exports[`UserWord component > it opens the accordion 1`] = `
             />
           </svg>
         </button>
-        <a
-          data-discover="true"
-          href="/userWords/1"
-        >
-          More Word Details
-        </a>
       </div>
     </article>
     <div

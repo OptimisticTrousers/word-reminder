@@ -16,7 +16,7 @@ exports[`Error500 component > renders message, error status, and link to the hom
       <h2
         class="_error__number_f26a4e"
       >
-        500
+        500 Error
       </h2>
       <hr
         class="_error__break_f26a4e"

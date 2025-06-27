@@ -91,31 +91,35 @@ export const WordReminders = CSSModules(
         <AutoCreateWordReminder />
         <CreateWordReminder />
         <form styleName="word-reminder__form" onSubmit={handleQuery}>
-          <fieldset styleName="words__sort sort">
-            <label styleName="sort__label">
+          <fieldset styleName="word-reminder__sort sort">
+            <label styleName="sort__label" htmlFor="sort">
               Sort by:
-              <select styleName="sort__select" onChange={handleSelectChange}>
-                <option styleName="sort__option" value="">
-                  Featured
-                </option>
-                <optgroup label="Created At">
-                  <option styleName="sort__option" value="1">
-                    Oldest Created
-                  </option>
-                  <option styleName="sort__option" value="-1">
-                    Newest Created
-                  </option>
-                </optgroup>
-                <optgroup label="Updated At">
-                  <option styleName="sort__option" value="1">
-                    Oldest Updated
-                  </option>
-                  <option styleName="sort__option" value="-1">
-                    Newest Updated
-                  </option>
-                </optgroup>
-              </select>
             </label>
+            <select
+              id="sort"
+              styleName="sort__select"
+              onChange={handleSelectChange}
+            >
+              <option styleName="sort__option" value="">
+                Featured
+              </option>
+              <optgroup label="Created At">
+                <option styleName="sort__option" value="1">
+                  Oldest Created
+                </option>
+                <option styleName="sort__option" value="-1">
+                  Newest Created
+                </option>
+              </optgroup>
+              <optgroup label="Updated At">
+                <option styleName="sort__option" value="1">
+                  Oldest Updated
+                </option>
+                <option styleName="sort__option" value="-1">
+                  Newest Updated
+                </option>
+              </optgroup>
+            </select>
           </fieldset>
           <button styleName="word-reminder__button" type="submit">
             Filter

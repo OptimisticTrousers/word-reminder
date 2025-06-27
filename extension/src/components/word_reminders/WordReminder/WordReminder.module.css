@@ -1,0 +1,17 @@
+.word-reminder {
+  background-color: var(--card-bkg-color);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 0.75rem;
+}
+
+.word-reminder__buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.word-reminder__button {
+  flex: 1;
+}

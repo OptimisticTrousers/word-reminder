@@ -1,0 +1,35 @@
+.reminder__top {
+  background-color: var(--card-bkg-color);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.reminder__control {
+  margin-top: 0.5rem;
+}
+
+.reminder__bold {
+  font-weight: 600;
+}
+
+.reminder__text {
+  font-weight: 500;
+  margin-right: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.reminder__input {
+  width: 100%;
+}
+
+.reminder__label,
+.reminder__note,
+.reminder__input,
+.reminder__description {
+  margin-bottom: 0.5rem;
+}
+
+.reminder__label {
+  display: block;
+}
