@@ -8,12 +8,16 @@ import { errorHandler } from "../middleware/error_handler";
 const app = express();
 app.use(express.json());
 
+const userErrorMessage = "User error occured.";
+
 app.get("/user-error", (req, res, next) => {
-  next(new CustomBadRequestError("User error occurred"));
+  next(new CustomBadRequestError(userErrorMessage));
 });
 
+const serverErrorMessage = "Internal Server Error.";
+
 app.get("/server-error", (req, res, next) => {
-  next(new Error());
+  next(new Error(serverErrorMessage));
 });
 
 app.use(errorHandler);
@@ -25,12 +29,12 @@ describe("errorHandler", () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
-        message: "User error occurred",
+        message: userErrorMessage,
         stack: expect.any(String),
       });
       expect(
         (response.body as { stack: string }).stack.includes(
-          "Error: User error occurred"
+          `Error: ${userErrorMessage}`
         )
       ).toBe(true);
     });
@@ -42,11 +46,13 @@ describe("errorHandler", () => {
 
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
-        message: "Internal Server Error.",
+        message: serverErrorMessage,
         stack: expect.any(String),
       });
       expect(
-        (response.body as { stack: string }).stack.includes("Error:")
+        (response.body as { stack: string }).stack.includes(
+          `Error: ${serverErrorMessage}`
+        )
       ).toBe(true);
     });
   });

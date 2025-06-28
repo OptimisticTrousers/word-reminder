@@ -1,4 +1,5 @@
 import { type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
 
 export async function loginWith(page: Page, email: string, password: string) {
   const responsePromise = page.waitForResponse(

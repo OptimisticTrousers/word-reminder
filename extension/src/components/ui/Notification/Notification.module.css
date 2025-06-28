@@ -12,6 +12,11 @@
 }
 
 .notification--error {
+  --bkg-color: var(--alert-bkg-color);
+  --base-text-color: var(--alert-text-color);
+  --btn-text-color: var(--hover-red-bkg-color);
+  --icon-color: var(--red-bkg-color);
+  background-color: var(--bkg-color);
 }
 
 .notification__flex {
