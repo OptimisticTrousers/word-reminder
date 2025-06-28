@@ -4,6 +4,7 @@ import { QueryResult } from "pg";
 import { createQueries } from "./queries";
 
 export interface Result {
+  totalRows: number;
   wordReminders: WordReminder[];
   previous?: Page;
   next?: Page;
@@ -205,12 +206,12 @@ export const userWordsWordRemindersQueries = (function () {
       SELECT COUNT(*) AS total FROM word_reminders
       WHERE user_id = $1;
     `;
-    const { rows: totalRowsResult }: QueryResult<{ total: number }> =
+    const { rows: totalRowsResult }: QueryResult<{ total: string }> =
       await db.query(totalQuery, [user_id]);
     // calculate the length of the rows before applying a limit on it to see how many rows match the query
-    const totalRows = totalRowsResult[0].total;
+    const totalRows = Number(totalRowsResult[0].total);
 
-    const result: Result = { wordReminders: rows };
+    const result: Result = { wordReminders: rows, totalRows };
 
     if (startIndex > 0) {
       result.previous = {

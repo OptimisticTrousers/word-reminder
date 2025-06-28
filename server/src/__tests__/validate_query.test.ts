@@ -148,7 +148,7 @@ const wordReminders = [
 describe("validateQuery", () => {
   const mockGetByUserId = jest
     .spyOn(userWordsWordRemindersQueries, "getByUserId")
-    .mockResolvedValue({ wordReminders });
+    .mockResolvedValue({ wordReminders, totalRows: 1 });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -183,6 +183,7 @@ describe("validateQuery", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
+          totalRows: 1,
           wordReminders: [
             {
               id: 1,
@@ -376,6 +377,7 @@ describe("validateQuery", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
+          totalRows: 1,
           wordReminders: [
             {
               id: 1,
@@ -526,6 +528,7 @@ describe("validateQuery", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
+          totalRows: 1,
           wordReminders: [
             {
               id: 1,

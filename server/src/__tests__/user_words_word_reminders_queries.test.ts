@@ -390,6 +390,7 @@ describe("userWordsWordRemindersQueries", () => {
       const result = await userWordsWordRemindersQueries.getByUserId(user!.id);
 
       expect(result).toEqual({
+        totalRows: 3,
         wordReminders: [
           {
             id: 1,
@@ -511,6 +512,7 @@ describe("userWordsWordRemindersQueries", () => {
         );
 
         expect(result).toEqual({
+          totalRows: 3,
           next: {
             limit: 2,
             page: 2,
@@ -613,6 +615,7 @@ describe("userWordsWordRemindersQueries", () => {
           );
 
           expect(result).toEqual({
+            totalRows: 3,
             wordReminders: [
               {
                 id: 2,
@@ -700,6 +703,7 @@ describe("userWordsWordRemindersQueries", () => {
           );
 
           expect(result).toEqual({
+            totalRows: 3,
             wordReminders: [
               {
                 id: 3,
@@ -779,6 +783,7 @@ describe("userWordsWordRemindersQueries", () => {
           );
 
           expect(result).toEqual({
+            totalRows: 2,
             wordReminders: [
               {
                 id: 1,
@@ -875,6 +880,7 @@ describe("userWordsWordRemindersQueries", () => {
         );
 
         expect(result).toEqual({
+          totalRows: 3,
           wordReminders: [
             {
               id: 1,
@@ -993,6 +999,7 @@ describe("userWordsWordRemindersQueries", () => {
         );
 
         expect(result).toEqual({
+          totalRows: 3,
           wordReminders: [
             {
               id: 3,
@@ -1111,6 +1118,7 @@ describe("userWordsWordRemindersQueries", () => {
         );
 
         expect(result).toEqual({
+          totalRows: 3,
           wordReminders: [
             {
               id: 1,
@@ -1229,6 +1237,7 @@ describe("userWordsWordRemindersQueries", () => {
         );
 
         expect(result).toEqual({
+          totalRows: 3,
           wordReminders: [
             {
               id: 3,

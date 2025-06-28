@@ -142,6 +142,7 @@ describe("word_reminder_list", () => {
         .spyOn(userWordsWordRemindersQueries, "getByUserId")
         .mockImplementation(() => {
           return Promise.resolve({
+            totalRows: 1,
             wordReminders: [{ ...wordReminder, user_words: userWords }],
           });
         });
@@ -153,6 +154,7 @@ describe("word_reminder_list", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
+        totalRows: 1,
         wordReminders: [
           {
             ...wordReminder,
@@ -191,6 +193,7 @@ describe("word_reminder_list", () => {
         .spyOn(userWordsWordRemindersQueries, "getByUserId")
         .mockImplementation(() => {
           return Promise.resolve({
+            totalRows: 1,
             wordReminders: [
               {
                 ...wordReminder,
@@ -214,6 +217,7 @@ describe("word_reminder_list", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
+        totalRows: 1,
         wordReminders: [
           {
             ...wordReminder,
