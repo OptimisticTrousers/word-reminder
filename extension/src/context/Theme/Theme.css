@@ -5,24 +5,27 @@
 
 .container--light {
   --bkg-color: #fff;
-  --hover-bkg-color: rgb(12, 11, 9);
+  --hover-bkg-color: #eae1ea;
   --text-color: #222;
+  --secondary-text-color: rgb(107, 114, 128);
+  --tertiary-text-color: rgb(175, 170, 156);
   --anchor-color: #0033cc;
+  --secondary-anchor-color: #181819;
   --input-bkg-color: #fff;
-  --label-color: none;
-  --shadow-color: none;
-  --input-color: none;
-  --primary-card-bkg-color: none;
-  --secondary-card-bkg-color: none;
-  --accordion-bkg-color: none;
-  --control-bkg-color: none;
-  --border-color: none;
-  --icon-color: none;
-  --navigation-bkg-color: none;
-  --bottom-navigation-bkg-color: none;
-  --active-navigation-bkg-color: none;
-  --modal-bkg-color: rgba(245, 245, 245, 0.8);
-  --break-color: #dedede;
+  --label-color: #b9bac3;
+  --shadow-color: #a4a5a4;
+  --input-color: var(--text-color);
+  --card-bkg-color: #f6f6f7;
+  --secondary-anchor-color: #181819;
+  --accordion-bkg-color: #fffefe;
+  --top-navigation-bkg-color: #fffefe;
+  --control-bkg-color: transparent;
+  --border-color: #efeeef;
+  --icon-color: #030302;
+  --bottom-navigation-bkg-color: #f8f8f8;
+  --active-navigation-bkg-color: #d3d3d3;
+  --modal-bkg-color: rgb(237, 239, 241, 0.8);
+  --break-color: #000101;
   --secondary-icon-color: #606770;
   --hover-icon-color: rgb(59, 130, 246);
   --alert-text-color: rgb(185, 28, 28);
@@ -36,24 +39,25 @@
 
 .container--dark {
   --bkg-color: #242424;
+  --hover-bkg-color: rgb(12, 11, 9);
   --text-color: #eee;
   --secondary-text-color: rgb(107, 114, 128);
   --tertiary-text-color: rgb(175, 170, 156);
-  --anchor-color: #809fff;
-  --secondary-anchor-color: #181819;
+  --anchor-color: #181819;
+  --secondary-anchor-color: #809fff;
   --input-bkg-color: #2a2a2a;
   --label-color: #bac0ce;
   --shadow-color: #757575;
-  --input-color: #a3a3a3;
+  --input-color: var(--text-color);
   --card-bkg-color: #2a2a2a;
   --secondary-card-bkg-color: #161d3a;
   --accordion-bkg-color: #1f1e22;
-  --top-navigation-bkg-color: #010001;
+  --top-navigation-bkg-color: #101112;
   --control-bkg-color: #2f343d;
   --border-color: #333;
   --icon-color: #efefef;
-  --bottom-navigation-bkg-color: #f8f8f8;
-  --active-navigation-bkg-color: #d3d3d3;
+  --bottom-navigation-bkg-color: #1f1f1f;
+  --active-navigation-bkg-color: #37343a;
   --modal-bkg-color: rgba(42, 42, 42, 0.8);
   --break-color: #dedede;
   --secondary-icon-color: #606770;
@@ -121,4 +125,8 @@
   padding: 0.5rem;
   border-radius: 8px;
   background-color: var(--input-bkg-color);
+}
+
+.container select {
+  color: var(--input-color);
 }

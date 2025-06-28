@@ -36,9 +36,15 @@
   color: var(--secondary-icon-color);
 }
 
-button.modal__button:hover {
+.modal__header button.modal__button:focus {
+  outline: auto;
+  box-shadow: none;
+}
+
+.modal button.modal__button:hover {
   color: var(--hover-icon-color);
   transform: scale(1.075);
+  background-color: transparent;
 }
 
 .modal__icon {

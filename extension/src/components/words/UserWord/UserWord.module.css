@@ -3,6 +3,10 @@
   margin-top: 1rem;
 }
 
+.user-word__panel {
+  border: 1px solid var(--border-color);
+}
+
 .word {
   background-color: var(--secondary-card-bkg-color);
   padding: 1rem;
@@ -26,6 +30,18 @@
 
 .word__buttons > * {
   flex: 1;
+}
+
+.word__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.word__button .word__icon {
+  margin-right: 8px;
+  width: 28px;
+  height: 28px;
 }
 
 .word__form {

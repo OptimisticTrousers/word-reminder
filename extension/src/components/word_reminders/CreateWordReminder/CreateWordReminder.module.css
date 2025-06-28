@@ -21,6 +21,7 @@ button.create:hover {
   height: 48px;
   margin-right: 12px;
   flex-shrink: 0;
+  color: var(--icon-color);
 }
 
 .create__text {
@@ -31,6 +32,7 @@ button.create:hover {
   font-size: 1.125rem;
   line-height: 1.75rem;
   font-weight: 600;
+  color: var(--text-color);
 }
 
 .create__description {

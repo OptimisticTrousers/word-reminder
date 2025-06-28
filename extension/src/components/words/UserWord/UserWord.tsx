@@ -1,5 +1,5 @@
 import { Detail, User } from "common";
-import { Info, Trash } from "lucide-react";
+import { GraduationCap, Info, Trash } from "lucide-react";
 import { FormEvent, useState } from "react";
 import CSSModules from "react-css-modules";
 import { Link, useOutletContext } from "react-router-dom";
@@ -106,6 +106,7 @@ export const UserWord = CSSModules(
                   type="submit"
                   disabled={disabled}
                 >
+                  <GraduationCap styleName="word__icon" />
                   {disabled ? "Toggling Learned..." : "Toggle Learned"}
                 </button>
               </form>
