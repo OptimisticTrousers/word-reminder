@@ -41,8 +41,8 @@
   box-shadow: none;
 }
 
-.modal button.modal__button:hover {
-  color: var(--hover-icon-color);
+.modal__header .modal__button:hover {
+  color: var(--tertiary-icon-color);
   transform: scale(1.075);
   background-color: transparent;
 }

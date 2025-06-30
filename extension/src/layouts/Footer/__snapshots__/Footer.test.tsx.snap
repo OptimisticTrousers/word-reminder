@@ -8,7 +8,7 @@ exports[`Footer component > renders link to the github page 1`] = `
     <p
       class="_footer__copyright_c5c965"
     >
-      © Tony Isern 2024
+      © Tony Isern 2025
     </p>
     <a
       aria-label="View source on Github (new tab)"

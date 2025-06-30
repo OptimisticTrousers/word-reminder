@@ -1,10 +1,9 @@
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: max(100vh, 100%);
 }
 
 .app__main {
-  position: relative;
-  padding: 0.75rem;
+  padding: 1rem;
 }

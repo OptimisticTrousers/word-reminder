@@ -2,8 +2,17 @@
   padding: 1rem;
 }
 
+.email-confirmation__container {
+  margin-bottom: 1rem;
+}
+
 .email-confirmation__heading {
   margin-bottom: 0.75rem;
+}
+
+.email-confirmation__image {
+  width: 250px;
+  height: 250px;
 }
 
 .email-confirmation__bold {

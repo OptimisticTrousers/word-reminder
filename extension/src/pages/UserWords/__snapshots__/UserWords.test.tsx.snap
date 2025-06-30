@@ -208,7 +208,7 @@ exports[`UserWords component > renders two forms that have fields for creating a
             class="_words__button_727679"
           >
             <svg
-              class="lucide lucide-download _words__icon_727679"
+              class="lucide lucide-download _words__icon_727679 _words__icon--export_727679"
               fill="none"
               height="24"
               stroke="currentColor"

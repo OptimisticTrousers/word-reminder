@@ -24,7 +24,7 @@
   padding: 1rem;
   border-radius: 5px;
   border: 1px solid var(--border-color);
-  background-color: var(--primary-card-bkg-color);
+  background-color: var(--card-bkg-color);
 }
 
 .word__text {

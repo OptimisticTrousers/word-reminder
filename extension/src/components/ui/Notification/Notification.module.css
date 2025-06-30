@@ -4,19 +4,19 @@
 }
 
 .notification--success {
-  --bkg-color: rgb(220, 252, 231);
-  --base-text-color: rgb(20, 83, 45);
-  --btn-text-color: rgb(22, 163, 74);
-  --icon-color: rgb(21, 128, 61);
-  background-color: var(--bkg-color);
+  --text-color: var(--success-text-color);
+  --icon-color: var(--success-icon-color);
+  --button-bkg-color: var(--success-button-bkg-color);
+  --secondary-button-bkg-color: var(--secondary-success-button-bkg-color);
+  background-color: var(--success-bkg-color);
 }
 
 .notification--error {
-  --bkg-color: var(--alert-bkg-color);
-  --base-text-color: var(--alert-text-color);
-  --btn-text-color: var(--hover-red-bkg-color);
-  --icon-color: var(--red-bkg-color);
-  background-color: var(--bkg-color);
+  --text-color: var(--alert-text-color);
+  --icon-color: var(--alert-icon-color);
+  --button-bkg-color: var(--alert-button-bkg-color);
+  --secondary-button-bkg-color: var(--secondary-alert-button-bkg-color);
+  background-color: var(--alert-bkg-color);
 }
 
 .notification__flex {
@@ -33,7 +33,7 @@
 }
 
 .notification__message {
-  color: var(--base-text-color);
+  color: var(--text-color);
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -53,11 +53,15 @@
 }
 
 .notification__button {
-  color: var(--btn-text-color);
+  color: var(--text-color);
   padding: 0.375rem;
-  background-color: var(--bkg-color);
+  background-color: var(--button-bkg-color);
   border-radius: 6px;
   display: inline-flex;
+}
+
+.notification__button:hover {
+  background-color: var(--secondary-button-bkg-color);
 }
 
 .notification__text {

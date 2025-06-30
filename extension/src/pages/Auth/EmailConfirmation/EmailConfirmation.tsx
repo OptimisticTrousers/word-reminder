@@ -38,11 +38,18 @@ export const EmailConfirmation = CSSModules(
 
     return (
       <div styleName="email-confirmation">
+        <div styleName="email-confirmation__container">
+          <img
+            styleName="email-confirmation__image"
+            src="/images/word-reminder.png"
+            alt=""
+          />
+        </div>
         <h2 styleName="email-confirmation__heading">Check your email</h2>
         <p styleName="email-confirmation__message">
           Follow the link in the email sent to
           <span styleName="email-confirmation__bold"> {user.email} </span>
-          and continue creating your account.
+          to create, verify, and use your account.
         </p>
       </div>
     );

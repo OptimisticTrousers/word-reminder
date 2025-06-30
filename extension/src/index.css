@@ -5,6 +5,11 @@
 }
 
 :root {
+  --button-bkg-color: #6200ea;
+  --secondary-button-bkg-color: #3700b3;
+  --button-text-color: #fff;
+  --heading-color: #8b5cf6;
+  --shadow-color: #8b5cf6;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -14,12 +19,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
-}
-
-body {
-  --primary-bkg-color: #6200ea;
-  --primary-bkg-hover-color: #3700b3;
-  --primary-color: #8b5cf6;
 }
 
 .scale-down {

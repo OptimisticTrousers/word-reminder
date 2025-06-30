@@ -1,13 +1,9 @@
 .auto-word-reminder,
-button.create {
+.create {
   background-color: var(--card-bkg-color);
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid var(--border-color);
-}
-
-button.create:hover {
-  background-color: var(--hover-bkg-color);
 }
 
 .create__container {

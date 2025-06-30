@@ -1,13 +1,18 @@
-button.create {
-  background-color: var(--bkg-color);
+.create {
+  background-color: inherit;
   width: 100%;
   margin: 1rem 0;
   border: 1px solid var(--border-color);
   padding: 0;
 }
 
-button.create:hover {
-  background-color: var(--hover-bkg-color);
+.create--light:hover .create__title,
+.create--light:hover .create__icon {
+  color: var(--button-text-color);
+}
+
+.create--light:hover .create__description {
+  color: var(--tertiary-text-color);
 }
 
 .create__container {

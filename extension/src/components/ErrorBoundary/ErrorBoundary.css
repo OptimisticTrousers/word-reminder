@@ -9,10 +9,16 @@
   align-items: center;
 }
 
+.boundary__image {
+  width: 250px;
+  height: 250px;
+  margin-bottom: 1rem;
+}
+
 .boundary__title {
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--primary-color);
+  color: var(--heading-color);
 }
 
 .boundary__message {

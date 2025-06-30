@@ -1,3 +1,17 @@
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  min-width: 380px;
+}
+
+#root,
+.container {
+  min-height: max(100vh, 100%);
+}
+
 .container {
   background-color: var(--bkg-color);
   color: var(--text-color);
@@ -5,128 +19,144 @@
 
 .container--light {
   --bkg-color: #fff;
-  --hover-bkg-color: #eae1ea;
-  --text-color: #222;
-  --secondary-text-color: rgb(107, 114, 128);
-  --tertiary-text-color: rgb(175, 170, 156);
-  --anchor-color: #0033cc;
-  --secondary-anchor-color: #181819;
-  --input-bkg-color: #fff;
-  --label-color: #b9bac3;
-  --shadow-color: #a4a5a4;
-  --input-color: var(--text-color);
   --card-bkg-color: #f6f6f7;
-  --secondary-anchor-color: #181819;
+  --secondary-card-bkg-color: #0000001a;
   --accordion-bkg-color: #fffefe;
   --top-navigation-bkg-color: #fffefe;
-  --control-bkg-color: transparent;
-  --border-color: #efeeef;
-  --icon-color: #030302;
   --bottom-navigation-bkg-color: #f8f8f8;
   --active-navigation-bkg-color: #d3d3d3;
-  --modal-bkg-color: rgb(237, 239, 241, 0.8);
-  --break-color: #000101;
+  --modal-bkg-color: rgb(237, 239, 241, 0.9);
+
+  --anchor-text-color: #0033cc;
+  --secondary-anchor-text-color: #181819;
+
+  --text-color: #222;
+  --secondary-text-color: rgb(107, 114, 128);
+
+  --icon-color: #030302;
   --secondary-icon-color: #606770;
-  --hover-icon-color: rgb(59, 130, 246);
+  --tertiary-icon-color: rgb(59, 130, 246);
+
+  --border-color: #efeeef;
+  --break-color: #000101;
+
+  --input-bkg-color: #fff;
+  --label-text-color: var(--text-color);
+  --input-text-color: rgb(0, 0, 0);
+
+  --white-button-text-color: rgb(31, 41, 55);
+  --white-button--bkg-color: rgb(243, 244, 246);
+  --secondary-white-button-bkg-color: rgb(229, 231, 235);
+  --tertiary-white-button-bkg-color: rgb(194, 200, 205);
+
+  --black-bkg-color: #121212;
+  --black-text-color: #f2f2f2;
+
   --alert-text-color: rgb(185, 28, 28);
   --alert-bkg-color: rgb(254, 226, 226);
-  --white-text-color: rgb(31, 41, 55);
-  --white-bkg-color: rgb(243, 244, 246);
-  --hover-white-bkg-color: rgb(229, 231, 235);
-  --red-bkg-color: rgb(239, 68, 68);
-  --hover-red-bkg-color: rgb(220, 38, 38);
+  --alert-button-bkg-color: rgb(239, 68, 68);
+  --secondary-alert-button-bkg-color: rgb(220, 38, 38);
+  --alert-icon-color: #e35151;
+
+  --success-bkg-color: rgb(220, 252, 231);
+  --success-text-color: rgb(20, 83, 45);
+  --success-button-bkg-color: rgb(22, 163, 74);
+  --secondary-success-button-bkg-color: rgb(21, 128, 61);
+  --success-icon-color: #1edc64;
 }
 
 .container--dark {
   --bkg-color: #242424;
-  --hover-bkg-color: rgb(12, 11, 9);
-  --text-color: #eee;
-  --secondary-text-color: rgb(107, 114, 128);
-  --tertiary-text-color: rgb(175, 170, 156);
-  --anchor-color: #181819;
-  --secondary-anchor-color: #809fff;
-  --input-bkg-color: #2a2a2a;
-  --label-color: #bac0ce;
-  --shadow-color: #757575;
-  --input-color: var(--text-color);
   --card-bkg-color: #2a2a2a;
   --secondary-card-bkg-color: #161d3a;
   --accordion-bkg-color: #1f1e22;
   --top-navigation-bkg-color: #101112;
-  --control-bkg-color: #2f343d;
-  --border-color: #333;
-  --icon-color: #efefef;
   --bottom-navigation-bkg-color: #1f1f1f;
   --active-navigation-bkg-color: #37343a;
-  --modal-bkg-color: rgba(42, 42, 42, 0.8);
-  --break-color: #dedede;
+  --modal-bkg-color: rgba(42, 42, 42, 0.9);
+
+  --anchor-text-color: #181819;
+  --secondary-anchor-text-color: #809fff;
+
+  --text-color: #eee;
+  --secondary-text-color: rgb(107, 114, 128);
+
+  --icon-color: #efefef;
   --secondary-icon-color: #606770;
-  --hover-icon-color: rgb(59, 130, 246);
+  --tertiary-icon-color: rgb(59, 130, 246);
+
+  --border-color: #333;
+  --break-color: #dedede;
+
+  --input-bkg-color: #2a2a2a;
+  --label-text-color: #bac0ce;
+  --input-text-color: #ffffff;
+
+  --white-button-text-color: rgb(31, 41, 55);
+  --white-button-bkg-color: rgb(243, 244, 246);
+  --secondary-white-button-bkg-color: rgb(229, 231, 235);
+  --tertiary-white-button-bkg-color: rgb(194, 200, 205);
+
+  --black-bkg-color: #121212;
+  --black-text-color: #f2f2f2;
+
   --alert-text-color: rgb(185, 28, 28);
   --alert-bkg-color: rgb(254, 226, 226);
-  --white-text-color: rgb(31, 41, 55);
-  --white-bkg-color: rgb(243, 244, 246);
-  --hover-white-bkg-color: rgb(229, 231, 235);
-  --red-bkg-color: rgb(239, 68, 68);
-  --hover-red-bkg-color: rgb(220, 38, 38);
+  --alert-button-bkg-color: rgb(239, 68, 68);
+  --secondary-alert-button-bkg-color: rgb(220, 38, 38);
+  --alert-icon-color: #e35151;
 
-  /* --color-control-bg: #2f343d;
-  --color-word-bg: #161d3a;
-  --color-base-text: white;
-  --color-input-bg: #fff;
-  --color-input-text: #a3a3a3;
-  --color-button-bg: #7f8ff4;
-  --color-button-text: #fff;
-  --color-options-text: black;
-  --color-accordion-bg: #1f1e22;
-  --color-word-text: white;
-  --color-accordion-text: white;
-  --color-shadow: #757575;
-  --color-label-text: #bac0ce; */
+  --success-bkg-color: rgb(220, 252, 231);
+  --success-text-color: rgb(20, 83, 45);
+  --success-button-bkg-color: rgb(22, 163, 74);
+  --secondary-success-button-bkg-color: rgb(21, 128, 61);
+  --success-icon-color: #1edc64;
 }
 
-.container a {
+.container--dark img {
+  filter: brightness(0.8) contrast(1.2);
+}
+
+a {
   color: var(--anchor-color);
 }
 
-.container button,
-.container input[type="button"] {
+button,
+input[type="button"] {
   padding: 0.6rem;
+  border-width: 0px;
   border-radius: 8px;
-  border: none;
-  background-color: var(--primary-bkg-color);
+  background-color: var(--button-bkg-color);
+  color: var(--button-text-color);
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.container button:hover,
-.container input:hover[type="button"] {
-  background-color: var(--primary-bkg-hover-color);
+button:hover,
+input[type="button"]:hover {
+  background-color: var(--secondary-button-bkg-color);
 }
 
-.container button:focus,
-.container input:focus,
-.container select:focus {
+button:focus,
+input:focus,
+select:focus {
   outline: none;
-  box-shadow: 0 0 5px var(--primary-color);
+  box-shadow: 0 0 5px var(--shadow-color);
 }
 
-.container img {
-  filter: brightness(0.8) contrast(1.2);
-}
-
-.container input {
+input {
   border: 1px solid var(--border-color);
 }
 
-.container input,
-.container select,
-.container fieldset {
+label {
+  color: var(--label-text-color);
+}
+
+input,
+select,
+fieldset {
   padding: 0.5rem;
   border-radius: 8px;
   background-color: var(--input-bkg-color);
-}
-
-.container select {
-  color: var(--input-color);
+  color: var(--input-text-color);
 }

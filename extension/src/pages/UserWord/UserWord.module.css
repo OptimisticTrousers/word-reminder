@@ -5,6 +5,7 @@
 .word__phonetics,
 .word__button,
 .word__license,
+.word__text,
 .word__top,
 .word__meanings,
 .word__line,
@@ -17,6 +18,7 @@
 }
 
 .word__buttons {
+  margin-top: 2rem;
   display: flex;
   justify-content: space-between;
 }

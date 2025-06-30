@@ -6,11 +6,11 @@
   display: block;
 }
 
-input.modal__input:not(input.modal__input[type="checkbox"]) {
+.modal__input:not(.modal__input[type="checkbox"]) {
   width: 100%;
 }
 
-fieldset .modal__label {
+.modal__fieldset .modal__label {
   display: initial;
   margin-right: 0.5rem;
 }

@@ -59,7 +59,7 @@ describe("EmailConfirmation component", () => {
     const message = screen.getByText((_, element) => {
       return (
         element?.textContent ===
-        `Follow the link in the email sent to ${user.email} and continue creating your account.`
+        `Follow the link in the email sent to ${user.email} to create, verify, and use your account.`
       );
     });
     expect(heading).toBeInTheDocument();

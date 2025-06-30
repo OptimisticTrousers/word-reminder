@@ -36,18 +36,18 @@ button.modal__button {
 }
 
 button.modal__button--cancel {
-  color: var(--white-text-color);
-  background-color: var(--white-bkg-color);
+  color: var(--white-button-text-color);
+  background-color: var(--white-button-bkg-color);
 }
 
 button.modal__button--cancel:hover {
-  background-color: var(--hover-white-bkg-color);
+  background-color: var(--secondary-white-button-bkg-color);
 }
 
 button.modal__button--delete {
-  background-color: var(--red-bkg-color);
+  background-color: var(--alert-button-bkg-color);
 }
 
 button.modal__button--delete:hover {
-  background-color: var(--hover-red-bkg-color);
+  background-color: var(--secondary-alert-button-bkg-color);
 }

@@ -55,6 +55,13 @@ export const Signup = CSSModules(
     return (
       <section styleName="auth">
         <div styleName="auth__hero">
+          <div styleName="auth__container">
+            <img
+              styleName="auth__image"
+              src="/images/word-reminder.png"
+              alt=""
+            />
+          </div>
           <h2 styleName="auth__heading">Word Reminder</h2>
           <p styleName="auth__description">
             Log in or create a new account to start storing your words.

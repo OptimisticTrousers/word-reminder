@@ -158,7 +158,7 @@ export const UserWord = CSSModules(
                                     styleName="word__button"
                                     onClick={() => handleAudio(phonetic.audio!)}
                                   >
-                                    <span styleName="word__text">
+                                    <span styleName="word__span">
                                       Pronounce word
                                     </span>
                                     <Play styleName="word__icon" />

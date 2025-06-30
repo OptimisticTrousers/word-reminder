@@ -14,7 +14,7 @@
 }
 
 .reminder a.reminder__link {
-  color: var(--secondary-anchor-color);
+  color: var(--secondary-anchor-text-color);
 }
 
 .reminder__text {

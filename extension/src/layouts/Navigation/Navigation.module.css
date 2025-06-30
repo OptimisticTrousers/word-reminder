@@ -9,7 +9,7 @@
 .navigation__image,
 .navigation__link,
 .navigation__item--bottom {
-  margin-right: 8px;
+  margin-right: 0.5rem;
 }
 
 .navigation__logo {
@@ -41,8 +41,8 @@
   border-radius: 4px;
 }
 
-.navigation__link.navigation__link--bottom {
-  color: var(--secondary-anchor-color);
+.navigation__link--bottom {
+  color: var(--secondary-anchor-text-color);
 }
 
 .navigation__link--settings {
@@ -53,8 +53,7 @@
   background-color: var(--active-navigation-bkg-color);
 }
 
-.navigation__list--bottom,
-button.navigation__button--new-tab {
+.navigation__list--bottom {
   padding: 0.5rem;
   background-color: var(--bottom-navigation-bkg-color);
 }
@@ -66,9 +65,9 @@ button.navigation__button--new-tab {
   transition: 0.3s ease;
 }
 
-.navigation__link--bottom:hover,
-button.navigation__button--new-tab:hover {
-  background-color: #c2c8cd;
+.navigation__link--bottom:hover {
+  background-color: var(--tertiary-white-button-bkg-color);
+  color: var(--white-button-text-color);
 }
 
 .navigation__button:hover {

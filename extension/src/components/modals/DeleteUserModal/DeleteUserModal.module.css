@@ -27,7 +27,7 @@
   margin-top: auto;
 }
 
-button.modal__button {
+.modal__button {
   font-size: 1.5rem;
   padding: 0.5rem 2rem;
   margin-right: 0.5rem;
@@ -35,19 +35,19 @@ button.modal__button {
   flex: 1;
 }
 
-button.modal__button--cancel {
-  color: var(--white-text-color);
-  background-color: var(--white-bkg-color);
+.modal__button--cancel {
+  color: var(--white-button-text-color);
+  background-color: var(--white-button-bkg-color);
 }
 
-button.modal__button--cancel:hover {
-  background-color: var(--hover-white-bkg-color);
+.modal__button--cancel:hover {
+  background-color: var(--secondary-white-button-bkg-color);
 }
 
-button.modal__button--delete {
-  background-color: var(--red-bkg-color);
+.modal__button--delete {
+  background-color: var(--alert-button-bkg-color);
 }
 
-button.modal__button--delete:hover {
-  background-color: var(--hover-red-bkg-color);
+.modal__button--delete:hover {
+  background-color: var(--secondary-alert-button-bkg-color);
 }

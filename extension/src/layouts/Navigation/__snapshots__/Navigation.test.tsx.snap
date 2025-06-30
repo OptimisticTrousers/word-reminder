@@ -34,7 +34,7 @@ exports[`Navigation component > renders navigation component 1`] = `
             <a
               aria-current="false"
               aria-label="Settings"
-              class="_navigation__link_511cb9"
+              class="_navigation__link_511cb9 _navigation__link--settings_511cb9"
               data-discover="true"
               href="/settings"
             >

@@ -8,6 +8,11 @@ exports[`ErrorBoundary component > renders title, message, and link 1`] = `
     <div
       class="boundary__container"
     >
+      <img
+        alt=""
+        class="boundary__image"
+        src="/images/word-reminder.png"
+      />
       <h2
         class="boundary__title"
       >

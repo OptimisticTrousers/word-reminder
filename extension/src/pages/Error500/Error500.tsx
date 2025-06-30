@@ -5,7 +5,7 @@ import robotImage from "../../assets/images/robot.png";
 import styles from "./Error500.module.css";
 
 export interface Props {
-  message: string;
+  message?: string;
 }
 
 export const Error500 = CSSModules(
@@ -16,7 +16,9 @@ export const Error500 = CSSModules(
           <img styleName="error__image" src={robotImage} alt="" />
           <h2 styleName="error__number">500 Error</h2>
           <hr styleName="error__break" />
-          <p styleName="error__message">Internal Server Error: {message}</p>
+          <p styleName="error__message">
+            Internal Server Error: {message || "unknown error"}
+          </p>
           <Link styleName="error__link" to="/">
             Go back to the home page.
           </Link>

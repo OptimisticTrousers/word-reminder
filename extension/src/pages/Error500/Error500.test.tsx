@@ -22,4 +22,24 @@ describe("Error500 component", () => {
     expect(link).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
+
+  it("renders generic error message when not provided", () => {
+    const { asFragment } = render(
+      <MemoryRouter>
+        <Error500 />
+      </MemoryRouter>
+    );
+
+    const status = screen.getByText("500 Error");
+    const errorMessage = screen.getByText(
+      `Internal Server Error: unknown error`
+    );
+    const link = screen.getByRole("link", {
+      name: "Go back to the home page.",
+    });
+    expect(status).toBeInTheDocument();
+    expect(errorMessage).toBeInTheDocument();
+    expect(link).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
+  });
 });

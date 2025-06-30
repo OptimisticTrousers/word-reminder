@@ -5,6 +5,15 @@ exports[`EmailConfirmation component > calls the functions to send confirmation 
   <div
     class="_email-confirmation_9d1292"
   >
+    <div
+      class="_email-confirmation__container_9d1292"
+    >
+      <img
+        alt=""
+        class="_email-confirmation__image_9d1292"
+        src="/images/word-reminder.png"
+      />
+    </div>
     <h2
       class="_email-confirmation__heading_9d1292"
     >
@@ -19,7 +28,7 @@ exports[`EmailConfirmation component > calls the functions to send confirmation 
       >
          bob@gmail.com 
       </span>
-      and continue creating your account.
+      to create, verify, and use your account.
     </p>
   </div>
 </DocumentFragment>

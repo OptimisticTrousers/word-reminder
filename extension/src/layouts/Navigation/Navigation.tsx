@@ -113,7 +113,7 @@ export const Navigation = CSSModules(
               <li styleName="navigation__item">
                 <button
                   onClick={handleNewTab}
-                  styleName="navigation__button navigation__button--new-tab"
+                  styleName="navigation__button navigation__button--bottom"
                 >
                   Open in New Tab
                 </button>
