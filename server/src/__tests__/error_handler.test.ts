@@ -20,6 +20,10 @@ app.get("/server-error", (req, res, next) => {
   next(new Error(serverErrorMessage));
 });
 
+app.get("/unknown-server-error", (req, res, next) => {
+  next(new Error());
+});
+
 app.use(errorHandler);
 
 describe("errorHandler", () => {
@@ -54,6 +58,16 @@ describe("errorHandler", () => {
           `Error: ${serverErrorMessage}`
         )
       ).toBe(true);
+    });
+
+    it("should handle unknown server errors and return status 500", async () => {
+      const response = await request(app).get("/unknown-server-error");
+
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({
+        message: serverErrorMessage,
+        stack: expect.any(String),
+      });
     });
   });
 });
