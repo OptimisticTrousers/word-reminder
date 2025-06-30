@@ -28,6 +28,8 @@ const user = {
 const queueName = `${userId}-email-queue`;
 
 const app = express();
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 app.use(express.json());
 app.post("/api/users/:userId/emails", send_email);
 
@@ -227,10 +229,14 @@ describe("send_email", () => {
       template: Template.CONFIRM_ACCOUNT,
       subject: Subject.CONFIRM_ACCOUNT,
     };
-    const emailTemplate = await readFile(
-      path.join(__dirname, "..", "views", "emails", `${body.template}.ejs`),
-      "utf-8"
+    const emailTemplatePath = path.join(
+      __dirname,
+      "..",
+      "views",
+      "emails",
+      `${body.template}.ejs`
     );
+    const emailTemplate = await readFile(emailTemplatePath, "utf-8");
 
     const response = await request(app)
       .post(`/api/users/${userId}/emails`)
@@ -244,9 +250,16 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(emailTemplate, {
-        url: `${SERVER_URL}:${SERVER_PORT}/confirmAccount/${userId}&${token.token}`,
-      }),
+      html: ejs.render(
+        emailTemplate,
+        {
+          url: `${SERVER_URL}:${SERVER_PORT}/confirmAccount/${userId}&${token.token}`,
+          title: "Confirm Account",
+        },
+        {
+          filename: emailTemplatePath,
+        }
+      ),
       subject: body.subject,
       to: body.email,
     });
@@ -265,10 +278,14 @@ describe("send_email", () => {
       template: Template.CHANGE_PASSWORD,
       subject: Subject.CHANGE_PASSWORD,
     };
-    const emailTemplate = await readFile(
-      path.join(__dirname, "..", "views", "emails", `${body.template}.ejs`),
-      "utf-8"
+    const emailTemplatePath = path.join(
+      __dirname,
+      "..",
+      "views",
+      "emails",
+      `${body.template}.ejs`
     );
+    const emailTemplate = await readFile(emailTemplatePath, "utf-8");
 
     const response = await request(app)
       .post(`/api/users/${userId}/emails`)
@@ -282,10 +299,16 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(emailTemplate, {
-        url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
-        title: "Change Password",
-      }),
+      html: ejs.render(
+        emailTemplate,
+        {
+          url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
+          title: "Change Password",
+        },
+        {
+          filename: emailTemplatePath,
+        }
+      ),
       subject: body.subject,
       to: body.email,
     });
@@ -304,10 +327,14 @@ describe("send_email", () => {
       template: Template.FORGOT_PASSWORD,
       subject: Subject.FORGOT_PASSWORD,
     };
-    const emailTemplate = await readFile(
-      path.join(__dirname, "..", "views", "emails", "change_password.ejs"),
-      "utf-8"
+    const emailTemplatePath = path.join(
+      __dirname,
+      "..",
+      "views",
+      "emails",
+      `${Template.CHANGE_PASSWORD}.ejs`
     );
+    const emailTemplate = await readFile(emailTemplatePath, "utf-8");
     const mockGetByEmail = jest
       .spyOn(userQueries, "getByEmail")
       .mockResolvedValue(user);
@@ -326,10 +353,16 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(emailTemplate, {
-        url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
-        title: "Forgot Password",
-      }),
+      html: ejs.render(
+        emailTemplate,
+        {
+          url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
+          title: "Forgot Password",
+        },
+        {
+          filename: emailTemplatePath,
+        }
+      ),
       subject: body.subject,
       to: body.email,
     });
@@ -348,10 +381,14 @@ describe("send_email", () => {
       template: Template.CHANGE_EMAIL,
       subject: Subject.CHANGE_EMAIL,
     };
-    const emailTemplate = await readFile(
-      path.join(__dirname, "..", "views", "emails", `${body.template}.ejs`),
-      "utf-8"
+    const emailTemplatePath = path.join(
+      __dirname,
+      "..",
+      "views",
+      "emails",
+      `${body.template}.ejs`
     );
+    const emailTemplate = await readFile(emailTemplatePath, "utf-8");
 
     const response = await request(app)
       .post(`/api/users/${userId}/emails`)
@@ -365,9 +402,16 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(emailTemplate, {
-        url: `${SERVER_URL}:${SERVER_PORT}/changeEmail/${userId}&${token.token}`,
-      }),
+      html: ejs.render(
+        emailTemplate,
+        {
+          url: `${SERVER_URL}:${SERVER_PORT}/changeEmail/${userId}&${token.token}`,
+          title: "Change Email",
+        },
+        {
+          filename: emailTemplatePath,
+        }
+      ),
       subject: body.subject,
       to: body.email,
     });

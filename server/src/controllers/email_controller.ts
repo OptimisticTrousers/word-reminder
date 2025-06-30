@@ -70,10 +70,14 @@ export const send_email = [
         templateName = Template.CHANGE_PASSWORD;
       }
 
-      const emailTemplate = await readFile(
-        path.join(__dirname, "..", "views", "emails", `${templateName}.ejs`),
-        "utf-8"
+      const emailTemplatePath = path.join(
+        __dirname,
+        "..",
+        "views",
+        "emails",
+        `${templateName}.ejs`
       );
+      const emailTemplate = await readFile(emailTemplatePath, "utf-8");
       const token = await tokenQueries.create();
       if (isNaN(Number(userId))) {
         const user = await userQueries.getByEmail(req.body.email);
@@ -86,9 +90,11 @@ export const send_email = [
       switch (template) {
         case Template.CHANGE_EMAIL:
           templateRoute = "changeEmail";
+          templateTitle = "Change Email";
           break;
         case Template.CONFIRM_ACCOUNT:
           templateRoute = "confirmAccount";
+          templateTitle = "Confirm Account";
           break;
         case Template.CHANGE_PASSWORD:
           templateRoute = "changePassword";
@@ -99,10 +105,16 @@ export const send_email = [
           templateTitle = "Forgot Password";
           break;
       }
-      const html = ejs.render(emailTemplate, {
-        url: `${SERVER_URL}:${SERVER_PORT}/${templateRoute}/${userId}&${token.token}`,
-        ...(templateTitle != "" && { title: templateTitle }),
-      });
+      const html = ejs.render(
+        emailTemplate,
+        {
+          url: `${SERVER_URL}:${SERVER_PORT}/${templateRoute}/${userId}&${token.token}`,
+          ...(templateTitle != "" && { title: templateTitle }),
+        },
+        {
+          filename: emailTemplatePath,
+        }
+      );
       const info = await email.sendMail({
         to: req.body.email,
         subject,
