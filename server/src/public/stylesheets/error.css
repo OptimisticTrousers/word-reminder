@@ -1,0 +1,37 @@
+.error {
+  margin: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--card-bkg-color);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.error__heading {
+  font-size: 2rem;
+}
+
+.error__image {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 4px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.error__break {
+  margin: 0.5rem 0;
+}
+
+.error__list {
+  padding: 1rem;
+}
+
+.error__link,
+.error__message,
+.error__break {
+  margin-bottom: 0.75rem;
+}

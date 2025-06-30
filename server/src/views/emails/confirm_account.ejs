@@ -1,23 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Confirm Account</title>
-    <link rel="stylesheet" href="/stylesheets/email.css" />
-  </head>
-  <body>
-    <div class="verify">
-      <img class="verify__image" src="images/logo.png" alt="" />
-      <p class="verify__description">
-        Confirm this email address for your WordReminder account by clicking the
-        link below.
-      </p>
-      <a class="verify__link" href="<%= url %>">Confirm Account Now</a>
-      <p class="verify__description">
-        If you did not request to confirm a WordReminder account, you can safely
-        ignore this email.
-      </p>
-    </div>
+    <%- include ('../partials/header', { stylesheet: "email.css", title: "Confirm Account" }) %>
+      <div class="email">
+        <main class="email__content">
+          <div class="email__container">
+            <h2 class="email__heading">Welcome to Word Reminder</h2>
+            <p class="email__description">
+              Welcome to Word Reminder and thank you for creating an account! Now you can extend your vocabulary while discovering new words you come across in your readings.
+            </p>
+            <p class="email__description">
+              Confirm this email address for your WordReminder account by clicking the
+              link below.
+            </p>
+            <a class="email__link email__link--change" href="<%= url %>">Confirm Account Now</a>
+            <p class="email__description">
+              If you did not request to confirm a WordReminder account, you can safely
+              ignore this email.
+            </p>
+          </div>
+          <%- include('../partials/support') %>
+        </main>
+      </div>
+      <%- include('../partials/footer') %>
   </body>
 </html>

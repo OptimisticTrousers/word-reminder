@@ -1,28 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Confirm Account</title>
-    <link rel="stylesheet" href="/stylesheets/confirm.css" />
-  </head>
-  <body>
-    <form
-      class="form"
-      action="/api/users/verify/<%= userId %>&<%= token %>"
-      method="POST"
-    >
-      <div class="form__control">
-        <input
-          class="form__input"
-          type="hidden"
-          name="confirmed"
-          id="confirmed"
-          defaultValue="true"
-          required
-        />
+    <%- include ('../partials/header', { stylesheet: "action.css", title: "Confirm Account" }) %>
+      <div class="action">
+        <main class="action__content">
+          <div class="action__container">
+            <h2 class="action__header">Welcome to Word Reminder</h2>
+            <p class="action__description">
+              Welcome to Word Reminder and thank you for creating an account! Now you can extend your vocabulary while discovering new words you come across in your readings.
+            </p>
+            <p class="action__description">
+              Confirm this email address for your WordReminder account by clicking the
+              link below.
+            </p>
+            <form
+              class="action__form"
+              action="/api/users/verify/<%= userId %>&<%= token %>"
+              method="POST"
+            >
+              <div class="action__control">
+                <input
+                  class="action__input"
+                  type="hidden"
+                  name="confirmed"
+                  id="confirmed"
+                  defaultValue="true"
+                  required
+                />
+              </div>
+              <button class="action__button" type="submit">Confirm Account</button>
+            </form>
+          </div>
+          <%- include('../partials/support') %>
+        </main>
       </div>
-      <button class="form__button" type="submit">Confirm Account</button>
-    </form>
+      <%- include('../partials/footer') %>
   </body>
 </html>

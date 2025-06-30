@@ -1,23 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Success</title>
-    <link rel="stylesheet" href="/stylesheets/success.css" />
-  </head>
-  <body>
-    <div class="success">
-      <div class="success__container">
-        <img
-          class="success_image"
-          src="/images/laptop-minimal-check.png"
-          alt=""
-        />
+  <%- include ('../partials/header', { stylesheet: "success.css", title: "Confirm Account" }) %>
+      <div class="success">
+        <div class="success__container">
+          <img
+            class="success__image"
+            src="/icons/laptop-minimal-check.svg"
+            alt=""
+          />
+          <p class="success__text">Success</p>
+        </div>
         <hr class="success__break" />
         <p class="success__message"><%= message %></p>
         <a class="success__link" href="/"> Go back to the home page. </a>
       </div>
-    </div>
+    </main>
+    <%- include('../partials/footer') %>
   </body>
 </html>

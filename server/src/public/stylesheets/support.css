@@ -1,0 +1,18 @@
+.support {
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bkg-color);
+  margin-top: 0.75rem;
+}
+
+.support__description {
+  margin-bottom: 12px;
+}
+
+.support__link {
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--text-color);
+}

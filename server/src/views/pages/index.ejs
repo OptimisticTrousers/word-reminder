@@ -4,116 +4,143 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Word Reminder</title>
+    <link rel="stylesheet" href="/stylesheets/global.css" />
     <link rel="stylesheet" href="/stylesheets/home.css" />
+    <link rel="stylesheet" href="/stylesheets/footer.css" />
   </head>
-  <body>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Welcome to WordReminder</h1>
-        <p>Your personalized word storage and reminder application</p>
-        <div class="video-container">
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/BM3nEh5LP8E"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        </div>
+  <body class="body">
+    <nav class="navigation">
+      <div class="navigation__left">
+        <img class="navigation__image" src="/images/logo.png" alt="" />
       </div>
-    </section>
-
-    <!-- Introduction -->
-    <section class="introduction">
-      <h2>Project Introduction</h2>
-      <p>
-        WordReminder is a Chrome extension and mobile application that allows
-        users to store words they come across and receive reminders, ensuring
-        better retention and learning.
-      </p>
-    </section>
-
-    <!-- Project Steps -->
-    <section class="project-steps">
-      <h2>Project Steps</h2>
-      <ol>
-        <li>
-          <strong>1.1</strong> Using ChatGPT-4, Gemini, and multi-modal AGI
-          packages to develop the WordReminder app from inception to completion.
-        </li>
-        <li>
-          <strong>1.2</strong> What does G, P, T refer to: Generative (creating
-          new content), Pre-trained (trained on large datasets), Transformer
-          (handles sequences and context).
-        </li>
-        <li>
-          <strong>1.3</strong> What is Neural Network: A set of algorithms
-          modeled after the human brain to recognize patterns.
-        </li>
-        <li>
-          <strong>1.4</strong> Algorithms: Searched various algorithms and
-          selected Long Short-Term Memory Networks for my project WordReminder.
-        </li>
-        <li>
-          <strong>1.5</strong> CASE tools: Selected GitHub for its collaborative
-          features and AI-supported code assistance.
-        </li>
-        <li>
-          <strong>1.6</strong> Software model: Chose Dynamic Systems Development
-          Method (DSDM) for its iterative, feedback-driven approach.
-        </li>
-        <li>
-          <strong>1.7</strong> Code generators: Selected ChatGPT for reliable,
-          contextually accurate code generation.
-        </li>
-        <li>
-          <strong>1.8</strong> Developed UMLs, implemented the project using
-          open-source tools, and conducted Alpha and Beta tests.
-        </li>
-        <li>
-          <strong>1.9</strong> Created sequence diagrams, scheduled milestones,
-          and prepared a project management plan with estimated duration and
-          cost.
-        </li>
-        <li>
-          <strong>1.10</strong> Reviewed programming languages, developed a
-          basic website and app, and demonstrated the project.
-        </li>
-      </ol>
-    </section>
-
-    <!-- Summary -->
-    <section class="summary">
-      <h2>Project Summary</h2>
-      <p>
-        The WordReminder project was designed and implemented to provide users
-        with a seamless tool to store and recall words. By leveraging modern AI
-        technologies and development practices, this project offers an
-        innovative way to enhance vocabulary learning.
-      </p>
-      <p class="credits">
-        Developed by Tony Isern | CS 351 - Software Engineering II | Professor
-        Aabdollah
-      </p>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="cta">
-      <h2>Download WordReminder</h2>
-      <div class="download-buttons">
-        <a
-          href="https://codepen.io/optimistictrousers/pen/eYqbbPm"
-          class="btn google-play"
-          >Download with Google Play</a
-        >
-        <a
-          href="https://codepen.io/optimistictrousers/pen/eYqbbPm"
-          class="btn app-store"
-          >Download with App Store</a
-        >
+      <div class="navigation__right">
+        <ul class="navigation__list">
+          <li class="navigation__item">
+            <a class="navigation__link" href="/">
+              <img class="navigation__icon" src="/icons/house.svg" alt="" />
+              Home
+            </a>
+          </li>
+          <li class="navigation__item">
+            <a class="navigation__link" href="/#download">
+              <img class="navigation__icon" src="/icons/download.svg" alt="" />
+              Download
+            </a>
+          </li>
+          <li class="navigation__item">
+            <a class="navigation__link" href="/about">
+              <img
+                class="navigation__icon"
+                src="/icons/circle-question-mark.svg"
+                alt=""
+              />
+              About
+            </a>
+          </li>
+          <li class="navigation__item">
+            <a class="navigation__link" href="/privacy">
+              <img class="navigation__icon" src="/icons/lock.svg" alt="" />
+              Privacy
+            </a>
+          </li>
+          <li class="navigation__item">
+            <a
+              class="navigation__link"
+              href="https://github.com/OptimisticTrousers/word-reminder"
+            >
+              <img class="navigation__icon" src="/icons/github.svg" alt="" />
+              Source
+            </a>
+          </li>
+          <li class="navigation__item">
+            <a class="navigation__link" href="/#contact">
+              <img
+                class="navigation__icon"
+                src="/icons/message-circle.svg"
+                alt=""
+              />
+              Contact
+            </a>
+          </li>
+        </ul>
       </div>
-    </section>
+    </nav>
+    <main class="main">
+      <div class="hero">
+        <header class="hero__container">
+          <div class="hero__content">
+            <img class="hero__image" src="/images/logo.png" alt="" />
+            <h1 class="hero__heading">Word Reminder</h1>
+            <p class="hero__text">App</p>
+          </div>
+          <p class="hero__subheading">The Personal Vocabulary Client</p>
+        </header>
+        <section class="hero__section">
+          <img class="hero__screenshot" src="/images/FreeTube1.png" />
+        </section>
+        <section class="hero__section">
+          <div class="hero__about">
+            <h2 class="hero__subheading">What is Word Reminder?</h2>
+            <p class="hero__paragraph">
+              FreeTube is a YouTube client for Windows (10 and later), Mac
+              (macOS 11 and later), and Linux built around using YouTube more
+              privately. You can enjoy your favorite content and creators
+              without your habits being tracked. All of your user data is stored
+              locally and never sent or published to the internet. FreeTube
+              grabs data by scraping the information it needs (with either local
+              methods or by optionally utilizing the Invidious API). With many
+              features similar to YouTube, FreeTube has become one of the best
+              methods to watch YouTube privately on desktop.
+            </p>
+          </div>
+        </section>
+        <section class="hero__section">
+          <img class="hero__screenshot" src="/images/FreeTube1.png" />
+        </section>
+        <section class="hero__section">
+          <div class="hero__features">
+            <h2 class="hero__subheading">Current Features</h2>
+            <div class="hero__grid"></div>
+            <p class="hero__note">...and many more to come!</p>
+          </div>
+        </section>
+        <section class="hero__section">
+          <img class="hero__screenshot" src="/images/FreeTube1.png" />
+        </section>
+        <section class="hero__section">
+          <div class="hero__download"></div>
+        </section>
+        <section class="hero__section" id="contact">
+          <div class="hero__container">
+            <h2 class="hero__subheading">Contact Information</h2>
+            <p class="hero__paragraph">Have an issue or suggestion?</p>
+            <p class="hero__paragraph">
+              Please make a thread on our <a class="hero__link">GitHub</a> page
+              so we can track it.
+            </p>
+            <p class="hero__paragraph">
+              You can also ask using one of these methods:
+            </p>
+            <div class="hero__links">
+              <a class="hero__link">wordreminder@protonmail.com</a>
+            </div>
+          </div>
+          <div class="hero__container">
+            <h2 class="hero__subheading">Useful Links</h2>
+            <div class="hero__links">
+              <a class="hero__link">
+                <img class="navigation__icon" src="/icons/github.svg" alt="" />
+                <span class="hero__text">GitHub</span>
+              </a>
+              <a class="hero__link">
+                <img class="navigation__icon" src="/icons/release.svg" alt="" />
+                <span class="hero__text">Release Changelog</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <%- include('../partials/footer') %>
   </body>
 </html>

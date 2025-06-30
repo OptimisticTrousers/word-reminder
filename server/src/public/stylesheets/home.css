@@ -1,82 +1,86 @@
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-}
-
-.hero {
-  background-color: #333;
-  color: #fff;
-  padding: 2rem 1rem;
-  text-align: center;
-}
-
-.hero-content h1 {
-  font-size: 2.5rem;
-}
-
-.hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-
-.video-container {
-  margin: 1rem auto;
-  max-width: 100%;
-}
-
-.introduction,
-.project-steps,
-.summary,
-.cta {
-  background-color: #fff;
-  margin: 1rem;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  color: #333;
-}
-
-.credits {
-  font-style: italic;
-  text-align: center;
-}
-
-.cta {
-  text-align: center;
-}
-
-.download-buttons {
+.navigation {
+  background-color: var(--top-navigation-bkg-color);
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  color: #fff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
+.navigation__list {
+  display: flex;
+  gap: 8px;
+}
+
+.navigation__icon,
+.hero__image {
+  margin-right: 12px;
+}
+
+.navigation__image {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(171deg)
+    brightness(103%) contrast(100%);
+}
+
+.navigation__item {
+  list-style: none;
+}
+
+.navigation__link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--bottom-navigation-bkg-color);
+  color: var(--anchor-color);
   text-decoration: none;
-  transition: background-color 0.3s;
 }
 
-.btn:hover {
-  background-color: #0056b3;
+.navigation__image {
+  height: 3rem;
 }
 
-.google-play {
-  background-color: #34a853;
+.hero__container {
+  margin: 0 auto;
 }
 
-.app-store {
-  background-color: #000;
+.main {
+  margin-top: 6rem;
+}
+
+.hero__image {
+  height: 10rem;
+  margin-right: 12px;
+}
+
+.hero__subheading {
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.hero__container {
+}
+
+.hero__links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero__flex {
+  display: flex;
+  align-items: center;
+}
+
+.hero__text {
+  text-align: end;
+}
+
+.hero__section {
+  margin-top: 6rem;
+}
+
+.hero__screenshot {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 100%;
+  height: auto;
+  width: 80%;
 }

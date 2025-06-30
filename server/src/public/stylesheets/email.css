@@ -1,0 +1,46 @@
+.email {
+  margin: 1rem 2rem;
+}
+
+.email__content {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--card-bkg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.email__container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem 2rem;
+}
+
+.email__container,
+.email__link,
+.email__description {
+  margin-bottom: 0.75rem;
+}
+
+.email__link {
+  font-size: 1.25rem;
+}
+
+.email__link--change {
+  display: block;
+  padding: 1rem;
+  border-width: 0px;
+  border-radius: 8px;
+  background-color: var(--button-bkg-color);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.email__link--change:hover {
+  background-color: var(--secondary-button-bkg-color);
+}

@@ -1,32 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Change Email</title>
-    <link rel="stylesheet" href="/stylesheets/change.css" />
-  </head>
-  <body>
-    <% if (message) { %>
-    <p class="message"><%= message %></p>
-    <%} %>
-    <form
-      class="form"
-      action="/api/users/<%= userId %>&<%= token %>"
-      method="POST"
-    >
-      <div class="form__control">
-        <label class="form__label" for="email">Email:</label>
-        <input
-          class="form__input"
-          type="email"
-          name="email"
-          id="email"
-          maxlength="255"
-          required
-        />
-      </div>
-      <button class="form__button" type="submit">Change Email</button>
-    </form>
+  <%- include ('../partials/header', { stylesheet: "action.css", title: "Change Email" }) %>
+    <div class="action">
+      <main class="action__content">
+        <div class="action__container action__container--primary">
+          <p class="action__description">
+            Enter a new email address for your WordReminder account below.
+          </p>
+        </div>
+        <div class="action__container action__container--secondary">
+          <% if (message) { %>
+          <p class="action__message"><%= message %></p>
+          <%} %>
+          <form
+            class="action__form"
+            action="/api/users/<%= userId %>&<%= token %>"
+            method="POST"
+          >
+            <div class="action__control">
+              <label class="action__label" for="email">Email:</label>
+              <input
+                class="action__input"
+                type="email"
+                name="email"
+                id="email"
+                maxlength="255"
+                required
+              />
+            </div>
+            <button class="action__button" type="submit">Change Email</button>
+          </form>
+        </div>
+        <%- include('../partials/support') %>
+      </main>
+    </div>
+    <%- include('../partials/footer') %>
   </body>
 </html>

@@ -1,0 +1,129 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+
+body {
+  --button-bkg-color: #6200ea;
+  --secondary-button-bkg-color: #3700b3;
+  --button-text-color: #fff;
+  --heading-color: #8b5cf6;
+  --shadow-color: #8b5cf6;
+
+  --bkg-color: #121212;
+  --card-bkg-color: #2a2a2a;
+  --secondary-card-bkg-color: #161d3a;
+
+  --anchor-text-color: #809fff;
+  --secondary-anchor-text-color: rgb(160, 174, 192);
+  --tertiary-anchor-text-color: rgb(237, 242, 247);
+
+  --text-color: #eee;
+
+  --border-color: #333;
+  --break-color: #dedede;
+
+  --input-bkg-color: #2a2a2a;
+
+  --alert-text-color: rgb(185, 28, 28);
+
+  --success-text-color: rgb(20, 83, 45);
+  background-color: var(--bkg-color);
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.image {
+  margin-right: 12px;
+  width: 130px;
+  height: 130px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+}
+
+a {
+  color: var(--anchor-text-color);
+}
+
+button,
+input[type="button"] {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--button-bkg-color);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: var(--button-text-color);
+}
+
+button:hover,
+input:hover[type="button"] {
+  background-color: var(--secondary-button-bkg-color);
+}
+
+button:focus,
+input:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--shadow-color);
+}
+
+img {
+  filter: brightness(0.8) contrast(1.2);
+}
+
+input {
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: var(--input-bkg-color);
+  color: var(--text-color);
+}
+
+label {
+  color: var(--text-color);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.heading {
+  font-size: 2.5rem;
+}
+
+h1,
+h2 {
+  color: var(--heading-color);
+}
+
+hr {
+  color: var(--break-color);
+}

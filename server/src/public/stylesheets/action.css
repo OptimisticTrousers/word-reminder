@@ -1,0 +1,75 @@
+.action {
+  padding: 1rem 2rem;
+}
+
+.action__content {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--card-bkg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.action__container {
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.action__container--primary {
+  background-color: var(--card-bkg-color);
+}
+
+.action__container--secondary {
+  background-color: var(--secondary-card-bkg-color);
+}
+
+.action__message {
+  color: var(--alert-text-color);
+}
+
+.action__input {
+  padding: 0.75rem 1rem;
+}
+
+.action__label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.action__container,
+.action__link,
+.action__description,
+.action__control {
+  margin-bottom: 12px;
+}
+
+.action__link {
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.action__button {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--button-bkg-color);
+  font-size: 1.1rem;
+}
+
+.action__link--change {
+  display: block;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--button-bkg-color);
+  font-size: 1.5rem;
+}
+
+.action__link--change:hover,
+.action__button:hover {
+  background-color: var(--secondary-button-bkg-color);
+}

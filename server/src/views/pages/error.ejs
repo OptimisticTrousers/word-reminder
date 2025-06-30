@@ -1,26 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Error</title>
-    <link rel="stylesheet" href="/stylesheets/error.css" />
-  </head>
-  <body>
-    <div class="error">
-      <div class="error__container">
-        <img class="error__image" src="images/robot.png" alt="" />
-        <h2 class="error__heading">Error</h2>
-        <hr class="error__break" />
-        <% if (errors) { %>
-        <ul class="error__list">
-          <% for (const error of errors ) {%>
-          <li class="error_item"><%= error.msg %></li>
+    <%- include ('../partials/header', { stylesheet: "error.css", title }) %>
+      <div class="error">
+        <div class="error__container">
+          <img class="error__image" src="images/robot.png" alt="" />
+          <h2 class="error__heading">Error</h2>
+          <hr class="error__break" />
+          <% if (errors) { %>
+          <ul class="error__list">
+            <% for (const error of errors ) {%>
+            <li class="error__item"><%= error.msg %></li>
+            <% } %>
+          </ul>
           <% } %>
-        </ul>
-        <% } %>
-        <a class="error__link" href="/"> Go back to the home page. </a>
+          <a class="error__link" href="/"> Go back to the home page. </a>
+        </div>
       </div>
-    </div>
+    </main>
+    <%- include('../partials/footer') %>
   </body>
 </html>

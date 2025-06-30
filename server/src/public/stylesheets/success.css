@@ -1,0 +1,38 @@
+.success {
+  margin: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--card-bkg-color);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.success__container {
+  display: flex;
+  align-items: center;
+}
+
+.success__break {
+  margin-top: 1rem;
+}
+
+.success__image {
+  width: 64px;
+  height: 64px;
+  filter: invert(41%) sepia(12%) saturate(3341%) hue-rotate(91deg)
+    brightness(117%) contrast(83%);
+  margin-right: 0.75rem;
+}
+
+.success__text {
+  color: var(--success-text-color);
+  font-weight: 800;
+  font-size: 2.5rem;
+}
+
+.success__message,
+.success__link {
+  margin-top: 0.75rem;
+}
