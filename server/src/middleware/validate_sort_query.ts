@@ -29,7 +29,9 @@ export const validateSortQuery = [
   query().custom((_value, { req }) => {
     const query = req.query;
     if (!query) {
-      return true;
+      throw new CustomBadRequestError(
+        "'column' and 'direction' must be provided together for sorting."
+      );
     }
 
     const hasColumn = "column" in query;

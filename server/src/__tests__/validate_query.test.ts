@@ -165,6 +165,77 @@ describe("validateQuery", () => {
     );
 
     describe("page number and page limit query", () => {
+      it("calls the functions to get the user's word reminders when no query is provided", async () => {
+        const params = new URLSearchParams({
+          page: "1",
+          limit: "10",
+        });
+
+        const response = await request(app)
+          .get(`/api/users/${userId}/wordReminders?${params}`)
+          .set("Accept", "application/json");
+
+        expect(mockGetByUserId).toHaveBeenCalledTimes(1);
+        expect(mockGetByUserId).toHaveBeenCalledWith(userId, {
+          page: 1,
+          limit: 10,
+        });
+        expect(response.headers["content-type"]).toMatch(/json/);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+          totalRows: 1,
+          wordReminders: [
+            {
+              id: 1,
+              user_id: userId,
+              reminder: wordReminder1.reminder,
+              is_active: wordReminder1.is_active,
+              has_reminder_onload: wordReminder1.has_reminder_onload,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
+              user_words: [
+                {
+                  learned: false,
+                  details: clemencyJson,
+                },
+              ],
+            },
+            {
+              id: 2,
+              user_id: userId,
+              reminder: wordReminder1.reminder,
+              is_active: wordReminder1.is_active,
+              has_reminder_onload: wordReminder1.has_reminder_onload,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
+              user_words: [
+                {
+                  learned: false,
+                  details: helloJson,
+                },
+              ],
+            },
+            {
+              id: 3,
+              user_id: userId,
+              reminder: wordReminder1.reminder,
+              is_active: wordReminder1.is_active,
+              has_reminder_onload: wordReminder1.has_reminder_onload,
+              finish: wordReminder1.finish.toISOString(),
+              created_at: wordReminders[0].created_at.toISOString(),
+              updated_at: wordReminders[0].updated_at.toISOString(),
+              user_words: [
+                {
+                  learned: false,
+                  details: milieuJson,
+                },
+              ],
+            },
+          ],
+        });
+      });
       it("calls the functions to get the user's word reminders with the page number and page limit query", async () => {
         const params = new URLSearchParams({
           page: "1",

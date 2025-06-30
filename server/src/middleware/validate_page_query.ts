@@ -16,6 +16,10 @@ export const validatePageQuery = [
   query().custom((_value, { req }) => {
     const query = req.query;
     if (!query) {
+      req.query = {
+        page: 1,
+        limit: 10,
+      };
       return true;
     }
     const hasPage = "page" in query;
