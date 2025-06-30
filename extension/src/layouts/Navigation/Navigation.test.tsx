@@ -104,6 +104,17 @@ describe("Navigation component", () => {
     expect(wordRemindersLink).toHaveAttribute("aria-current", "page");
   });
 
+  it("makes the settings page link currently active when on the settings page", async () => {
+    const { user } = setup("/settings");
+
+    const settingsLink = screen.getByLabelText("Settings");
+    await user.click(settingsLink);
+
+    const settings = screen.getByTestId("settings");
+    expect(settings).toBeInTheDocument();
+    expect(settingsLink).toHaveAttribute("aria-current", "page");
+  });
+
   it("logs out the user when the 'Log Out' button is clicked", async () => {
     const mockClear = vi.spyOn(queryClient, "clear");
     const mockLogout = vi

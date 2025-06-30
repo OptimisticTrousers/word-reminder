@@ -442,6 +442,7 @@ describe("Service Worker Suite", async () => {
                 notification: {
                   close: mockClose,
                 },
+                action: undefined,
               };
               await callback(mockEvent);
             })
