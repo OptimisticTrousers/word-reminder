@@ -47,3 +47,11 @@ export const failed_verification = (req: Request, res: Response) => {
 export const index = (req: Request, res: Response) => {
   res.render("pages/index");
 };
+
+export const about = (req: Request, res: Response) => {
+  res.render("pages/about");
+};
+
+export const privacy = (req: Request, res: Response) => {
+  res.render("pages/privacy");
+};

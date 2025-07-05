@@ -4,6 +4,8 @@ import {
   change_email,
   change_password,
   index,
+  about,
+  privacy,
   failed_verification,
   confirm_account,
 } from "../controllers/views_controller";
@@ -40,3 +42,9 @@ viewRouter.get(
 );
 
 viewRouter.get("/failedVerification", failed_verification);
+
+viewRouter.get("/home", index);
+
+viewRouter.get("/about", about);
+
+viewRouter.get("/privacy", privacy);

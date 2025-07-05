@@ -1,3 +1,8 @@
+@font-face {
+  font-family: Up-Up-And-Away-Inline;
+  src: url(/fonts/CCUpUpAndAway-Inline.ttf);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -17,6 +22,11 @@
 }
 
 body {
+  --primary-color: #6f2b8e;
+  --accent-color: #8e37b5;
+  --primary-text-color: #ffffff;
+  --secondary-color: #ffcb04;
+  --secondary-text-color: #102724;
   --button-bkg-color: #6200ea;
   --secondary-button-bkg-color: #3700b3;
   --button-text-color: #fff;
@@ -40,31 +50,9 @@ body {
 
   --alert-text-color: rgb(185, 28, 28);
 
+  --success-bkg-color: rgb(154, 230, 180);
   --success-text-color: rgb(20, 83, 45);
   background-color: var(--bkg-color);
-}
-
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.header {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.image {
-  margin-right: 12px;
-  width: 130px;
-  height: 130px;
-}
-
-.link {
-  display: flex;
-  align-items: center;
 }
 
 a {
@@ -113,10 +101,6 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-.heading {
-  font-size: 2.5rem;
 }
 
 h1,

@@ -4,11 +4,13 @@ import path from "path";
 import request from "supertest";
 
 import {
+  about,
   change_email,
   change_password,
   confirm_account,
   failed_verification,
   index,
+  privacy,
 } from "../controllers/views_controller";
 
 const userId = 1;
@@ -79,7 +81,7 @@ describe("views", () => {
     });
   });
 
-  describe("index", () => {
+  describe("pages", () => {
     it("calls the functions to render home page", async () => {
       const app = express();
       app.set("views", path.join(__dirname, "..", "views"));
@@ -87,6 +89,34 @@ describe("views", () => {
       app.get("/", index);
 
       const response = await request(app).get("/").set("Accept", "text/html");
+
+      expect(response.headers["content-type"]).toMatch(/html/);
+      expect(response.status).toBe(200);
+    });
+
+    it("calls the functions to render about page", async () => {
+      const app = express();
+      app.set("views", path.join(__dirname, "..", "views"));
+      app.set("view engine", "ejs");
+      app.use("/about", about);
+
+      const response = await request(app)
+        .get("/about")
+        .set("Accept", "text/html");
+
+      expect(response.headers["content-type"]).toMatch(/html/);
+      expect(response.status).toBe(200);
+    });
+
+    it("calls the functions to render privacy page", async () => {
+      const app = express();
+      app.set("views", path.join(__dirname, "..", "views"));
+      app.set("view engine", "ejs");
+      app.use("/", privacy);
+
+      const response = await request(app)
+        .get("/privacy")
+        .set("Accept", "text/html");
 
       expect(response.headers["content-type"]).toMatch(/html/);
       expect(response.status).toBe(200);

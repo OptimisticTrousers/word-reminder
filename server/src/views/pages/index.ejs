@@ -1,141 +1,303 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Word Reminder</title>
-    <link rel="stylesheet" href="/stylesheets/global.css" />
-    <link rel="stylesheet" href="/stylesheets/home.css" />
-    <link rel="stylesheet" href="/stylesheets/footer.css" />
-  </head>
-  <body class="body">
-    <nav class="navigation">
-      <div class="navigation__left">
-        <img class="navigation__image" src="/images/logo.png" alt="" />
-      </div>
-      <div class="navigation__right">
-        <ul class="navigation__list">
-          <li class="navigation__item">
-            <a class="navigation__link" href="/">
-              <img class="navigation__icon" src="/icons/house.svg" alt="" />
-              Home
-            </a>
-          </li>
-          <li class="navigation__item">
-            <a class="navigation__link" href="/#download">
-              <img class="navigation__icon" src="/icons/download.svg" alt="" />
-              Download
-            </a>
-          </li>
-          <li class="navigation__item">
-            <a class="navigation__link" href="/about">
-              <img
-                class="navigation__icon"
-                src="/icons/circle-question-mark.svg"
-                alt=""
-              />
-              About
-            </a>
-          </li>
-          <li class="navigation__item">
-            <a class="navigation__link" href="/privacy">
-              <img class="navigation__icon" src="/icons/lock.svg" alt="" />
-              Privacy
-            </a>
-          </li>
-          <li class="navigation__item">
-            <a
-              class="navigation__link"
-              href="https://github.com/OptimisticTrousers/word-reminder"
-            >
-              <img class="navigation__icon" src="/icons/github.svg" alt="" />
-              Source
-            </a>
-          </li>
-          <li class="navigation__item">
-            <a class="navigation__link" href="/#contact">
-              <img
-                class="navigation__icon"
-                src="/icons/message-circle.svg"
-                alt=""
-              />
-              Contact
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+  <%- include('../partials/head', { stylesheets: ["home.css"], title: "WordReminder" }) %>
+  <%- include('../partials/navigation') %>
     <main class="main">
       <div class="hero">
         <header class="hero__container">
           <div class="hero__content">
-            <img class="hero__image" src="/images/logo.png" alt="" />
-            <h1 class="hero__heading">Word Reminder</h1>
-            <p class="hero__text">App</p>
-          </div>
-          <p class="hero__subheading">The Personal Vocabulary Client</p>
-        </header>
-        <section class="hero__section">
-          <img class="hero__screenshot" src="/images/FreeTube1.png" />
-        </section>
-        <section class="hero__section">
-          <div class="hero__about">
-            <h2 class="hero__subheading">What is Word Reminder?</h2>
-            <p class="hero__paragraph">
-              FreeTube is a YouTube client for Windows (10 and later), Mac
-              (macOS 11 and later), and Linux built around using YouTube more
-              privately. You can enjoy your favorite content and creators
-              without your habits being tracked. All of your user data is stored
-              locally and never sent or published to the internet. FreeTube
-              grabs data by scraping the information it needs (with either local
-              methods or by optionally utilizing the Invidious API). With many
-              features similar to YouTube, FreeTube has become one of the best
-              methods to watch YouTube privately on desktop.
-            </p>
-          </div>
-        </section>
-        <section class="hero__section">
-          <img class="hero__screenshot" src="/images/FreeTube1.png" />
-        </section>
-        <section class="hero__section">
-          <div class="hero__features">
-            <h2 class="hero__subheading">Current Features</h2>
-            <div class="hero__grid"></div>
-            <p class="hero__note">...and many more to come!</p>
-          </div>
-        </section>
-        <section class="hero__section">
-          <img class="hero__screenshot" src="/images/FreeTube1.png" />
-        </section>
-        <section class="hero__section">
-          <div class="hero__download"></div>
-        </section>
-        <section class="hero__section" id="contact">
-          <div class="hero__container">
-            <h2 class="hero__subheading">Contact Information</h2>
-            <p class="hero__paragraph">Have an issue or suggestion?</p>
-            <p class="hero__paragraph">
-              Please make a thread on our <a class="hero__link">GitHub</a> page
-              so we can track it.
-            </p>
-            <p class="hero__paragraph">
-              You can also ask using one of these methods:
-            </p>
-            <div class="hero__links">
-              <a class="hero__link">wordreminder@protonmail.com</a>
+            <img
+              class="hero__image hero__image--logo"
+              src="/images/logo.png"
+              alt=""
+            />
+            <div class="hero__block">
+              <h1 class="hero__heading">WordReminder</h1>
+              <p class="hero__subtext">Application</p>
             </div>
           </div>
-          <div class="hero__container">
-            <h2 class="hero__subheading">Useful Links</h2>
-            <div class="hero__links">
-              <a class="hero__link">
-                <img class="navigation__icon" src="/icons/github.svg" alt="" />
-                <span class="hero__text">GitHub</span>
+          <p class="hero__text">The Personal Vocabulary Client</p>
+        </header>
+        <section class="hero__section section section--image">
+          <img class="section__screenshot" src="/images/WordReminder1.png" />
+        </section>
+        <section class="hero__section section section--secondary">
+          <div class="section__container container">
+            <div class="section__about">
+              <h2 class="section__subheading">What is WordReminder?</h2>
+              <p class="section__paragraph">
+                WordReminder is a client for Chromium based browser, Gecko-based
+                browsers, Android, and iOS designed to improve the word
+                rentention of users. You can easily add words you come across to
+                your dictionary and create desktop automatic reminders of these
+                words on a recurring basis without being tracked. WordReminder
+                mostly relies on other open-source tooling such as the
+                <a
+                  class="section__link section__link--secondary"
+                  href="https://github.com/meetDeveloper/freeDictionaryAPI"
+                >
+                  Free Dictionary API
+                </a>
+                to fetch word information and the
+                <a
+                  class="section__link section__link--secondary"
+                  href="https://commons.wikimedia.org/w/api.php?action=help&modules=main"
+                >
+                  Wikimedia Commons API
+                </a>
+                to fetch images for words. WordReminder is a very convinient way
+                to quickly find definitions of words without disrupting your
+                flow of reading and to remind yourself of uncommon words. It
+                also adds a custom context menu option that allows you to add
+                words by highlighting them.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section class="hero__section section section--image">
+          <img class="section__screenshot" src="/images/WordReminder2.png" />
+        </section>
+        <section class="hero__section section section--primary">
+          <div class="section__container container">
+            <div class="section__features">
+              <h2 class="section__subheading">Current Features</h2>
+              <div class="section__grid">
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/calendar-sync.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Scheduling</h3>
+                    <p class="item__paragraph">
+                      Show words you have encountered on a recurring basis for
+                      better retention
+                    </p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/clock.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Auto Word Reminder</h3>
+                    <p class="item__paragraph">
+                      Automatically schedule word reminder notifications
+                      manually
+                    </p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/square-menu.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Context Menu</h3>
+                    <p class="item__paragraph">
+                      Highlight any word in the browser to add the word to your
+                      dictionary.
+                    </p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/scan-search.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Images</h3>
+                    <p class="item__paragraph">
+                      Get images of words without needing to do a web search
+                    </p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/ban.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">No Ads</h3>
+                    <p class="item__paragraph">Enjoy an ad free experience</p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/book-open-text.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Open Source</h3>
+                    <p class="item__paragraph">
+                      WordReminder is Free and Open Source Software under the
+                      MIT License
+                    </p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/globe-lock.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Private</h3>
+                    <p class="item__paragraph">
+                      Your habits are not tracked by us
+                    </p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/import.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Import Words</h3>
+                    <p class="item__paragraph">
+                      Import your words into WordReminder to add them to your
+                      dictionary
+                    </p>
+                  </div>
+                </div>
+                <div class="section__item item item--feature">
+                  <div class="item__left">
+                    <img class="item__icon" src="/icons/monitor.svg" />
+                  </div>
+                  <div class="item__right">
+                    <h3 class="item__heading">Multi Platform</h3>
+                    <p class="item__paragraph">
+                      Runs on Android, iOS, Chromium, and Gecko-based browsers
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p class="section__note">...and many more to come!</p>
+            </div>
+          </div>
+        </section>
+        <section class="hero__section section section--image">
+          <img class="section__screenshot" src="/images/WordReminder3.png" />
+        </section>
+        <section class="hero__section section section--primary" id="download">
+          <div class="section__container container">
+            <div class="section__title">
+              <h2 class="section__subheading">
+                Download WordReminder
+                <span class="section__link section__link--release"
+                  >Release 1.0 Beta</span
+                >
+              </h2>
+              <p class="section__paragraph">
+                WordReminder is free to download thanks to its open source
+                nature.
+              </p>
+            </div>
+            <div class="section__grid">
+              <div class="section__item item item--download">
+                <div class="item__left">
+                  <img class="item__icon" src="/icons/chrome.svg" />
+                </div>
+                <div class="item__right">
+                  <h3 class="item__heading">Chromium</h3>
+                  <a class="item__link item__link--download" href="/"
+                    >Chrome Web Store</a
+                  >
+                </div>
+              </div>
+              <div class="section__item item item--download">
+                <div class="item__left">
+                  <img class="item__icon" src="/icons/firefox.svg" />
+                </div>
+                <div class="item__right">
+                  <h3 class="item__heading">Webkit</h3>
+                  <a class="item__link item__link--download" href="/"
+                  >Firefox Add-Ons</a>
+                </div>
+              </div>
+              <div class="section__item item--download">
+                <div class="item__left">
+                  <img class="item__icon" src="/icons/apple-brands.svg" />
+                </div>
+                <div class="item__right">
+                  <h3 class="item__heading">iOS</h3>
+                  <a class="item__link item__link--download" href="/">iOS App Store</a>
+                </div>
+              </div>
+              <div class="section__item item--download">
+                <div class="item__left">
+                  <img class="item__icon" src="/icons/android-brands.svg" />
+                </div>
+                <div class="item__right">
+                  <h3 class="item__heading">Android</h3>
+                  <a class="item__link item__link--download" href="/">F-Droid</a>
+                  <a class="item__link item__link--download" href="/"
+                    >Google Play Store</a
+                  >
+                </div>
+              </div>
+            </div>
+            <p class="section__note">
+              Users are also welcome to download from
+              <a
+                class="section__link"
+                href="https://github.com/OptimisticTrousers/word-reminder"
+              >
+                source
               </a>
-              <a class="hero__link">
-                <img class="navigation__icon" src="/icons/release.svg" alt="" />
-                <span class="hero__text">Release Changelog</span>
-              </a>
+              for all platforms.
+            </p>
+          </div>
+        </section>
+        <section class="hero__section section section--image">
+          <img class="section__screenshot" src="/images/WordReminder4.png" />
+        </section>
+        <section class="hero__section section" id="contact">
+          <div class="section__container container">
+            <div class="section__top">
+              <h2 class="section__subheading">Contact Information</h2>
+              <p class="section__line">Have an issue or suggestion?</p>
+              <p class="section__line">
+                Please make a thread on our
+                <a
+                  class="hero__link"
+                  href="https://github.com/OptimisticTrousers/word-reminder/issues"
+                  >GitHub</a
+                >
+                page so we can track it.
+              </p>
+              <p class="section__line">
+                You can also ask using one of these methods:
+              </p>
+              <div class="section__links">
+                <a
+                  class="section__link section__link--icon"
+                  href="malito:wordreminder@protonmail.com"
+                >
+                  <img
+                    class="section__icon section__link--icon"
+                    src="/icons/mail.svg"
+                    alt=""
+                  />
+                  <span class="section__text">
+                    wordreminder@protonmail.com
+                  </span>
+                </a>
+              </div>
+            </div>
+            <div class="section__bottom">
+              <h2 class="section__subheading">Useful Links</h2>
+              <div class="section__links">
+                <a
+                  class="section__link section__link--icon"
+                  href="https://github.com/OptimisticTrousers/word-reminder"
+                >
+                  <img class="section__icon" src="/icons/github.svg" alt="" />
+                  <span class="section__text">GitHub</span>
+                </a>
+                <a
+                  class="section__link section__link--icon"
+                  href="https://github.com/OptimisticTrousers/word-reminder/blob/main/CHANGES.md"
+                >
+                  <img
+                    class="section__icon"
+                    src="/icons/clipboard-list.svg"
+                    alt=""
+                  />
+                  <span class="section__text">Release Changelog</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>

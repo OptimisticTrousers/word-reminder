@@ -1,0 +1,41 @@
+.about {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  line-height: 2rem;
+}
+
+.about__container {
+  margin-top: 6rem;
+}
+
+.about__heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.about__description {
+  margin-left: 4rem;
+  margin-right: 4rem;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .about {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .about {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about {
+    max-width: 1024px;
+  }
+}

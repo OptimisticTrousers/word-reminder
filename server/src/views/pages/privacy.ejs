@@ -1,0 +1,54 @@
+        <%- include('../partials/head', { stylesheets: ["privacy.css"], title: "WordReminder" }) %>
+        <%- include('../partials/navigation') %>
+        <main class="privacy">
+            <div class="privacy__container">
+                <h2 class="privacy__heading">Privacy Policy: WordReminder Website
+                    <span class="privacy__status">Last Updated: July 2025</span>
+                </h2>
+                <p class="privacy__paragraph">
+                    This privacy policy is to explain what information is collected by visitors of the FreeTube website (FreeTubeApp.io) and how it is used. This privacy policy may be changed or updated at any point in the future. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.
+                </p>
+                <p class="privacy__paragraph">
+                   Your privacy is very important, which is why this site runs with hardly any JavaScript and does not use Google Analytics.                
+                </p>
+            </div>
+            <div class="privacy__container">
+                <h2 class="privacy__heading">Privacy Policy: WordReminder Application 
+                    <span class="privacy__status">Last Updated: July 2025</span>
+                </h2>
+                <p class="privacy__paragraph">
+                    This privacy policy is to explain what information is collected by visitors of the FreeTube website (FreeTubeApp.io) and how it is used. This privacy policy may be changed or updated at any point in the future.
+                </p>
+                <div class="privacy__container">
+                    <h3 class="privacy__subheading">Data Collected and How It Is Used
+                    </h3>
+                    <p class="privacy__paragraph">
+                        Your privacy is taken very seriously as a WordReminder user. Your words, word reminders, auto word reminders, and settings are saved on a hosted server. All information can be deleted at any time by the user by navigating the settings page and deleting their account. 
+                    </p>
+                    <p class="privacy__paragraph">
+                        WordReminder will make a connection to 
+                        <a class="privacy__link" href="https://aws.amazon.com/ses/">
+                        Amazon SES
+                        </a>, the
+                        <a class="privacy__link" href="https://github.com/meetDeveloper/freeDictionaryAPI">
+                            Free Dictionary API
+                        </a>, the 
+                        <a class="privacy__link" href="https://commons.wikimedia.org/w/api.php?action=help&modules=main">
+                            Wikimedia Commons API
+                        </a>, and 
+                        <a class="privacy__link" href="https://developer.chrome.com/docs/extensions/reference/api">
+                            Chrome APs
+                        </a>. We can't guarentee that these domains aren't tracking you in any way though we do our best to limit this as much as possible.
+                    </p>
+                    <p class="privacy__paragraph">
+                        Like any other website, the WordReminder extension uses "cookies". These cookies are used to store information to authenticate the user. .
+                    </p>
+                    <p class="privacy__paragraph">
+                        By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.
+                    </p>
+                </div>
+            </div>
+        </main>
+        <%- include('../partials/footer') %>
+    </body>
+</html>
