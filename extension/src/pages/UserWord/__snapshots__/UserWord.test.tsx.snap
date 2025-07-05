@@ -113,7 +113,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 class="_word__button_063118"
               >
                 <span
-                  class="_word__text_063118"
+                  class="_word__span_063118"
                 >
                   Pronounce word
                 </span>
@@ -468,7 +468,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
                 class="_word__button_063118"
               >
                 <span
-                  class="_word__text_063118"
+                  class="_word__span_063118"
                 >
                   Pronounce word
                 </span>
