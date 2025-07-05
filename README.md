@@ -75,9 +75,9 @@ To find out what's new in this version of Word Reminder, please see [the changel
 
 ### Mobile App
 
-<p align="center"><a href="https://f-droid.org/packages/org.schabi.newpipe/"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_%28material_design%29.svg" alt="Get it on F-Droid" height=80/></a></p>
-<p align="center"><a href="https://play.google.com/store/apps/details?id=com.x8bit.bitwarden&hl=en_US"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height=80/></a></p>
-<p align="center"><a href="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_%28material_design%29.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" height=80/></a></p>
+<p align="center"><a href="https://f-droid.org/packages/org.schabi.newpipe/"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_%28material_design%29.svg" alt="Get it on F-Droid" height=240 width=240/></a></p>
+<p align="center"><a href="https://play.google.com/store/apps/details?id=com.x8bit.bitwarden&hl=en_US"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height=240 width=240/></a></p>
+<p align="center"><a href="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_%28material_design%29.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" height=240 width=240/></a></p>
 
 ### Extension
 
