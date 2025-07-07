@@ -61,7 +61,7 @@ describe("confirmAccount", () => {
     const response = await request(app).get(`/api/users/${user.id}&${token}`);
 
     const hasMessage = response.text.includes(
-      "Server Error. Unable to confirm your account. Please log into WordReminder and try again."
+      "Server Error. Unable to confirm your account. Please log into Word Reminder and try again."
     );
     expect(hasMessage).toBe(true);
     expect(response.headers["content-type"]).toBe("text/html; charset=utf-8");

@@ -6,10 +6,10 @@ export enum Template {
 }
 
 export enum Subject {
-  CHANGE_EMAIL = "WordReminder - Change Email",
-  CHANGE_PASSWORD = "WordReminder - Change Password",
-  FORGOT_PASSWORD = "WordReminder - Forgot Password",
-  CONFIRM_ACCOUNT = "WordReminder - Confirm Account",
+  CHANGE_EMAIL = "Word Reminder - Change Email",
+  CHANGE_PASSWORD = "Word Reminder - Change Password",
+  FORGOT_PASSWORD = "Word Reminder - Forgot Password",
+  CONFIRM_ACCOUNT = "Word Reminder - Confirm Account",
 }
 
 export enum Column {
