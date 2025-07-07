@@ -38,7 +38,7 @@ export const confirm_account = asyncHandler(
         res.render("pages/error", {
           errors: [
             {
-              msg: "Server Error. Unable to confirm your account. Please log into WordReminder and try again.",
+              msg: "Server Error. Unable to confirm your account. Please log into Word Reminder and try again.",
             },
           ],
         });
