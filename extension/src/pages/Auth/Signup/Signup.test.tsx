@@ -56,8 +56,8 @@ describe("Signup component", () => {
   });
 
   it("calls the functions to signup, login, show notification, redirect user", async () => {
-    const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
-    const mockSet = vi.spyOn(chrome.storage.sync, "set");
+    const mockSendMessage = vi.spyOn(window.chrome.runtime, "sendMessage");
+    const mockStorageSet = vi.spyOn(window.chrome.storage.sync, "set");
     const mockUserServiceSignup = vi
       .spyOn(userService, "signupUser")
       .mockImplementation(async () => {
@@ -92,8 +92,8 @@ describe("Signup component", () => {
     });
     expect(mockSendMessage).toHaveBeenCalledTimes(1);
     expect(mockSendMessage).toHaveBeenCalledWith(null);
-    expect(mockSet).toHaveBeenCalledTimes(1);
-    expect(mockSet).toHaveBeenCalledWith({ userId: testUser.id });
+    expect(mockStorageSet).toHaveBeenCalledTimes(1);
+    expect(mockStorageSet).toHaveBeenCalledWith({ userId: testUser.id });
     expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceLogin).toHaveBeenCalledWith({
       email: testUser.email,

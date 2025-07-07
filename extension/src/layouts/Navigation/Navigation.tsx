@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { sessionService } from "../../services/session_service";
 import { useNotificationError } from "../../hooks/useNotificationError";
 import { LogOut } from "lucide-react";
+import { extension } from "../../utils/extension";
 
 export const Navigation = CSSModules(
   function () {
@@ -16,7 +17,7 @@ export const Navigation = CSSModules(
     const { isPending, mutate } = useMutation({
       mutationFn: sessionService.logoutUser,
       onSettled: () => {
-        chrome.storage.sync.remove("userId");
+        extension.storage.sync.remove("userId");
       },
       onError: showNotificationError,
     });
@@ -40,8 +41,8 @@ export const Navigation = CSSModules(
     }
 
     function handleNewTab() {
-      const url = chrome.runtime.getURL("index.html?popup=false");
-      chrome.tabs.create({ url });
+      const url = window.chrome.runtime.getURL("index.html?popup=false");
+      window.chrome.tabs.create({ url });
     }
 
     const urlSearchParams = new URLSearchParams(window.location.search);

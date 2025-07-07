@@ -55,8 +55,8 @@ describe("Login component", () => {
   });
 
   it("calls the functions to login, show notification, and redirect user", async () => {
-    const mockSendMessage = vi.spyOn(chrome.runtime, "sendMessage");
-    const mockSet = vi.spyOn(chrome.storage.sync, "set");
+    const mockSendMessage = vi.spyOn(window.chrome.runtime, "sendMessage");
+    const mockStorageSet = vi.spyOn(window.chrome.storage.sync, "set");
     const mockSessionServiceLogin = vi
       .spyOn(sessionService, "loginUser")
       .mockImplementation(async () => {
@@ -87,8 +87,8 @@ describe("Login component", () => {
     expect(userWords).toBeInTheDocument();
     expect(mockSendMessage).toHaveBeenCalledTimes(1);
     expect(mockSendMessage).toHaveBeenCalledWith(null);
-    expect(mockSet).toHaveBeenCalledTimes(1);
-    expect(mockSet).toHaveBeenCalledWith({ userId: testUser.id });
+    expect(mockStorageSet).toHaveBeenCalledTimes(1);
+    expect(mockStorageSet).toHaveBeenCalledWith({ userId: testUser.id });
     expect(mockSessionServiceLogin).toHaveBeenCalledTimes(1);
     expect(mockSessionServiceLogin).toHaveBeenCalledWith({
       email: testUser.email,

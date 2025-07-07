@@ -14,6 +14,7 @@ import { ErrorResponse } from "../../../types";
 import styles from "./DeleteUserModal.module.css";
 import { ToggleModal } from "../types";
 import { userService } from "../../../services/user_service";
+import { extension } from "../../../utils/extension/extension";
 
 interface Props {
   toggleModal: ToggleModal;
@@ -32,7 +33,7 @@ export const DeleteUserModal = CSSModules(
           NOTIFICATION_ACTIONS.SUCCESS,
           USER_NOTIFICATION_MSGS.deleteUser()
         );
-        chrome.storage.sync.remove("userId");
+        extension.storage.sync.remove("userId");
       },
       onError: (response: ErrorResponse) => {
         showNotificationError(response);

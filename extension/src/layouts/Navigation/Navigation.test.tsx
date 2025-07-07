@@ -122,7 +122,7 @@ describe("Navigation component", () => {
       .mockImplementation(async () => {
         return { json: { user: { id: "1" } }, status: 200 };
       });
-    const mockSyncRemove = vi.spyOn(chrome.storage.sync, "remove");
+    const mockStorageRemove = vi.spyOn(window.chrome.storage.sync, "remove");
     const { user } = setup("/");
 
     const logoutButton = screen.getByRole("button", { name: "Log Out" });
@@ -130,8 +130,8 @@ describe("Navigation component", () => {
 
     const login = screen.getByTestId("login");
     expect(login).toBeInTheDocument();
-    expect(mockSyncRemove).toHaveBeenCalledTimes(1);
-    expect(mockSyncRemove).toHaveBeenCalledWith("userId");
+    expect(mockStorageRemove).toHaveBeenCalledTimes(1);
+    expect(mockStorageRemove).toHaveBeenCalledWith("userId");
     expect(mockLogout).toHaveBeenCalledTimes(1);
     expect(mockLogout).toHaveBeenCalledWith(undefined);
     expect(mockClear).toHaveBeenCalledTimes(1);
@@ -145,8 +145,10 @@ describe("Navigation component", () => {
     });
     const path = "index.html?popup=false";
     const url = `chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/${path}`;
-    const mockGetURL = vi.spyOn(chrome.runtime, "getURL").mockReturnValue(url);
-    const mockCreate = vi.spyOn(chrome.tabs, "create");
+    const mockGetURL = vi
+      .spyOn(window.chrome.runtime, "getURL")
+      .mockReturnValue(url);
+    const mockCreate = vi.spyOn(window.chrome.tabs, "create");
     const { user } = setup("/");
 
     const openNewTabButton = screen.getByRole("button", {

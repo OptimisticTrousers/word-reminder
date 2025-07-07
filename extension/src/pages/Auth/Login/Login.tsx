@@ -13,6 +13,7 @@ import { sessionService } from "../../../services/session_service";
 import { Response } from "../../../types";
 import styles from "../Auth.module.css";
 import { useNotificationError } from "../../../hooks/useNotificationError";
+import { extension } from "../../../utils/extension";
 
 export const Login = CSSModules(
   function () {
@@ -32,8 +33,8 @@ export const Login = CSSModules(
           queryKey: ["sessions"],
           exact: true,
         });
-        await chrome.storage.sync.set({ userId: response.json.user.id });
-        await chrome.runtime.sendMessage(null);
+        await extension.storage.sync.set({ userId: response.json.user.id });
+        await extension.runtime.sendMessage(null);
       },
       onError: showNotificationError,
     });

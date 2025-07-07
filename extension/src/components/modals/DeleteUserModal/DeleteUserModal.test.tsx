@@ -102,7 +102,7 @@ describe("DeleteUserModal component", () => {
       .mockImplementation(async () => {
         return { json, status };
       });
-    const mockSyncRemove = vi.spyOn(chrome.storage.sync, "remove");
+    const mockStorageRemove = vi.spyOn(window.chrome.storage.sync, "remove");
     const user = userEvent.setup();
 
     render(<Stub initialEntries={["/"]} />);
@@ -114,8 +114,8 @@ describe("DeleteUserModal component", () => {
     const notification = screen.queryByRole("dialog");
     expect(notification).not.toBeInTheDocument();
     expect(login).toBeInTheDocument();
-    expect(mockSyncRemove).toHaveBeenCalledTimes(1);
-    expect(mockSyncRemove).toHaveBeenCalledWith("userId");
+    expect(mockStorageRemove).toHaveBeenCalledTimes(1);
+    expect(mockStorageRemove).toHaveBeenCalledWith("userId");
     expect(mockDeleteUser).toHaveBeenCalledTimes(1);
     expect(mockDeleteUser).toHaveBeenCalledWith({
       userId: testUser.id,
