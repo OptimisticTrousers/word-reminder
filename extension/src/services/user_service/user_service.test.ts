@@ -39,6 +39,7 @@ describe("userService", () => {
             email: user.email,
             password: user.newPassword,
           }),
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },

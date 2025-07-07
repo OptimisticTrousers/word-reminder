@@ -34,6 +34,7 @@ describe("sessionService", () => {
         url: `${VITE_API_DOMAIN}/sessions`,
         options: {
           body: JSON.stringify(user),
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
