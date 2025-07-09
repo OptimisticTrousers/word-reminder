@@ -6,9 +6,12 @@ import styles from "./App.module.css";
 import { Footer } from "../../layouts/Footer";
 import { Navigation } from "../../layouts/Navigation";
 import { EmailConfirmation } from "../../pages/Auth/EmailConfirmation";
+import { useMobileTextSelectionAction } from "../../hooks/useMobileTextSelectionAction";
 
 export const App = CSSModules(
   function ({ user }: { user: User }) {
+    useMobileTextSelectionAction(String(user.id));
+
     if (import.meta.env.MODE === "production") {
       if (!user.confirmed) {
         return <EmailConfirmation user={user} />;

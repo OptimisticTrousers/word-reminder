@@ -8,6 +8,7 @@ import com.getcapacitor.JSObject;
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        registerPlugin(TextSelectionActionPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }
