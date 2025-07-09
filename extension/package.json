@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && vite build --config vite.sw.config.ts",
+    "build": "tsc -b && vite build --config vite.sw.config.ts && vite build --config vite.config.ts",
     "extension": "NODE_ENV=development tsc -b && vite build --mode development --watch",
     "sw": "vite build --config vite.sw.config.ts --watch",
     "coverage": "vitest run --coverage",
@@ -16,6 +16,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.1",
+    "@capacitor/core": "^7.4.1",
     "@tanstack/react-query": "^5.64.2",
     "common": "file:../common",
     "cronstrue": "^2.56.0",
@@ -26,6 +28,7 @@
     "react-router-dom": "^7.1.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.4.1",
     "@eslint/js": "^9.17.0",
     "@playwright/test": "^1.52.0",
     "@testing-library/jest-dom": "^6.6.3",
