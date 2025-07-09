@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 
 import { App } from "./App";
 import { createRoutesStub } from "react-router-dom";
+import * as hooks from "../../hooks/useMobileTextSelectionAction";
 
 vi.mock("../../layouts/Footer", () => {
   return {
@@ -48,6 +49,9 @@ const user = {
 describe("App component", () => {
   describe("when MODE === 'production'", () => {
     it("renders main element and footer when the user is confirmed", () => {
+      const mockUseMobileTextSelectionAction = vi
+        .spyOn(hooks, "useMobileTextSelectionAction")
+        .mockImplementation(vi.fn());
       vi.stubEnv("MODE", "production");
       const Stub = createRoutesStub([
         {
@@ -65,10 +69,17 @@ describe("App component", () => {
       expect(footer).toBeInTheDocument();
       expect(navigation).toBeInTheDocument();
       expect(outlet).toBeInTheDocument();
+      expect(mockUseMobileTextSelectionAction).toHaveBeenCalledTimes(1);
+      expect(mockUseMobileTextSelectionAction).toHaveBeenCalledWith(
+        String(user.id)
+      );
       expect(asFragment()).toMatchSnapshot();
     });
 
     it("renders main element and footer when the user is not confirmed", () => {
+      const mockUseMobileTextSelectionAction = vi
+        .spyOn(hooks, "useMobileTextSelectionAction")
+        .mockImplementation(vi.fn());
       vi.stubEnv("MODE", "production");
       const Stub = createRoutesStub([
         {
@@ -82,11 +93,18 @@ describe("App component", () => {
 
       const emailConfirmation = screen.getByTestId("email-confirmation");
       expect(emailConfirmation).toBeInTheDocument();
+      expect(mockUseMobileTextSelectionAction).toHaveBeenCalledTimes(1);
+      expect(mockUseMobileTextSelectionAction).toHaveBeenCalledWith(
+        String(user.id)
+      );
     });
   });
 
   describe("when MODE !== 'production'", () => {
     it("renders main element and footer", () => {
+      const mockUseMobileTextSelectionAction = vi
+        .spyOn(hooks, "useMobileTextSelectionAction")
+        .mockImplementation(vi.fn());
       vi.stubEnv("MODE", "development");
       const Stub = createRoutesStub([
         {
@@ -104,6 +122,10 @@ describe("App component", () => {
       expect(footer).toBeInTheDocument();
       expect(navigation).toBeInTheDocument();
       expect(outlet).toBeInTheDocument();
+      expect(mockUseMobileTextSelectionAction).toHaveBeenCalledTimes(1);
+      expect(mockUseMobileTextSelectionAction).toHaveBeenCalledWith(
+        String(user.id)
+      );
       expect(asFragment()).toMatchSnapshot();
     });
   });
