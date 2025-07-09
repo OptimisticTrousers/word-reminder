@@ -17,9 +17,9 @@ describe("useOnMessageNavigate", () => {
         callback(
           { resource: "userWords", id: userWordId },
           {
-            id: "okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-            origin: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-            url: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/service-worker.js",
+            id: "hiligdjmbpdajadhmciipkifbofekokl",
+            origin: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl",
+            url: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl/service-worker.js",
           },
           vi.fn()
         );

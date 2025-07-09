@@ -703,9 +703,9 @@ describe("Service Worker Suite", async () => {
           callback(
             {},
             {
-              id: "okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-              origin: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-              url: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/service-worker.js",
+              id: "hiligdjmbpdajadhmciipkifbofekokl",
+              origin: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl",
+              url: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl/service-worker.js",
             },
             vi.fn()
           );
@@ -855,9 +855,9 @@ describe("Service Worker Suite", async () => {
           callback(
             {},
             {
-              id: "okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-              origin: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-              url: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/index.html?popup=false",
+              id: "hiligdjmbpdajadhmciipkifbofekokl",
+              origin: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl",
+              url: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl/index.html?popup=false",
             },
             vi.fn()
           );
@@ -1001,9 +1001,9 @@ describe("Service Worker Suite", async () => {
           callback(
             {},
             {
-              id: "okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-              origin: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa",
-              url: "chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/index.html?popup=true",
+              id: "hiligdjmbpdajadhmciipkifbofekokl",
+              origin: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl",
+              url: "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl/index.html?popup=true",
             },
             vi.fn()
           );
