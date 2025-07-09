@@ -144,7 +144,7 @@ describe("Navigation component", () => {
       value: { search: "?popup=true" },
     });
     const path = "index.html?popup=false";
-    const url = `chrome-extension://okplhmjkgoekmcnjbjjglmnpanfkgdfa/${path}`;
+    const url = `chrome-extension://hiligdjmbpdajadhmciipkifbofekokl/${path}`;
     const mockGetURL = vi
       .spyOn(window.chrome.runtime, "getURL")
       .mockReturnValue(url);
