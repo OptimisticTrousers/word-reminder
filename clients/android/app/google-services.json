@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "871944329515",
+    "project_id": "word-reminder-9b031",
+    "storage_bucket": "word-reminder-9b031.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871944329515:android:6858d62f764927faac8d6e",
+        "android_client_info": {
+          "package_name": "com.wordreminder.www"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsJZnYZFUOD-GhS17m-XjdLrDbNiPZ37I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

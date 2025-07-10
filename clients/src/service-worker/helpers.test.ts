@@ -88,7 +88,8 @@ describe("Service Worker Suite", async () => {
         const promise = Promise.resolve();
         const mockShowNotification = vi.fn().mockReturnValue(promise);
         const mockWaitUntil = vi.fn();
-        const words = ["hello", "welcome"];
+        const title = "Word Reminder";
+        const body = `Your active word reminder words: hello, welcome.`;
         const wordReminderId = "1";
         const mockSelf = {
           registration: {
@@ -103,7 +104,7 @@ describe("Service Worker Suite", async () => {
               const event = {
                 data: {
                   json: function () {
-                    return { words, id: wordReminderId };
+                    return { body, title, id: wordReminderId };
                   },
                 },
                 waitUntil: mockWaitUntil,
@@ -125,20 +126,17 @@ describe("Service Worker Suite", async () => {
         expect(mockWaitUntil).toHaveBeenCalledTimes(1);
         expect(mockWaitUntil).toHaveBeenCalledWith(promise);
         expect(mockShowNotification).toHaveBeenCalledTimes(1);
-        expect(mockShowNotification).toHaveBeenCalledWith(
-          `Word Reminder Chrome Extension: your active word reminder has these words:`,
-          {
-            body: words,
-            icon: "/favicon/web-app-manifest-192x192.png",
-            actions: [
-              {
-                action: "navigate-to-word-reminder",
-                title: "Navigate to Word Reminder",
-                icon: "/images/navigation.png",
-              },
-            ],
-          }
-        );
+        expect(mockShowNotification).toHaveBeenCalledWith(title, {
+          body,
+          icon: "/favicon/web-app-manifest-192x192.png",
+          actions: [
+            {
+              action: "navigate-to-word-reminder",
+              title: "Navigate to Word Reminder",
+              icon: "/images/navigation.png",
+            },
+          ],
+        });
         expect(mockHandleNavigate).not.toHaveBeenCalled();
       });
 
@@ -147,7 +145,8 @@ describe("Service Worker Suite", async () => {
         const mockShowNotification = vi.fn().mockReturnValue(promise);
         const mockClose = vi.fn();
         const mockWaitUntil = vi.fn();
-        const words = ["hello", "welcome"];
+        const title = "Word Reminder";
+        const body = `Your active word reminder words: hello, welcome.`;
         const mockSelf = {
           registration: {
             showNotification: mockShowNotification,
@@ -162,7 +161,7 @@ describe("Service Worker Suite", async () => {
               const event = {
                 data: {
                   json: function () {
-                    return { words, id: wordReminderId };
+                    return { title, body, id: wordReminderId };
                   },
                 },
                 waitUntil: mockWaitUntil,
@@ -182,13 +181,10 @@ describe("Service Worker Suite", async () => {
         expect(mockWaitUntil).toHaveBeenCalledTimes(1);
         expect(mockWaitUntil).toHaveBeenCalledWith(promise);
         expect(mockShowNotification).toHaveBeenCalledTimes(1);
-        expect(mockShowNotification).toHaveBeenCalledWith(
-          `Word Reminder Chrome Extension: your active word reminder has these words:`,
-          {
-            body: words,
-            icon: "/favicon/web-app-manifest-192x192.png",
-          }
-        );
+        expect(mockShowNotification).toHaveBeenCalledWith(title, {
+          body,
+          icon: "/favicon/web-app-manifest-192x192.png",
+        });
         expect(mockHandleNavigate).not.toBeCalled();
         expect(mockClose).not.toHaveBeenCalled();
       });
@@ -1051,14 +1047,16 @@ describe("Service Worker Suite", async () => {
           callback(mockInfo);
         }
       );
-
-      const words = ["hello", "welcome"];
+      const title = "Word Reminder";
+      const body = `Your active word reminder words: hello, welcome.`;
       const mockWaitUntil = vi.fn();
       const mockEvent = {
         data: {
           json: function () {
             return {
-              words,
+              userId,
+              title,
+              body,
             };
           },
         },

@@ -7,10 +7,12 @@ import { Footer } from "../../layouts/Footer";
 import { Navigation } from "../../layouts/Navigation";
 import { EmailConfirmation } from "../../pages/Auth/EmailConfirmation";
 import { useMobileTextSelectionAction } from "../../hooks/useMobileTextSelectionAction";
+import { useMobilePushNotificationListeners } from "../../hooks/useMobilePushNotifications";
 
 export const App = CSSModules(
   function ({ user }: { user: User }) {
     useMobileTextSelectionAction(String(user.id));
+    useMobilePushNotificationListeners(String(user.id));
 
     if (import.meta.env.MODE === "production") {
       if (!user.confirmed) {

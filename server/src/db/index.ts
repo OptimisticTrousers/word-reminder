@@ -142,6 +142,11 @@ export const createPopulateDb = function (client: Client) {
         expires_at TIMESTAMP NOT NULL DEFAULT (NOW() + INTERVAL '30 minutes')
       );
 
+      CREATE TABLE fcm_tokens (
+        token TEXT PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) NOT NULL
+      );
+
       CREATE UNIQUE index ON word_reminders (is_active) WHERE is_active = true;
 
       CREATE OR REPLACE FUNCTION trigger_set_timestamp()

@@ -25,7 +25,10 @@ app.set("view engine", "ejs");
 
 app.use(
   cors({
-    origin: ["http://localhost"],
+    origin: [
+      "http://localhost",
+      "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl",
+    ],
     credentials: true,
   })
 );

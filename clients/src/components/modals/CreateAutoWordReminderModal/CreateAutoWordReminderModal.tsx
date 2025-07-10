@@ -15,6 +15,7 @@ import { Duration } from "../../ui/Duration";
 import { autoWordReminderService } from "../../../services/auto_word_reminder_service/auto_word_reminder_service";
 import { Reminder } from "../../ui/Reminder";
 import { unitsToMs } from "../../../utils/date/date";
+import { useMobilePushNotificationRegistration } from "../../../hooks/useMobilePushNotifications";
 
 interface Props {
   toggleModal: ToggleModal;
@@ -26,6 +27,7 @@ export const CreateAutoWordReminderModal = CSSModules(
     const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
+    const { register } = useMobilePushNotificationRegistration(userId);
     const queryClient = useQueryClient();
     const { isPending, mutate } = useMutation({
       mutationFn: autoWordReminderService.createAutoWordReminder,
@@ -41,6 +43,7 @@ export const CreateAutoWordReminderModal = CSSModules(
           queryKey: ["autoWordReminders"],
           exact: true,
         });
+        register();
       },
       onError: showNotificationError,
       onSettled: () => {
