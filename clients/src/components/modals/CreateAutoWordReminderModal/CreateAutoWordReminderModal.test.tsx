@@ -8,8 +8,17 @@ import { SortMode } from "common";
 import { NotificationProvider } from "../../../context/Notification";
 import { Mock } from "vitest";
 import { autoWordReminderService } from "../../../services/auto_word_reminder_service/auto_word_reminder_service";
+import * as useMobilePushNotificationHooks from "../../../hooks/useMobilePushNotifications";
 
 vi.mock("../ModalContainer/ModalContainer");
+
+vi.mock("../../../hooks/useMobilePushNotifications", () => {
+  return {
+    useMobilePushNotificationRegistration: vi
+      .fn()
+      .mockReturnValue({ register: vi.fn() }),
+  };
+});
 
 describe("CreateAutoWordReminderModal component", () => {
   const testUser = {
@@ -123,6 +132,11 @@ describe("CreateAutoWordReminderModal component", () => {
           status,
         };
       });
+    const mockRegister = vi.fn();
+    vi.spyOn(
+      useMobilePushNotificationHooks,
+      "useMobilePushNotificationRegistration"
+    ).mockReturnValue({ register: mockRegister });
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
@@ -177,6 +191,8 @@ describe("CreateAutoWordReminderModal component", () => {
     });
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
+    expect(mockRegister).toHaveBeenCalledTimes(1);
+    expect(mockRegister).toHaveBeenCalledWith();
     expect(mockAutoCreateWordReminder).toHaveBeenCalledTimes(1);
     expect(mockAutoCreateWordReminder).toHaveBeenCalledWith({
       userId: testUser.id,
@@ -201,6 +217,11 @@ describe("CreateAutoWordReminderModal component", () => {
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
+    const mockRegister = vi.fn();
+    vi.spyOn(
+      useMobilePushNotificationHooks,
+      "useMobilePushNotificationRegistration"
+    ).mockReturnValue({ register: mockRegister });
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
@@ -222,6 +243,7 @@ describe("CreateAutoWordReminderModal component", () => {
     const notification = screen.getByRole("dialog", { name: message });
     expect(notification).toBeInTheDocument();
     expect(mockInvalidateQueries).not.toHaveBeenCalled();
+    expect(mockRegister).not.toHaveBeenCalled();
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
     expect(mockAutoCreateWordReminder).toHaveBeenCalledTimes(1);

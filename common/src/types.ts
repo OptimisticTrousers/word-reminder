@@ -143,3 +143,8 @@ export interface Token {
   token: string;
   expires_at: Date;
 }
+
+export interface FCMToken {
+  token: string;
+  user_id: number;
+}

@@ -11,6 +11,8 @@ import { Detail, Token, UserWord } from "common";
 import { subscriptionQueries } from "../db/subscription_queries";
 import { triggerWebPushMsg } from "../utils/trigger_web_push_msg";
 import { tokenQueries } from "../db/token_queries";
+import { getApps, initializeApp } from "firebase-admin/app";
+import { triggerFirebaseMsg } from "../utils/trigger_firebase_msg";
 
 interface AutoWordReminderJobData {
   auto_word_reminder_id: number;
@@ -122,9 +124,12 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
       );
 
       const words: string[] = await Promise.all(wordPromises);
+      const title = "Word Reminder";
+      const body = `Your active word reminder words: ${words.join(", ")}.`;
       const data = {
         id: word_reminder_id,
-        words: words.join(", "),
+        title,
+        body,
       };
       const subscription = await subscriptionQueries.getByUserId(
         Number(wordReminder.user_id)
@@ -132,6 +137,11 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
       const twoDaysMs = 172800;
       await triggerWebPushMsg(subscription, JSON.stringify(data), {
         TTL: wordReminder.has_reminder_onload ? twoDaysMs : 0, // 2 days if the user wants to see the notification once they open their browser and 0 if they never want to see it if their browser is closed
+      });
+      await triggerFirebaseMsg({
+        userId: wordReminder.user_id,
+        title,
+        body,
       });
     }
   }
@@ -144,6 +154,9 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
     await tokenQueries.deleteAll(tokens);
   }
 
+  if (getApps().length === 0) {
+    initializeApp();
+  }
   await boss.createQueue(autoWordReminderQueueName);
   await boss.createQueue(wordReminderQueueName);
   await boss.createQueue(emailQueueName);

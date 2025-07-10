@@ -11,10 +11,12 @@ import { wordReminderQueries } from "../db/word_reminder_queries";
 import { wordQueries } from "../db/word_queries";
 import { subscriptionQueries } from "../db/subscription_queries";
 import * as triggerWebPush from "../utils/trigger_web_push_msg";
+import * as triggerFirebase from "../utils/trigger_firebase_msg";
 import { tokenQueries } from "../db/token_queries";
 import { Job } from "pg-boss";
 import { autoWordReminderQueries } from "../db/auto_word_reminder_queries";
 import { createWorkers } from "../middleware/create_workers";
+import * as firebaseApp from "firebase-admin/app";
 
 const userId = 1;
 const subscription1 = {
@@ -142,6 +144,93 @@ describe("createWorkers", () => {
   const wordReminderQueueName = "word-reminder-queue";
   const emailQueueName = "email-queue";
 
+  it("setups workers when firebase app is not initialized", async () => {
+    const message = "Success!";
+    const app = express();
+    app.use(createWorkers);
+    app.post("/api", (req, res) => {
+      res.json({ message });
+    });
+    const mockGetApps = jest.spyOn(firebaseApp, "getApps").mockReturnValue([]);
+    const mockInitializeApp = jest
+      .spyOn(firebaseApp, "initializeApp")
+      .mockImplementation(jest.fn());
+    const mockCreateQueue = jest
+      .spyOn(boss, "createQueue")
+      .mockImplementation(jest.fn());
+    const mockWork = jest.spyOn(boss, "work").mockImplementation(jest.fn());
+
+    const response = await request(app)
+      .post("/api")
+      .set("Accept", "application/json");
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message });
+    expect(mockGetApps).toHaveBeenCalledTimes(1);
+    expect(mockGetApps).toHaveBeenCalledWith();
+    expect(mockInitializeApp).toHaveBeenCalledTimes(1);
+    expect(mockInitializeApp).toHaveBeenCalledWith();
+    expect(mockCreateQueue).toHaveBeenCalledTimes(3);
+    expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
+    expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
+    expect(mockCreateQueue).toHaveBeenCalledWith(emailQueueName);
+    expect(mockWork).toHaveBeenCalledTimes(3);
+    expect(mockWork).toHaveBeenCalledWith(
+      autoWordReminderQueueName,
+      expect.any(Function)
+    );
+    expect(mockWork).toHaveBeenCalledWith(
+      wordReminderQueueName,
+      expect.any(Function)
+    );
+    expect(mockWork).toHaveBeenCalledWith(emailQueueName, expect.any(Function));
+  });
+
+  it("setups workers when firebase app is already initialized", async () => {
+    const message = "Success!";
+    const app = express();
+    app.use(createWorkers);
+    app.post("/api", (req, res) => {
+      res.json({ message });
+    });
+    const mockGetApps = jest
+      .spyOn(firebaseApp, "getApps")
+      .mockReturnValue([{ name: "app1", options: {} }]);
+    const mockInitializeApp = jest
+      .spyOn(firebaseApp, "initializeApp")
+      .mockImplementation(jest.fn());
+    const mockCreateQueue = jest
+      .spyOn(boss, "createQueue")
+      .mockImplementation(jest.fn());
+    const mockWork = jest.spyOn(boss, "work").mockImplementation(jest.fn());
+
+    const response = await request(app)
+      .post("/api")
+      .set("Accept", "application/json");
+
+    expect(response.headers["content-type"]).toMatch(/json/);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message });
+    expect(mockGetApps).toHaveBeenCalledTimes(1);
+    expect(mockGetApps).toHaveBeenCalledWith();
+    expect(mockInitializeApp).not.toHaveBeenCalled();
+    expect(mockCreateQueue).toHaveBeenCalledTimes(3);
+    expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
+    expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
+    expect(mockCreateQueue).toHaveBeenCalledWith(emailQueueName);
+    expect(mockWork).toHaveBeenCalledTimes(3);
+    expect(mockWork).toHaveBeenCalledWith(
+      autoWordReminderQueueName,
+      expect.any(Function)
+    );
+    expect(mockWork).toHaveBeenCalledWith(
+      wordReminderQueueName,
+      expect.any(Function)
+    );
+    expect(mockWork).toHaveBeenCalledWith(emailQueueName, expect.any(Function));
+  });
+
   describe("when the queue is for auto word reminders", () => {
     it("setups worker for auto word reminders", async () => {
       const message = "Success!";
@@ -150,6 +239,12 @@ describe("createWorkers", () => {
       app.post("/api", (req, res) => {
         res.json({ message });
       });
+      const mockGetApps = jest
+        .spyOn(firebaseApp, "getApps")
+        .mockReturnValue([{ name: "app1", options: {} }]);
+      const mockInitializeApp = jest
+        .spyOn(firebaseApp, "initializeApp")
+        .mockImplementation(jest.fn());
       const mockCreateQueue = jest
         .spyOn(boss, "createQueue")
         .mockImplementation(jest.fn());
@@ -189,6 +284,9 @@ describe("createWorkers", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ message });
+      expect(mockGetApps).toHaveBeenCalledTimes(1);
+      expect(mockGetApps).toHaveBeenCalledWith();
+      expect(mockInitializeApp).not.toHaveBeenCalled();
       expect(mockCreateQueue).toHaveBeenCalledTimes(3);
       expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
       expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -223,6 +321,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -284,6 +388,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -326,6 +433,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -386,6 +499,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -469,6 +585,12 @@ describe("createWorkers", () => {
       app.post("/api", (req, res) => {
         res.json({ message });
       });
+      const mockGetApps = jest
+        .spyOn(firebaseApp, "getApps")
+        .mockReturnValue([{ name: "app1", options: {} }]);
+      const mockInitializeApp = jest
+        .spyOn(firebaseApp, "initializeApp")
+        .mockImplementation(jest.fn());
       const mockCreateQueue = jest
         .spyOn(boss, "createQueue")
         .mockImplementation(jest.fn());
@@ -514,6 +636,9 @@ describe("createWorkers", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ message });
+      expect(mockGetApps).toHaveBeenCalledTimes(1);
+      expect(mockGetApps).toHaveBeenCalledWith();
+      expect(mockInitializeApp).not.toHaveBeenCalled();
       expect(mockCreateQueue).toHaveBeenCalledTimes(3);
       expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
       expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -549,6 +674,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -610,6 +741,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -646,6 +780,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -707,6 +847,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -743,6 +886,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -804,6 +953,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -839,6 +991,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -904,6 +1062,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -948,6 +1109,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -1013,6 +1180,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -1041,13 +1211,19 @@ describe("createWorkers", () => {
         expect(mockTriggerWebPushMsg).not.toHaveBeenCalled();
       });
 
-      it("sends web push notification with 2 days TTL when user wants to see the reminder when they load their browser", async () => {
+      it("sends firebase push notification and web push notification with 2 days TTL when user wants to see the reminder when they load their browser", async () => {
         const message = "Success!";
         const app = express();
         app.use(createWorkers);
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -1102,6 +1278,9 @@ describe("createWorkers", () => {
         const mockTriggerWebPushMsg = jest
           .spyOn(triggerWebPush, "triggerWebPushMsg")
           .mockImplementation(jest.fn());
+        const mockTriggerFirebaseMsg = jest
+          .spyOn(triggerFirebase, "triggerFirebaseMsg")
+          .mockImplementation(jest.fn());
         jest.spyOn(global.Date, "now").mockImplementation(() => {
           return new Date(0).valueOf();
         });
@@ -1113,6 +1292,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -1142,12 +1324,19 @@ describe("createWorkers", () => {
         ).toHaveBeenCalledWith(wordReminder.id);
         expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledTimes(1);
         expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledWith(userId);
+        expect(mockTriggerFirebaseMsg).toHaveBeenCalledTimes(1);
+        expect(mockTriggerFirebaseMsg).toHaveBeenCalledWith({
+          userId: wordReminder.user_id,
+          title: "Word Reminder",
+          body: `Your active word reminder words: ${word1.details[0].word}, ${word2.details[0].word}.`,
+        });
         expect(mockTriggerWebPushMsg).toHaveBeenCalledTimes(1);
         expect(mockTriggerWebPushMsg).toHaveBeenCalledWith(
           subscription1,
           JSON.stringify({
             id: wordReminder.id,
-            words: `${word1.details[0].word}, ${word2.details[0].word}`,
+            title: "Word Reminder",
+            body: `Your active word reminder words: ${word1.details[0].word}, ${word2.details[0].word}.`,
           }),
           { TTL: 172800 }
         );
@@ -1160,6 +1349,12 @@ describe("createWorkers", () => {
         app.post("/api", (req, res) => {
           res.json({ message });
         });
+        const mockGetApps = jest
+          .spyOn(firebaseApp, "getApps")
+          .mockReturnValue([{ name: "app1", options: {} }]);
+        const mockInitializeApp = jest
+          .spyOn(firebaseApp, "initializeApp")
+          .mockImplementation(jest.fn());
         const mockCreateQueue = jest
           .spyOn(boss, "createQueue")
           .mockImplementation(jest.fn());
@@ -1214,6 +1409,9 @@ describe("createWorkers", () => {
         const mockTriggerWebPushMsg = jest
           .spyOn(triggerWebPush, "triggerWebPushMsg")
           .mockImplementation(jest.fn());
+        const mockTriggerFirebaseMsg = jest
+          .spyOn(triggerFirebase, "triggerFirebaseMsg")
+          .mockImplementation(jest.fn());
         jest.spyOn(global.Date, "now").mockImplementation(() => {
           return new Date(0).valueOf();
         });
@@ -1225,6 +1423,9 @@ describe("createWorkers", () => {
         expect(response.headers["content-type"]).toMatch(/json/);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message });
+        expect(mockGetApps).toHaveBeenCalledTimes(1);
+        expect(mockGetApps).toHaveBeenCalledWith();
+        expect(mockInitializeApp).not.toHaveBeenCalled();
         expect(mockCreateQueue).toHaveBeenCalledTimes(3);
         expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
         expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -1254,12 +1455,19 @@ describe("createWorkers", () => {
         ).toHaveBeenCalledWith(wordReminder.id);
         expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledTimes(1);
         expect(mockSubscriptionQueriesGetByUserId).toHaveBeenCalledWith(userId);
+        expect(mockTriggerFirebaseMsg).toHaveBeenCalledTimes(1);
+        expect(mockTriggerFirebaseMsg).toHaveBeenCalledWith({
+          userId: wordReminder.user_id,
+          title: "Word Reminder",
+          body: `Your active word reminder words: ${word1.details[0].word}, ${word2.details[0].word}.`,
+        });
         expect(mockTriggerWebPushMsg).toHaveBeenCalledTimes(1);
         expect(mockTriggerWebPushMsg).toHaveBeenCalledWith(
           subscription1,
           JSON.stringify({
             id: wordReminder.id,
-            words: `${word1.details[0].word}, ${word2.details[0].word}`,
+            title: "Word Reminder",
+            body: `Your active word reminder words: ${word1.details[0].word}, ${word2.details[0].word}.`,
           }),
           { TTL: 0 }
         );
@@ -1275,6 +1483,12 @@ describe("createWorkers", () => {
       app.post("/api", (req, res) => {
         res.json({ message });
       });
+      const mockGetApps = jest
+        .spyOn(firebaseApp, "getApps")
+        .mockReturnValue([{ name: "app1", options: {} }]);
+      const mockInitializeApp = jest
+        .spyOn(firebaseApp, "initializeApp")
+        .mockImplementation(jest.fn());
       const mockCreateQueue = jest
         .spyOn(boss, "createQueue")
         .mockImplementation(jest.fn());
@@ -1317,6 +1531,9 @@ describe("createWorkers", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ message });
+      expect(mockGetApps).toHaveBeenCalledTimes(1);
+      expect(mockGetApps).toHaveBeenCalledWith();
+      expect(mockInitializeApp).not.toHaveBeenCalled();
       expect(mockCreateQueue).toHaveBeenCalledTimes(3);
       expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
       expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);
@@ -1351,6 +1568,12 @@ describe("createWorkers", () => {
       app.post("/api", (req, res) => {
         res.json({ message });
       });
+      const mockGetApps = jest
+        .spyOn(firebaseApp, "getApps")
+        .mockReturnValue([{ name: "app1", options: {} }]);
+      const mockInitializeApp = jest
+        .spyOn(firebaseApp, "initializeApp")
+        .mockImplementation(jest.fn());
       const mockCreateQueue = jest
         .spyOn(boss, "createQueue")
         .mockImplementation(jest.fn());
@@ -1404,6 +1627,9 @@ describe("createWorkers", () => {
       expect(response.headers["content-type"]).toMatch(/json/);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ message });
+      expect(mockGetApps).toHaveBeenCalledTimes(1);
+      expect(mockGetApps).toHaveBeenCalledWith();
+      expect(mockInitializeApp).not.toHaveBeenCalled();
       expect(mockCreateQueue).toHaveBeenCalledTimes(3);
       expect(mockCreateQueue).toHaveBeenCalledWith(autoWordReminderQueueName);
       expect(mockCreateQueue).toHaveBeenCalledWith(wordReminderQueueName);

@@ -24,7 +24,10 @@ test.describe("Forgot password page", () => {
     await expect(loginLink).toBeVisible();
   });
 
-  test("submitting request to reset password when user exists", async ({ page, request }) => {
+  test("submitting request to reset password when user exists", async ({
+    page,
+    request,
+  }) => {
     await request.post(`${VITE_API_DOMAIN}/users`, {
       data: testUser,
     });

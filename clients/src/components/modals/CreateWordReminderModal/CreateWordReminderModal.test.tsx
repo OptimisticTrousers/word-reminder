@@ -8,6 +8,7 @@ import { CreateWordReminderModal } from "./CreateWordReminderModal";
 import { userWordService } from "../../../services/user_word_service";
 import { ErrorBoundary } from "../../ErrorBoundary/ErrorBoundary";
 import { Mock } from "vitest";
+import * as useMobilePushNotificationHooks from "../../../hooks/useMobilePushNotifications";
 
 vi.mock("../../ErrorBoundary/ErrorBoundary");
 vi.mock("../ModalContainer/ModalContainer");
@@ -202,6 +203,11 @@ describe("CreateWordReminderModal component", () => {
       .mockImplementation(async () => {
         return { json: { wordReminder }, status };
       });
+    const mockRegister = vi.fn();
+    vi.spyOn(
+      useMobilePushNotificationHooks,
+      "useMobilePushNotificationRegistration"
+    ).mockReturnValue({ register: mockRegister });
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
@@ -233,6 +239,8 @@ describe("CreateWordReminderModal component", () => {
     expect(notification).toBeInTheDocument();
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
+    expect(mockRegister).toHaveBeenCalledTimes(1);
+    expect(mockRegister).toHaveBeenCalledWith();
     expect(mockCreateWordReminder).toHaveBeenCalledTimes(1);
     expect(mockCreateWordReminder).toHaveBeenCalledWith({
       userId: String(testUser.id),
@@ -280,6 +288,11 @@ describe("CreateWordReminderModal component", () => {
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
+    const mockRegister = vi.fn();
+    vi.spyOn(
+      useMobilePushNotificationHooks,
+      "useMobilePushNotificationRegistration"
+    ).mockReturnValue({ register: mockRegister });
     const mockToggleModal = vi.fn();
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
@@ -322,6 +335,7 @@ describe("CreateWordReminderModal component", () => {
     });
     expect(mockToggleModal).toHaveBeenCalledTimes(1);
     expect(mockToggleModal).toHaveBeenCalledWith();
+    expect(mockRegister).not.toHaveBeenCalled();
     expect(mockInvalidateQueries).not.toHaveBeenCalled();
   });
 

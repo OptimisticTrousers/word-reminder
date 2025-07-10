@@ -15,6 +15,7 @@ import { useNotificationError } from "../../../hooks/useNotificationError";
 import { wordReminderService } from "../../../services/word_reminder_service";
 import { ToggleModal } from "../types";
 import { Reminder } from "../../ui/Reminder";
+import { useMobilePushNotificationRegistration } from "../../../hooks/useMobilePushNotifications";
 
 interface Props {
   toggleModal: ToggleModal;
@@ -26,6 +27,7 @@ export const CreateWordReminderModal = CSSModules(
     const userId = String(user.id);
     const { showNotification } = useContext(NotificationContext);
     const { showNotificationError } = useNotificationError();
+    const { register } = useMobilePushNotificationRegistration(userId);
     const queryClient = useQueryClient();
     const { data } = useQuery({
       queryKey: ["userWords"],
@@ -47,6 +49,7 @@ export const CreateWordReminderModal = CSSModules(
         queryClient.invalidateQueries({
           queryKey: ["wordReminders"],
         });
+        register();
       },
       onError: showNotificationError,
       onSettled: () => {

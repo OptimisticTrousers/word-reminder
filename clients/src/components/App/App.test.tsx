@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 
 import { App } from "./App";
 import { createRoutesStub } from "react-router-dom";
-import * as hooks from "../../hooks/useMobileTextSelectionAction";
+import * as useMobileTextSelectionActionHooks from "../../hooks/useMobileTextSelectionAction";
+import * as useMobilePushNotificationHooks from "../../hooks/useMobilePushNotifications";
 
 vi.mock("../../layouts/Footer", () => {
   return {
@@ -50,7 +51,16 @@ describe("App component", () => {
   describe("when MODE === 'production'", () => {
     it("renders main element and footer when the user is confirmed", () => {
       const mockUseMobileTextSelectionAction = vi
-        .spyOn(hooks, "useMobileTextSelectionAction")
+        .spyOn(
+          useMobileTextSelectionActionHooks,
+          "useMobileTextSelectionAction"
+        )
+        .mockImplementation(vi.fn());
+      const mockUseMobilePushNotificationListeners = vi
+        .spyOn(
+          useMobilePushNotificationHooks,
+          "useMobilePushNotificationListeners"
+        )
         .mockImplementation(vi.fn());
       vi.stubEnv("MODE", "production");
       const Stub = createRoutesStub([
@@ -73,12 +83,25 @@ describe("App component", () => {
       expect(mockUseMobileTextSelectionAction).toHaveBeenCalledWith(
         String(user.id)
       );
+      expect(mockUseMobilePushNotificationListeners).toHaveBeenCalledTimes(1);
+      expect(mockUseMobilePushNotificationListeners).toHaveBeenCalledWith(
+        String(user.id)
+      );
       expect(asFragment()).toMatchSnapshot();
     });
 
     it("renders main element and footer when the user is not confirmed", () => {
       const mockUseMobileTextSelectionAction = vi
-        .spyOn(hooks, "useMobileTextSelectionAction")
+        .spyOn(
+          useMobileTextSelectionActionHooks,
+          "useMobileTextSelectionAction"
+        )
+        .mockImplementation(vi.fn());
+      const mockUseMobilePushNotificationListeners = vi
+        .spyOn(
+          useMobilePushNotificationHooks,
+          "useMobilePushNotificationListeners"
+        )
         .mockImplementation(vi.fn());
       vi.stubEnv("MODE", "production");
       const Stub = createRoutesStub([
@@ -97,13 +120,26 @@ describe("App component", () => {
       expect(mockUseMobileTextSelectionAction).toHaveBeenCalledWith(
         String(user.id)
       );
+      expect(mockUseMobilePushNotificationListeners).toHaveBeenCalledTimes(1);
+      expect(mockUseMobilePushNotificationListeners).toHaveBeenCalledWith(
+        String(user.id)
+      );
     });
   });
 
   describe("when MODE !== 'production'", () => {
     it("renders main element and footer", () => {
       const mockUseMobileTextSelectionAction = vi
-        .spyOn(hooks, "useMobileTextSelectionAction")
+        .spyOn(
+          useMobileTextSelectionActionHooks,
+          "useMobileTextSelectionAction"
+        )
+        .mockImplementation(vi.fn());
+      const mockUseMobilePushNotificationListeners = vi
+        .spyOn(
+          useMobilePushNotificationHooks,
+          "useMobilePushNotificationListeners"
+        )
         .mockImplementation(vi.fn());
       vi.stubEnv("MODE", "development");
       const Stub = createRoutesStub([
@@ -124,6 +160,10 @@ describe("App component", () => {
       expect(outlet).toBeInTheDocument();
       expect(mockUseMobileTextSelectionAction).toHaveBeenCalledTimes(1);
       expect(mockUseMobileTextSelectionAction).toHaveBeenCalledWith(
+        String(user.id)
+      );
+      expect(mockUseMobilePushNotificationListeners).toHaveBeenCalledTimes(1);
+      expect(mockUseMobilePushNotificationListeners).toHaveBeenCalledWith(
         String(user.id)
       );
       expect(asFragment()).toMatchSnapshot();

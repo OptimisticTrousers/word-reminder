@@ -15,7 +15,10 @@ describe("triggerWebPushMsg", () => {
       "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM=",
     auth: "tBHItJI5svbpez7KI4CCXg==",
   };
-  const words = "hello, clemency, dubious";
+  const data = JSON.stringify({
+    title: "Word Reminder",
+    body: `Your active word reminder words: hello, clemency, dubious.`,
+  });
 
   it("calls the functions to send a notification", async () => {
     const mockSendNotification = jest
@@ -33,7 +36,7 @@ describe("triggerWebPushMsg", () => {
         auth: subscription1.auth,
         userId: subscription1.userId,
       },
-      words,
+      data,
       { TTL: 172800 } // 2 days
     );
 
@@ -43,7 +46,7 @@ describe("triggerWebPushMsg", () => {
         endpoint: subscription1.endpoint,
         keys: { p256dh: subscription1.p256dh, auth: subscription1.auth },
       },
-      words,
+      data,
       { TTL: 172800 } // 2 days
     );
     expect(mockDeleteById).not.toHaveBeenCalled();
@@ -69,7 +72,7 @@ describe("triggerWebPushMsg", () => {
         auth: subscription1.auth,
         userId: subscription1.userId,
       },
-      words,
+      data,
       { TTL: 172800 } // 2 days
     );
 
@@ -79,7 +82,7 @@ describe("triggerWebPushMsg", () => {
         endpoint: subscription1.endpoint,
         keys: { p256dh: subscription1.p256dh, auth: subscription1.auth },
       },
-      words,
+      data,
       { TTL: 172800 } // 2 days
     );
     expect(mockDeleteById).toHaveBeenCalledTimes(1);

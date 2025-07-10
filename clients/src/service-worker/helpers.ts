@@ -57,7 +57,8 @@ export const createWebpushService: CreateWebPushService = (
     }
 
     const json = event.data.json();
-    const words = json.words;
+    const title = json.title;
+    const body = json.body;
     wordReminderId[0] = json.id;
     const options: NotificationOptions & {
       actions?: {
@@ -66,7 +67,7 @@ export const createWebpushService: CreateWebPushService = (
         icon: string;
       }[];
     } = {
-      body: words,
+      body,
       icon: "/favicon/web-app-manifest-192x192.png",
     };
 
@@ -81,10 +82,7 @@ export const createWebpushService: CreateWebPushService = (
       ];
     }
 
-    const promiseChain = self.registration.showNotification(
-      `Word Reminder Chrome Extension: your active word reminder has these words:`,
-      options
-    );
+    const promiseChain = self.registration.showNotification(title, options);
 
     event.waitUntil(promiseChain);
   }

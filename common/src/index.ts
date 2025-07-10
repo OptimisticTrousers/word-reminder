@@ -11,6 +11,7 @@ export {
   Template,
   User,
   SortMode,
+  FCMToken,
   UserWord,
   UserWordsWordReminders,
   AutoWordReminder,
