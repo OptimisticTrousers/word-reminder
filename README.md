@@ -49,8 +49,11 @@ Have you ever read a book, article, or any other form of written content and dis
 ## Screenshots
 
 ![Word Reminder Menu](https://github.com/user-attachments/assets/7b78e167-9c39-423d-b3f5-a11128166e8f)
+
 ![Word Reminder Words](https://github.com/user-attachments/assets/bed385a8-a710-4b67-8b67-cd654d3d569d)
+
 ![Word Reminder Context Menu](https://github.com/user-attachments/assets/1c859509-3120-4b61-b2da-9cbb6fd6a519)
+
 ![Word Reminder Notification](https://github.com/user-attachments/assets/6da01e4a-0d37-4600-b05c-3ac04553e2ac)
 
 <img width="270" alt="" src="https://github.com/user-attachments/assets/38c2df58-2c55-457b-9944-a986d221df0d" />
