@@ -131,6 +131,18 @@
   margin-right: auto;
 }
 
+.section--images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.section__screenshot--mobile {
+  max-width: 270px;
+  box-shadow: none;
+  border: 2px solid var(--border-color);
+}
+
 .section__grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
