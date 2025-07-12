@@ -28,6 +28,7 @@ app.use(
     origin: [
       "http://localhost",
       "chrome-extension://hiligdjmbpdajadhmciipkifbofekokl",
+      "*",
     ],
     credentials: true,
   })
