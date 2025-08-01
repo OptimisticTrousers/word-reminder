@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { fcmTokenQueries } from "../db/fcm_token_queries";
 // Import db setup and teardown functionality
 import "../db/test_populatedb";

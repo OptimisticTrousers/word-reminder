@@ -18,7 +18,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
     <p
       class="_word__created-at_063118"
     >
-      5/12/2020, 7:50:21 PM
+      Tue, 12 May 2020 23:50:21 GMT
     </p>
     <div
       data-testid="image-carousel"
@@ -373,7 +373,7 @@ exports[`UserWord component > renders word, origin, phonetics, meanings, license
     <p
       class="_word__created-at_063118"
     >
-      5/12/2020, 7:50:21 PM
+      Tue, 12 May 2020 23:50:21 GMT
     </p>
     <div
       data-testid="image-carousel"

@@ -33,9 +33,9 @@
   - [Setup Local Chrome Extension](#setup-local-chrome-extension)
   - [Setup Local Mobile App](#setup-local-mobile-app)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-    - [Chrome](#chrome)
-    - [Firefox](#firefox)
-    - [Edge](#edge)
+      - [Chrome](#chrome)
+      - [Firefox](#firefox)
+      - [Edge](#edge)
   - [Contribute](#contribute)
   - [Next Steps](#next-steps)
   - [Known Bugs](#known-bugs)
@@ -101,6 +101,7 @@ The server, which both the mobile app and chrome extension use, utilizes the [Fr
 - Allows users to import and export a CSV file of words
 - Has a mobile app and chrome extension
 - 97%+ test coverage for the chrome extension, mobile app, and server with end-to-end tests for critical features
+- Includes a comphrehensive CI/CD pipeline with GitHub Actions.
 
 ## Download
 
@@ -389,9 +390,9 @@ With Edge, open the [edge://extensions/](edge://extensions/) page and click on t
 
 Additionally, you must go to [fixtures.ts](https://github.com/OptimisticTrousers/word-reminder/blob/main/clients/tests/e2e/helpers.ts) and change the email address to one verified by your [Amazon SES](https://aws.amazon.com/ses/)Amazon SES() account.
 
-5. If you make any changes to the `service-worker` folder under `clients`, `npm run extension` will not watch for those changes. Use the `npm run sw` command simultaneously with `npm run extension` in order to watch for service-worker changes.
+5. If you make any changes to the `service-worker` folder under `clients`, `npm run extension -- --watch` will not watch for those changes. Use the `npm run sw -- --watch` command simultaneously with `npm run extension -- --watch` in order to watch for service-worker changes.
 6. Send a pull request and bug the maintainer until it gets merged and published. :) Make sure to add yourself to CONTRIBUTORS.txt.
-7. A GitHub Actions workflow will automatically lint, test, and build the application.
+7. A GitHub Actions workflow will automatically lint, test, and build the application for both the frontend and backend, as well as run all e2e tests when any pull requests are made to the main branch.
 
 ## Next Steps
 

@@ -1,0 +1,127 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+env:
+  # Server-side
+  DATABASE_URL: postgresql://postgres:password@postgres:5432/word_reminder
+  NODE_ENV: test
+  TEST_DATABASE_URL: postgresql://postgres:password@postgres:5432/word_reminder
+  SALT: 17
+  SECRET: keyboard cat
+  SERVER_PORT: 5000
+  SERVER_URL: http://localhost
+  VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+  WORD_REMINDER_EMAIL: ${{ secrets.WORD_REMINDER_EMAIL }}
+
+  # Client-side
+  VITE_API_DOMAIN: http://localhost:5000/api
+  VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+
+
+jobs:
+  deployment_pipeline:
+    runs-on: ubuntu-latest
+    container: node:20
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: word_reminder
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install common dependencies
+        working-directory: "common"
+        run: npm install
+      - name: Build common
+        working-directory: "common"
+        run: npm run dev
+      - name: Common tests
+        working-directory: "common"
+        run: npm run coverage
+      - uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: common-coverage 
+          path: common/coverage/
+          retention-days: 30
+
+      - name: Install server dependencies
+        working-directory: "server"
+        run: npm install
+      - name: Check server style
+        working-directory: "server"
+        run: npm run lint
+      - name: Seed database
+        working-directory: "server"
+        run: npm run seed
+      - name: Server tests
+        working-directory: "server"
+        run: npm run coverage
+      - uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: server-coverage 
+          path: server/coverage/
+          retention-days: 30
+
+      - name: Install dependencies
+        working-directory: "clients"
+        run: npm install
+      - name: Check clients style
+        working-directory: "clients"
+        run: npm run lint
+      - name: Build
+        working-directory: "clients"
+        run: npm run build
+      - name: Clients tests
+        working-directory: "clients"
+        run: npm run coverage
+      - uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: clients-coverage 
+          path: clients/coverage/
+          retention-days: 30
+      - name: Install Playwright Browsers
+        working-directory: "clients"
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        working-directory: "clients"
+        run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: playwright-report
+          path: clients/playwright-report/
+          retention-days: 30
+  tag_release:
+    needs: [deployment_pipeline]
+    runs-on: ubuntu-22.04
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.73.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: "#patch"
