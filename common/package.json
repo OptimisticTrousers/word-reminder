@@ -4,6 +4,7 @@
   "main": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "scripts": {
+    "coverage": "jest --coverage",
     "compile": "tsc",
     "build": "webpack --config webpack.prod.js",
     "postdev": "npm run compile",

@@ -33,7 +33,7 @@ describe("UserWord component", () => {
   };
   const userWordId = "1";
   const status = 200;
-  const created_at = new Date("2020-05-12T23:50:21.817Z");
+  const created_at = new Date("2020-05-12T23:50:21.817Z").toUTCString();
 
   function setup({ queryClient }: { queryClient: QueryClient }) {
     const Stub = createRoutesStub([

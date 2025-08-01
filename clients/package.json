@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build --config vite.sw.config.ts && vite build --config vite.config.ts",
-    "extension": "NODE_ENV=development tsc -b && vite build --mode development --watch",
-    "sw": "vite build --config vite.sw.config.ts --watch",
+    "extension": "NODE_ENV=development tsc -b && vite build --mode development",
+    "sw": "vite build --config vite.sw.config.ts",
     "coverage": "vitest run --coverage",
     "test": "vitest",
+    "pree2e": "npm run sw && npm run extension",
     "e2e": "playwright test --project=chromium",
     "e2e:report": "playwright show-report",
     "lint": "eslint .",

@@ -6,7 +6,7 @@ import { variables } from "../config/variables";
 const { DATABASE_URL } = variables;
 
 // Deleting all of the documents in each collection in the database for the real Mongo database
-await (async () => {
+void (async () => {
   try {
     const database = createPopulateDb(
       new Client({ connectionString: DATABASE_URL })
