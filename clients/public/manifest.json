@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A word reminder chrome extension that allows users to store words in their dictionary and reminds users of the words that they store so that users can remember words that they come across in their readings.",
   "name": "Word Reminder",
   "action": {
