@@ -1,0 +1,15 @@
+name: Render Deploy
+on:
+  push:
+    branches:
+      - main
+env:
+  CONDITION: ${{ contains(github.event.head_commit.message, '#skip') }}
+jobs:
+  deploy:
+    name: Deploy app
+    if: ${{ github.env.CONDITION == false }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Trigger deployment
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
