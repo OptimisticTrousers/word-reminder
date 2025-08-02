@@ -100,6 +100,9 @@ passport.deserializeUser(async (id: string, done) => {
   }
 });
 
+app.get("/health", (req, res) => {
+  res.send("ok");
+});
 app.use("/", viewRouter);
 app.use("/api", apiRouter);
 
