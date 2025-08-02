@@ -15,7 +15,7 @@ for (const variable of [
   "NODE_ENV",
   "SALT",
   "SECRET",
-  "SERVER_PORT",
+  "PORT",
   "VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
   "WORD_REMINDER_EMAIL",

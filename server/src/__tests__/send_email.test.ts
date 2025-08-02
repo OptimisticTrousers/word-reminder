@@ -15,7 +15,7 @@ import { Subject, Template } from "common";
 import { variables } from "../config/variables";
 import { userQueries } from "../db/user_queries";
 
-const { SERVER_URL, SERVER_PORT } = variables;
+const { SERVER_URL, PORT } = variables;
 
 const userId = 1;
 const user = {
@@ -253,7 +253,7 @@ describe("send_email", () => {
       html: ejs.render(
         emailTemplate,
         {
-          url: `${SERVER_URL}:${SERVER_PORT}/confirmAccount/${userId}&${token.token}`,
+          url: `${SERVER_URL}:${PORT}/confirmAccount/${userId}&${token.token}`,
           title: "Confirm Account",
         },
         {
@@ -302,7 +302,7 @@ describe("send_email", () => {
       html: ejs.render(
         emailTemplate,
         {
-          url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
+          url: `${SERVER_URL}:${PORT}/changePassword/${userId}&${token.token}`,
           title: "Change Password",
         },
         {
@@ -356,7 +356,7 @@ describe("send_email", () => {
       html: ejs.render(
         emailTemplate,
         {
-          url: `${SERVER_URL}:${SERVER_PORT}/changePassword/${userId}&${token.token}`,
+          url: `${SERVER_URL}:${PORT}/changePassword/${userId}&${token.token}`,
           title: "Forgot Password",
         },
         {
@@ -405,7 +405,7 @@ describe("send_email", () => {
       html: ejs.render(
         emailTemplate,
         {
-          url: `${SERVER_URL}:${SERVER_PORT}/changeEmail/${userId}&${token.token}`,
+          url: `${SERVER_URL}:${PORT}/changeEmail/${userId}&${token.token}`,
           title: "Change Email",
         },
         {
