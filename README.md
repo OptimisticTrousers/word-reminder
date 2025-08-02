@@ -33,9 +33,9 @@
   - [Setup Local Chrome Extension](#setup-local-chrome-extension)
   - [Setup Local Mobile App](#setup-local-mobile-app)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-      - [Chrome](#chrome)
-      - [Firefox](#firefox)
-      - [Edge](#edge)
+    - [Chrome](#chrome)
+    - [Firefox](#firefox)
+    - [Edge](#edge)
   - [Contribute](#contribute)
   - [Next Steps](#next-steps)
   - [Known Bugs](#known-bugs)
@@ -308,7 +308,7 @@ Here is a step by step plan on how to locally setup the Word Reminder chrome ext
   NODE_ENV=development
   SALT=11
   SECRET=[enter any secret value or 'keyboard cat']
-  SERVER_PORT=5000
+  PORT=5000
   SERVER_URL=http://localhost
   VAPID_PUBLIC_KEY=[YOUR VAPID PUBLIC KEY HERE]
   AWS_ACCESS_KEY_ID=[YOUR AWS ACCESS KEY ID HERE]
@@ -393,6 +393,7 @@ Additionally, you must go to [fixtures.ts](https://github.com/OptimisticTrousers
 5. If you make any changes to the `service-worker` folder under `clients`, `npm run extension -- --watch` will not watch for those changes. Use the `npm run sw -- --watch` command simultaneously with `npm run extension -- --watch` in order to watch for service-worker changes.
 6. Send a pull request and bug the maintainer until it gets merged and published. :) Make sure to add yourself to CONTRIBUTORS.txt.
 7. A GitHub Actions workflow will automatically lint, test, and build the application for both the frontend and backend, as well as run all e2e tests when any pull requests are made to the main branch.
+8. You can skip the deployment step if unnecessary (ie. updating docs) by including the "#skip" tag in your commit message.
 
 ## Next Steps
 
