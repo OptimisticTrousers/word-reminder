@@ -2,7 +2,7 @@
   font-size: 1.25rem;
   background-color: var(--card-bkg-color);
   padding: 4rem 1.25rem;
-  margin-top: 6rem;
+  margin-top: auto;
 }
 
 .footer__content {
