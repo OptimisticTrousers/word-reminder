@@ -14,7 +14,7 @@ import { email } from "../utils/email";
 import { userQueries } from "../db/user_queries";
 import { variables } from "../config/variables";
 
-const { SERVER_URL, PORT } = variables;
+const { SERVER_URL } = variables;
 
 // @desc Sends an email
 // @route POST /api/users/:userId/emails
@@ -108,7 +108,7 @@ export const send_email = [
       const html = ejs.render(
         emailTemplate,
         {
-          url: `${SERVER_URL}:${PORT}/${templateRoute}/${userId}&${token.token}`,
+          url: `${SERVER_URL}/${templateRoute}/${userId}&${token.token}`,
           ...(templateTitle != "" && { title: templateTitle }),
         },
         {

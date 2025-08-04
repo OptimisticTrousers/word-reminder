@@ -53,6 +53,7 @@ body {
   --success-bkg-color: rgb(154, 230, 180);
   --success-text-color: rgb(20, 83, 45);
   background-color: var(--bkg-color);
+  color: var(--text-color);
 }
 
 a {
