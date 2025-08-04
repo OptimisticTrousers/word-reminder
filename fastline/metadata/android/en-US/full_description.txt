@@ -1,0 +1,65 @@
+A simple vocabulary building tool.
+
+Word Reminder is an open-source application that allows users to store words they come across in their readings and receive reminders of those words, ensuring better retention and learning of vocabulary.
+
+Why Word Reminder?
+
+☑ Cross-platform with a chrome extension and mobile app, allowing you to share words across devices
+☑ Easy to set up, so you can get through anything you are reading right away
+☑ Little customization needed: allows you to automatically create word reminders
+☑ Schedule intervals for word reminder notifications
+☑ Word Reminder does not track the habits of users
+☑ Free to use with no ads, making it easy to jump in and start adding words to your dictionary
+
+-------------------------
+
+What is Word Reminder?
+
+Word Reminder is a vocabulary building tool designed to be lightweight and efficient. Word Reminder adds a text selection context menu option called "Add Word" or “Word Reminder” on all websites, allowing you to highlight and add words to your dictionary quickly. Word Reminder also sends desktop or push notifications that will remind you of the words you have in your active word reminder based on your custom preferences.
+
+One of the most unique vocabulary building tools available, Word Reminder is simple to set up and easy to use.
+
+-------------------------
+Set and forget.
+
+Add Word Reminder to your browser to automatically remind yourself of words and add words to your dictionary. Get through your readings faster.
+
+Improve your reading life and prevent word vocabulary regression by adding words to your dictionary. Maintain everything in a cross-platform account that you can share.
+
+Use Word Reminder to accumulate a conglomerate of words and receive desktop or push notifications at customizable intervals.
+
+-------------------------
+
+More reasons to choose Word Reminder:
+
+Word Images and Definitions
+Get definitions and images (if applicable) of words that you add to your dictionary, along with synonyms, antonyms, etymology, different meanings, part of speech, and more.
+
+Learned Words
+Toggle your words as learned when you feel that you have fully learned them.
+
+Sorting, Search, and Filtering
+Use a variety of sorting and searching in order to search for the words you already have in your dictionary or word reminders.
+
+Word Reminder Import/Export
+Share your dictionary of words with others or for your own purposes by exporting/importing a CSV file of all of the words in your dictionary. 
+
+Theming
+Enjoy light or dark themes based on your preference.
+
+Minimalistic
+Vocabulary apps can be chockful of complex and hard-to-use features. Word Reminder has a very targeted and specific problem that it tries to solve and does not go outside of that problem scope.
+
+-------------------------
+
+**How to Use**
+Install the Word Reminder application from the store.
+
+Register for a user account by using your email and password. Word Reminder will ask you to confirm your email so make sure you have access to the email you are using to sign up.
+In order to add words to your dictionary, you can highlight any text on a webpage, right-click, and select the "Add Word" or “Word Reminder” option. Additionally, you can copy and paste a word into the "Add Word" field on the home page and click on the "Add" button.
+
+In order to create word reminders to remind you of the words, navigate to the "Word Reminders" page and either create an "Auto Word Reminder" or a "Word Reminder". Most users will want to have word reminders created for them automatically. Enter in your preferences in order to create a word reminder based on the duration you select. The word reminder will periodically send you a desktop or push notification based on the reminder that you select. Word reminders can be disabled at any time and only one can be active at a time.
+
+Start collecting and remembering words!
+
+This is an open source project. See the official repository for more details: https://github.com/OptimisticTrousers/word-reminder.

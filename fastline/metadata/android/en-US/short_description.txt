@@ -1,0 +1,1 @@
+Vocabulary building tool used to store, look up, and create word reminders.
