@@ -33,10 +33,11 @@
   - [Setup Local Chrome Extension](#setup-local-chrome-extension)
   - [Setup Local Mobile App](#setup-local-mobile-app)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-    - [Chrome](#chrome)
-    - [Firefox](#firefox)
-    - [Edge](#edge)
+      - [Chrome](#chrome)
+      - [Firefox](#firefox)
+      - [Edge](#edge)
   - [Contribute](#contribute)
+  - [Delete Account](#delete-account)
   - [Next Steps](#next-steps)
   - [Known Bugs](#known-bugs)
   - [Support](#support)
@@ -84,7 +85,7 @@ The Word Reminder chrome extension leverages the [Web Push API](https://develope
 
 The Word Reminder mobile app uses [Capacitor](https://capacitorjs.com/) to convert the extension into a WebView-based mobile app. The mobile port reuses as much code used in the chrome extension as possible. However, there are a few notable differences. The mobile port does not use any [Chrome APIs](https://developer.chrome.com/docs/extensions/reference/api) because they are not available inside of a WebView. Additionally, the [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API#browser_compatibility) is not used since it is not available inside of a WebView. Instead, the mobiel app utilizes the [@capacitator/push-notifications](https://capacitorjs.com/docs/apis/push-notifications), an [offical Capacitor plugin](https://github.com/ionic-team/capacitor-plugins) which relies on [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) and the [Apple Push Notification Service](https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns) under the hood. Unlike the chrome extension, the mobile app needs to explicitly request permission from the user to send push notifications. Lastly, a text selection context menu option called "Word Reminder" is created with a custom plugin called [TextSelectionActionPlugin](https://github.com/OptimisticTrousers/word-reminder/blob/mobile/clients/android/app/src/main/java/com/wordreminder/www/TextSelectionActionPlugin.java) and by specifying an ACTION_PROCESS_TEXT intent-filter in [AndroidManifest.xml](https://github.com/OptimisticTrousers/word-reminder/blob/mobile/clients/android/app/src/main/AndroidManifest.xml). When the user highlights a word, this "Word Reminder" option will add the word to the user's dictionary across apps. More details on how this feature works is explained here: https://medium.com/androiddevelopers/custom-text-selection-actions-with-action-process-text-191f792d2999. Due to the aforementioned details, the mobile port does not need to use a service worker.
 
-The server, which both the mobile app and chrome extension use, utilizes the [Free Dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI) to fetch word definitions. To fetch images for words (when available), it utilizes the [Wikimedia Commons API](https://commons.wikimedia.org/w/api.php?action=help&modules=main). For scheduling related to word reminders, [pg-boss](https://github.com/timgit/pg-boss) is used since it provides convinient APIs for job queuing with PostgresQL. The server uses [Amazon SES](https://aws.amazon.com/ses/) to send emails to users for email confirmation and resetting passwords.
+The server, which both the mobile app and chrome extension use, utilizes the [Free Dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI) to fetch word definitions. To fetch images for words (when available), it utilizes the [Wikimedia Commons API](https://commons.wikimedia.org/w/api.php?action=help&modules=main). For scheduling related to word reminders, [pg-boss](https://github.com/timgit/pg-boss) is used since it provides convinient APIs for job queuing with PostgresQL. The server uses [Amazon SES](https://aws.amazon.com/ses/) to send emails to users for email confirmation and resetting passwords. The server uses [Helmet](https://helmetjs.github.io/) to secure HTTP response headers.
 
 ## Features
 
@@ -309,7 +310,7 @@ Here is a step by step plan on how to locally setup the Word Reminder chrome ext
   SALT=11
   SECRET=[enter any secret value or 'keyboard cat']
   PORT=5000
-  SERVER_URL=http://localhost
+  SERVER_URL=http://localhost:5000
   VAPID_PUBLIC_KEY=[YOUR VAPID PUBLIC KEY HERE]
   AWS_ACCESS_KEY_ID=[YOUR AWS ACCESS KEY ID HERE]
   AWS_SECRET_ACCESS_KEY=[YOUR AWS SECRET ACCESS KEY HERE]
@@ -395,6 +396,10 @@ Additionally, you must go to [fixtures.ts](https://github.com/OptimisticTrousers
 7. A GitHub Actions workflow will automatically lint, test, and build the application for both the frontend and backend, as well as run all e2e tests when any pull requests are made to the main branch.
 8. You can skip the deployment step if unnecessary (ie. updating docs) by including the "#skip" tag in your commit message.
 
+## Delete Account
+
+In order to permanently delete your account, log into Word Reminder, navigate to "Settings", and click on the "Delete User" button.
+
 ## Next Steps
 
 - Allow users to automatically create word reminders through a combination of nouns, verbs, adverbs, adjectives, etc.
@@ -404,10 +409,15 @@ Additionally, you must go to [fixtures.ts](https://github.com/OptimisticTrousers
 - Potentially have a history of words that the user entered that do not exist. The [Free Dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI) does not have definitions for all words, especially more archaic ones.
 - When using the text selection context menu option on mobile, show a pop-up instead of redirecting the user to the Word Reminder app.
 - Add an iOS App Store port of Word Reminder. I currently cannot do this because I do not have access to a Mac with XCode. The text selection context menu option and push notifications need to be included in this port.
+- Add a CD pipeline for deploying to the Chrome Web Store and the Google Play Store.
 
 ## Known Bugs
 
 1. The Word Reminder chrome extension service worker sleeps after a while, causing the `Add Word` text selection context menu option to disappear.
+2. When logging in or registering, the application hangs for a bit without any feedback given back to the user before authenticating the user. This hang time should be reduced.
+3. When a user is confirming their email, the chrome extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the chrome extension for the user confirmation to be detected.
+4. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled.
+5. If a user is trying to confirm their email, but accidentally used an incorrect email or changed their mind about the email they used to sign in, there is no way for them to go back to the login/registration pages.
 
 ## Support
 
