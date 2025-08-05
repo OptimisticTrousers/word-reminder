@@ -1,7 +1,7 @@
 {
   "name": "clients",
   "description": "Clients for a word reminder application that allows users to store words in their dictionary and reminds users of the words that they store so that users can remember words that they come across in their readings.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
