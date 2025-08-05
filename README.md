@@ -17,6 +17,7 @@
   - [Download](#download)
     - [Mobile App](#mobile-app)
     - [Extension](#extension)
+    - [Source](#source)
   - [Creation/Updating Options](#creationupdating-options)
     - [User Word Options](#user-word-options)
     - [Word Reminder Attributes](#word-reminder-attributes)
@@ -33,9 +34,9 @@
   - [Setup Local Chrome Extension](#setup-local-chrome-extension)
   - [Setup Local Mobile App](#setup-local-mobile-app)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-      - [Chrome](#chrome)
-      - [Firefox](#firefox)
-      - [Edge](#edge)
+    - [Chrome](#chrome)
+    - [Firefox](#firefox)
+    - [Edge](#edge)
   - [Contribute](#contribute)
   - [Delete Account](#delete-account)
   - [Next Steps](#next-steps)
@@ -108,7 +109,6 @@ The server, which both the mobile app and chrome extension use, utilizes the [Fr
 
 ### Mobile App
 
-<p align="center"><a href="https://f-droid.org/packages/org.schabi.newpipe/"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Get_it_on_F-Droid_%28material_design%29.svg" alt="Get it on F-Droid" height=240 width=240/></a></p>
 <p align="center"><a href="https://play.google.com/store/apps/details?id=com.x8bit.bitwarden&hl=en_US"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height=240 width=240/></a></p>
 
 ### Extension
@@ -118,6 +118,10 @@ Visit the Chrome Web Store to add the extension to your Chromium browser (Brave,
 Visit Firefox Browser Add-ons to add the extension to your Gecko-based browser: https://addons.mozilla.org/en-US/firefox/addon/bitwarden-password-manager/
 
 Visit Microsoft Edge Add-ons add the extension to Edge: https://microsoftedge.microsoft.com/addons/detail/bitwarden-password-manage/jbkfoedolllekgbhcbcoahefnbanhhlh
+
+### Source
+
+You can also download from source by unzipping the extension.zip file and following the instructions to [load the extension locally](#how-to-load-the-extension-locally) and/or downloading the mobile app apk by going to releases: https://github.com/OptimisticTrousers/word-reminder/releases.
 
 ## Creation/Updating Options
 
@@ -413,11 +417,10 @@ In order to permanently delete your account, log into Word Reminder, navigate to
 
 ## Known Bugs
 
-1. The Word Reminder chrome extension service worker sleeps after a while, causing the `Add Word` text selection context menu option to disappear.
-2. When logging in or registering, the application hangs for a bit without any feedback given back to the user before authenticating the user. This hang time should be reduced.
+1. The Word Reminder chrome extension service worker sleeps after a while, which can cause the `Add Word` text selection context menu option to disappear.
+2. When logging in or registering, the application hangs for a bit without any feedback given back to the user before authenticating the user. This hang time should be reduced or some feedback should be given. Although there is an implementation to disable the button and change the button text, it is currently not functional for some reason.
 3. When a user is confirming their email, the chrome extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the chrome extension for the user confirmation to be detected.
 4. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled.
-5. If a user is trying to confirm their email, but accidentally used an incorrect email or changed their mind about the email they used to sign in, there is no way for them to go back to the login/registration pages.
 
 ## Support
 
