@@ -8,7 +8,6 @@
   },
   "background": {
     "service_worker": "service-worker.js",
-    "scripts": ["service_worker.js"],
     "type": "module"
   },
   "permissions": ["contextMenus", "notifications", "storage"],

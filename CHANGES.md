@@ -1,4 +1,4 @@
-1.0 (2025-05-21)
+1.0.0 (2025-05-21)
 
 - Started writing documentation
 - Added the MIT License
