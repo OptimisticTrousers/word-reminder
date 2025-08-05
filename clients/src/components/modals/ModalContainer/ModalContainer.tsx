@@ -46,5 +46,5 @@ export const ModalContainer = CSSModules(
     );
   },
   styles,
-  { allowMultiple: false, handleNotFoundStyleName: "log" }
+  { allowMultiple: false, handleNotFoundStyleName: "ignore" }
 );

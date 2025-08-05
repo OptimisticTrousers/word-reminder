@@ -82,7 +82,7 @@ export const DeleteUserModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const USER_NOTIFICATION_MSGS = {

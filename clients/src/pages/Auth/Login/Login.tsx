@@ -116,7 +116,7 @@ export const Login = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const LOGIN_AUTH_NOTIFICATION_MSGS = {

@@ -179,7 +179,7 @@ export const CreateAutoWordReminderModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const CREATE_AUTO_WORD_REMINDER_NOTIFICATION_MSGS = {

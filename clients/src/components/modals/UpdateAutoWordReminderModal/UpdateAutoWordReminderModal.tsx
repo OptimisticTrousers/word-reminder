@@ -181,7 +181,7 @@ export const UpdateAutoWordReminderModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const UPDATE_AUTO_WORD_REMINDER_NOTIFICATION_MSGS = {
