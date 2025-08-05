@@ -30,6 +30,11 @@ exports[`EmailConfirmation component > calls the functions to send confirmation 
       </span>
       to create, verify, and use your account.
     </p>
+    <button
+      class="_email-confirmation__button_9d1292"
+    >
+      Cancel
+    </button>
   </div>
 </DocumentFragment>
 `;

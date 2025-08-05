@@ -18,3 +18,7 @@
 .email-confirmation__bold {
   font-weight: 600;
 }
+
+.email-confirmation__button {
+  margin-top: 1rem;
+}
