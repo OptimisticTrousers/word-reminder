@@ -126,5 +126,5 @@ export const Navigation = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );

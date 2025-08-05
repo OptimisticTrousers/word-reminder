@@ -35,5 +35,5 @@ export const WordReminder = CSSModules(
     return <WordReminderItem wordReminder={data?.json.wordReminder} />;
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );

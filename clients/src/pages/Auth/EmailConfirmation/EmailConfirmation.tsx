@@ -84,5 +84,5 @@ export const EmailConfirmation = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );

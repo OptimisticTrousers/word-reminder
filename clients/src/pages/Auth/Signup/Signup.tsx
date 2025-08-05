@@ -114,7 +114,7 @@ export const Signup = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const SIGNUP_AUTH_NOTIFICATION_MSGS = {

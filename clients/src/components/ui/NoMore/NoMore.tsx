@@ -17,5 +17,5 @@ export const NoMore = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
