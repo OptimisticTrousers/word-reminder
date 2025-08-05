@@ -56,7 +56,10 @@ export const DeleteAutoWordReminderModal = CSSModules(
     };
 
     return (
-      <ModalContainer title="Delete Auto Word Reminder" toggleModal={toggleModal}>
+      <ModalContainer
+        title="Delete Auto Word Reminder"
+        toggleModal={toggleModal}
+      >
         <form styleName="modal" action={handleDelete}>
           <p styleName="modal__alert">
             Are you sure you want to delete this auto word reminder?
@@ -82,7 +85,7 @@ export const DeleteAutoWordReminderModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const AUTO_WORD_REMINDER_NOTIFICATION_MSGS = {

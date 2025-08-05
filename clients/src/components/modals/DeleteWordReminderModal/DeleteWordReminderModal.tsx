@@ -81,7 +81,7 @@ export const DeleteWordReminderModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const WORD_REMINDER_NOTIFICATION_MSGS = {

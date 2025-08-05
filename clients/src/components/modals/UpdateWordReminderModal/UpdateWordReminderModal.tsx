@@ -180,7 +180,7 @@ export const UpdateWordReminderModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const UPDATE_WORD_REMINDER_NOTIFICATION_MSGS = {

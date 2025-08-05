@@ -154,7 +154,7 @@ export const WordReminders = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const PAGINATION_LIMIT = "10";

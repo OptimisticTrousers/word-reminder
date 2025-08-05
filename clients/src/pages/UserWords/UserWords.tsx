@@ -361,7 +361,7 @@ export const UserWords = CSSModules(
   styles,
   {
     allowMultiple: true,
-    handleNotFoundStyleName: "log",
+    handleNotFoundStyleName: "ignore",
   }
 );
 

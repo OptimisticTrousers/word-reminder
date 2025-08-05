@@ -22,6 +22,6 @@ export const Footer = CSSModules(
   styles,
   {
     allowMultiple: true,
-    handleNotFoundStyleName: "log",
+    handleNotFoundStyleName: "ignore",
   }
 );

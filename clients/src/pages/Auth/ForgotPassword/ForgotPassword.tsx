@@ -81,7 +81,7 @@ export const ForgotPassword = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const FORGOT_PASSWORD_NOTIFICATION_MSGS = {

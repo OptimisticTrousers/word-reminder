@@ -81,7 +81,7 @@ export const DeleteUserWordModal = CSSModules(
     );
   },
   styles,
-  { allowMultiple: true, handleNotFoundStyleName: "log" }
+  { allowMultiple: true, handleNotFoundStyleName: "ignore" }
 );
 
 const USER_WORD_NOTIFICATION_MSGS = {

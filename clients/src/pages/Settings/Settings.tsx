@@ -116,7 +116,7 @@ export const Settings = CSSModules(
   styles,
   {
     allowMultiple: true,
-    handleNotFoundStyleName: "log",
+    handleNotFoundStyleName: "ignore",
   }
 );
 
