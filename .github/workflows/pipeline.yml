@@ -26,11 +26,13 @@ env:
   # Client-side
   VITE_API_DOMAIN: http://localhost:5000/api
   VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+  CONDITION: ${{ contains(github.event.head_commit.message, '#skip') }}
 
 jobs:
   deployment_pipeline:
     runs-on: ubuntu-latest
     container: node:20
+    if: ${{ github.env.CONDITION == false }}
     services:
       postgres:
         image: postgres
