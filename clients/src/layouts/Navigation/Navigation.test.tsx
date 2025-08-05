@@ -115,29 +115,6 @@ describe("Navigation component", () => {
     expect(settingsLink).toHaveAttribute("aria-current", "page");
   });
 
-  it("logs out the user when the 'Log Out' button is clicked", async () => {
-    const mockClear = vi.spyOn(queryClient, "clear");
-    const mockLogout = vi
-      .spyOn(sessionService, "logoutUser")
-      .mockImplementation(async () => {
-        return { json: { user: { id: "1" } }, status: 200 };
-      });
-    const mockStorageRemove = vi.spyOn(window.chrome.storage.sync, "remove");
-    const { user } = setup("/");
-
-    const logoutButton = screen.getByRole("button", { name: "Log Out" });
-    await user.click(logoutButton);
-
-    const login = screen.getByTestId("login");
-    expect(login).toBeInTheDocument();
-    expect(mockStorageRemove).toHaveBeenCalledTimes(1);
-    expect(mockStorageRemove).toHaveBeenCalledWith("userId");
-    expect(mockLogout).toHaveBeenCalledTimes(1);
-    expect(mockLogout).toHaveBeenCalledWith(undefined);
-    expect(mockClear).toHaveBeenCalledTimes(1);
-    expect(mockClear).toHaveBeenCalledWith();
-  });
-
   it("opens a new tab with the extension", async () => {
     Object.defineProperty(window, "location", {
       writable: true,
@@ -176,43 +153,68 @@ describe("Navigation component", () => {
     expect(openNewTabButton).not.toBeInTheDocument();
   });
 
-  it("disables 'Log Out' button when mutation is pending", async () => {
-    const delay = 50;
-    const mockLogout = vi
-      .spyOn(sessionService, "logoutUser")
-      .mockImplementation(async () => {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({ json: { user: { id: "1" } }, status: 200 });
-          }, delay);
+  describe("when logging out", () => {
+    it("logs out the user when the 'Log Out' button is clicked", async () => {
+      const mockClear = vi.spyOn(queryClient, "clear");
+      const mockLogout = vi
+        .spyOn(sessionService, "logoutUser")
+        .mockImplementation(async () => {
+          return { json: { user: { id: "1" } }, status: 200 };
         });
-      });
-    const { user } = setup("/");
+      const mockStorageRemove = vi.spyOn(window.chrome.storage.sync, "remove");
+      const { user } = setup("/");
 
-    const logoutButton = screen.getByRole("button", { name: "Log Out" });
-    await user.click(logoutButton);
+      const logoutButton = screen.getByRole("button", { name: "Log Out" });
+      await user.click(logoutButton);
 
-    expect(logoutButton).toBeDisabled();
-    expect(mockLogout).toHaveBeenCalledTimes(1);
-    expect(mockLogout).toHaveBeenCalledWith(undefined);
-  });
+      const login = screen.getByTestId("login");
+      expect(login).toBeInTheDocument();
+      expect(mockStorageRemove).toHaveBeenCalledTimes(1);
+      expect(mockStorageRemove).toHaveBeenCalledWith("userId");
+      expect(mockLogout).toHaveBeenCalledTimes(1);
+      expect(mockLogout).toHaveBeenCalledWith(undefined);
+      expect(mockClear).toHaveBeenCalledTimes(1);
+      expect(mockClear).toHaveBeenCalledWith();
+    });
 
-  it("when there is an error, it shows a notification error when attempting to log out", async () => {
-    const message = "Bad Request.";
-    const status = 400;
-    const mockLogout = vi
-      .spyOn(sessionService, "logoutUser")
-      .mockImplementation(async () => {
-        return Promise.reject({ json: { message }, status });
-      });
-    const { user } = setup("/");
+    it("disables 'Log Out' button when mutation is pending", async () => {
+      const delay = 50;
+      const mockLogout = vi
+        .spyOn(sessionService, "logoutUser")
+        .mockImplementation(async () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve({ json: { user: { id: "1" } }, status: 200 });
+            }, delay);
+          });
+        });
+      const { user } = setup("/");
 
-    const logoutButton = screen.getByRole("button", { name: "Log Out" });
-    await user.click(logoutButton);
+      const logoutButton = screen.getByRole("button", { name: "Log Out" });
+      await user.click(logoutButton);
 
-    const notification = await screen.findByRole("dialog", { name: message });
-    expect(notification).toBeInTheDocument();
-    expect(mockLogout).toHaveBeenCalledTimes(1);
-    expect(mockLogout).toHaveBeenCalledWith(undefined);
+      expect(logoutButton).toBeDisabled();
+      expect(mockLogout).toHaveBeenCalledTimes(1);
+      expect(mockLogout).toHaveBeenCalledWith(undefined);
+    });
+
+    it("when there is an error, it shows a notification error when attempting to log out", async () => {
+      const message = "Bad Request.";
+      const status = 400;
+      const mockLogout = vi
+        .spyOn(sessionService, "logoutUser")
+        .mockImplementation(async () => {
+          return Promise.reject({ json: { message }, status });
+        });
+      const { user } = setup("/");
+
+      const logoutButton = screen.getByRole("button", { name: "Log Out" });
+      await user.click(logoutButton);
+
+      const notification = await screen.findByRole("dialog", { name: message });
+      expect(notification).toBeInTheDocument();
+      expect(mockLogout).toHaveBeenCalledTimes(1);
+      expect(mockLogout).toHaveBeenCalledWith(undefined);
+    });
   });
 });

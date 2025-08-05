@@ -1,10 +1,13 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { emailService } from "../../../services/email_service";
 import { EmailConfirmation } from "./EmailConfirmation";
 import { Subject, Template } from "common";
 import { NotificationProvider } from "../../../context/Notification";
+import { createRoutesStub, Outlet } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
+import { sessionService } from "../../../services/session_service";
 
 vi.mock("../../../components/ui/Loading/Loading");
 
@@ -26,18 +29,40 @@ describe("EmailConfirmation component", () => {
 
   const status = 200;
 
-  function setup() {
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
+  function setup(queryClient: QueryClient) {
+    const Stub = createRoutesStub([
+      {
+        path: "/",
+        Component: function () {
+          return (
+            <NotificationProvider>
+              <QueryClientProvider client={queryClient}>
+                <Outlet />
+              </QueryClientProvider>
+            </NotificationProvider>
+          );
+        },
+        children: [
+          {
+            path: "/email-confirmation",
+            Component: function () {
+              return <EmailConfirmation user={user} />;
+            },
+          },
+          {
+            path: "/login",
+            Component: function () {
+              return <div data-testid="login"></div>;
+            },
+          },
+        ],
+      },
+    ]);
 
-    return render(
-      <NotificationProvider>
-        <QueryClientProvider client={queryClient}>
-          <EmailConfirmation user={user} />
-        </QueryClientProvider>
-      </NotificationProvider>
-    );
+    return {
+      user: userEvent.setup(),
+      ...render(<Stub initialEntries={["/email-confirmation"]} />),
+    };
   }
 
   beforeEach(() => {
@@ -50,8 +75,11 @@ describe("EmailConfirmation component", () => {
       .mockImplementation(async () => {
         return { json: { info }, status };
       });
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
-    const { asFragment } = setup();
+    const { asFragment } = setup(queryClient);
 
     const heading = await screen.findByRole("heading", {
       name: "Check your email",
@@ -87,8 +115,11 @@ describe("EmailConfirmation component", () => {
           }, delay);
         });
       });
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
-    setup();
+    setup(queryClient);
 
     const loading = screen.getByTestId("loading");
     expect(loading).toBeInTheDocument();
@@ -111,8 +142,11 @@ describe("EmailConfirmation component", () => {
       .mockImplementation(async () => {
         return Promise.reject({ json: { message }, status });
       });
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
 
-    setup();
+    setup(queryClient);
 
     const error = await screen.findByTestId("error-500");
     expect(error).toBeInTheDocument();
@@ -124,6 +158,97 @@ describe("EmailConfirmation component", () => {
         subject: Subject.CONFIRM_ACCOUNT,
         template: Template.CONFIRM_ACCOUNT,
       },
+    });
+  });
+
+  describe("when cancelling", () => {
+    it("logs out the user when the 'Cancel' button is clicked", async () => {
+      vi.spyOn(emailService, "sendEmail").mockImplementation(async () => {
+        return { json: { info }, status };
+      });
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+      const mockClear = vi.spyOn(queryClient, "clear");
+      const mockLogout = vi
+        .spyOn(sessionService, "logoutUser")
+        .mockImplementation(async () => {
+          return { json: { user: { id: "1" } }, status: 200 };
+        });
+      const mockStorageRemove = vi.spyOn(window.chrome.storage.sync, "remove");
+      const { user } = setup(queryClient);
+
+      const cancelButton = await screen.findByRole("button", {
+        name: "Cancel",
+      });
+      await user.click(cancelButton);
+
+      const login = await screen.findByTestId("login");
+      expect(login).toBeInTheDocument();
+      expect(mockStorageRemove).toHaveBeenCalledTimes(1);
+      expect(mockStorageRemove).toHaveBeenCalledWith("userId");
+      expect(mockLogout).toHaveBeenCalledTimes(1);
+      expect(mockLogout).toHaveBeenCalledWith(undefined);
+      expect(mockClear).toHaveBeenCalledTimes(1);
+      expect(mockClear).toHaveBeenCalledWith();
+    });
+
+    it("disables 'Cancel' button when mutation is pending", async () => {
+      vi.spyOn(emailService, "sendEmail").mockImplementation(async () => {
+        return { json: { info }, status };
+      });
+      const delay = 500;
+      const mockLogout = vi
+        .spyOn(sessionService, "logoutUser")
+        .mockImplementation(async () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve({ json: { user: { id: "1" } }, status: 200 });
+            }, delay);
+          });
+        });
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+      const { user } = setup(queryClient);
+
+      await waitFor(async () => {
+        const cancelButton = screen.getByRole("button", {
+          name: "Cancel",
+        });
+        await user.click(cancelButton);
+
+        expect(cancelButton).toBeDisabled();
+        expect(mockLogout).toHaveBeenCalledTimes(1);
+        expect(mockLogout).toHaveBeenCalledWith(undefined);
+      });
+    });
+
+    it("when there is an error, it shows a notification error when attempting to cancel", async () => {
+      vi.spyOn(emailService, "sendEmail").mockImplementation(async () => {
+        return { json: { info }, status };
+      });
+      const message = "Bad Request.";
+      const status = 400;
+      const mockLogout = vi
+        .spyOn(sessionService, "logoutUser")
+        .mockImplementation(async () => {
+          return Promise.reject({ json: { message }, status });
+        });
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+      const { user } = setup(queryClient);
+
+      const cancelButton = await screen.findByRole("button", {
+        name: "Cancel",
+      });
+      await user.click(cancelButton);
+
+      const notification = await screen.findByRole("dialog", { name: message });
+      expect(notification).toBeInTheDocument();
+      expect(mockLogout).toHaveBeenCalledTimes(1);
+      expect(mockLogout).toHaveBeenCalledWith(undefined);
     });
   });
 });
