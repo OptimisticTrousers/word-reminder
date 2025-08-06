@@ -12,7 +12,6 @@ exports[`UserWords component > renders two forms that have fields for creating a
         class="_words__container_727679"
       >
         <form
-          action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
           class="_words__form_727679"
         >
           <div

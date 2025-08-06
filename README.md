@@ -34,9 +34,9 @@
   - [Setup Local Chrome Extension](#setup-local-chrome-extension)
   - [Setup Local Mobile App](#setup-local-mobile-app)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-    - [Chrome](#chrome)
-    - [Firefox](#firefox)
-    - [Edge](#edge)
+      - [Chrome](#chrome)
+      - [Firefox](#firefox)
+      - [Edge](#edge)
   - [Contribute](#contribute)
   - [Delete Account](#delete-account)
   - [Next Steps](#next-steps)
@@ -414,13 +414,13 @@ In order to permanently delete your account, log into Word Reminder, navigate to
 - When using the text selection context menu option on mobile, show a pop-up instead of redirecting the user to the Word Reminder app.
 - Add an iOS App Store port of Word Reminder. I currently cannot do this because I do not have access to a Mac with XCode. The text selection context menu option and push notifications need to be included in this port.
 - Add a CD pipeline for deploying to the Chrome Web Store and the Google Play Store.
+- Send emails using the email 'wordreminder@protonmail.com'.
 
 ## Known Bugs
 
 1. The Word Reminder chrome extension service worker sleeps after a while, which can cause the `Add Word` text selection context menu option to disappear.
-2. When logging in or registering, the application hangs for a bit without any feedback given back to the user before authenticating the user. This hang time should be reduced or some feedback should be given. Although there is an implementation to disable the button and change the button text, it is currently not functional for some reason.
-3. When a user is confirming their email, the chrome extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the chrome extension for the user confirmation to be detected.
-4. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled.
+2. When a user is confirming their email, the chrome extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the chrome extension for the user confirmation to be detected.
+3. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled.
 
 ## Support
 
