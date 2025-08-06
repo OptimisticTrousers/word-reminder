@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "0.0.1",
+  "version": "1.1.0",
   "description": "Allows users to store and remind themselves of words in their dictionary to improve vocabulary and increase word retention.",
   "name": "Word Reminder",
   "action": {
