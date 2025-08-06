@@ -43,7 +43,7 @@ export const EmailConfirmation = CSSModules(
       onError: showNotificationError,
     });
 
-    async function handleLogout() {
+    function handleLogout() {
       mutate();
       queryClient.clear();
     }

@@ -1,5 +1,5 @@
 import { EMAIL_MAX, PASSWORD_MAX, User } from "common";
-import { useContext } from "react";
+import { FormEvent, useContext } from "react";
 import CSSModules from "react-css-modules";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -39,16 +39,18 @@ export const Signup = CSSModules(
         });
         await extension.storage.sync.set({ userId: response.json.user.id });
         await extension.runtime.sendMessage(null);
+        await navigate("/userWords");
       },
       onError: showNotificationError,
     });
 
-    async function handleSubmit(formData: FormData) {
+    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
       mutate({
         email: formData.get("email") as string,
         password: formData.get("password") as string,
       });
-      await navigate("/userWords");
     }
 
     const disabled = status === "pending";
@@ -68,7 +70,7 @@ export const Signup = CSSModules(
             Log in or create a new account to start storing your words.
           </p>
         </div>
-        <form styleName="auth__form" action={handleSubmit}>
+        <form styleName="auth__form" onSubmit={handleSubmit}>
           <nav styleName="auth__navigation">
             <div styleName="auth__redirect">
               Already have an account?{" "}

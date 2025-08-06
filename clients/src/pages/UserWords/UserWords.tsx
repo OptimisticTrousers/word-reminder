@@ -132,7 +132,9 @@ export const UserWords = CSSModules(
       });
     }
 
-    function handleAdd(formData: FormData) {
+    function handleAdd(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
       const word = formData.get("word") as string;
       if (!file && word.length === 0) {
         showNotification(
@@ -205,7 +207,7 @@ export const UserWords = CSSModules(
       <section styleName="words">
         <div styleName="words__top">
           <div styleName="words__container">
-            <form styleName="words__form" action={handleAdd}>
+            <form styleName="words__form" onSubmit={handleAdd}>
               <div styleName="words__control">
                 <label styleName="words__label" htmlFor="word">
                   Word

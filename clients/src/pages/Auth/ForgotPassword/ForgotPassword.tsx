@@ -4,7 +4,7 @@ import { EMAIL_MAX, Subject, Template } from "common";
 import { useMutation } from "@tanstack/react-query";
 import { emailService } from "../../../services/email_service";
 import { useNotificationError } from "../../../hooks/useNotificationError";
-import { useContext, useRef } from "react";
+import { FormEvent, useContext, useRef } from "react";
 import {
   NotificationContext,
   NOTIFICATION_ACTIONS,
@@ -27,7 +27,9 @@ export const ForgotPassword = CSSModules(
       onError: showNotificationError,
     });
 
-    function handleSubmit(formData: FormData) {
+    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
       const email = formData.get("email") as string;
       emailRef.current = email;
       mutate({
@@ -49,7 +51,7 @@ export const ForgotPassword = CSSModules(
           Enter your email address and we'll send you a link to reset your
           password.
         </p>
-        <form styleName="forgot-password__form" action={handleSubmit}>
+        <form styleName="forgot-password__form" onSubmit={handleSubmit}>
           <div styleName="forgot-password__control">
             <label htmlFor="email" styleName="forgot-password__label">
               Email
