@@ -34,9 +34,9 @@
   - [Setup Local Chrome Extension](#setup-local-chrome-extension)
   - [Setup Local Mobile App](#setup-local-mobile-app)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-      - [Chrome](#chrome)
-      - [Firefox](#firefox)
-      - [Edge](#edge)
+    - [Chrome](#chrome)
+    - [Firefox](#firefox)
+    - [Edge](#edge)
   - [Contribute](#contribute)
   - [Delete Account](#delete-account)
   - [Next Steps](#next-steps)
@@ -413,18 +413,18 @@ In order to permanently delete your account, log into Word Reminder, navigate to
 - Potentially have a history of words that the user entered that do not exist. The [Free Dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI) does not have definitions for all words, especially more archaic ones.
 - When using the text selection context menu option on mobile, show a pop-up instead of redirecting the user to the Word Reminder app.
 - Add an iOS App Store port of Word Reminder. I currently cannot do this because I do not have access to a Mac with XCode. The text selection context menu option and push notifications need to be included in this port.
-- Add a CD pipeline for deploying to the Chrome Web Store and the Google Play Store.
-- Send emails using the email 'wordreminder@protonmail.com'.
+- Add a CD pipeline for deploying to the Chrome Web Store, Firefox Add-ons, Microsoft Edge Add-ons, and the Google Play Store.
+- Add a splash screen and app icon for the mobile port.
 
 ## Known Bugs
 
-1. The Word Reminder chrome extension service worker sleeps after a while, which can cause the `Add Word` text selection context menu option to disappear.
+1. The Word Reminder extension service worker sleeps after a while, which can cause the `Add Word` text selection context menu option to disappear.
 2. When a user is confirming their email, the chrome extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the chrome extension for the user confirmation to be detected.
 3. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled.
 
 ## Support
 
-Let us know if you have issues at: wordreminder@protonmail.com
+Let us know if you have issues at: word-reminder@protonmail.com
 
 ## License
 

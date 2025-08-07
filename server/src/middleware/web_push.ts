@@ -3,7 +3,7 @@ import webpush from "web-push";
 
 import { variables } from "../config/variables";
 
-const { VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY, WORD_REMINDER_EMAIL } = variables;
+const { VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY } = variables;
 
 const vapidKeys = {
   publicKey: VAPID_PUBLIC_KEY,
@@ -12,7 +12,7 @@ const vapidKeys = {
 
 export const webPush = (req: Request, res: Response, next: NextFunction) => {
   webpush.setVapidDetails(
-    `mailto:${WORD_REMINDER_EMAIL}`,
+    "mailto:word-reminder@protonmail.com",
     vapidKeys.publicKey,
     vapidKeys.privateKey
   );
