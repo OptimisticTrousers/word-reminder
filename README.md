@@ -2,7 +2,7 @@
 
 <p>
 <img alt="Version" src="https://img.shields.io/badge/version-1.0-blue.svg?cacheSeconds=2592000" />
-<a href="https://github.com/urllib3/urllib3/actions?query=workflow%3ACI"><img alt="Coverage Status" src="https://img.shields.io/badge/coverage-97%25-success" /></a>
+<a href="https://github.com/OptimisticTrousers/word-reminder/actions?query=workflow%3Apipeline"><img alt="Coverage Status" src="https://img.shields.io/badge/coverage-97%25-success" /></a>
 </p>
 
 ## Table of Contents
@@ -31,12 +31,12 @@
       - [For Firefox](#for-firefox)
   - [Creating Words using cURL](#creating-words-using-curl)
     - [Creating a word](#creating-a-word)
-  - [Setup Local Chrome Extension](#setup-local-chrome-extension)
+  - [Setup Local Browser Extension](#setup-local-browser-extension)
   - [Setup Local Mobile App](#setup-local-mobile-app)
   - [How to load the extension locally](#how-to-load-the-extension-locally)
-    - [Chrome](#chrome)
-    - [Firefox](#firefox)
-    - [Edge](#edge)
+      - [Chrome](#chrome)
+      - [Firefox](#firefox)
+      - [Edge](#edge)
   - [Contribute](#contribute)
   - [Delete Account](#delete-account)
   - [Next Steps](#next-steps)
@@ -72,7 +72,7 @@ Have you ever read a book, article, or any other form of written content and dis
 
 ## Introduction
 
-Word Reminder is a chrome extension and mobile application that allows users to store words in their dictionary and reminds users of the words that they store to enhance users' reading flow. Notifications will be shown to the user automatically based on their preferences. The notifications will show a list of words in a word reminder. All the user has to do is create an 'Auto Word Reminder' with their preferences and add words to their dictionary. Auto Word Reminders exist to create word reminders for you automatically. The goal of Word Reminder is to help users improve their vocabulary effortlessly.
+Word Reminder is a browser extension and mobile application that allows users to store words in their dictionary and reminds users of the words that they store to enhance users' reading flow. Notifications will be shown to the user automatically based on their preferences. The notifications will show a list of words in a word reminder. All the user has to do is create an 'Auto Word Reminder' with their preferences and add words to their dictionary. Auto Word Reminders exist to create word reminders for you automatically. The goal of Word Reminder is to help users improve their vocabulary effortlessly.
 
 To see Word Reminder's website: https://ww.word-reminder.com
 
@@ -80,18 +80,18 @@ To find out what's new in this version of Word Reminder, please see [the changel
 
 ## Technologies
 
-Word Reminder is built with PostgresQL, React.js, and Express.js in TypeScript. Word Reminder was first built as a chrome extension.
+Word Reminder is built with PostgresQL, React.js, and Express.js in TypeScript. Word Reminder was first built as a browser extension.
 
-The Word Reminder chrome extension leverages the [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) to send desktop push notifications that show the user a list of the words in their word reminders. It utilizes [Chrome APIs](https://developer.chrome.com/docs/extensions/reference/api) to [create a custom selection context menu](https://developer.chrome.com/docs/extensions/reference/api/contextMenus), saving the user's id in order to create [PushSubscriptions](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription) using the [Chrome Storage Sync API](https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync), and the [Chrome Runtime API](https://developer.chrome.com/docs/extensions/reference/api/runtime#event-onMessage) to communicate between the extension and service worker, among other things.
+The Word Reminder browser extension leverages the [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) to send desktop push notifications that show the user a list of the words in their word reminders. It utilizes [Chrome APIs](https://developer.chrome.com/docs/extensions/reference/api) to [create a custom selection context menu](https://developer.chrome.com/docs/extensions/reference/api/contextMenus), saving the user's id in order to create [PushSubscriptions](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription) using the [Chrome Storage Sync API](https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync), and the [Chrome Runtime API](https://developer.chrome.com/docs/extensions/reference/api/runtime#event-onMessage) to communicate between the extension and service worker, among other things.
 
-The Word Reminder mobile app uses [Capacitor](https://capacitorjs.com/) to convert the extension into a WebView-based mobile app. The mobile port reuses as much code used in the chrome extension as possible. However, there are a few notable differences. The mobile port does not use any [Chrome APIs](https://developer.chrome.com/docs/extensions/reference/api) because they are not available inside of a WebView. Additionally, the [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API#browser_compatibility) is not used since it is not available inside of a WebView. Instead, the mobiel app utilizes the [@capacitator/push-notifications](https://capacitorjs.com/docs/apis/push-notifications), an [offical Capacitor plugin](https://github.com/ionic-team/capacitor-plugins) which relies on [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) and the [Apple Push Notification Service](https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns) under the hood. Unlike the chrome extension, the mobile app needs to explicitly request permission from the user to send push notifications. Lastly, a text selection context menu option called "Word Reminder" is created with a custom plugin called [TextSelectionActionPlugin](https://github.com/OptimisticTrousers/word-reminder/blob/mobile/clients/android/app/src/main/java/com/wordreminder/www/TextSelectionActionPlugin.java) and by specifying an ACTION_PROCESS_TEXT intent-filter in [AndroidManifest.xml](https://github.com/OptimisticTrousers/word-reminder/blob/mobile/clients/android/app/src/main/AndroidManifest.xml). When the user highlights a word, this "Word Reminder" option will add the word to the user's dictionary across apps. More details on how this feature works is explained here: https://medium.com/androiddevelopers/custom-text-selection-actions-with-action-process-text-191f792d2999. Due to the aforementioned details, the mobile port does not need to use a service worker.
+The Word Reminder mobile app uses [Capacitor](https://capacitorjs.com/) to convert the extension into a WebView-based mobile app. The mobile port reuses as much code used in the browser extension as possible. However, there are a few notable differences. The mobile port does not use any [Chrome APIs](https://developer.chrome.com/docs/extensions/reference/api) because they are not available inside of a WebView. Additionally, the [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API#browser_compatibility) is not used since it is not available inside of a WebView. Instead, the mobiel app utilizes the [@capacitator/push-notifications](https://capacitorjs.com/docs/apis/push-notifications), an [offical Capacitor plugin](https://github.com/ionic-team/capacitor-plugins) which relies on [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) and the [Apple Push Notification Service](https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns) under the hood. Unlike the browser extension, the mobile app needs to explicitly request permission from the user to send push notifications. Lastly, a text selection context menu option called "Word Reminder" is created with a custom plugin called [TextSelectionActionPlugin](https://github.com/OptimisticTrousers/word-reminder/blob/mobile/clients/android/app/src/main/java/com/wordreminder/www/TextSelectionActionPlugin.java) and by specifying an ACTION_PROCESS_TEXT intent-filter in [AndroidManifest.xml](https://github.com/OptimisticTrousers/word-reminder/blob/mobile/clients/android/app/src/main/AndroidManifest.xml). When the user highlights a word, this "Word Reminder" option will add the word to the user's dictionary across apps. More details on how this feature works is explained here: https://medium.com/androiddevelopers/custom-text-selection-actions-with-action-process-text-191f792d2999. Due to the aforementioned details, the mobile port does not need to use a service worker.
 
-The server, which both the mobile app and chrome extension use, utilizes the [Free Dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI) to fetch word definitions. To fetch images for words (when available), it utilizes the [Wikimedia Commons API](https://commons.wikimedia.org/w/api.php?action=help&modules=main). For scheduling related to word reminders, [pg-boss](https://github.com/timgit/pg-boss) is used since it provides convinient APIs for job queuing with PostgresQL. The server uses [Amazon SES](https://aws.amazon.com/ses/) to send emails to users for email confirmation and resetting passwords. The server uses [Helmet](https://helmetjs.github.io/) to secure HTTP response headers.
+The server, which both the mobile app and browser extension use, utilizes the [Free Dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI) to fetch word definitions. To fetch images for words (when available), it utilizes the [Wikimedia Commons API](https://commons.wikimedia.org/w/api.php?action=help&modules=main). For scheduling related to word reminders, [pg-boss](https://github.com/timgit/pg-boss) is used since it provides convinient APIs for job queuing with PostgresQL. The server uses [Amazon SES](https://aws.amazon.com/ses/) to send emails to users for email confirmation and resetting passwords. The server uses [Helmet](https://helmetjs.github.io/) to secure HTTP response headers.
 
 ## Features
 
-- Account authentication that allows a user's dictionary to be shared between mobile app and chrome extension
-- Allows users to get push notifications on both the chrome extension and mobile app
+- Account authentication that allows a user's dictionary to be shared between mobile app and browser extension
+- Allows users to get push notifications on both the browser extension and mobile app
 - Allows users to get definitions and images of words quickly
 - Allows users to search, sort, and filter words
 - Dark and light theme
@@ -101,8 +101,8 @@ The server, which both the mobile app and chrome extension use, utilizes the [Fr
 - Convenient and easy to use through the automatic creation of word reminders
 - Creates a selection context menu option in the browser that allows you to add a single highlighted word to your dictionary
 - Allows users to import and export a CSV file of words
-- Has a mobile app and chrome extension
-- 97%+ test coverage for the chrome extension, mobile app, and server with end-to-end tests for critical features
+- Has a mobile app and browser extension
+- 97%+ test coverage for the browser extension, mobile app, and server with end-to-end tests for critical features
 - Includes a comphrehensive CI/CD pipeline with GitHub Actions.
 
 ## Download
@@ -113,11 +113,11 @@ The server, which both the mobile app and chrome extension use, utilizes the [Fr
 
 ### Extension
 
-Visit the Chrome Web Store to add the extension to your Chromium browser (Brave, Chrome, Edge): https://chromewebstore.google.com/detail/bitwarden-password-manage/nngceckbapebfimnlniiiahkandclblb
+Visit the Chrome Web Store to add the extension to your Chromium browser (Brave, Chrome, Edge): https://chromewebstore.google.com/detail/word-reminder/oejlbeackbidindbmobdbcfhjieljhji
 
 Visit Firefox Browser Add-ons to add the extension to your Gecko-based browser: https://addons.mozilla.org/en-US/firefox/addon/bitwarden-password-manager/
 
-Visit Microsoft Edge Add-ons add the extension to Edge: https://microsoftedge.microsoft.com/addons/detail/bitwarden-password-manage/jbkfoedolllekgbhcbcoahefnbanhhlh
+Visit Microsoft Edge Add-ons add the extension to Edge: https://microsoftedge.microsoft.com/addons/detail/word-reminder/gpciakmhepdkgaeocophgcdiahcbolam
 
 ### Source
 
@@ -150,7 +150,7 @@ There may be confusion as to what the options are when trying to create/update y
 
 ## Tips
 
-- Use a shortcut to open the chrome extension such as `Shift + Ctrl + W` under your extension keyboard shortcuts to easily open Word Reminder. The word input will automatically focus so you can type in the word you want to add to your dictionary.
+- Use a shortcut to open the browser extension such as `Shift + Ctrl + W` under your extension keyboard shortcuts to easily open Word Reminder. The word input will automatically focus so you can type in the word you want to add to your dictionary.
 - Press `Escape` to close the extension and open it back up again using a shortcut such as `Shift + Ctrl + W`. It's faster to add another word to your dictionary this way using the keyboard instead of navigating back to the `User Words` page.
 
 ## Format of CSV File
@@ -189,7 +189,7 @@ patronage
 ],
 ```
 
-NOTE: These permissions are automatically granted once the user installs the chrome extension.
+NOTE: These permissions are automatically granted once the user installs the browser extension.
 
 ## Mobile App Permissions
 
@@ -199,7 +199,7 @@ NOTE: The Word Reminder mobile app will not request permissions for notification
 
 ### Debugging extension storage API
 
-The Word Reminder chrome extension uses the Storage API (see [Storage API for Chrome](https://developer.chrome.com/docs/extensions/reference/api/storage) or [Storage API for Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage)) for keeping track of the user's id. This is used to create a [PushSubscription](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription) for each user, as explained earlier in the [Introduction](#introduction).
+The Word Reminder browser extension uses the Storage API (see [Storage API for Chrome](https://developer.chrome.com/docs/extensions/reference/api/storage) or [Storage API for Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage)) for keeping track of the user's id. This is used to create a [PushSubscription](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription) for each user, as explained earlier in the [Introduction](#introduction).
 
 #### For Chromium browsers (Chrome, Edge, Brave)
 
@@ -235,7 +235,7 @@ browser.storage.sync.clear(() => {
 
 ## Creating Words using cURL
 
-You can use the web server alone to add words to your dictionary. However, the functionality for word reminders on the chrome extension will not work properly as it relies on the Web Push API which only works in the browser through the extension. Word reminders will work correctly on the mobile app, however, as long as the user grants notification permissions. Use these commands to authenticate into the web server and create words.
+You can use the web server alone to add words to your dictionary. However, the functionality for word reminders on the browser extension will not work properly as it relies on the Web Push API which only works in the browser through the extension. Word reminders will work correctly on the mobile app, however, as long as the user grants notification permissions. Use these commands to authenticate into the web server and create words.
 
 Install cURL:
 
@@ -270,9 +270,9 @@ $ curl -b cookie.txt -c cookie.txt -H 'Content-Type/application/json' -d 'word=<
 
 ```
 
-## Setup Local Chrome Extension
+## Setup Local Browser Extension
 
-Here is a step by step plan on how to locally setup the Word Reminder chrome extension. It will get you to a point of having a local running instance. It is recommended to use the deployed versions unless contributing. Only tested for Debian-based devices:
+Here is a step by step plan on how to locally setup the Word Reminder browser extension. It will get you to a point of having a local running instance. It is recommended to use the deployed versions unless contributing. Only tested for Debian-based devices:
 
 - First, obtain v22.15.1 (LTS) for [Node.js](https://nodejs.org/en/download).
 - Clone this repo:
@@ -414,13 +414,13 @@ In order to permanently delete your account, log into Word Reminder, navigate to
 - When using the text selection context menu option on mobile, show a pop-up instead of redirecting the user to the Word Reminder app.
 - Add an iOS App Store port of Word Reminder. I currently cannot do this because I do not have access to a Mac with XCode. The text selection context menu option and push notifications need to be included in this port.
 - Add a CD pipeline for deploying to the Chrome Web Store, Firefox Add-ons, Microsoft Edge Add-ons, and the Google Play Store.
-- Add a splash screen and app icon for the mobile port.
+- Implement Push Notifications using [UnifiedPush](https://unifiedpush.org/), an open-source alternative to [FCM](https://firebase.google.com/docs/cloud-messaging).
 
 ## Known Bugs
 
 1. The Word Reminder extension service worker sleeps after a while, which can cause the `Add Word` text selection context menu option to disappear.
-2. When a user is confirming their email, the chrome extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the chrome extension for the user confirmation to be detected.
-3. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled.
+2. When a user is confirming their email, the browser extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the browser extension for the user confirmation to be detected.
+3. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled with broken image links.
 
 ## Support
 
