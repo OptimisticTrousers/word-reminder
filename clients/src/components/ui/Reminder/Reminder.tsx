@@ -21,12 +21,20 @@ export const Reminder = CSSModules(
       <div styleName="reminder">
         <div styleName="reminder__top">
           <p styleName="reminder__note">
-            <span styleName="reminder__bold">Important:</span> Use UTC in your
-            reminder. (ie. If you live in 'America/New_York' and you want to
-            schedule the reminder to show at 4 PM ET, use the 8 PM cron
-            expression).
+            <span styleName="reminder__bold">Important: </span>
+            <a
+              styleName="reminder__link"
+              href="https://github.com/OptimisticTrousers/word-reminder?tab=readme-ov-file#word-reminder-attributes"
+              target="_blank"
+            >
+              See details on the reminder attribute here.
+            </a>
           </p>
-          <a styleName="reminder__link" href="https://cronprompt.com/">
+          <a
+            styleName="reminder__link"
+            href="https://cronprompt.com/"
+            target="_blank"
+          >
             Visit cronprompt to enter a valid reminder.
           </a>
         </div>
