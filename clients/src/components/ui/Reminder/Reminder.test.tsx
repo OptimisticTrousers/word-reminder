@@ -15,7 +15,7 @@ describe("Reminder", () => {
       name: "Visit cronprompt to enter a valid reminder.",
     });
     const reminderNote = screen.getByText(
-      "Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression)."
+      "See details on the reminder attribute here."
     );
     expect(cronPromptLink).toBeInTheDocument();
     expect(reminderNote).toBeInTheDocument();
@@ -34,7 +34,7 @@ describe("Reminder", () => {
       name: "Visit cronprompt to enter a valid reminder.",
     });
     const reminderNote = screen.getByText(
-      "Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression)."
+      "See details on the reminder attribute here."
     );
     expect(cronPromptLink).toBeInTheDocument();
     expect(reminderNote).toBeInTheDocument();
