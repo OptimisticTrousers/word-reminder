@@ -30,9 +30,14 @@ exports[`CreateAutoWordReminderModal component > renders form with all inputs 1`
               <span
                 class="_reminder__bold_a2fc7e"
               >
-                Important:
+                Important: 
               </span>
-               Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression).
+              <a
+                class="_reminder__link_a2fc7e"
+                href="https://github.com/OptimisticTrousers/word-reminder?tab=readme-ov-file#word-reminder-attributes"
+              >
+                See details on the reminder attribute here.
+              </a>
             </p>
             <a
               class="_reminder__link_a2fc7e"
