@@ -25,6 +25,10 @@
   - [Tips](#tips)
   - [Format of CSV File](#format-of-csv-file)
   - [Extension Permissions](#extension-permissions)
+    - [contextMenus justification](#contextmenus-justification)
+    - [notifications justification](#notifications-justification)
+    - [storage justification](#storage-justification)
+    - [Host permission justification](#host-permission-justification)
   - [Mobile App Permissions](#mobile-app-permissions)
     - [Debugging extension storage API](#debugging-extension-storage-api)
       - [For Chromium browsers (Chrome, Edge, Brave)](#for-chromium-browsers-chrome-edge-brave)
@@ -113,6 +117,8 @@ The server, which both the mobile app and browser extension use, utilizes the [F
 
 ### Extension
 
+NOTE: In order to enable the use of push notifications with the help of the Web Push API, the user needs to enable desktop notification permissions in their operating system settings. A push notification will be sent on a recurring basis based on the word reminder that a user creates.
+
 Visit the Chrome Web Store to add the extension to your Chromium browser (Brave, Chrome, Edge): https://chromewebstore.google.com/detail/word-reminder/oejlbeackbidindbmobdbcfhjieljhji
 
 Visit Firefox Browser Add-ons to add the extension to your Gecko-based browser: https://addons.mozilla.org/en-US/firefox/addon/bitwarden-password-manager/
@@ -133,7 +139,7 @@ There may be confusion as to what the options are when trying to create/update y
 
 ### Word Reminder Attributes
 
-- Reminder - a crontab string that represents how often you would like a notification to be shown to you with a list of the words in the word reminder. If you would like an easy way to convert English into a cron expression, check out this site: https://cronprompt.com/. The application uses UTC time so you need to make sure the crontab string is in UTC.
+- Reminder - a crontab string that represents how often you would like a notification to be shown to you with a list of the words in the word reminder. If you would like an easy way to convert English into a cron expression, check out this site: https://cronprompt.com/. The application uses UTC time so you need to make sure the crontab string is in UTC. In other words, convert your current time zone to UTC and use the crontab expression for that. For example, if your timezone is 'America/New_York' and you want to schedule the reminder to show every 4 PM ET (which is 'America/New_York' time), use the 8 PM UTC cron expression because UTC time is four hours ahead of ET. The 8 PM UTC cron expression would be "0 20 * * *".
 - Finish - a date that represents when the word reminder ends. Once this date is reached, a word reminder will automatically be set to inactive and notifications for the word reminder will no longer be shown. However, word reminders will not be deleted and you can simply update 'Finish' to a later date and check 'Is Active' to activate the word reminder again. The application uses UTC time so you need to make sure the finish date is in UTC.
 - Is Active (togglable) - a boolean that represents if the word reminder is active or not. If the word reminder is active, notifications will continue to be shown based on the 'reminder' attribute. If the word reminder is not active, notifications will not be shown. This will automatically be set to false once the word reminder finishes. WARNING: Only one word reminder can be set to active at a time.
 - Has Reminder Onload (togglable) - a boolean that determines whether to show a stale notification when the user opens their browser. The [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) only works when the user's browser is open. If the user's browser is closed while a notification should be shown, a stale notification will be shown once the user opens their browser if the option is checked. If the option is unchecked, this stale notification will not be shown when the user opens their browser.
@@ -188,6 +194,22 @@ patronage
     "storage"
 ],
 ```
+
+### contextMenus justification
+
+A text selection context menu called "Add Word" is used to allow users to quickly and easily add words to their dictionary without having to type or copy and paste the word into the chrome extension. A similar text selection context menu option is created by the "Word Reference" mobile app which allows users to look up definitions of the words that they have selected.
+
+### notifications justification
+
+In order to remind users of the words that they have in their word reminder, the Web Push API is used to facilitate that. Notifications are only sent to the user if they create a Word Reminder through the chrome extension.
+
+### storage justification
+
+In order to know which user is adding a word to their dictionary using the "Add Word" text selection context menu option, the user's id is stored using the Chrome Storage Sync API, which allows the service worker to open and redirect the user to the page of the word that they have selected.
+
+### Host permission justification
+
+The chrome extension needs to store cookies since it used traditional session-based authentication, meaning that it needs to interact directly with the user's browser and client data.
 
 NOTE: These permissions are automatically granted once the user installs the browser extension.
 
