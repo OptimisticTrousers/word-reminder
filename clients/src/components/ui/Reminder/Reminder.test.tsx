@@ -12,10 +12,10 @@ describe("Reminder", () => {
       "An error occurred when generating the expression description. Check the cron expression syntax."
     );
     const cronPromptLink = screen.getByRole("link", {
-      name: "Visit cronprompt to enter a valid reminder.",
+      name: "Visit cronprompt to enter a valid reminder, which needs to be in UTC time.",
     });
     const reminderNote = screen.getByText(
-      "Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression)."
+      "See details on the reminder attribute here."
     );
     expect(cronPromptLink).toBeInTheDocument();
     expect(reminderNote).toBeInTheDocument();
@@ -31,10 +31,10 @@ describe("Reminder", () => {
     const reminderInput = screen.getByDisplayValue(value);
     const reminderDescription = screen.getByText("Every 5 minutes");
     const cronPromptLink = screen.getByRole("link", {
-      name: "Visit cronprompt to enter a valid reminder.",
+      name: "Visit cronprompt to enter a valid reminder, which needs to be in UTC time.",
     });
     const reminderNote = screen.getByText(
-      "Use UTC in your reminder. (ie. If you live in 'America/New_York' and you want to schedule the reminder to show at 4 PM ET, use the 8 PM cron expression)."
+      "See details on the reminder attribute here."
     );
     expect(cronPromptLink).toBeInTheDocument();
     expect(reminderNote).toBeInTheDocument();
