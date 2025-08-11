@@ -12,4 +12,4 @@ boss.start().catch((error: unknown) => {
   console.error(error);
 });
 
-app.listen(port, () => console.log("Server running..."));
+app.listen(port, "0.0.0.0", () => console.log("Server running..."));
