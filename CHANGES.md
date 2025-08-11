@@ -16,3 +16,8 @@
 1.1.2 (2025-08-07)
 
 - Add a splash screen and icon for the mobile port.
+
+1.1.3 (2025-08-10)
+
+- Add slight changes to the modals for creating and updating an auto or regular word reminder to make sure that the modal fits in the viewport comfortably
+- Add more space to the Node.js V8 old memory section to prevent server crashing in production.
