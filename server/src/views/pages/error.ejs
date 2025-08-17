@@ -1,5 +1,5 @@
-    <%- include('../partials/head', { stylesheets: ["error.css"], title: "Error", baseURL: "" }) %>
-    <%- include('../partials/header') %>
+    <%- include('../partials/head', { stylesheets: ["error.css"], title: "Error" }) %>
+    <%- include('../partials/header', { baseURL: "" }) %>
     <main class="error">
       <div class="error__content">
         <div class="error__container">
@@ -17,6 +17,6 @@
         </div>
       </div>
     </main>
-    <%- include('../partials/footer') %>
+    <%- include('../partials/footer', { baseURL: "" }) %>
   </body>
 </html>

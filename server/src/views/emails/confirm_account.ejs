@@ -1,5 +1,5 @@
-    <%- include('../partials/head', { stylesheets: ["email.css"], title, baseURL: "https://www.word-reminder.com" }) %>
-    <%- include('../partials/header') %>
+    <%- include('../partials/head', { stylesheets: ["email.css"], title }) %>
+    <%- include('../partials/header', { baseURL: "https://www.word-reminder.com" }) %>
       <div class="email">
         <main class="email__content">
           <div class="email__container">
@@ -20,6 +20,6 @@
           <%- include('../partials/support') %>
         </main>
       </div>
-      <%- include('../partials/footer') %>
+      <%- include('../partials/footer', { baseURL: "https://www.word-reminder.com" }) %>
   </body>
 </html>

@@ -6,6 +6,7 @@ import asyncHandler from "express-async-handler";
 import { body } from "express-validator";
 import { readFile } from "node:fs/promises";
 import path from "path";
+import inlineCss from "inline-css";
 
 import { boss } from "../db/boss";
 import { tokenQueries } from "../db/token_queries";
@@ -115,10 +116,16 @@ export const send_email = [
           filename: emailTemplatePath,
         }
       );
+      const publicFolder = path.join(__dirname, "..", "public");
+      const publicUrl = `file://${publicFolder}/`;
+      const inlineHTML = await inlineCss(html, {
+        url: publicUrl,
+        removeLinkTags: true,
+      });
       const info = await email.sendMail({
         to: req.body.email,
         subject,
-        html,
+        html: inlineHTML,
       });
 
       const ms = 30 * 60 * 1000; // 30 minutes in ms
