@@ -437,12 +437,11 @@ In order to permanently delete your account, log into Word Reminder, navigate to
 - Add an iOS App Store port of Word Reminder. I currently cannot do this because I do not have access to a Mac with XCode. The text selection context menu option and push notifications need to be included in this port.
 - Add a CD pipeline for deploying to the Chrome Web Store, Firefox Add-ons, Microsoft Edge Add-ons, and the Google Play Store.
 - Implement Push Notifications using [UnifiedPush](https://unifiedpush.org/), an open-source alternative to [FCM](https://firebase.google.com/docs/cloud-messaging).
+- When a user is confirming their email, the browser extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the browser extension for the user confirmation to be detected. The user should automatically be redirected to the home page.
 
 ## Known Bugs
 
-1. The Word Reminder extension service worker sleeps after a while, which can cause the `Add Word` text selection context menu option to disappear.
-2. When a user is confirming their email, the browser extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the browser extension for the user confirmation to be detected.
-3. When sending an email through Amazon SES, the email templates are not able to render CSS and images that are fetched from the production server. As such, emails received by user are currently unstyled with broken image links.
+1. The Word Reminder extension service worker sleeps after a while, which can cause the `Add Word` text selection context menu option to disappear. Signing out, reloading the extension, and signing back into the extension is a temporary fix for anyone who has this problem.
 
 ## Support
 
