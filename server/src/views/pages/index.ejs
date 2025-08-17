@@ -1,4 +1,4 @@
-  <%- include('../partials/head', { stylesheets: ["home.css"], title: "Word Reminder", baseURL: "" }) %>
+  <%- include('../partials/head', { stylesheets: ["home.css"], title: "Word Reminder" }) %>
   <%- include('../partials/navigation') %>
     <main class="main">
       <div class="hero">
@@ -315,6 +315,6 @@
         </section>
       </div>
     </main>
-    <%- include('../partials/footer') %>
+    <%- include('../partials/footer', { baseURL: "" }) %>
   </body>
 </html>
