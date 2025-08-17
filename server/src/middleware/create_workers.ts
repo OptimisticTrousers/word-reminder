@@ -160,9 +160,21 @@ export const createWorkers = asyncHandler(async (_req, _res, next) => {
   await boss.createQueue(autoWordReminderQueueName);
   await boss.createQueue(wordReminderQueueName);
   await boss.createQueue(emailQueueName);
-  await boss.work(autoWordReminderQueueName, autoWordReminderCallback);
-  await boss.work(wordReminderQueueName, wordReminderCallback);
-  await boss.work(emailQueueName, emailCallback);
+  await boss.work(
+    autoWordReminderQueueName,
+    { pollingIntervalSeconds: 60, batchSize: 200 },
+    autoWordReminderCallback
+  );
+  await boss.work(
+    wordReminderQueueName,
+    { pollingIntervalSeconds: 60, batchSize: 200 },
+    wordReminderCallback
+  );
+  await boss.work(
+    emailQueueName,
+    { pollingIntervalSeconds: 60, batchSize: 200 },
+    emailCallback
+  );
 
   next();
 });
