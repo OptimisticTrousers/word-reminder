@@ -178,13 +178,19 @@ describe("createWorkers", () => {
     expect(mockWork).toHaveBeenCalledTimes(3);
     expect(mockWork).toHaveBeenCalledWith(
       autoWordReminderQueueName,
+      { pollingIntervalSeconds: 30, batchSize: 200 },
       expect.any(Function)
     );
     expect(mockWork).toHaveBeenCalledWith(
       wordReminderQueueName,
+      { pollingIntervalSeconds: 30, batchSize: 200 },
       expect.any(Function)
     );
-    expect(mockWork).toHaveBeenCalledWith(emailQueueName, expect.any(Function));
+    expect(mockWork).toHaveBeenCalledWith(
+      emailQueueName,
+      { pollingIntervalSeconds: 30, batchSize: 200 },
+      expect.any(Function)
+    );
   });
 
   it("setups workers when firebase app is already initialized", async () => {
@@ -222,13 +228,19 @@ describe("createWorkers", () => {
     expect(mockWork).toHaveBeenCalledTimes(3);
     expect(mockWork).toHaveBeenCalledWith(
       autoWordReminderQueueName,
+      { pollingIntervalSeconds: 30, batchSize: 200 },
       expect.any(Function)
     );
     expect(mockWork).toHaveBeenCalledWith(
       wordReminderQueueName,
+      { pollingIntervalSeconds: 30, batchSize: 200 },
       expect.any(Function)
     );
-    expect(mockWork).toHaveBeenCalledWith(emailQueueName, expect.any(Function));
+    expect(mockWork).toHaveBeenCalledWith(
+      emailQueueName,
+      { pollingIntervalSeconds: 30, batchSize: 200 },
+      expect.any(Function)
+    );
   });
 
   describe("when the queue is for auto word reminders", () => {
@@ -294,14 +306,17 @@ describe("createWorkers", () => {
       expect(mockWork).toHaveBeenCalledTimes(3);
       expect(mockWork).toHaveBeenCalledWith(
         autoWordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         wordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         emailQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockUserWordGetByUserWords).not.toHaveBeenCalled();
@@ -333,7 +348,7 @@ describe("createWorkers", () => {
         const jobId = "1";
         const mockWork = jest
           .spyOn(boss, "work")
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -398,14 +413,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockAutoWordReminderGetById).toHaveBeenCalledTimes(1);
@@ -445,7 +463,7 @@ describe("createWorkers", () => {
         const jobId = "1";
         const mockWork = jest
           .spyOn(boss, "work")
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -509,14 +527,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockAutoWordReminderGetById).toHaveBeenCalledTimes(1);
@@ -646,14 +667,17 @@ describe("createWorkers", () => {
       expect(mockWork).toHaveBeenCalledTimes(3);
       expect(mockWork).toHaveBeenCalledWith(
         autoWordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         wordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         emailQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWordRemindersGetById).not.toHaveBeenCalled();
@@ -687,7 +711,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -751,14 +775,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
@@ -793,7 +820,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -857,14 +884,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
@@ -899,7 +929,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -963,14 +993,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
@@ -1004,7 +1037,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -1072,14 +1105,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
@@ -1122,7 +1158,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -1190,14 +1226,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
@@ -1231,7 +1270,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -1302,14 +1341,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
@@ -1362,7 +1404,7 @@ describe("createWorkers", () => {
         const mockWork = jest
           .spyOn(boss, "work")
           .mockImplementationOnce(jest.fn())
-          .mockImplementationOnce((queueName, callback: any) => {
+          .mockImplementationOnce((queueName, options, callback: any) => {
             callback([
               {
                 data: {
@@ -1433,14 +1475,17 @@ describe("createWorkers", () => {
         expect(mockWork).toHaveBeenCalledTimes(3);
         expect(mockWork).toHaveBeenCalledWith(
           autoWordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           wordReminderQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWork).toHaveBeenCalledWith(
           emailQueueName,
+          { pollingIntervalSeconds: 30, batchSize: 200 },
           expect.any(Function)
         );
         expect(mockWordRemindersGetById).toHaveBeenCalledTimes(1);
@@ -1541,14 +1586,17 @@ describe("createWorkers", () => {
       expect(mockWork).toHaveBeenCalledTimes(3);
       expect(mockWork).toHaveBeenCalledWith(
         autoWordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         wordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         emailQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockUserWordGetByUserWords).not.toHaveBeenCalled();
@@ -1585,7 +1633,7 @@ describe("createWorkers", () => {
         .spyOn(boss, "work")
         .mockImplementationOnce(jest.fn())
         .mockImplementationOnce(jest.fn())
-        .mockImplementationOnce((queueName, callback: any) => {
+        .mockImplementationOnce((queueName, options, callback: any) => {
           callback(mockJobs);
           return Promise.resolve("");
         });
@@ -1637,14 +1685,17 @@ describe("createWorkers", () => {
       expect(mockWork).toHaveBeenCalledTimes(3);
       expect(mockWork).toHaveBeenCalledWith(
         autoWordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         wordReminderQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockWork).toHaveBeenCalledWith(
         emailQueueName,
+        { pollingIntervalSeconds: 30, batchSize: 200 },
         expect.any(Function)
       );
       expect(mockUserWordGetByUserWords).not.toHaveBeenCalled();
