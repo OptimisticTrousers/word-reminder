@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import inlineCss from "inline-css";
 import ejs from "ejs";
 import express from "express";
 import { SentMessageInfo } from "nodemailer";
@@ -230,13 +231,29 @@ describe("send_email", () => {
       subject: Subject.CONFIRM_ACCOUNT,
     };
     const emailTemplatePath = path.join(
-      __dirname,
-      "..",
+      process.cwd(),
+      "src",
       "views",
       "emails",
       `${body.template}.ejs`
     );
     const emailTemplate = await readFile(emailTemplatePath, "utf-8");
+    const publicFolder = path.join(process.cwd(), "src", "public");
+    const publicUrl = `file://${publicFolder}/`;
+    const html = ejs.render(
+      emailTemplate,
+      {
+        url: `${SERVER_URL}/confirmAccount/${userId}&${token.token}`,
+        title: "Confirm Account",
+      },
+      {
+        filename: emailTemplatePath,
+      }
+    );
+    const inlineHTML = await inlineCss(html, {
+      url: publicUrl,
+      removeLinkTags: true,
+    });
 
     const response = await request(app)
       .post(`/api/users/${userId}/emails`)
@@ -250,16 +267,7 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/confirmAccount/${userId}&${token.token}`,
-          title: "Confirm Account",
-        },
-        {
-          filename: emailTemplatePath,
-        }
-      ),
+      html: inlineHTML,
       subject: body.subject,
       to: body.email,
     });
@@ -286,6 +294,22 @@ describe("send_email", () => {
       `${body.template}.ejs`
     );
     const emailTemplate = await readFile(emailTemplatePath, "utf-8");
+    const publicFolder = path.join(process.cwd(), "src", "public");
+    const publicUrl = `file://${publicFolder}/`;
+    const html = ejs.render(
+      emailTemplate,
+      {
+        url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
+        title: "Change Password",
+      },
+      {
+        filename: emailTemplatePath,
+      }
+    );
+    const inlineHTML = await inlineCss(html, {
+      url: publicUrl,
+      removeLinkTags: true,
+    });
 
     const response = await request(app)
       .post(`/api/users/${userId}/emails`)
@@ -299,16 +323,7 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
-          title: "Change Password",
-        },
-        {
-          filename: emailTemplatePath,
-        }
-      ),
+      html: inlineHTML,
       subject: body.subject,
       to: body.email,
     });
@@ -335,6 +350,22 @@ describe("send_email", () => {
       `${Template.CHANGE_PASSWORD}.ejs`
     );
     const emailTemplate = await readFile(emailTemplatePath, "utf-8");
+    const publicFolder = path.join(process.cwd(), "src", "public");
+    const publicUrl = `file://${publicFolder}/`;
+    const html = ejs.render(
+      emailTemplate,
+      {
+        url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
+        title: "Forgot Password",
+      },
+      {
+        filename: emailTemplatePath,
+      }
+    );
+    const inlineHTML = await inlineCss(html, {
+      url: publicUrl,
+      removeLinkTags: true,
+    });
     const mockGetByEmail = jest
       .spyOn(userQueries, "getByEmail")
       .mockResolvedValue(user);
@@ -353,16 +384,7 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
-          title: "Forgot Password",
-        },
-        {
-          filename: emailTemplatePath,
-        }
-      ),
+      html: inlineHTML,
       subject: body.subject,
       to: body.email,
     });
@@ -389,6 +411,22 @@ describe("send_email", () => {
       `${body.template}.ejs`
     );
     const emailTemplate = await readFile(emailTemplatePath, "utf-8");
+    const publicFolder = path.join(__dirname, "..", "public");
+    const publicUrl = `file://${publicFolder}/`;
+    const html = ejs.render(
+      emailTemplate,
+      {
+        url: `${SERVER_URL}/changeEmail/${userId}&${token.token}`,
+        title: "Change Email",
+      },
+      {
+        filename: emailTemplatePath,
+      }
+    );
+    const inlineHTML = await inlineCss(html, {
+      url: publicUrl,
+      removeLinkTags: true,
+    });
 
     const response = await request(app)
       .post(`/api/users/${userId}/emails`)
@@ -402,16 +440,7 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/changeEmail/${userId}&${token.token}`,
-          title: "Change Email",
-        },
-        {
-          filename: emailTemplatePath,
-        }
-      ),
+      html: inlineHTML,
       subject: body.subject,
       to: body.email,
     });

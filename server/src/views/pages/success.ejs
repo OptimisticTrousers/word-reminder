@@ -1,5 +1,5 @@
-  <%- include('../partials/head', { stylesheets: ["success.css"], title: "Success", baseURL: "" }) %>
-  <%- include('../partials/header') %>
+  <%- include('../partials/head', { stylesheets: ["success.css"], title: "Success" }) %>
+  <%- include('../partials/header', { baseURL: ""}) %>
       <div class="success">
         <div class="success__container">
           <img
@@ -14,6 +14,6 @@
         <a class="success__link" href="/"> Go back to the home page. </a>
       </div>
     </main>
-    <%- include('../partials/footer') %>
+    <%- include('../partials/footer', { baseURL: ""}) %>
   </body>
 </html>

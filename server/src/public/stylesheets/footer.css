@@ -40,8 +40,6 @@
 }
 
 .footer__image {
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(7deg)
-    brightness(103%) contrast(104%);
   border: 4px solid var(--border-color);
   border-radius: 8px;
   padding: 0.5rem;
