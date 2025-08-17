@@ -3,12 +3,10 @@ on:
   push:
     branches:
       - main
-env:
-  CONDITION: ${{ contains(github.event.head_commit.message, '#skip') }}
 jobs:
   deploy:
     name: Deploy app
-    if: ${{ github.env.CONDITION == false }}
+    if: ${{ !contains(github.event.head_commit.message, '#skip') }}
     runs-on: ubuntu-22.04
     steps:
       - name: Trigger deployment
