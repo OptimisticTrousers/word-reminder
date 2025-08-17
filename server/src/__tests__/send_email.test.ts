@@ -14,6 +14,7 @@ import { email } from "../utils/email";
 import { Subject, Template } from "common";
 import { variables } from "../config/variables";
 import { userQueries } from "../db/user_queries";
+import juice from "juice";
 
 const { SERVER_URL } = variables;
 
@@ -250,15 +251,17 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/confirmAccount/${userId}&${token.token}`,
-          title: "Confirm Account",
-        },
-        {
-          filename: emailTemplatePath,
-        }
+      html: juice(
+        ejs.render(
+          emailTemplate,
+          {
+            url: `${SERVER_URL}/confirmAccount/${userId}&${token.token}`,
+            title: "Confirm Account",
+          },
+          {
+            filename: emailTemplatePath,
+          }
+        )
       ),
       subject: body.subject,
       to: body.email,
@@ -299,15 +302,17 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
-          title: "Change Password",
-        },
-        {
-          filename: emailTemplatePath,
-        }
+      html: juice(
+        ejs.render(
+          emailTemplate,
+          {
+            url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
+            title: "Change Password",
+          },
+          {
+            filename: emailTemplatePath,
+          }
+        )
       ),
       subject: body.subject,
       to: body.email,
@@ -353,15 +358,17 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
-          title: "Forgot Password",
-        },
-        {
-          filename: emailTemplatePath,
-        }
+      html: juice(
+        ejs.render(
+          emailTemplate,
+          {
+            url: `${SERVER_URL}/changePassword/${userId}&${token.token}`,
+            title: "Forgot Password",
+          },
+          {
+            filename: emailTemplatePath,
+          }
+        )
       ),
       subject: body.subject,
       to: body.email,
@@ -402,15 +409,17 @@ describe("send_email", () => {
     expect(mockCreate).toHaveBeenCalledWith();
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith({
-      html: ejs.render(
-        emailTemplate,
-        {
-          url: `${SERVER_URL}/changeEmail/${userId}&${token.token}`,
-          title: "Change Email",
-        },
-        {
-          filename: emailTemplatePath,
-        }
+      html: juice(
+        ejs.render(
+          emailTemplate,
+          {
+            url: `${SERVER_URL}/changeEmail/${userId}&${token.token}`,
+            title: "Change Email",
+          },
+          {
+            filename: emailTemplatePath,
+          }
+        )
       ),
       subject: body.subject,
       to: body.email,

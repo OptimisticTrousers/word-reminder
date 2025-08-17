@@ -13,6 +13,7 @@ import { errorValidationHandler } from "../middleware/error_validation_handler";
 import { email } from "../utils/email";
 import { userQueries } from "../db/user_queries";
 import { variables } from "../config/variables";
+import juice from "juice";
 
 const { SERVER_URL } = variables;
 
@@ -115,10 +116,11 @@ export const send_email = [
           filename: emailTemplatePath,
         }
       );
+      const inlineHTML = juice(html);
       const info = await email.sendMail({
         to: req.body.email,
         subject,
-        html,
+        html: inlineHTML,
       });
 
       const ms = 30 * 60 * 1000; // 30 minutes in ms
