@@ -1,7 +1,7 @@
 # Word Reminder
 
 <p>
-<img alt="Version" src="https://img.shields.io/badge/version-1.0-blue.svg?cacheSeconds=2592000" />
+<img alt="Version" src="https://img.shields.io/badge/version-1.1.3-blue.svg?cacheSeconds=2592000" />
 <a href="https://github.com/OptimisticTrousers/word-reminder/actions?query=workflow%3Apipeline"><img alt="Coverage Status" src="https://img.shields.io/badge/coverage-97%25-success" /></a>
 </p>
 
