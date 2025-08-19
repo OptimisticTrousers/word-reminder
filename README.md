@@ -113,7 +113,7 @@ The server, which both the mobile app and browser extension use, utilizes the [F
 
 ### Mobile App
 
-<p align="center"><a href="https://play.google.com/store/apps/details?id=com.x8bit.bitwarden&hl=en_US"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height=240 width=240/></a></p>
+<p align="center"><a href="https://play.google.com/store/apps/details?id=com.wordreminder.www"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height=240 width=240/></a></p>
 
 ### Extension
 
@@ -121,7 +121,7 @@ NOTE: In order to enable the use of push notifications with the help of the Web 
 
 Visit the Chrome Web Store to add the extension to your Chromium browser (Brave, Chrome, Edge): https://chromewebstore.google.com/detail/word-reminder/oejlbeackbidindbmobdbcfhjieljhji
 
-Visit Firefox Browser Add-ons to add the extension to your Gecko-based browser: https://addons.mozilla.org/en-US/firefox/addon/bitwarden-password-manager/
+Visit Firefox Browser Add-ons to add the extension to your Gecko-based browser: Not available yet.
 
 Visit Microsoft Edge Add-ons add the extension to Edge: https://microsoftedge.microsoft.com/addons/detail/word-reminder/gpciakmhepdkgaeocophgcdiahcbolam
 
