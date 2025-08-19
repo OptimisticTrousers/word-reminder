@@ -15,6 +15,7 @@
   - [Technologies](#technologies)
   - [Features](#features)
   - [Download](#download)
+    - [Requirements](#requirements)
     - [Mobile App](#mobile-app)
     - [Extension](#extension)
     - [Source](#source)
@@ -110,6 +111,16 @@ The server, which both the mobile app and browser extension use, utilizes the [F
 - Includes a comphrehensive CI/CD pipeline with GitHub Actions.
 
 ## Download
+
+### Requirements
+
+Word Reminder should work with any device. However, these are the specifications used to build Word Reminder:
+
+- Linux Mint 22 
+- ARM64 CPU Architecture
+- 64GB of system memory (RAM), 8 cores of vCPU
+- Node v20.18.0 and npm 10.8.2
+- At least 1GB of free disk space
 
 ### Mobile App
 
@@ -399,6 +410,35 @@ For Chrome, load the `dist` folder as a local extension at [chrome://extensions/
 #### Firefox
 
 In Firefox, head over to [about:debugging#/runtime/this-firefox](about:debugging#/runtime/this-firefox) and click on the "Load Temporary Add-on..." button on top of the page. :warning: For Firefox, you'll need to select the `dist/manifest.json` file instead of the `dist` folder.
+
+You'll need to make sure that the `manifest.json` file looks like this, making sure to replace `background.service_worker` with `background.scripts` because `background.service_worker` is not supported in Firefox yet, along with the extension's ID:
+
+```js
+{
+  "manifest_version": 3,
+  "version": "1.1.3",
+  "description": "Allows users to store and remind themselves of words in their dictionary to improve vocabulary and increase word retention.",
+  "name": "Word Reminder",
+  "action": {
+    "default_popup": "index.html?popup=true"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@oejlbeackbidindbmobdbcfhjieljhji"
+    }
+  },
+  "background": {
+    "scripts": ["service-worker.js"],
+    "type": "module"
+  },
+  "permissions": ["contextMenus", "notifications", "storage"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "icons": {
+    "16": "images/word-reminder-16x16.png"
+  }
+}
+
+```
 
 #### Edge
 
