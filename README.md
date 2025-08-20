@@ -132,7 +132,7 @@ NOTE: In order to enable the use of push notifications with the help of the Web 
 
 Visit the Chrome Web Store to add the extension to your Chromium browser (Brave, Chrome, Edge): https://chromewebstore.google.com/detail/word-reminder/oejlbeackbidindbmobdbcfhjieljhji
 
-Visit Firefox Browser Add-ons to add the extension to your Gecko-based browser: Not available yet.
+Visit Firefox Browser Add-ons to add the extension to your Gecko-based browser: https://addons.mozilla.org/en-US/firefox/addon/word-reminder/
 
 Visit Microsoft Edge Add-ons add the extension to Edge: https://microsoftedge.microsoft.com/addons/detail/word-reminder/gpciakmhepdkgaeocophgcdiahcbolam
 
