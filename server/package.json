@@ -10,7 +10,7 @@
     "coverage": "jest --runInBand --coverage",
     "dev": "NODE_ENV=development nodemon src/server.ts",
     "seed": "ts-node src/db/populatedb",
-    "start": "node -r ts-node/register --max-old-space-size=1536 src/server.ts",
+    "start": "ts-node src/server.ts",
     "start:test": "NODE_ENV=test ts-node src/server.ts",
     "test": "jest --runInBand --watchAll",
     "lint": "eslint ."
