@@ -85,7 +85,7 @@ To find out what's new in this version of Word Reminder, please see [the changel
 
 ## Technologies
 
-Word Reminder is built with PostgresQL, React.js, and Express.js in TypeScript. Word Reminder was first built as a browser extension.
+Word Reminder is built with [PostgresQL](https://www.postgresql.org/), [React.js](https://react.dev/), and [Express.js](https://expressjs.com/) in [TypeScript](https://www.typescriptlang.org/). Word Reminder was first built as a browser extension. it uses [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) for data fetching.
 
 The Word Reminder browser extension leverages the [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) to send desktop push notifications that show the user a list of the words in their word reminders. It utilizes [Chrome APIs](https://developer.chrome.com/docs/extensions/reference/api) to [create a custom selection context menu](https://developer.chrome.com/docs/extensions/reference/api/contextMenus), saving the user's id in order to create [PushSubscriptions](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription) using the [Chrome Storage Sync API](https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync), and the [Chrome Runtime API](https://developer.chrome.com/docs/extensions/reference/api/runtime#event-onMessage) to communicate between the extension and service worker, among other things.
 
