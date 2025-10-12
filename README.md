@@ -478,6 +478,7 @@ In order to permanently delete your account, log into Word Reminder, navigate to
 - Add a CD pipeline for deploying to the Chrome Web Store, Firefox Add-ons, Microsoft Edge Add-ons, and the Google Play Store.
 - Implement Push Notifications using [UnifiedPush](https://unifiedpush.org/), an open-source alternative to [FCM](https://firebase.google.com/docs/cloud-messaging).
 - When a user is confirming their email, the browser extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the browser extension for the user confirmation to be detected. The user should automatically be redirected to the home page.
+- Add a 'Do Not Disturb' option for Word Reminders so that reminders are not sent during those times.
 
 ## Known Bugs
 
