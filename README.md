@@ -480,6 +480,7 @@ In order to permanently delete your account, log into Word Reminder, navigate to
 - When a user is confirming their email, the browser extension does not automatically redirect the user to the home page. Instead, the user needs to close and re-open the browser extension for the user confirmation to be detected. The user should automatically be redirected to the home page.
 - Add a 'Do Not Disturb' option for Word Reminders so that reminders are not sent during those times.
 - Add an option to favorite words.
+- Fix 500 error that occurs when adding words to your dictionary.
 
 ## Known Bugs
 
